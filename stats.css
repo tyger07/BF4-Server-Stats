@@ -1,0 +1,189 @@
+/*  Player Stats Style
+    --------------------------------------------------------------
+	Author:		Ty_ger07 ( http://open-web-community.com/ )
+    --------------------------------------------------------------
+*/
+* {
+	margin: 0 auto;
+	padding: 0;
+}
+.right {
+	float: right;
+}
+.clear {
+	clear: both;
+}
+body{
+	margin: 0 auto;
+	padding: 0;
+	text-align: left;
+	height: 100%;
+	width: 100%;
+	background: #140C0A;
+	background-image: url("images/BF4.jpg");
+	background-position: top left;
+	background-repeat: repeat-x;
+	background-attachment: fixed;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 12px;
+	color: #BBBBBB;
+}
+a{
+	color: #81B2C4;
+	text-decoration: none;
+}
+a:visited{
+	color: #81B2C4;
+	text-decoration: none;
+}
+a:hover{
+	color: #9CD7ED;
+	text-decoration: none;
+}
+a:active{
+	color: #9CD7ED;
+	text-decoration: none;
+}
+.joinbutton{
+	box-shadow: 0px 0px 15px #666;
+}
+#pagebody{
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	background-image: url("images/50.png"), linear-gradient(170deg, rgba(100,000,000,0.5), rgba(000,000,100,0.3), rgba(000,000,100,0.1));
+	background-position: left top;
+	background-repeat: repeat;
+	border-radius: 10px;
+	box-shadow: 0px 0px 15px #000;
+}
+.topcontent{
+	margin-left: auto;
+	margin-right: auto;
+	width: 97%;
+	padding-bottom: 2px;
+}
+.menucontent{
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	background-image: url("images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
+	background-position: left top;
+	background-repeat: repeat;
+	border-radius: 10px;
+	padding-bottom: 2px;
+	box-shadow: 2px 2px 20px 2px rgba(0,0,0,0.5);
+}
+.menucontent a:link, .menucontent a:visited{
+	color: #81B2C4;
+}
+.menucontent a:hover, .menucontent a:active{
+	color: #9CD7ED;
+}
+.middlecontent{
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	background-image: url("images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
+	background-position: left top;
+	background-repeat: repeat;
+	border-radius: 10px;
+	padding-bottom: 2px;
+	box-shadow: 2px 2px 20px 2px rgba(0,0,0,0.5);
+}
+.innercontent{
+	margin-left: auto;
+	margin-right: auto;
+}
+.countrymap{
+	margin-left: auto;
+	margin-right: auto;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #222222;
+	width: 840px;
+	height: 440px;
+	background-color: #FFFFFF;
+	border-radius: 15px;
+}
+.prettyheader{
+	color: #FDD853;
+	padding: 3px;
+}
+.orderheader{
+	color: #81B2C4;
+	padding-left: 20px;
+	padding-right: 10px;
+	background-image: url(images/order.gif);
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 0% 50%;
+}
+.orderheader a:link, .orderheader a:visited{
+	color: #81B2C4;
+}
+.orderheader a:hover, .orderheader a:active{
+	color: #9CD7ED;
+}
+.pagination a:link, .pagination a:visited{
+	color: #81B2C4;
+}
+.pagination a:hover, .pagination a:active{
+	color: #9CD7ED;
+}
+.prettytable{
+	margin-left: auto;
+	margin-right: auto;
+	padding: 3px;
+}
+th{
+	font-weight: normal;
+	background-image: url("images/40.png");
+	background-position: left top;
+	background-repeat: repeat;
+	height: 30px;
+	padding: 3px;
+	box-shadow: 0px 0px 15px #111;
+}
+.tablecontents{
+	text-align: left;
+	background-image: url("images/40.png"), linear-gradient(170deg, rgba(120,100,100,0.1), rgba(110,110,130,0.1));
+	background-position: left top;
+	background-repeat: repeat;
+	padding: 3px;
+	box-shadow: 0px 0px 5px #111;
+}
+.inputbox{
+	width: 100px;
+	background-color: #111111;
+	color: #81B2C4;
+	border: 1px solid #444444;
+}
+.button{
+	cursor: pointer;
+	background-color: #111111;
+	color: #81B2C4;
+	border: 1px solid #444444;
+}
+.alertbutton{
+	cursor: pointer;
+	background-color: #222222;
+	color: #FF0000;
+	border: 1px solid #444444;
+}
+.headline{
+	font-size: 14px;
+	color: #DDDDDD;
+}
+.teamname{
+	color: #B2DDED;
+}
+.alert{
+	color: #FF0000;
+}
+.information{
+	color: #999999;
+}
+.footertext{
+	color: #888888;
+}
