@@ -2,35 +2,21 @@
 // server stats page by Ty_ger07 at http://open-web-community.com/
 // THIS FOLLOWING INFORMATION NEEDS TO BE FILLED IN
 
-// DATABASE INFORMATION
-$db_host		= ''; // database host
-$db_port		= '3306'; // database port. default is 3306
-$db_name		= ''; // database name
-$db_uname		= ''; // database user name
-$db_pass		= ''; // database password
-
 // DATABASE SERVER ID
-$server_ID		= '1'; // default server ID is 1.  If using more than one server in the same database, you can select a server other than the first one.
+$server_ID		= ''; // default server ID is 1.  If using more than one server in the same database, you can select a server other than the first one.
 
 // SERVER NAME
 $server_name	= ''; // server name to display
 
 // BATTLE LOG LINK
-$battlelog		= 'http://battlelog.battlefield.com/bf4/servers/show/pc/'; // your server battlelog link
-
-// CLAN NAME
-$clan_name		= ''; // your gaming clan or organization name
-
-// PAGE BANNER
-$banner_image	= 'images/bf4-logo.png'; // your desired page banner
-
-// BANNER LINK
-$banner_url		= 'http://open-web-community.com/'; // where clicking the banner will take you
-
-// STATS INDEX LINK
-$index_link		= ''; // if you have multiple stats pages and want a link to the index page to be available, enter the link value here
+$battlelog		= ''; // your server battlelog link
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
+//
+//
+// include common.php contents
+require_once('./common/common.php');
+// database connection details
 $database_connect = $db_host . ':' . $db_port;
 // start counting page load time
 $mtime = microtime();
@@ -53,7 +39,7 @@ echo '
 // hide php notices
 error_reporting(E_ALL ^ E_NOTICE);
 // load stylesheet now because we have to (a bit early but ok)
-echo '<link rel="stylesheet" href="stats.css" type="text/css" />';
+echo '<link rel="stylesheet" href="./common/stats.css" type="text/css" />';
 // use server name in database if user didn't enter one above
 $database_connected = 0;
 if($server_name == null)
@@ -175,7 +161,7 @@ if($index_link != '')
 	</table>
 	</td>
 	<td width="10%" style="text-align: right;">
-	<br/><a href="' . $battlelog . '" target="_blank"><img src="images/joinbtn.png" alt="join" class="joinbutton"/></a><br/>
+	<br/><a href="' . $battlelog . '" target="_blank"><img src="./images/joinbtn.png" alt="join" class="joinbutton"/></a><br/>
 	</td>
 	</tr>
 	</table>
@@ -194,7 +180,7 @@ else
 	<br/><a href="' . $_SERVER['PHP_SELF'] . '"><b><font class="information">Currently viewing:</font> ' . $server_name . '</b></a><br/>
 	</td>
 	<td width="25%" style="float: right;">
-	<br/><a href="' . $battlelog . '" target="_blank"><img src="images/joinbtn.png" alt="join" class="joinbutton"/></a><br/>
+	<br/><a href="' . $battlelog . '" target="_blank"><img src="./images/joinbtn.png" alt="join" class="joinbutton"/></a><br/>
 	</td>
 	</tr>
 	</table>
@@ -442,33 +428,47 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 		$map_name = 'Unknown';
 		$mode = 'Unknown';
 		// figure out current game mode and map name
-		$mode_query = @mysql_query("SELECT `mapName`, `Gamemode` FROM tbl_server WHERE `ServerID` = '$server_ID'");
+		$mode_query = @mysql_query("SELECT `mapName`, `Gamemode`, `maxSlots`, `usedSlots`, `IP_Address` FROM tbl_server WHERE `ServerID` = '$server_ID'");
 		if(@mysql_num_rows($mode_query)!=0)
 		{
 			$mode_row = @mysql_fetch_assoc($mode_query);
+			$used_slots = $mode_row['usedSlots'];
+			$available_slots = $mode_row['maxSlots'];
+			$ip_address = $mode_row['IP_Address'];
 			// convert mode to friendly name
 			$mode = $mode_row['Gamemode'];
 			$mode_name = array_search($mode,$mode_array);
 			// convert map to friendly name
 			$map = $mode_row['mapName'];
 			$map_name = array_search($map,$map_array);
+			$map_img = './images/maps/' . $map . '.jpg';
 		}
 		echo '
 		<div class="innercontent">
 		<table width="98%" align="center" border="0" class="prettytable">
 		<tr>
-		<td width="25%" style="text-align:left">  <font class="information">Current Game Mode:</font></td>
-		<td width="25%" style="text-align:left">  ' . $mode_name . '</td>
-		<td width="25%" style="text-align:left">  <font class="information">Current Map:</font></td>
-		<td width="25%" style="text-align:left">  ' . $map_name . '</td>
+		<td style="background-image: url(' . $map_img . '); background-position: left center; background-repeat: repeat; background-size: 100% auto;">
+		<div style="background-image: url(./images/50.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8));">
+		<table width="80%" align="center" border="0">
+		<tr>
+		<td width="10%" style="text-align:left"><br/>&nbsp;<br/><br/></td>
+		<td width="22%" style="text-align:left"><br/><font class="information">Server IP Address:</font><br/><br/></td>
+		<td width="22%" style="text-align:left"><br/>' . $ip_address . '<br/><br/></td>
+		<td width="22%" style="text-align:left"><br/><font class="information">Current Game Mode:</font><br/><br/></td>
+		<td width="22%" style="text-align:left"><br/>' . $mode_name . '<br/><br/></td>
 		</tr>
 		<tr>
-		<td colspan="4">&nbsp;</td>
+		<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
+		<td width="22%" style="text-align:left"><font class="information">Current Map:</font><br/><br/></td>
+		<td width="22%" style="text-align:left">' . $map_name . '<br/><br/></td>
+		<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/></td>
+		<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/></td>
 		</tr>
-		<tr>
-		<td colspan="4"><center><font class="information">No players currently in ' . $server_name . ' server.</font></center></td>
+		</table>
+		</div>
+		</td>
 		</tr>
-		</table><br/>
+		</table>
 		</div>
 		';
 	}
@@ -501,7 +501,7 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			echo '
 			<tr>
 			<td style="background-image: url(' . $map_img . '); background-position: left center; background-repeat: repeat; background-size: 100% auto;" colspan="2">
-			<div style="background-image: url(images/40.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));">
+			<div style="background-image: url(./images/50.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8));">
 			';
 		}
 		else
@@ -526,14 +526,14 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					echo '
 					<table width="80%" align="center" border="0">
 					<tr>
-					<td width="10%" style="text-align:left"><br/><br/>&nbsp;<br/><br/></td>
-					<td width="22%" style="text-align:left"><br/><br/><font class="information">Server IP Address:</font><br/><br/></td>
-					<td width="22%" style="text-align:left"><br/><br/>' . $ip_address . '<br/><br/></td>
+					<td width="10%" style="text-align:left"><br/>&nbsp;<br/><br/></td>
+					<td width="22%" style="text-align:left"><br/><font class="information">Server IP Address:</font><br/><br/></td>
+					<td width="22%" style="text-align:left"><br/>' . $ip_address . '<br/><br/></td>
 					<td width="22%" style="text-align:left"><br/><font class="information">Current Game Mode:</font><br/><br/></td>
 					<td width="22%" style="text-align:left"><br/>' . $mode_name . '<br/><br/></td>
 					</tr>
 					<tr>
-					<td width="10%" style="text-align:left"><br/>&nbsp;<br/><br/></td>
+					<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
 					<td width="22%" style="text-align:left"><font class="information">Current Map:</font><br/><br/></td>
 					<td width="22%" style="text-align:left">' . $map_name . '<br/><br/></td>
 					<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/></td>

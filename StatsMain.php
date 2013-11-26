@@ -2,44 +2,33 @@
 // server stats index page by Ty_ger07 at http://open-web-community.com/
 // THIS FOLLOWING INFORMATION NEEDS TO BE FILLED IN
 
-// DATABASE INFORMATION
-$db_host		= ''; // database host
-$db_port		= '3306'; // database port. default is 3306
-$db_name		= ''; // database name
-$db_uname		= ''; // database user name
-$db_pass		= ''; // database password
-
 // DATABASE SERVER ID
-$server_ID		= array('1','2'); // If you have multiple servers in same database, enter each server ID.  Otherwise, enter each one as '1'.
+$server_ID		= array('',''); // If you have multiple servers in same database, enter each server ID.  Otherwise, enter each one as '1'.
 //
 // for example, if you use different server IDs:
 // $server_ID	= array('1','2','3');
 
 // SERVER NAME
-$server_name	= array('name 1','name 2'); // Enter each server name to display.
+$server_name	= array('',''); // Enter each server name to display.
 //
 // for example:
 // $server_name	= array('Server 1','Server 2','Server 3');
 
 // STATS LINK
-$stats_link		= array('ServerStats1.php','ServerStats2.php'); // Enter each server stats link.
+$stats_link		= array('',''); // Enter each server stats link.
 //
 // for example:
 // $stats_link	= array('player_stats1.php','player_stats2.php','player_stats3.php');
 
 // BATTLE LOG LINK
-$battlelog		= array('http://battlelog.battlefield.com/bf4/servers/show/pc/','http://battlelog.battlefield.com/bf4/servers/show/pc/'); // your server battlelog link
-
-// CLAN NAME
-$clan_name		= ''; // your gaming clan or organization name
-
-// PAGE BANNER
-$banner_image	= 'images/bf4-logo.png'; // your desired page banner
-
-// BANNER LINK
-$banner_url		= 'http://open-web-community.com/'; // where clicking the banner will take you
+$battlelog		= array('',''); // your server battlelog link
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
+//
+//
+// include common.php contents
+require_once('./common/common.php');
+// database connection details
 $db_connect = $db_host . ':' . $db_port;
 // start counting page load time
 $mtime = microtime();
@@ -63,7 +52,7 @@ echo '
 <meta name="keywords" content="BF4,Player,Stats,Server,Index,' . $clan_name . '" />
 <meta name="description" content="This is the ' . $clan_name . ' BF4 player stats server index page." />
 <title>' . $clan_name . ' BF4 Player Stats Index Page</title>
-<link rel="stylesheet" href="stats.css" type="text/css" />
+<link rel="stylesheet" href="./common/stats.css" type="text/css" />
 </head>
 <body>
 <br/>
@@ -170,7 +159,7 @@ foreach($server_ID as $sid)
 	<tr>
 	<td width="100%" style="text-align: left;">
 	<div style="background-image: url(' . $map_img . '); background-position: left center; background-repeat: repeat; background-size: 100% auto; border-radius: 10px;">
-	<div class="middlecontent">
+	<div style="background-image: url(./images/50.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8)); border-radius: 10px;">
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
@@ -188,7 +177,7 @@ foreach($server_ID as $sid)
 	</tr>
 	<tr>
 	<td width="35%">
-	<a href="' . $battlelink . '" target="_blank"><img src="images/joinbtn.png" alt="join"/></a><br/><br/>
+	<a href="' . $battlelink . '" target="_blank"><img src="./images/joinbtn.png" alt="join"/></a><br/><br/>
 	</td>
 	<td width="22%">
 	<font class="information">Players Logged:</font> ' . $total_players . '<br/><br/>

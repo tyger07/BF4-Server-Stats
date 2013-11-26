@@ -20,7 +20,7 @@ body{
 	height: 100%;
 	width: 100%;
 	background: #140C0A;
-	background-image: url("images/BF4.jpg");
+	background-image: url("../images/BF4.jpg");
 	background-position: top left;
 	background-repeat: repeat-x;
 	background-attachment: fixed;
@@ -43,7 +43,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
-	background-image: url("images/50.png"), linear-gradient(170deg, rgba(100,000,000,0.5), rgba(000,000,100,0.3), rgba(000,000,100,0.1));
+	background-image: url("../images/50.png"), linear-gradient(170deg, rgba(100,000,000,0.5), rgba(000,000,100,0.3), rgba(000,000,100,0.1));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;
@@ -59,7 +59,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	width: 100%;
-	background-image: url("images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
+	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;
@@ -76,7 +76,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	width: 100%;
-	background-image: url("images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
+	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;
@@ -106,7 +106,7 @@ a:hover, a:active{
 	color: #DAA520;
 	padding-left: 20px;
 	padding-right: 10px;
-	background-image: url(images/order.gif);
+	background-image: url("../images/order.gif");
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: 0% 50%;
@@ -130,7 +130,7 @@ a:hover, a:active{
 }
 th{
 	font-weight: normal;
-	background-image: url("images/40.png");
+	background-image: url("../images/40.png");
 	background-position: left top;
 	background-repeat: repeat;
 	height: 30px;
@@ -139,7 +139,7 @@ th{
 }
 .tablecontents{
 	text-align: left;
-	background-image: url("images/40.png"), linear-gradient(170deg, rgba(120,100,100,0.1), rgba(110,110,130,0.1));
+	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(120,100,100,0.1), rgba(110,110,130,0.1));
 	background-position: left top;
 	background-repeat: repeat;
 	padding: 3px;
