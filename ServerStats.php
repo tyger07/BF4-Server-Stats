@@ -441,26 +441,26 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			// convert map to friendly name
 			$map = $mode_row['mapName'];
 			$map_name = array_search($map,$map_array);
-			$map_img = './images/maps/' . $map . '.jpg';
+			$map_img = './images/maps/' . $map . '.png';
 		}
 		echo '
 		<div class="innercontent">
 		<table width="98%" align="center" border="0" class="prettytable">
 		<tr>
-		<td style="background-image: url(' . $map_img . '); background-position: left center; background-repeat: repeat; background-size: 100% auto;">
-		<div style="background-image: url(./images/50.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8));">
+		<td class="mapimage" style="background-image: url(' . $map_img . ');">
+		<div class="simplecontent">
 		<table width="80%" align="center" border="0">
 		<tr>
 		<td width="10%" style="text-align:left"><br/>&nbsp;<br/><br/></td>
-		<td width="22%" style="text-align:left"><br/><font class="information">Server IP Address:</font><br/><br/></td>
-		<td width="22%" style="text-align:left"><br/>' . $ip_address . '<br/><br/></td>
 		<td width="22%" style="text-align:left"><br/><font class="information">Current Game Mode:</font><br/><br/></td>
 		<td width="22%" style="text-align:left"><br/>' . $mode_name . '<br/><br/></td>
+		<td width="22%" style="text-align:left"><br/><font class="information">Current Map:</font><br/><br/></td>
+		<td width="22%" style="text-align:left"><br/>' . $map_name . '<br/><br/></td>
 		</tr>
 		<tr>
 		<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
-		<td width="22%" style="text-align:left"><font class="information">Current Map:</font><br/><br/></td>
-		<td width="22%" style="text-align:left">' . $map_name . '<br/><br/></td>
+		<td width="22%" style="text-align:left"><font class="information">Server IP Address:</font><br/><br/></td>
+		<td width="22%" style="text-align:left">' . $ip_address . '<br/><br/></td>
 		<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/></td>
 		<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/></td>
 		</tr>
@@ -497,11 +497,11 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			// convert map to friendly name
 			$map = $mode_row['mapName'];
 			$map_name = array_search($map,$map_array);
-			$map_img = './images/maps/' . $map . '.jpg';
+			$map_img = './images/maps/' . $map . '.png';
 			echo '
 			<tr>
-			<td style="background-image: url(' . $map_img . '); background-position: left center; background-repeat: repeat; background-size: 100% auto;" colspan="2">
-			<div style="background-image: url(./images/50.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8));">
+			<td colspan="2" class="mapimage" style="background-image: url(' . $map_img . ');">
+			<div class="simplecontent">
 			';
 		}
 		else
@@ -527,15 +527,15 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					<table width="80%" align="center" border="0">
 					<tr>
 					<td width="10%" style="text-align:left"><br/>&nbsp;<br/><br/></td>
-					<td width="22%" style="text-align:left"><br/><font class="information">Server IP Address:</font><br/><br/></td>
-					<td width="22%" style="text-align:left"><br/>' . $ip_address . '<br/><br/></td>
 					<td width="22%" style="text-align:left"><br/><font class="information">Current Game Mode:</font><br/><br/></td>
 					<td width="22%" style="text-align:left"><br/>' . $mode_name . '<br/><br/></td>
+					<td width="22%" style="text-align:left"><br/><font class="information">Current Map:</font><br/><br/></td>
+					<td width="22%" style="text-align:left"><br/>' . $map_name . '<br/><br/></td>
 					</tr>
 					<tr>
 					<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
-					<td width="22%" style="text-align:left"><font class="information">Current Map:</font><br/><br/></td>
-					<td width="22%" style="text-align:left">' . $map_name . '<br/><br/></td>
+					<td width="22%" style="text-align:left"><font class="information">Server IP Address:</font><br/><br/></td>
+					<td width="22%" style="text-align:left">' . $ip_address . '<br/><br/></td>
 					<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/></td>
 					<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/></td>
 					</tr>

@@ -143,7 +143,7 @@ foreach($server_ID as $sid)
 		// convert map to friendly name
 		$map = $map_row['mapName'];
 		$map_name = array_search($map,$map_array);
-		$map_img = './images/maps/' . $map . '.jpg';
+		$map_img = './images/maps/' . $map . '.png';
 	}
 	// remove ses older than 30 minutes
 	@mysql_query("DELETE FROM ses_{$sid}_tbl WHERE `timestamp` <= '$old'");
@@ -158,8 +158,8 @@ foreach($server_ID as $sid)
 	echo '
 	<tr>
 	<td width="100%" style="text-align: left;">
-	<div style="background-image: url(' . $map_img . '); background-position: left center; background-repeat: repeat; background-size: 100% auto; border-radius: 10px; box-shadow: 2px 2px 20px 2px rgba(0,0,0,0.5);">
-	<div style="background-image: url(./images/50.png), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8)); border-radius: 10px;">
+	<div class="mapimage" style="background-image: url(' . $map_img . ');">
+	<div class="simplecontent">
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
