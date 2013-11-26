@@ -60,7 +60,7 @@ if($server_name == null)
 {
 	// connect to the database early because we have to
 	@mysql_connect($database_connect, $db_uname, $db_pass);
-	@mysql_select_db($db_name) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='http://www.phogue.net/forumvb/showthread.php?3756-BF3-Server-Stats-page-for-XpKiller-s-BF3-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
+	@mysql_select_db($db_name) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
 	$database_connected = 1;
 	$server_query = @mysql_query("SELECT `ServerName` FROM `tbl_server` WHERE `ServerID` = '$server_ID'");
 	if(@mysql_num_rows($server_query)!=0)
@@ -212,7 +212,7 @@ echo '
 if($database_connected == 0)
 {
 	@mysql_connect($database_connect, $db_uname, $db_pass);
-	@mysql_select_db($db_name) or die ("<b><br/>Unable to access stats database. Please notify this website's administrator.</b><br/>If you are the administrator, please seek assistance <a href='http://www.phogue.net/forumvb/showthread.php?3756-BF3-Server-Stats-page-for-XpKiller-s-BF3-Chat-GUID-Stats-and-Mapstats-Logger'>here</a>.<br/></center></td></tr></table></div></td></tr></table></div></body></html>");
+	@mysql_select_db($db_name) or die ("<b><br/>Unable to access stats database. Please notify this website's administrator.</b><br/>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger'>here</a>.<br/></center></td></tr></table></div></td></tr></table></div></body></html>");
 	$database_connected = 1;
 }
 echo '

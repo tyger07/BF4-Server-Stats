@@ -95,7 +95,7 @@ echo '
 ';
 // connect to the database if not already done
 @mysql_connect($db_connect, $db_uname, $db_pass);
-@mysql_select_db($db_name) or die ("<b><br/><br/>Unable to access stats database. Please notify this website's administrator.</b><br/>If you are the administrator, please seek assistance <a href='http://www.phogue.net/forumvb/showthread.php?3756-BF3-Server-Stats-page-for-XpKiller-s-BF3-Chat-GUID-Stats-and-Mapstats-Logger'>here</a>.<br/><br/></center></td></tr></table></div></td></tr></table></div></body></html>");
+@mysql_select_db($db_name) or die ("<b><br/><br/>Unable to access stats database. Please notify this website's administrator.</b><br/>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger'>here</a>.<br/><br/></center></td></tr></table></div></td></tr></table></div></body></html>");
 echo '
 <table width="100%">
 <tr>
