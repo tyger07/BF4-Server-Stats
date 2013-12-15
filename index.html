@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Bf4-server-stats : BF4 Server Stats Page using XpKiller's PRoCon stats logging plugin." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Bf4-server-stats</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/tyger07/BF4-Server-Stats">View on GitHub</a>
+
+          <h1 id="project_title">Bf4-server-stats</h1>
+          <h2 id="project_tagline">BF4 Server Stats Page using XpKiller's PRoCon stats logging plugin.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/tyger07/BF4-Server-Stats/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/tyger07/BF4-Server-Stats/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a name="bf4-server-stats-overview" class="anchor" href="#bf4-server-stats-overview"><span class="octicon octicon-link"></span></a>BF4 Server Stats Overview</h2>
+
+<p>This is a very simple and fast loading game server player stats webpage as requested by Friegide in these forums.  The page is designed to provide minimal performance impact on your web server while still providing much very useful statistical data.  This page requires the use of a stats database which is created by XpKiller's BF4 Chat, GUID, Stats and Mapstats Logger Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's thread.</p>
+
+<p>Each copy of this stats page code is designed to be used with one game server.  Multiple copies of the file using different names or placed in different directories can be used to create multiple stats pages.</p>
+
+<h2>
+<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
+
+<p><a href="http://open-web-community.com/bf4stats/player-stats/index.php">http://open-web-community.com/bf4stats/player-stats/index.php</a></p>
+
+<h2>
+<a name="additional-info" class="anchor" href="#additional-info"><span class="octicon octicon-link"></span></a>Additional Info</h2>
+
+<p>Valid!</p>
+
+<p><a href="http://validator.w3.org/check?uri=http%3A%2F%2Fopen-web-community.com%2Fbf4stats%2Fplayer-stats%2Findex.php&amp;charset=%28detect+automatically%29&amp;doctype=Inline&amp;group=0&amp;user-agent=W3C_Validator%2F1.3+http%3A%2F%2Fvalidator.w3.org%2Fservices">http://validator.w3.org/check?uri=http%3A%2F%2Fopen-web-community.com%2Fbf4stats%2Fplayer-stats%2Findex.php&amp;charset=%28detect+automatically%29&amp;doctype=Inline&amp;group=0&amp;user-agent=W3C_Validator%2F1.3+http%3A%2F%2Fvalidator.w3.org%2Fservices</a></p>
+
+<h2>
+<a name="installation-steps" class="anchor" href="#installation-steps"><span class="octicon octicon-link"></span></a>Installation Steps</h2>
+
+<p>Download the following file:</p>
+
+<p><a href="http://open-web-community.com/bf4stats/BF4Stats.zip">http://open-web-community.com/bf4stats/BF4Stats.zip</a></p>
+
+<p>Extract the files.  You may rename index.php to any name of your choice.</p>
+
+<p>You may change the appearance of the page by modifying the stats.css file in the common folder.</p>
+
+<p>Fill in the required parameters before using this code.  You must place the necessary data between the single quotation marks (''). </p>
+
+<p>Note:  You may not include single quotation marks (') in the following fields.  For instance, you may not call your clan 'Ty_ger07's Clan' as it will create a PHP compilation error.
+For example, this would not work:</p>
+
+<p>$clan_name = 'Ty_ger07's Clan'; // your gaming clan or organization name</p>
+
+<p>You must use a PHP delimiter if you wish to use single quotes within the following fields.
+For example, this would work:</p>
+
+<p>$clan_name = 'Ty_ger07\'s Clan'; // your gaming clan or organization name</p>
+
+<p><strong>You must fill in the following information in the common.php file found in the common folder</strong></p>
+
+<p><strong>1)</strong> Input your stats database host, stats database user name, stats database password, and stats database name.</p>
+
+<p>$db_host = ''; // database host</p>
+
+<p>$db_port = '3306'; // database port. default is 3306</p>
+
+<p>$db_name = ''; // database name</p>
+
+<p>$db_uname = ''; // database user name</p>
+
+<p>$db_pass = ''; // database password</p>
+
+<p>For example:</p>
+
+<p>$db_host = '100.200.300.400'; // database host</p>
+
+<p>$db_port = '3306'; // database port. default is 3306</p>
+
+<p>$db_name = 'database'; // database name</p>
+
+<p>$db_uname = 'user'; // database user name</p>
+
+<p>$db_pass = 'pass'; // database password</p>
+
+<p><strong>Note:</strong> Some web server providers (such as GoDaddy) use the same value for database name and database user name.</p>
+
+<p><strong>2)</strong> Input your clan name as you would like it to appear in the stats pages.</p>
+
+<p>$clan_name = ''; // your gaming clan or organization name</p>
+
+<p>For example:</p>
+
+<p>$clan_name = 'Junglewraiths'; // your gaming clan or organization name</p>
+
+<p><strong>3)</strong> Input your desired banner image URL if you want one other than the default to be displayed.</p>
+
+<p>$banner_image = './images/bf4-logo.png'; // your desired page banner</p>
+
+<p><strong>4)</strong> Enter the URL which you would like users to redirect to if they click your banner image.</p>
+
+<p>$banner_url = '<a href="http://open-web-community.com/">http://open-web-community.com/</a>'; // where clicking the banner will take you</p>
+
+<p>Enjoy!</p>
+
+<h2>
+<a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog:</h2>
+
+<p>12-14-2013:</p>
+
+<ul>
+<li>SQL injection security fix by only allowing expected inputs</li>
+<li>New code structure splitting code into different files in the common folder to make finding code easier</li>
+<li>One single index file which leads to all available servers automatically without needing to know server IDs or create multiple separate pages</li>
+<li>More comments in the code to explain what is going on</li>
+<li>Formatting SQL queries to make them more readable</li>
+<li>SQL queries executed with a connection link to avoid issues which might happen if you executed this page inside another page</li>
+<li>Minor SQL optimizations</li>
+<li>Minor file size reductions</li>
+<li>Better error handling</li>
+<li>URL query strings changed to make them slightly shorter and to reference PlayerID instead of SoldierName</li>
+<li>More graphs</li>
+<li>Vehicle stats (as much as the crippled Rcon will allow)</li>
+<li>Added DLC</li>
+</ul><p>11-26-2013:</p>
+
+<ul>
+<li>Map image transparency fixed.</li>
+<li>CSS cleaned up a bit.</li>
+<li>Scoreboard header fixed up a bit.</li>
+</ul><p>11-25-2013:</p>
+
+<ul>
+<li>Popular requests added.</li>
+<li>New directory structure.</li>
+<li>Images added.</li>
+<li>common.php file in the common folder has shared stats page info so less info has to be changed on each individual stats page</li>
+<li>Added this project on GitHub ( <a href="https://github.com/tyger07/BF4-Server-Stats">https://github.com/tyger07/BF4-Server-Stats</a> )</li>
+</ul><p>11-22-2013:</p>
+
+<ul>
+<li>Appearance renovated to look like BF4</li>
+</ul><p>11-21-2013:</p>
+
+<ul>
+<li>Many more stats</li>
+<li>Tables can be organized by various categories</li>
+<li>Scoreboard takes up less area</li>
+<li>Weapon ranks added</li>
+<li>More ranks in more places</li>
+</ul><p>11-20-2013:</p>
+
+<ul>
+<li>Initial release modified and transferred over from BF3 stats page version</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Bf4-server-stats maintained by <a href="https://github.com/tyger07">tyger07</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
