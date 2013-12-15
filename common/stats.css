@@ -1,16 +1,16 @@
-/*  Player Stats Style
-    --------------------------------------------------------------
-	Author:		Ty_ger07 ( http://open-web-community.com/ )
-    --------------------------------------------------------------
+/* Player Stats Stylesheet
+   ---------------------------------------------------
+   Author: Ty_ger07 ( http://open-web-community.com/ )
+   ---------------------------------------------------
 */
-* {
+*{
 	margin: 0 auto;
 	padding: 0;
 }
-.right {
+.right{
 	float: right;
 }
-.clear {
+.clear{
 	clear: both;
 }
 body{
@@ -97,17 +97,6 @@ a:hover, a:active{
 	background-size: 100% auto;
 	border-radius: 10px;
 	box-shadow: 2px 2px 20px 2px rgba(0,0,0,0.5);
-}
-.countrymap{
-	margin-left: auto;
-	margin-right: auto;
-	border-style: solid;
-	border-width: 1px;
-	border-color: #222222;
-	width: 840px;
-	height: 440px;
-	background-color: #FFFFFF;
-	border-radius: 15px;
 }
 .prettyheader{
 	color: #FDD853;

@@ -1,6 +1,6 @@
 <?php
 // server stats common config page by Ty_ger07 at http://open-web-community.com/
-// THIS FOLLOWING INFORMATION NEEDS TO BE FILLED IN
+// THE FOLLOWING INFORMATION NEEDS TO BE FILLED IN
 
 // DATABASE INFORMATION
 $db_host		= ''; // database host
@@ -13,11 +13,8 @@ $db_pass		= ''; // database password
 $clan_name		= ''; // your gaming clan or organization name
 
 // PAGE BANNER
-$banner_image	= 'images/bf4-logo.png'; // your desired page banner
+$banner_image	= './images/bf4-logo.png'; // your desired page banner
 
 // BANNER LINK
 $banner_url		= 'http://open-web-community.com/'; // where clicking the banner will take you
-
-// STATS INDEX LINK
-$index_link		= ''; // if you have multiple stats pages and want a link to the index page to be available, enter the link value here
 ?>
