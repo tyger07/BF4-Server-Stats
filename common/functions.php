@@ -53,18 +53,38 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		$order = 'ASC';
 		$nextorder = 'DESC';
 	}
-	// see if this player has used this category's weapons
-	$Weapon_q = @mysqli_query($db,"
-		SELECT tws.Friendlyname, wa.Kills, wa.Deaths, wa.Headshots, wa.WeaponID, (wa.Headshots/wa.Kills) AS HSR
-		FROM tbl_weapons_stats wa
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = wa.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		INNER JOIN tbl_weapons tws ON tws.WeaponID = wa.WeaponID
-		WHERE tsp.ServerID = {$server_ID}
-		AND tpd.SoldierName = '{$ThisPlayerName}'
-		AND tws.Damagetype = '{$damagetype}' AND wa.Kills > 0
-		ORDER BY {$rank} {$order}
-	");
+	// if server id is not null, this is a server query
+	if(!is_null($server_ID))
+	{
+		// see if this player has used this category's weapons
+		$Weapon_q = @mysqli_query($db,"
+			SELECT tws.Friendlyname, wa.Kills, wa.Deaths, wa.Headshots, wa.WeaponID, (wa.Headshots/wa.Kills) AS HSR
+			FROM tbl_weapons_stats wa
+			INNER JOIN tbl_server_player tsp ON tsp.StatsID = wa.StatsID
+			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+			INNER JOIN tbl_weapons tws ON tws.WeaponID = wa.WeaponID
+			WHERE tsp.ServerID = {$server_ID}
+			AND tpd.SoldierName = '{$ThisPlayerName}'
+			AND tws.Damagetype = '{$damagetype}' AND wa.Kills > 0
+			ORDER BY {$rank} {$order}
+		");
+	}
+	// server id is null, so this is a global query
+	else
+	{
+		// see if this player has used this category's weapons
+		$Weapon_q = @mysqli_query($db,"
+			SELECT tws.Friendlyname, SUM(wa.Kills) AS Kills, SUM(wa.Deaths) AS Deaths, SUM(wa.Headshots) AS Headshots, wa.WeaponID, (SUM(wa.Headshots)/SUM(wa.Kills)) AS HSR
+			FROM tbl_weapons_stats wa
+			INNER JOIN tbl_server_player tsp ON tsp.StatsID = wa.StatsID
+			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+			INNER JOIN tbl_weapons tws ON tws.WeaponID = wa.WeaponID
+			WHERE tpd.SoldierName = '{$ThisPlayerName}'
+			AND tws.Damagetype = '{$damagetype}' AND wa.Kills > 0
+			GROUP BY tws.Friendlyname
+			ORDER BY {$rank} {$order}
+		");
+	}
 	// see if we have any records for this player for this category
 	if(@mysqli_num_rows($Weapon_q) != 0)
 	{
@@ -78,7 +98,17 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		<table align="center" width="98%" border="0">
 		<tr>
 		<td width="3%" style="text-align:left">&nbsp;</td>
-		<th width="17%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Friendlyname&amp;order=';
+		';
+		// if server id is not null, this is a server query
+		if(!is_null($server_ID))
+		{
+			echo '<th width="20%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Friendlyname&amp;order=';
+		}
+		// otherwise it is a global player query
+		else
+		{
+			echo '<th width="20%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $ThisPlayerID . '&amp;rank=Friendlyname&amp;order=';
+		}
 		if($rank != 'Friendlyname')
 		{
 			echo 'ASC';
@@ -87,9 +117,17 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		{
 			echo $nextorder;
 		}
-		echo '"><span class="orderheader">Weapon Name</span></a></th>
-		<th width="16%" style="text-align:left;">Rank</th>
-		<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Kills&amp;order=';
+		echo '"><span class="orderheader">Weapon Name</span></a></th>';
+		// if server id is not null, this is a server query
+		if(!is_null($server_ID))
+		{
+			echo '<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Kills&amp;order=';
+		}
+		// otherwise it is a global player query
+		else
+		{
+			echo '<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $ThisPlayerID . '&amp;rank=Kills&amp;order=';
+		}
 		if($rank != 'Kills')
 		{
 			echo 'DESC';
@@ -98,8 +136,17 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		{
 			echo $nextorder;
 		}
-		echo '"><span class="orderheader">Kills</span></a></th>
-		<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Deaths&amp;order=';
+		echo '"><span class="orderheader">Kills</span></a></th>';
+		// if server id is not null, this is a server query
+		if(!is_null($server_ID))
+		{
+			echo '<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Deaths&amp;order=';
+		}
+		// otherwise it is a global player query
+		else
+		{
+			echo '<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $ThisPlayerID . '&amp;rank=Deaths&amp;order=';
+		}
 		if($rank != 'Deaths')
 		{
 			echo 'DESC';
@@ -108,8 +155,17 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		{
 			echo $nextorder;
 		}
-		echo '"><span class="orderheader">Deaths</span></a></th>
-		<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Headshots&amp;order=';
+		echo '"><span class="orderheader">Deaths</span></a></th>';
+		// if server id is not null, this is a server query
+		if(!is_null($server_ID))
+		{
+			echo '<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=Headshots&amp;order=';
+		}
+		// otherwise it is a global player query
+		else
+		{
+			echo '<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $ThisPlayerID . '&amp;rank=Headshots&amp;order=';
+		}
 		if($rank != 'Headshots')
 		{
 			echo 'DESC';
@@ -118,8 +174,17 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		{
 			echo $nextorder;
 		}
-		echo '"><span class="orderheader">Headshots</span></a></th>
-		<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=HSR&amp;order=';
+		echo '"><span class="orderheader">Headshots</span></a></th>';
+		// if server id is not null, this is a server query
+		if(!is_null($server_ID))
+		{
+			echo '<th width="20%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $server_ID . '&amp;PlayerID=' . $ThisPlayerID . '&amp;search=1&amp;rank=HSR&amp;order=';
+		}
+		// otherwise it is a global player query
+		else
+		{
+			echo '<th width="20%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $ThisPlayerID . '&amp;rank=HSR&amp;order=';
+		}
 		if($rank != 'HSR')
 		{
 			echo 'DESC';
@@ -143,43 +208,14 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 			$headshots = $Weapon_r['Headshots'];
 			$ratio = round(($Weapon_r['HSR']*100),2);
 			$weaponID = $Weapon_r['WeaponID'];
-			// find this player's weapon rank with this weapon
-			// initialize values
-			$weapon_count = 0;
-			$num_rows = 0;
-			// weapon rank query
-			$WeaponRank_q = @mysqli_query($db,"
-				SELECT wa.Kills
-				FROM tbl_weapons_stats wa
-				INNER JOIN tbl_server_player tsp ON tsp.StatsID = wa.StatsID
-				WHERE tsp.ServerID = {$server_ID}
-				AND wa.WeaponID = {$weaponID}
-				AND wa.Kills > 0
-				ORDER BY wa.Kills DESC
-			");
-			// count number of rows as total number of kills with this weapon in the database
-			$num_rows = @mysqli_num_rows($WeaponRank_q);
-			while($WeaponRank_r = @mysqli_fetch_assoc($WeaponRank_q))
-			{
-				$weapon_count++;
-				$this_kills = $WeaponRank_r['Kills'];
-				// if this player's number of kills matches the current kill row
-				if($kills == $this_kills)
-				{
-					break;
-				}
-			}
-			// free up weapon rank query memory
-			@mysqli_free_result($WeaponRank_q);
 			echo '
 			<tr>
 			<td width="3%" style="text-align:left">&nbsp;</td>
-			<td width="17%" class="tablecontents"  style="text-align: left"><font class="information">' . $weapon_name_displayed . ':</font></td>
-			<td width="16%" class="tablecontents" style="text-align: left">' . $weapon_count . '<font class="information"> / </font>' . $num_rows . '</td>
-			<td width="16%" class="tablecontents" style="text-align: left">' . $kills . '</td>
-			<td width="16%" class="tablecontents" style="text-align: left">' . $deaths . '</td>
-			<td width="16%" class="tablecontents" style="text-align: left">' . $headshots . '</td>
-			<td width="16%" class="tablecontents" style="text-align: left">' . $ratio . ' <font class="information">%</font></td>
+			<td width="20%" class="tablecontents"  style="text-align: left"><font class="information">' . $weapon_name_displayed . ':</font></td>
+			<td width="19%" class="tablecontents" style="text-align: left">' . $kills . '</td>
+			<td width="19%" class="tablecontents" style="text-align: left">' . $deaths . '</td>
+			<td width="19%" class="tablecontents" style="text-align: left">' . $headshots . '</td>
+			<td width="20%" class="tablecontents" style="text-align: left">' . $ratio . ' <font class="information">%</font></td>
 			</tr>
 			';
 		}
@@ -191,43 +227,90 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 	}
 }
 // rank queries function for player stats page
-function rank($server_ID, $player_name, $metric, $order, $width, $db)
+function rank($server_ID, $player_name, $db)
 {
 	// initialize values
 	$count = 0;
 	$match = 0;
-	// rank players
-	$Rank_q  = @mysqli_query($db,"
-		SELECT tpd.SoldierName
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$server_ID}
-		ORDER BY {$metric} {$order}, SoldierName ASC
-	");
-	// count number of rows as total number of players in this measurement
-	$num_rows = @mysqli_num_rows($Rank_q);
-	while($Rank_r = @mysqli_fetch_assoc($Rank_q))
+	// if server id is not null, this is a server query
+	if(!is_null($server_ID))
 	{
-		// make sure case in player search doesn't matter
-		$SoldierNameRank = strtolower($Rank_r['SoldierName']);
-		$SoldierMatch = strtolower($player_name);
-		$count++;
-		// if player name in rank row matches player of interest
-		if($SoldierNameRank == $SoldierMatch)
-		{
-			$match = 1;
-			echo '<td width="' . $width . '%" class="tablecontents" style="text-align:left">&nbsp; &nbsp; ' . $count . '<font class="information"> / </font>' . $num_rows . '</td>';
-			break;
-		}
+		// get player ranks
+		$Rank_q  = @mysqli_query($db,"
+			SELECT rankScore, rankKills
+			FROM tbl_playerstats tps
+			INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
+			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+			WHERE tpd.SoldierName = '{$player_name}'
+			AND tsp.ServerID = {$server_ID}
+		");
 	}
+	// server id is null, so this is a global query
+	else
+	{
+		// get player ranks
+		$Rank_q  = @mysqli_query($db,"
+			SELECT AVG(rankScore) AS rankScore, AVG(rankKills) as rankKills
+			FROM tbl_playerstats tps
+			INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
+			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+			WHERE tpd.SoldierName = '{$player_name}'
+		");
+	}
+	// query worked
+	if(@mysqli_num_rows($Rank_q) != 0)
+	{
+		$Rank_r = @mysqli_fetch_assoc($Rank_q);
+		$ScoreRank = round($Rank_r['rankScore'],0);
+		$KillsRank = round($Rank_r['rankKills'],0);
+	}
+	// error occured
+	else
+	{
+		$ScoreRank = 'Unknown';
+		$KillsRank = 'Unknown';
+	}
+	// if server id is not null, this is a server query
+	if(!is_null($server_ID))
+	{
+		// query server stats
+		$Server_q = @mysqli_query($db,"
+			SELECT `CountPlayers`
+			FROM tbl_server_stats
+			WHERE ServerID = {$server_ID}
+		");
+	}
+	// server id is null, so this is a global query
+	else
+	{
+		// query server stats
+		$Server_q = @mysqli_query($db,"
+			SELECT SUM(CountPlayers) AS CountPlayers
+			FROM tbl_server_stats
+			WHERE 1
+		");
+	}
+	// query worked
+	if(@mysqli_num_rows($Server_q) != 0)
+	{
+		$Server_r = @mysqli_fetch_assoc($Server_q);
+		$Players = $Server_r['CountPlayers'];
+	}
+	// error occured
+	else
+	{
+		$Players = 'Unknown';
+	}
+	echo '
+	<td width="25%" style="text-align:left"><br/>&nbsp;<br/></td>
+	<td width="18%" style="text-align:left"><br/><font class="information">Score:</font> ' . $ScoreRank . '<font class="information"> / </font>' . $Players . '<br/></td>
+	<td width="23%" style="text-align:left"><br/>&nbsp;<br/></td>
+	<td width="33%" style="text-align:left"><br/><font class="information">Kills:</font> ' . $KillsRank . '<font class="information"> / </font>' . $Players . '<br/></td>
+	';
 	// free up player rank query memory
 	@mysqli_free_result($Rank_q);
-	// in case no rank match was found, display error (this shouldn't happen)
-	if($match == 0)
-	{
-		echo '<td width="' . $width . '%" class="tablecontents" style="text-align:left">&nbsp; &nbsp; error</td>';
-	}
+	// free up server query memory
+	@mysqli_free_result($Server_q);
 }
 // function to create and display scoreboard
 function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_array, $country_array, $db)
@@ -248,6 +331,8 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 		WHERE `ServerID` = {$server_ID}
 		ORDER BY `TeamID` ASC
 	");
+	// no players were found in the server
+	// display basic server information
 	if(@mysqli_num_rows($Scoreboard_q) == 0)
 	{
 		// initialize values
@@ -269,12 +354,30 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			$name = substr($Basic_r['ServerName'],0,25) . ' ...';
 			$mode = $Basic_r['Gamemode'];
 			// convert mode to friendly name
-			$mode_name = array_search($Basic_r['Gamemode'],$mode_array);
+			if(in_array($mode,$mode_array))
+			{
+				$mode_name = array_search($mode,$mode_array);
+			}
+			// this mode is missing!
+			else
+			{
+				$mode_name = $mode;
+			}
 			$map = $Basic_r['mapName'];
 			// convert map to friendly name
-			$map_name = array_search($map,$map_array);
-			// compile map image
-			$map_img = './images/maps/' . $map . '.png';
+			// first find if this map name is even in the map array
+			if(in_array($map,$map_array))
+			{
+				$map_name = array_search($map,$map_array);
+				// compile map image
+				$map_img = './images/maps/' . $map . '.png';
+			}
+			// this map is missing!
+			else
+			{
+				$map_img = './images/40.png';
+				$map_name = $map;
+			}
 			echo '
 			<div class="innercontent">
 			<table width="98%" align="center" border="0" class="prettytable">
@@ -338,6 +441,8 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 		// free up basic query memory
 		@mysqli_free_result($Basic_q);
 	}
+	// players were found in the server
+	// display teams and players
 	else
 	{
 		echo '
@@ -363,12 +468,31 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			$name = substr($Basic_r['ServerName'],0,25) . ' ...';
 			$mode = $Basic_r['Gamemode'];
 			// convert mode to friendly name
-			$mode_name = array_search($Basic_r['Gamemode'],$mode_array);
+			// first find if this mode is even in the mode array
+			if(in_array($mode,$mode_array))
+			{
+				$mode_name = array_search($mode,$mode_array);
+			}
+			// this mode is missing!
+			else
+			{
+				$mode_name = $mode;
+			}
 			$map = $Basic_r['mapName'];
 			// convert map to friendly name
-			$map_name = array_search($map,$map_array);
-			// compile map image
-			$map_img = './images/maps/' . $map . '.png';
+			// first find if this map name is even in the map array
+			if(in_array($map,$map_array))
+			{
+				$map_name = array_search($map,$map_array);
+				// compile map image
+				$map_img = './images/maps/' . $map . '.png';
+			}
+			// this map is missing!
+			else
+			{
+				$map_img = './images/40.png';
+				$map_name = $map;
+			}
 			echo '
 			<tr>
 			<td colspan="2" class="mapimage" style="background-image: url(' . $map_img . ');">
@@ -385,13 +509,15 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 		while($Scoreboard_r = @mysqli_fetch_assoc($Scoreboard_q))
 		{
 			$this_team = $Scoreboard_r['TeamID'];
+			// change to a different collumn or row of the scoreboard when the team number changes
 			if($this_team != $last_team)
 			{
+				// if the game mode has more than 2 teams, the third team should be moved down to the next row of the scoreboard
 				if($this_team == 3)
 				{
 					echo '</tr><tr><td colspan="2">&nbsp;</td></tr><tr>';
 				}
-				// only show the header information once
+				// only show the server header information once
 				if($mode_shown == 0)
 				{
 					if(@mysqli_num_rows($Basic_q) != 0)
@@ -449,12 +575,15 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					$mode_shown = 1;
 				}
 				// change team name shown depending on team number
+				// team 0 is 'loading in'
 				if($this_team == 0)
 				{
 					$team_name = 'Loading In';
 				}
+				// player is actually assigned to a team
 				else
 				{
+					// change team name based on team number and game mode
 					if($mode == 'RushLarge0')
 					{
 						if($this_team == 1)
@@ -491,6 +620,8 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 								$team_name = 'Defenders';
 							}
 						}
+						// something unexpected occured and a correct team name was not found
+						// just name the team based on team number instead
 						else
 						{
 							$team_name = 'Team ' . $this_team;
@@ -532,6 +663,8 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 								$team_name = 'RU Army';
 							}
 						}
+						// something unexpected occured and a correct team name was not found
+						// just name the team based on team number instead
 						else
 						{
 							$team_name = 'Team ' . $this_team;
@@ -555,24 +688,31 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 						{
 							$team_name = 'Delta';
 						}
+						// something unexpected occured and a correct team name was not found
+						// just name the team based on team number instead
 						else
 						{
 							$team_name = 'Team ' . $this_team;
 						}
 					}
+					// something unexpected occured and a correct team name was not found
+					// just name the team based on team number instead
 					else
 					{
 						$team_name = 'Team ' . $this_team;
 					}
 				}
+				// the player is not on a team yet, the "loading in" collumn is formatted different than the team collumns (it extends over two team collumns)
 				if($this_team == 0)
 				{
 					echo '<td valign="top" colspan="2">';
 				}
+				// this is a team collumn
 				else
 				{
 					echo '<td valign="top" class="prettytable">';
 				}
+				// the "loading in" team does not have scores
 				if($this_team != 0)
 				{
 					// query for scores
@@ -590,11 +730,11 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 							$WinningScore = $Score_r['WinningScore'];
 							if($WinningScore == 0)
 							{
-								echo '<b><font class="teamname">' . $team_name . '</font></b> &nbsp; <font class="information">Tickets Remaining:</font> ' . $Score;
+								echo '<br/><b><font class="teamname">' . $team_name . '</font></b> &nbsp; <font class="information">Tickets Remaining:</font> ' . $Score;
 							}
 							else
 							{
-								echo '<b><font class="teamname">' . $team_name . '</font></b> &nbsp; <font class="information">Tickets:</font> ' . $Score . '<font class="information">/</font>' . $WinningScore;
+								echo '<br/><b><font class="teamname">' . $team_name . '</font></b> &nbsp; <font class="information">Tickets:</font> ' . $Score . '<font class="information">/</font>' . $WinningScore;
 							}
 						}
 					}
@@ -604,12 +744,15 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					{
 						echo '<b><font class="teamname">' . $team_name . '</font></b>';
 					}
+					// free up score query memory
+					@mysqli_free_result($Score_q);
 				}
 				echo '
 				<table width="100%" align="center" border="0" class="prettytable">
 				<tr>
 				';
-				// change team color depending...
+				// this formatting is changed depending on if this is a real team or is the "loading in" team
+				// this is the "loading in" team
 				if($this_team == 0)
 				{
 					echo '
@@ -617,6 +760,7 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					<th width="40%" colspan="3" style="text-align:left">Player</th>
 					';
 				}
+				// this is a real team
 				else
 				{
 					echo '
@@ -635,7 +779,7 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					';
 				}
 				echo'</tr>';
-				// query all players on this team
+				// query for all players on this team
 				$Team_q = @mysqli_query($db,"
 					SELECT `Soldiername`, `Score`, `Kills`, `Deaths`, `TeamID`, `SquadID`, `CountryCode`
 					FROM tbl_currentplayers
@@ -643,6 +787,7 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 					AND `TeamID` = {$this_team}
 					ORDER BY `Score` Desc
 				");
+				// if team query worked and players were found on this team
 				if(@mysqli_num_rows($Team_q) != 0)
 				{
 					$count = 1;
@@ -659,7 +804,7 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 							AND SoldierName = '{$player}'
 						");
 						// server stats found for this player in this server
-						if(@mysqli_num_rows($PlayerID_q) != 0)
+						if(@mysqli_num_rows($PlayerID_q) == 1)
 						{
 							$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
 							$PlayerID = $PlayerID_r['PlayerID'];
@@ -674,22 +819,44 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 						$deaths = $Team_r['Deaths'];
 						$team = $Team_r['TeamID'];
 						$squad = $Team_r['SquadID'];
-						// convert squad name and country name to friendly names
-						$squad_name = array_search($squad,$squad_array);
-						$country = strtoupper($Team_r['CountryCode']);
-						$country_name = array_search($country,$country_array);
-						// compile country flag image
-						if(($country == '') OR ($country == '--'))
+						// convert squad name to friendly name
+						// first find out if this squad name is the list of squad names
+						if(in_array($squad,$squad_array))
 						{
-							$country_img = './images/flags/none.png';
+							$squad_name = array_search($squad,$squad_array);
 						}
+						// this squad is missing!
 						else
 						{
-							$country_img = './images/flags/' . strtolower($country) . '.png';	
+							$squad_name = $squad;
+						}
+						$country = strtoupper($Team_r['CountryCode']);
+						// convert country name to friendly name
+						// and compile flag image
+						// first find out if this country name is the list of country names
+						if(in_array($country,$country_array))
+						{
+							$country_name = array_search($country,$country_array);
+							// compile country flag image
+							// if country is null or unknown, use generic image
+							if(($country == '') OR ($country == '--'))
+							{
+								$country_img = './images/flags/none.png';
+							}
+							else
+							{
+								$country_img = './images/flags/' . strtolower($country) . '.png';	
+							}
+						}
+						// this country is missing!
+						else
+						{
+							$country_name = $country;
+							$country_img = './images/flags/none.png';
 						}
 						echo '
 						<tr>
-						<td class="tablecontents" width="5%" style="text-align:left"><font class="information">' . $count . '</font></td>
+						<td class="tablecontents" width="5%" style="text-align:left"><font class="information">' . $count . ':</font></td>
 						';
 						// if this player has stats in this server, provide a link to their stats page
 						if($PlayerID != null)
@@ -718,12 +885,27 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 						echo '</tr>';
 					}
 				}
+				// no players were found on this team!
+				// some sort of database error must have occured
+				// this is bad..
+				// playing damage control
+				else
+				{
+					echo '
+					<tr>
+					<td class="tablecontents" width="5%" style="text-align:left">&nbsp;</td>
+					<td class="tablecontents" width="95%" style="text-align:left" colspan="5"><font class="information">An error occured!</font></td>
+					</tr>
+					';
+				}
 				echo '</table></td>';
+				// the formatting between the "loading in" team and the other actual teams is different
 				if($this_team == 0)
 				{
-					echo '</tr><tr><td colspan="2">&nbsp;</td></tr><tr>';
+					echo '</tr><tr>';
 				}
 			}
+			// remember to track which team we just probed
 			$last_team = $this_team;
 		}
 		// free up player ID query memory

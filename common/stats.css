@@ -43,7 +43,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
-	background-image: url("../images/50.png"), linear-gradient(170deg, rgba(100,000,000,0.5), rgba(000,000,100,0.3), rgba(000,000,100,0.1));
+	background-image: url("../images/50.png"), linear-gradient(170deg, rgba(100,000,000,0.6), rgba(000,000,100,0.4), rgba(000,000,100,0.3));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;

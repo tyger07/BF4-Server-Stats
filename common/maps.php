@@ -35,22 +35,17 @@ if(isset($_GET['rank']) AND !empty($_GET['rank']))
 {
 	$rank = $_GET['rank'];
 	// filter out SQL injection
-	if($rank != 'MapCode')
+	if($rank != 'Gamemode')
 	{
 		// unexpected input detected
 		// use default instead
-		$rankin = 'MapName';
-	}
-	else
-	{
-		$rankin = 'MapName';
+		$rank = 'Gamemode';
 	}
 }
 // set default if no rank provided in URL
 else
 {
-	$rank = 'MapCode';
-	$rankin = 'MapName';
+	$rank = 'Gamemode';
 }
 // get current order query details
 if(isset($_GET['order']) AND !empty($_GET['order']))
@@ -83,14 +78,15 @@ else
 	$nextorder = 'DESC';
 }
 // query for maps in this server
-$Map_q = @mysqli_query($BF4stats,"
-	SELECT MapName
+$Mode_q = @mysqli_query($BF4stats,"
+	SELECT Gamemode
 	FROM tbl_mapstats
 	WHERE ServerID = {$ServerID}
-	GROUP BY MapName
-	ORDER BY {$rankin} {$order}
+	AND Gamemode != ''
+	GROUP BY Gamemode
+	ORDER BY {$rank} {$order}
 ");
-if(@mysqli_num_rows($Map_q) == 0)
+if(@mysqli_num_rows($Mode_q) == 0)
 {
 	echo '
 	<div class="innercontent"><br/>
@@ -109,6 +105,8 @@ else
 		SELECT SUBSTRING(TimeMapLoad, 1, length(TimeMapLoad) - 9) AS Date, AVG(MaxPlayers) AS Average
 		FROM tbl_mapstats
 		WHERE ServerID = {$ServerID}
+		AND Gamemode != ''
+		AND MapName != ''
 		GROUP BY Date
 		ORDER BY Date DESC LIMIT 7
 	");
@@ -152,9 +150,10 @@ else
 	<table width="98%" align="center" border="0">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
-	<th width="19%" style="text-align:left">Map Name</th>
-	<th width="19%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1&amp;rank=MapCode&amp;order=';
-	if($rank != 'MapCode')
+	<th width="16%" style="text-align:left">Map Name</th>
+	<th width="16%" style="text-align:left;">Map Code</th>
+	<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1&amp;rank=Gamemode&amp;order=';
+	if($rank != 'Gamemode')
 	{
 		echo 'ASC';
 	}
@@ -162,62 +161,95 @@ else
 	{
 		echo $nextorder;
 	}
-	echo '"><span class="orderheader">Map Code</span></a></th>
-	<th width="19%" style="text-align:left;">Game Mode</th>
-	<th width="19%" style="text-align:left;">Rounds Played</th>
-	<th width="19%" style="text-align:left;">Average Popularity</th>
+	echo '"><span class="orderheader">Game Mode</span></a></th>
+	<th width="15%" style="text-align:left;">Rounds Played</th>
+	<th width="16%" style="text-align:left;">Average Players</th>
+	<th width="16%" style="text-align:left;">Average Popularity</th>
 	</tr>';
 	// initialize value
 	$count = 0;
 	$match = 0;
-	while($Map_r = @mysqli_fetch_assoc($Map_q))
+	$last_mode = 0;
+	while($Mode_r = @mysqli_fetch_assoc($Mode_q))
 	{
-		$MapCode = $Map_r['MapName'];
+		$Mode = $Mode_r['Gamemode'];
 		// query for game modes for each map
-		$GameMode_q = @mysqli_query($BF4stats,"
-			SELECT SUM(NumberofRounds) AS NumberofRounds, AVG(AvgPlayers) AS AveragePlayers, AVG(PlayersLeftServer) AS AveragePlayersLeftServer, (AVG(AvgPlayers)/AVG(PlayersLeftServer)) AS AVGPop, Gamemode
+		$Map_q = @mysqli_query($BF4stats,"
+			SELECT MapName, SUM(NumberofRounds) AS NumberofRounds, AVG(AvgPlayers) AS AveragePlayers, (AVG(AvgPlayers)/AVG(PlayersLeftServer)) AS AVGPop
 			FROM tbl_mapstats
 			WHERE ServerID = {$ServerID}
-			AND MapName = '{$MapCode}'
-			GROUP BY Gamemode
-			ORDER BY Gamemode {$order}
+			AND Gamemode = '{$Mode}'
+			AND MapName != ''
+			GROUP BY MapName
+			ORDER BY NumberofRounds DESC
 		");
-		if(@mysqli_num_rows($GameMode_q) != 0)
+		if(@mysqli_num_rows($Map_q) != 0)
 		{
 			$match = 1;
-			while($GameMode_r = @mysqli_fetch_assoc($GameMode_q))
+			while($Map_r = @mysqli_fetch_assoc($Map_q))
 			{
-				$NumberofRounds = $GameMode_r['NumberofRounds'];
-				$MapName = array_search($MapCode,$map_array);
-				$GameMode = array_search($GameMode_r['Gamemode'],$mode_array);
-				$AveragePlayers = $GameMode_r['AveragePlayers'];
-				$AveragePlayersLeftServer = $GameMode_r['AveragePlayersLeftServer'];
-				$AveragePopularity = round($GameMode_r['AVGPop'],2);
-				// if there is data...
-				if($MapName!=null)
+				$NumberofRounds = $Map_r['NumberofRounds'];
+				$MapCode = $Map_r['MapName'];
+				// convert map to friendly name
+				// first find if this map name is even in the map array
+				if(in_array($MapCode,$map_array))
 				{
-					$count++;
-					echo '
-					<tr>
-					<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
-					<td width="19%" class="tablecontents" style="text-align: left;">' . $MapName . '</td>
-					<td width="19%" class="tablecontents" style="text-align: left;">' . $MapCode . '</td>
-					<td width="19%" class="tablecontents" style="text-align: left;">' . $GameMode . '</td>
-					<td width="19%" class="tablecontents" style="text-align: left;">' . $NumberofRounds . '</td>
-					<td width="19%" class="tablecontents" style="text-align: left;">' . $AveragePopularity . '</td>
-					</tr>
-					';
+					$MapName = array_search($MapCode,$map_array);
 				}
+				// this map is missing!
+				else
+				{
+					$MapName = $MapCode;
+				}
+				// convert mode to friendly name
+				if(in_array($Mode,$mode_array))
+				{
+					$GameMode = array_search($Mode,$mode_array);
+				}
+				// this mode is missing!
+				else
+				{
+					$GameMode = $Mode;
+				}
+				$AveragePlayers = round($Map_r['AveragePlayers'],2);
+				// don't show average popularity if sample size is small
+				if($NumberofRounds <= 4)
+				{
+					$AveragePopularity = '<font class="information">not enough data</font>';
+				}
+				else
+				{
+					$AveragePopularity = round($Map_r['AVGPop'],2);
+				}
+				$count++;
+				// add a space between mode changes
+				if($last_mode !== $Mode AND $last_mode !== 0)
+				{
+					echo '<tr><td width="100%" class="tablecontents" style="text-align: left;" colspan="7">&nbsp;</td></tr>';
+					$last_mode = $Mode;
+				}
+				echo '
+				<tr>
+				<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
+				<td width="16%" class="tablecontents" style="text-align: left;">' . $MapName . '</td>
+				<td width="16%" class="tablecontents" style="text-align: left;">' . $MapCode . '</td>
+				<td width="16%" class="tablecontents" style="text-align: left;">' . $GameMode . '</td>
+				<td width="15%" class="tablecontents" style="text-align: left;">' . $NumberofRounds . '</td>
+				<td width="16%" class="tablecontents" style="text-align: left;">' . $AveragePlayers . '</td>
+				<td width="16%" class="tablecontents" style="text-align: left;">' . $AveragePopularity . '</td>
+				</tr>
+				';
 			}
 		}
-		// free up game mode query memory
-		@mysqli_free_result($GameMode_q);
+		$last_mode = $Mode;
 	}
+	// free up map query memory
+	@mysqli_free_result($Map_q);
 	if($match == 0)
 	{
 		echo '
 		<tr>
-		<td width="100%" class="tablecontents" style="text-align: left;" colspan="6"><font class="information">No information found.</font></td>
+		<td width="100%" class="tablecontents" style="text-align: left;" colspan="7"><font class="information">No information found.</font></td>
 		</tr>
 		';
 	}
@@ -227,8 +259,8 @@ else
 	</div>
 	';
 }
-// free up map query memory
-@mysqli_free_result($Map_q);
+// free up mode query memory
+@mysqli_free_result($Mode_q);
 echo '
 </td></tr>
 </table>

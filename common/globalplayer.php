@@ -1,5 +1,5 @@
 <?php
-// server stats player page by Ty_ger07 at http://open-web-community.com/
+// server stats global player page by Ty_ger07 at http://open-web-community.com/
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
@@ -10,7 +10,7 @@ if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
 	$SoldierName = preg_replace('/\s/','',($_GET['SoldierName']));
 	if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
 	{
-		die("<br/><center><font class='alert'><b>This page has halted!</b></font><br/>Potential SQL injection attempt detected!</center><br/></td></tr></table></td></tr></table></center></td></tr></table></div></td></tr></table></div></body></html>");
+		die("<br/><center><font class='alert'><b>This page has halted!</b></font><br/>Potential SQL injection attempt detected!</center><br/></td></tr></table></td></tr></table></td></tr></table></center></td></tr></table></div></td></tr></table></div></body></html>");
 	}
 }
 elseif(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']))
@@ -76,7 +76,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	<td class="headline">
 	<br/>
 	<center>
-	<b>Statistics Data for ' .$SoldierName . '</b>
+	<b>Global Statistics Data for ' .$SoldierName . ' in ' . $clan_name . '\'s Servers</b>
 	</center>
 	<br/>
 	</td>
@@ -91,12 +91,11 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	';
 	// get player stats
 	$PlayerData_q = @mysqli_query($BF4stats,"
-		SELECT tpd.CountryCode, tpd.PlayerID, tps.Suicide, tps.Score, tps.Kills, tps.Deaths, (tps.Kills/tps.Deaths) AS KDR, (tps.Headshots/tps.Kills) AS HSR, tps.TKs, tps.Headshots, tps.Rounds, tps.Killstreak, tps.Deathstreak, tps.Wins, tps.Losses, (tps.Wins/tps.Losses) AS WLR, tps.HighScore, tps.FirstSeenOnServer, tps.LastSeenOnServer
+		SELECT tpd.CountryCode, tpd.PlayerID, SUM(tps.Suicide) AS Suicide, SUM(tps.Score) AS Score, SUM(tps.Kills) AS Kills, SUM(tps.Deaths) AS Deaths, (SUM(tps.Kills)/SUM(tps.Deaths)) AS KDR, (SUM(tps.Headshots)/SUM(tps.Kills)) AS HSR, SUM(tps.TKs) AS TKs, SUM(tps.Headshots) AS Headshots, SUM(tps.Rounds) AS Rounds, MAX(tps.Killstreak) AS Killstreak, MAX(tps.Deathstreak) AS Deathstreak, SUM(tps.Wins) AS Wins, SUM(tps.Losses) AS Losses, (SUM(tps.Wins)/SUM(tps.Losses)) AS WLR, MAX(tps.HighScore) AS HighScore, MIN(tps.FirstSeenOnServer) AS FirstSeenOnServer, MAX(tps.LastSeenOnServer) AS LastSeenOnServer
 		FROM tbl_playerstats tps
 		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
 		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
-		AND SoldierName = '{$SoldierName}'
+		WHERE SoldierName = '{$SoldierName}'
 	");
 	// if no stats were found for player name, display this
 	if(@mysqli_num_rows($PlayerData_q) != 1)
@@ -162,7 +161,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			FROM tbl_playerstats tps
 			INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
 			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-			WHERE tsp.ServerID = {$ServerID}
+			WHERE 1
 			AND SoldierName LIKE '%{$SoldierName}%'
 			ORDER BY {$rank} {$order}
 		");
@@ -276,34 +275,6 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	else
 	{
 		echo '
-		<th class="headline"><b>Ranks</b></th>
-		</tr>
-		<tr>
-		<td>
-		<div class="innercontent">
-		<table width="70%" align="center" border="0">
-		<tr>
-		';
-		// get this player's ranks
-		// input as: server id, soldier, db
-		rank($ServerID, $SoldierName, $BF4stats);
-		echo '
-		</tr>
-		</table>
-		<br/>
-		</div>
-		';
-		echo '
-		</td>
-		</tr>
-		</table>
-		</div>
-		';
-		echo '
-		<br/><br/>
-		<div class="middlecontent">
-		<table width="100%" border="0">
-		<tr>
 		<th class="headline"><b>Overview</b></th>
 		</tr>
 		<tr>
@@ -405,15 +376,15 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		echo '<br/>';
 		// get weapon stats for weapon graph
 		$Weapon_q = @mysqli_query($BF4stats,"
-			SELECT tws.Friendlyname, wa.Kills, wa.Deaths, wa.Headshots, (wa.Headshots/wa.Kills) AS 'HSR'
+			SELECT tws.Friendlyname, SUM(wa.Kills) AS Kills, SUM(wa.Deaths) AS Deaths, SUM(wa.Headshots) AS Headshots, wa.WeaponID, (SUM(wa.Headshots)/SUM(wa.Kills)) AS HSR
 			FROM tbl_weapons_stats wa
 			INNER JOIN tbl_server_player tsp ON tsp.StatsID = wa.StatsID
 			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
 			INNER JOIN tbl_weapons tws ON tws.WeaponID = wa.WeaponID
-			WHERE tsp.ServerID = {$ServerID}
-			AND tpd.SoldierName = '{$SoldierName}'
+			WHERE tpd.SoldierName = '{$SoldierName}'
 			AND wa.Kills > 0
 			AND (tws.Damagetype = 'assaultrifle' OR tws.Damagetype = 'lmg' OR tws.Damagetype = 'shotgun' OR tws.Damagetype = 'smg' OR tws.Damagetype = 'sniperrifle' OR tws.Damagetype = 'handgun' OR tws.Damagetype = 'projectileexplosive' OR tws.Damagetype = 'explosive' OR tws.Damagetype = 'melee' OR tws.Damagetype = 'none')
+			GROUP BY tws.Friendlyname
 		");
 		if(@mysqli_num_rows($Weapon_q) != 0)
 		{
@@ -480,16 +451,16 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			';
 			// get weapon stats for weapon stats list
 			// input as: title, damage, soldier, player id, server, db
-			Statsout("Assault Rifle Stats","assaultrifle",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Light Machine Gun Stats","lmg",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Shot Gun Stats","shotgun",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Submachine Gun Stats","smg",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Sniper Rifle Stats","sniperrifle",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Hand Gun Stats","handgun",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Projectile Explosive Stats","projectileexplosive",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Explosive Stats","explosive",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Other Weapon Stats","melee",$SoldierName, $PlayerID, $ServerID, $BF4stats);
-			Statsout("Vehicle Stats","none",$SoldierName, $PlayerID, $ServerID, $BF4stats);
+			Statsout("Assault Rifle Stats","assaultrifle",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Light Machine Gun Stats","lmg",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Shot Gun Stats","shotgun",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Submachine Gun Stats","smg",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Sniper Rifle Stats","sniperrifle",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Hand Gun Stats","handgun",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Projectile Explosive Stats","projectileexplosive",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Explosive Stats","explosive",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Other Weapon Stats","melee",$SoldierName, $PlayerID, null, $BF4stats);
+			Statsout("Vehicle Stats","none",$SoldierName, $PlayerID, null, $BF4stats);
 			echo '
 			<br/>
 			</td>
@@ -508,14 +479,14 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	if(@mysqli_num_rows($PlayerData_q) != 0)
 	{
 		$DogTag_q = @mysqli_query($BF4stats,"
-			SELECT dt.Count, tpd2.SoldierName AS Victim, tpd2.PlayerID AS VictimID
+			SELECT SUM(dt.Count) AS Count, tpd2.SoldierName AS Victim
 			FROM tbl_dogtags dt
 			INNER JOIN tbl_server_player tsp ON tsp.StatsID = dt.KillerID
 			INNER JOIN tbl_server_player tsp2 ON tsp2.StatsID = dt.VictimID
 			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
 			INNER JOIN tbl_playerdata tpd2 ON tsp2.PlayerID = tpd2.PlayerID
 			WHERE tpd.SoldierName = '{$SoldierName}'
-			AND tsp.ServerID = {$ServerID}
+			GROUP BY Victim
 			ORDER BY Count DESC
 		");
 		// initialize value
@@ -547,14 +518,13 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
 			{
 				$Victim = $DogTag_r['Victim'];
-				$VictimID = $DogTag_r['VictimID'];
 				$KillCount = $DogTag_r['Count'];
 				$count++;
 				echo '
 				<tr>
 				<td width="3%" style="text-align: left">&nbsp;</td>
 				<td width="5%" class="tablecontents" style="text-align: left"><font class="information">' . $count . ':</font></td>
-				<td width="45%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $VictimID . '&amp;search=1">' . $Victim . '</a></td>
+				<td width="45%" class="tablecontents" style="text-align: left">' . $Victim . '</td>
 				<td width="47%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
 				</tr>
 				';
@@ -577,14 +547,14 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		';
 		// find who has killed this player
 		$DogTag_q = @mysqli_query($BF4stats,"
-			SELECT tpd.SoldierName AS Killer, tpd.PlayerID AS KillerID, dt.Count
+			SELECT tpd.SoldierName AS Killer, SUM(dt.Count) AS Count
 			FROM tbl_dogtags dt
 			INNER JOIN tbl_server_player tsp ON tsp.StatsID = dt.KillerID
 			INNER JOIN tbl_server_player tsp2 ON tsp2.StatsID = dt.VictimID
 			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
 			INNER JOIN tbl_playerdata tpd2 ON tsp2.PlayerID = tpd2.PlayerID
 			WHERE tpd2.SoldierName = '{$SoldierName}'
-			AND tsp.ServerID = {$ServerID}
+			GROUP BY Killer
 			ORDER BY Count DESC
 		");
 		// initialize value
@@ -610,14 +580,13 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
 			{
 				$Killer = $DogTag_r['Killer'];
-				$KillerID = $DogTag_r['KillerID'];
 				$KillCount = $DogTag_r['Count'];
 				$count++;
 				echo '
 				<tr>
 				<td width="3%" style="text-align: left">&nbsp;</td>
 				<td width="5%" class="tablecontents" style="text-align: left"><font class="information">' . $count . ':</font></td>
-				<td width="45%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $KillerID . '&amp;search=1">' . $Killer . '</a></td>
+				<td width="45%" class="tablecontents" style="text-align: left">' . $Killer . '</td>
 				<td width="47%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
 				</tr>
 				';

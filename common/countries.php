@@ -90,7 +90,6 @@ else
 			{
 				$CountryCodeMap = strtoupper($CountryMap_r['CountryCode']);
 				$PlayerCountMap = $CountryMap_r['PlayerCount'];
-				$CountryNameMap = array_search($CountryCodeMap,$country_array);
 				echo '
 				data.setValue(' . $mapcount . ', 0, \'' . $CountryCodeMap . '\');
 				data.setValue(' . $mapcount . ', 1, ' . $PlayerCountMap . ');
@@ -122,17 +121,28 @@ else
 	while($Country_r = @mysqli_fetch_assoc($Country_q))
 	{
 		$CountryCode = strtoupper($Country_r['CountryCode']);
-		// compile this user's country flag image
-		if(($CountryCode == '') OR ($CountryCode == '--'))
+		// first find out if this country name is the list of country names
+		if(in_array($CountryCode,$country_array))
 		{
-			$country_img = './images/flags/none.png';
+			$country_name = array_search($CountryCode,$country_array);
+			// compile country flag image
+			// if country is null or unknown, use generic image
+			if(($CountryCode == '') OR ($CountryCode == '--'))
+			{
+				$country_img = './images/flags/none.png';
+			}
+			else
+			{
+				$country_img = './images/flags/' . strtolower($CountryCode) . '.png';	
+			}
 		}
+		// this country is missing!
 		else
 		{
-			$country_img = './images/flags/' . strtolower($CountryCode) . '.png';	
+			$country_name = $CountryCode;
+			$country_img = './images/flags/none.png';
 		}
 		$PlayerCount = $Country_r['PlayerCount'];
-		$country_name = array_search($CountryCode,$country_array);
 		$count++;
 		echo '
 		<div class="innercontent">

@@ -75,6 +75,12 @@ $ServerID = null;
 // and we will find this server's, create a battlelog link, and finish this page's header
 if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
 {
+	// this is momentus!
+	// this is important!
+	// this means that you are  viewing a server page and not the index!
+	// assign the ServerID variable with this server ID
+	// this ServerID variable will be used over and over again
+	// this is easily the most important variable in this code
 	$ServerID = $_GET['ServerID'];
 	// find this server name
 	$ServerName_q = @mysqli_query($BF4stats,"
@@ -249,7 +255,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	</tr>
 	<tr>
 	<td>
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '"><b><font class="information">Currently viewing:</font> ' . $ServerName . '</b></a><br/>
+	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '"><font class="information">Currently viewing:</font> ' . $ServerName . '</a><br/>
 	</td>
 	</tr>
 	</table>
@@ -260,6 +266,36 @@ if(isset($ServerID) AND !is_null($ServerID))
 	</tr>
 	</table>
 	<br/>
+	</div>
+	';
+}
+// at global stats page
+elseif((isset($_GET['topglobal']) AND !empty($_GET['topglobal'])) OR (isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])))
+{
+	echo '
+	<br/>
+	<div class="topcontent">
+	<table width="98%" align="center" border="0">
+	<tr>
+	<td width="90%">
+	<table width="100%" border="0">
+	<tr>
+	<td>
+	<br/><a href="' . $_SERVER['PHP_SELF'] . '"><font size="3">Return to ' . $clan_name . ' Stats Index Page</font></a><br/>
+	</td>
+	</tr>
+	<tr>
+	<td>
+	<a href="' . $_SERVER['PHP_SELF'] . '?topglobal=1"><font class="information">Currently viewing:</font> Global Server Stats</a><br/>
+	</td>
+	</tr>
+	</table>
+	</td>
+	<td width="10%" style="text-align: right;">
+	&nbsp;
+	</td>
+	</tr>
+	</table>
 	</div>
 	';
 }
@@ -386,7 +422,7 @@ if((isset($ServerID) AND !is_null($ServerID)) AND (($_GET['topplayers']) OR !(($
 	require_once('./common/home.php');
 }
 // begin index page logic
-if((!isset($ServerID) OR is_null($ServerID)))
+if(!isset($ServerID) OR is_null($ServerID))
 {
 	// include index.php contents
 	require_once('./common/index.php');
@@ -438,12 +474,26 @@ else
 }
 // free up exist query memory
 @mysqli_free_result($exist_query);
-// remove sessions older than 30 minutes
-@mysqli_query($BF4stats,"
-	DELETE FROM `ses_{$ServerID}_tbl`
+// find if there are sessions older than 30 minutes
+// do this to avoid optimizing the table (slow) every page load
+$old_query = @mysqli_query($BF4stats,"
+	SELECT `timestamp`
+	FROM `ses_{$ServerID}_tbl`
 	WHERE `timestamp` <= {$old}
 ");
-@mysqli_query($BF4stats,"OPTIMIZE TABLE `ses_{$ServerID}_tbl`");
+if(@mysqli_num_rows($old_query) != 0)
+{
+	// remove sessions older than 30 minutes
+	@mysqli_query($BF4stats,"
+		DELETE FROM `ses_{$ServerID}_tbl`
+		WHERE `timestamp` <= {$old}
+	");
+	@mysqli_query($BF4stats,"
+		OPTIMIZE TABLE `ses_{$ServerID}_tbl`
+	");
+}
+// free up old query memory
+@mysqli_free_result($old_query);
 // count all sessions
 $ses_count = @mysqli_query($BF4stats,"
 	SELECT count(`IP`) as ses

@@ -179,16 +179,47 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	while($Messages_r = @mysqli_fetch_assoc($Messages_q))
 	{
 		// get data
-		$logDate = $Messages_r['logDate'];
+		$logDate = date("M d - H:i", strtotime($Messages_r['logDate']));
 		$logSoldierName = textcleaner($Messages_r['logSoldierName']);
 		$logMessage = textcleaner($Messages_r['Message']);
 		$logSubset = $Messages_r['logSubset'];
 		$count++;
+		// see if this player has server stats in this server yet
+		$PlayerID_q = @mysqli_query($BF4stats,"
+			SELECT tpd.PlayerID
+			FROM tbl_playerstats tps
+			INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
+			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+			WHERE tsp.ServerID = {$ServerID}
+			AND SoldierName = '{$logSoldierName}'
+		");
+		// server stats found for this player in this server
+		if(@mysqli_num_rows($PlayerID_q) == 1)
+		{
+			$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
+			$PlayerID = $PlayerID_r['PlayerID'];
+		}
+		// this player needs to finish this round to get server stats in this server
+		else
+		{
+			$PlayerID = null;
+		}
 		echo '
 		<tr>
 		<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
 		<td width="13%" class="tablecontents" style="text-align: left;">' . $logDate . '</td>
-		<td width="10%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $logSoldierName . '&amp;search=1">' . $logSoldierName . '</a></td>
+		';
+		// if this player has stats in this server, provide a link to their stats page
+		if($PlayerID != null)
+		{
+			echo '<td width="10%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $logSoldierName . '&amp;search=1">' . $logSoldierName . '</a></td>';
+		}
+		// otherwise just display their name without a link
+		else
+		{
+			echo '<td width="10%" class="tablecontents" style="text-align: left;">' . $logSoldierName . '</td>';
+		}
+		echo '
 		<td width="7%" class="tablecontents" style="text-align: left;">' . $logSubset . '</td>
 		<td width="65%" class="tablecontents" style="text-align: left;">' . $logMessage . '</td>
 		</tr>
@@ -204,6 +235,8 @@ else
 	</tr>
 	';
 }
+// free up player ID query memory
+@mysqli_free_result($PlayerID_q);
 // free up messages query memory
 @mysqli_free_result($Messages_q);
 // build the pagination links
