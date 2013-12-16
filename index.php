@@ -215,14 +215,105 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		';
 	}
 }
-// no server ID was given in the URL or an invalid server ID was given, so use index page header
+// no server ID was given in the URL or an invalid server ID was given, so use index page header or global stats page header
 else
 {
-	echo '
-	<meta name="keywords" content="BF4,Player,Stats,Server,Index,' . $clan_name . '" />
-	<meta name="description" content="This is the ' . $clan_name . ' BF4 player stats server index page." />
-	<title>' . $clan_name . ' BF4 Player Stats - Index Page</title>
-	';
+	// use top global stats header if selected
+	if(isset($_GET['topglobal']) AND !empty($_GET['topglobal']))
+	{
+		echo '
+		<meta name="keywords" content="Top,Players,Global,' . $clan_name . ',BF4,Player,Stats,Server" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 global top players stats page." />
+		<title>' . $clan_name . ' BF4 Player Stats - Global Top Players</title>
+		';
+	}
+	// use global player stats header if selected
+	elseif((isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])) AND (isset($_GET['SoldierName']) AND !empty($_GET['SoldierName'])))
+	{
+		// remove spaces from name input
+		$SoldierName = preg_replace('/\s/','',($_GET['SoldierName']));
+		// remove dangerous / invalid characters from input
+		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
+		{
+			$SoldierName = 'Not Found';
+		}
+		echo '
+		<meta name="keywords" content="' . $SoldierName . ',,' . $clan_name . ',BF4,Global,Player,Stats,Server" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server player stats page for ' . $SoldierName . '." />
+		<title>' . $clan_name . ' BF4 Global Player Stats - ' . $SoldierName . '</title>
+		';
+	}
+	// use global player stats header if selected
+	elseif((isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])) AND (isset($_GET['PlayerID']) AND !empty($_GET['PlayerID'])))
+	{
+		// make sure player id provided is a number
+		if(is_numeric($_GET['PlayerID']))
+		{
+			// search for soldier name using provided player ID
+			$SoldierName_q = @mysqli_query($BF4stats,"
+				SELECT `SoldierName`
+				FROM `tbl_playerdata`
+				WHERE `PlayerID` = {$_GET['PlayerID']}
+			");
+			if(@mysqli_num_rows($SoldierName_q) == 1)
+			{
+				$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
+				$SoldierName = $SoldierName_r['SoldierName'];
+			}
+			else
+			{
+				$SoldierName = 'Not Found';
+			}
+			// free up soldier name query memory
+			@mysqli_free_result($SoldierName_q);
+		}
+		// invalid
+		else
+		{
+			$SoldierName = 'Not Found';
+		}
+		echo '
+		<meta name="keywords" content="' . $SoldierName . ',,' . $clan_name . ',BF4,Global,Player,Stats,Server" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server player stats page for ' . $SoldierName . '." />
+		<title>' . $clan_name . ' BF4 Global Player Stats - ' . $SoldierName . '</title>
+		';
+	}
+	// or else at global suspicious page
+	elseif(isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious']))
+	{
+		echo '
+		<meta name="keywords" content="Global,Suspicious,Players,' . $clan_name . ',BF4,Player,Stats,Server" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Suspicious Players page." />
+		<title>' . $clan_name . ' BF4 Global Player Stats - Suspicious Players</title>
+		';
+	}
+	// or else at global countries page
+	elseif(isset($_GET['globalcountries']) AND !empty($_GET['globalcountries']))
+	{
+		echo '
+		<meta name="keywords" content="Global,Country,' . $clan_name . ',BF4,Player,Stats,Server" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Country Stats page." />
+		<title>' . $clan_name . ' BF4 Global Player Stats - Country Stats</title>
+		';
+	}
+	// or else at global countries page
+	elseif(isset($_GET['globalmaps']) AND !empty($_GET['globalmaps']))
+	{
+		echo '
+		<meta name="keywords" content="Global,Map,' . $clan_name . ',BF4,Player,Stats,Server" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Map Stats page." />
+		<title>' . $clan_name . ' BF4 Global Player Stats - Map Stats</title>
+		';
+	}
+	// or else use the server stats index page header
+	else
+	{
+		echo '
+		<meta name="keywords" content="BF4,Player,Stats,Server,Index,' . $clan_name . '" />
+		<meta name="description" content="This is the ' . $clan_name . ' BF4 player stats server index page." />
+		<title>' . $clan_name . ' BF4 Player Stats - Index Page</title>
+		';
+	}
 }
 echo '
 </head>
@@ -270,7 +361,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	';
 }
 // at global stats page
-elseif((isset($_GET['topglobal']) AND !empty($_GET['topglobal'])) OR (isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])))
+elseif((isset($_GET['topglobal']) AND !empty($_GET['topglobal'])) OR (isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])) OR (isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious'])) OR (isset($_GET['globalcountries']) AND !empty($_GET['globalcountries'])) OR (isset($_GET['globalmaps']) AND !empty($_GET['globalmaps'])))
 {
 	echo '
 	<br/>
@@ -371,6 +462,48 @@ if(isset($ServerID) AND !is_null($ServerID))
 	</td>
 	<td width="10%" style="text-align: center">
 	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;serverstats=1">Server Info</a>
+	</td>
+	</tr>
+	</table>
+	</div>
+	';
+}
+// display menu if this is a global page
+elseif((isset($_GET['topglobal']) AND !empty($_GET['topglobal'])) OR (isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])) OR (isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious'])) OR (isset($_GET['globalcountries']) AND !empty($_GET['globalcountries'])) OR (isset($_GET['globalmaps']) AND !empty($_GET['globalmaps'])))
+{
+	echo '
+	<div class="menucontent">
+	<table align="center" width="100%" border="0">
+	<tr>
+	<td width="60%" style="text-align: left">
+	<form action="' . $_SERVER['PHP_SELF'] . '" method="get">
+	<input type="hidden" name="globalsearch" value="1" />
+	&nbsp; &nbsp; <font class="information">Player:</font>&nbsp;
+	';
+	// try to fill in search box
+	if(isset($SoldierName) AND !empty($SoldierName) AND $SoldierName != 'Not Found')
+	{
+		echo '<input type="text" class="inputbox" value="' . $SoldierName . '" name="SoldierName" />';
+	}
+	else
+	{
+		echo '<input type="text" class="inputbox" name="SoldierName" />';
+	}
+	echo '
+	<input type="submit" name="search" value="Search" title="Search" class="button" />
+	</form>
+	</td>
+	<td width="10%" style="text-align: center">
+	<a href="' . $_SERVER['PHP_SELF'] . '?topglobal=1">Home</a>
+	</td>
+	<td width="10%" style="text-align: center">
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1">Suspicious</a>
+	</td>
+	<td width="10%" style="text-align: center">
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalcountries=1">Countries</a>
+	</td>
+	<td width="10%" style="text-align: center">
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalmaps=1">Maps</a>
 	</td>
 	</tr>
 	</table>

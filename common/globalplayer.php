@@ -89,6 +89,20 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	<table width="100%" border="0">
 	<tr>
 	';
+	// initialize value
+	$soldier_found = 0;
+	// find if this soldiername is in server stats
+	$Find_q = @mysqli_query($BF4stats,"
+			SELECT `SoldierName`
+			FROM `tbl_playerdata`
+			WHERE `SoldierName` = '{$SoldierName}'
+	");
+	if(@mysqli_num_rows($Find_q) != 0)
+	{
+		$soldier_found = 1;
+	}
+	// free up soldier find query memory
+	@mysqli_free_result($Find_q);
 	// get player stats
 	$PlayerData_q = @mysqli_query($BF4stats,"
 		SELECT tpd.CountryCode, tpd.PlayerID, SUM(tps.Suicide) AS Suicide, SUM(tps.Score) AS Score, SUM(tps.Kills) AS Kills, SUM(tps.Deaths) AS Deaths, (SUM(tps.Kills)/SUM(tps.Deaths)) AS KDR, (SUM(tps.Headshots)/SUM(tps.Kills)) AS HSR, SUM(tps.TKs) AS TKs, SUM(tps.Headshots) AS Headshots, SUM(tps.Rounds) AS Rounds, MAX(tps.Killstreak) AS Killstreak, MAX(tps.Deathstreak) AS Deathstreak, SUM(tps.Wins) AS Wins, SUM(tps.Losses) AS Losses, (SUM(tps.Wins)/SUM(tps.Losses)) AS WLR, MAX(tps.HighScore) AS HighScore, MIN(tps.FirstSeenOnServer) AS FirstSeenOnServer, MAX(tps.LastSeenOnServer) AS LastSeenOnServer
@@ -98,7 +112,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		WHERE SoldierName = '{$SoldierName}'
 	");
 	// if no stats were found for player name, display this
-	if(@mysqli_num_rows($PlayerData_q) != 1)
+	if($soldier_found == 0)
 	{
 		echo '
 		<td>
@@ -157,12 +171,13 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		}
 		// check to see if there are any players who match a similar name
 		$PlayerMatch_q = @mysqli_query($BF4stats,"
-			SELECT tpd.SoldierName, tpd.PlayerID, tps.Score, tps.Kills, tps.Deaths, tps.Rounds, (tps.Kills/tps.Deaths) AS KDR
+			SELECT tpd.SoldierName, tpd.PlayerID, SUM(tps.Score) AS Score, SUM(tps.Kills) AS Kills, SUM(tps.Deaths) AS Deaths, SUM(tps.Rounds) AS Rounds, (SUM(tps.Kills)/SUM(tps.Deaths)) AS KDR
 			FROM tbl_playerstats tps
 			INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
 			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
 			WHERE 1
 			AND SoldierName LIKE '%{$SoldierName}%'
+			GROUP BY SoldierName
 			ORDER BY {$rank} {$order}
 		");
 		// if a similar name was found, display this
@@ -181,7 +196,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			<table width="98%" align="center" border="0">
 			<tr>
 			<th width="5%" style="text-align:left">#</th>
-			<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=SoldierName&amp;order=';
+			<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=SoldierName&amp;order=';
 			if($rank != 'SoldierName')
 			{
 				echo 'ASC';
@@ -191,7 +206,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 				echo $nextorder;
 			}
 			echo '"><span class="orderheader">Player</span></a></th>
-			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Score&amp;order=';
+			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Score&amp;order=';
 			if($rank != 'Score')
 			{
 				echo 'DESC';
@@ -201,7 +216,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 				echo $nextorder;
 			}
 			echo '"><span class="orderheader">Score</span></a></th>
-			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Rounds&amp;order=';
+			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Rounds&amp;order=';
 			if($rank != 'Rounds')
 			{
 				echo 'DESC';
@@ -211,7 +226,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 				echo $nextorder;
 			}
 			echo '"><span class="orderheader">Rounds Played</span></a></th>
-			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Kills&amp;order=';
+			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Kills&amp;order=';
 			if($rank != 'Kills')
 			{
 				echo 'DESC';
@@ -221,7 +236,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 				echo $nextorder;
 			}
 			echo '"><span class="orderheader">Kills</span></a></th>
-			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Deaths&amp;order=';
+			<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Deaths&amp;order=';
 			if($rank != 'Deaths')
 			{
 				echo 'DESC';
@@ -231,7 +246,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 				echo $nextorder;
 			}
 			echo '"><span class="orderheader">Deaths</span></a></th>
-			<th width="17%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=KDR&amp;order=';
+			<th width="17%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=KDR&amp;order=';
 			if($rank != 'KDR')
 			{
 				echo 'DESC';
@@ -257,7 +272,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 				echo '
 				<tr>
 				<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
-				<td width="18%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $Player_ID . '&amp;search=1">' . $Soldier_Name . '</a></td>
+				<td width="18%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $Player_ID . '">' . $Soldier_Name . '</a></td>
 				<td width="15%" class="tablecontents" style="text-align: left;">' . $Score . '</td>
 				<td width="15%" class="tablecontents" style="text-align: left;">' . $Rounds . '</td>
 				<td width="15%" class="tablecontents" style="text-align: left;">' . $Kills . '</td>
@@ -272,7 +287,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		@mysqli_free_result($PlayerMatch_q);
 	}
 	// this unique player was found
-	else
+	elseif($soldier_found == 1)
 	{
 		echo '
 		<th class="headline"><b>Overview</b></th>
@@ -371,7 +386,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	</div>
 	';
 	// double check that a matching player was found
-	if(@mysqli_num_rows($PlayerData_q) != 0)
+	if($soldier_found == 1)
 	{
 		echo '<br/>';
 		// get weapon stats for weapon graph
@@ -476,7 +491,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	}
 	// begin dog tag stats
 	// double check that a matching player was found
-	if(@mysqli_num_rows($PlayerData_q) != 0)
+	if($soldier_found == 1)
 	{
 		$DogTag_q = @mysqli_query($BF4stats,"
 			SELECT SUM(dt.Count) AS Count, tpd2.SoldierName AS Victim

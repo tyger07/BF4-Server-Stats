@@ -56,6 +56,48 @@ if(@mysqli_num_rows($ServerTotals_q) != 0)
 	</div>
 	';
 }
+// something went wrong
+// display blank data
+else
+{
+	echo '
+	<br/>
+	<br/><div class="middlecontent"><br/><center>Or view global stats from all of ' . $clan_name . ' servers:</center><br/></div><br/>
+	<br/>
+	<div class="simplecontent">
+	<table width="95%" align="center" border="0">
+	<tr>
+	<td width="35%">
+	<br/><font size="3">' . $clan_name . ' Global Server Stats</font><br/><br/>
+	</td>
+	<td width="22%">
+	<br/><br/><font class="information">Total Players:</font> Unknown<br/><br/>
+	</td>
+	<td width="22%">
+	<br/><br/><font class="information">Total Rounds:</font> Unknown<br/><br/>
+	</td>
+	<td width="21%">
+	<br/><br/><font class="information">Total Days Played:</font> Unknown<br/><br/>
+	</td>
+	</tr>
+	<tr>
+	<td width="35%">
+	<a href="' . $_SERVER['PHP_SELF'] . '?topglobal=1"><img src="./images/viewstatsbtn.png" alt="view stats"/></a><br/><br/>
+	</td>
+	<td width="22%">
+	<font class="information">Total Kills:</font> Unknown<br/><br/><br/>
+	</td>
+	<td width="22%">
+	<font class="information">Total Deaths:</font> Unknown<br/><br/><br/>
+	</td>
+	<td width="21%">
+	<font class="information">Titak Headshots:</font> Unknown<br/><br/><br/>
+	</td>
+	</tr>
+	</table>
+	</div>
+	';
+}
 // free up server totals query memory
 @mysqli_free_result($ServerTotals_q);
 ?>
