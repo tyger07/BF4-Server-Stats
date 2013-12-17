@@ -16,5 +16,5 @@ $clan_name		= ''; // your gaming clan or organization name
 $banner_image	= './images/bf4-logo.png'; // your desired page banner
 
 // BANNER LINK
-$banner_url		= 'http://open-web-community.com/'; // where clicking the banner will take you
+$banner_url		= 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
 ?>

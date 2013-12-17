@@ -135,7 +135,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 	<table width="98%" align="center" class="prettytable" border="0">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
-	<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=SoldierName&amp;order=';
+	<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=SoldierName&amp;order=';
 	if($rank != 'SoldierName')
 	{
 		echo 'ASC';
@@ -145,7 +145,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Player</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=Score&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=Score&amp;order=';
 	if($rank != 'Score')
 	{
 		echo 'DESC';
@@ -155,7 +155,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Score</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=Rounds&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=Rounds&amp;order=';
 	if($rank != 'Rounds')
 	{
 		echo 'DESC';
@@ -165,7 +165,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Rounds Played</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=Kills&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=Kills&amp;order=';
 	if($rank != 'Kills')
 	{
 		echo 'DESC';
@@ -175,7 +175,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Kills</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=Deaths&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=Deaths&amp;order=';
 	if($rank != 'Deaths')
 	{
 		echo 'DESC';
@@ -185,7 +185,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Deaths</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=KDR&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=KDR&amp;order=';
 	if($rank != 'KDR')
 	{
 		echo 'DESC';
@@ -195,7 +195,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Kill/Death Ratio</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=Headshots&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=Headshots&amp;order=';
 	if($rank != 'Headshots')
 	{
 		echo 'DESC';
@@ -205,7 +205,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder;
 	}
 	echo '"><span class="orderheader">Headshots</span></a></th>
-	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;topglobal=1&amp;rank=HSR&amp;order=';
+	<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $currentpage . '&amp;globalhome=1&amp;rank=HSR&amp;order=';
 	if($rank != 'HSR')
 	{
 		echo 'DESC';
@@ -232,7 +232,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo '
 		<tr>
 		<td class="tablecontents" width="5%"><font class="information">' . $count . ':</font></td>
-		<td width="18%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $SoldierName . '</a></td>
+		<td width="18%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '">' . $SoldierName . '</a></td>
 		<td width="11%" class="tablecontents">' . $Score . '</td>
 		<td width="11%" class="tablecontents">' . $Rounds . '</td>
 		<td width="11%" class="tablecontents">' . $Kills . '</td>
@@ -271,11 +271,11 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 	if ($currentpage > 1)
 	{
 		// show << link to go back to first page
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?currentpage=1&amp;topglobal=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;&lt;</a>';
+		echo '<a href="' . $_SERVER['PHP_SELF'] . '?currentpage=1&amp;globalhome=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;&lt;</a>';
 		// get previous page num
 		$prevpage = $currentpage - 1;
 		// show < link to go back one page
-		echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $prevpage . '&amp;topglobal=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;</a> ';
+		echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $prevpage . '&amp;globalhome=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;</a> ';
 	}
 	// loop to show links to range of pages around current page
 	for($x = ($currentpage - $range); $x < (($currentpage + $range) + 1); $x++)
@@ -292,7 +292,7 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 			else
 			{
 				// make it a link
-				echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $x . '&amp;topglobal=1&amp;rank=' . $rank . '&amp;order=' . $order . '">' . $x . '</a> ';
+				echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $x . '&amp;globalhome=1&amp;rank=' . $rank . '&amp;order=' . $order . '">' . $x . '</a> ';
 			}
 		}
 	}
@@ -302,9 +302,9 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 		// get next page
 		$nextpage = $currentpage + 1;
 		// show > link to go forward one page
-		echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $nextpage . '&amp;topglobal=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;</a> ';
+		echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $nextpage . '&amp;globalhome=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;</a> ';
 		// show >> link to last page
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $totalpages . '&amp;topglobal=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;&gt;</a>';
+		echo '<a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $totalpages . '&amp;globalhome=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;&gt;</a>';
 	}
 	echo '
 	</center>

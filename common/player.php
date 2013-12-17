@@ -3,11 +3,13 @@
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
+// this was already done once in index.php
+// but we will do it again just to be sure
 if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
 {
 	// GET player name and remove any spaces accidentally inserted into the search box
 	// also, make sure that no SQL injection is being attempted
-	$SoldierName = preg_replace('/\s/','',($_GET['SoldierName']));
+	$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
 	if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
 	{
 		die("<br/><center><font class='alert'><b>This page has halted!</b></font><br/>Potential SQL injection attempt detected!</center><br/></td></tr></table></td></tr></table></center></td></tr></table></div></td></tr></table></div></body></html>");
@@ -18,11 +20,12 @@ elseif(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']))
 	// make sure player id provided is a number
 	if(is_numeric($_GET['PlayerID']))
 	{
+		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
 		// search for soldier name using provided player ID
 		$SoldierName_q = @mysqli_query($BF4stats,"
 			SELECT `SoldierName`
 			FROM `tbl_playerdata`
-			WHERE `PlayerID` = {$_GET['PlayerID']}
+			WHERE `PlayerID` = {$PlayerID}
 		");
 		if(@mysqli_num_rows($SoldierName_q) == 1)
 		{
@@ -413,7 +416,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			WHERE tsp.ServerID = {$ServerID}
 			AND tpd.SoldierName = '{$SoldierName}'
 			AND wa.Kills > 0
-			AND (tws.Damagetype = 'assaultrifle' OR tws.Damagetype = 'lmg' OR tws.Damagetype = 'shotgun' OR tws.Damagetype = 'smg' OR tws.Damagetype = 'sniperrifle' OR tws.Damagetype = 'handgun' OR tws.Damagetype = 'projectileexplosive' OR tws.Damagetype = 'explosive' OR tws.Damagetype = 'melee' OR tws.Damagetype = 'none')
+			AND (tws.Damagetype = 'assaultrifle' OR tws.Damagetype = 'lmg' OR tws.Damagetype = 'shotgun' OR tws.Damagetype = 'smg' OR tws.Damagetype = 'sniperrifle' OR tws.Damagetype = 'handgun' OR tws.Damagetype = 'projectileexplosive' OR tws.Damagetype = 'explosive' OR tws.Damagetype = 'melee' OR tws.Damagetype = 'none' OR tws.Damagetype = 'carbine' OR tws.Damagetype = 'dmr' OR tws.Damagetype = 'impact')
 		");
 		if(@mysqli_num_rows($Weapon_q) != 0)
 		{
@@ -436,6 +439,8 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 					var data = google.visualization.arrayToDataTable([
 						[\'Weapon\', \'Kills\', \'Deaths\', \'Headshots\',  \'Headshot Ratio\']
 						';
+						$vmax = 0;
+						$hmax = 0;
 						while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 						{
 							$weapon = preg_replace("/_/"," ",$Weapon_r['Friendlyname']);
@@ -448,6 +453,17 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 							$kills = $Weapon_r['Kills'];
 							$headshots = $Weapon_r['Headshots'];
 							$hsr = $Weapon_r['HSR'];
+							// set max values higher than max for cropping reasons
+							// find the vmax value
+							if($deaths > $vmax)
+							{
+								$vmax = $deaths + 50;
+							}
+							// find the hmax value
+							if($kills > $hmax)
+							{
+								$hmax = $kills + 50;
+							}
 							echo ',
 							[\'' . $weapon . '\', ' . $kills . ', ' . $deaths . ', ' . $headshots . ',  ' . $hsr . ']
 							';
@@ -458,8 +474,8 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 						title: \'Headshots\',
 						titleTextStyle: {color: \'#444\', bold: \'false\'},
 						legend: {textStyle: {color: \'#444\'}},
-						hAxis: {title: \'Kills\', titleTextStyle: {color: \'#444\'}, textStyle:  {color: \'transparent\'}, minValue: -1, gridlines: {color: \'transparent\'}, baselineColor:  \'#222\'},
-						vAxis: {title: \'Deaths\', titleTextStyle: {color: \'#444\'}, textStyle:  {color: \'transparent\'}, minValue: -1, gridlines: {color: \'transparent\'}, baselineColor:  \'#222\'},
+						hAxis: {title: \'Kills\', titleTextStyle: {color: \'#444\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $hmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#222\'},
+						vAxis: {title: \'Deaths\', titleTextStyle: {color: \'#444\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $vmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#222\'},
 						bubble: {textStyle: {color: \'#888\', fontSize: 12}, stroke: \'transparent\'},
 						backgroundColor: \'transparent\',
 						chartArea: {left: 20, top: 50, width: "90%", height: "70%"},
@@ -481,6 +497,8 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			// get weapon stats for weapon stats list
 			// input as: title, damage, soldier, player id, server, db
 			Statsout("Assault Rifle Stats","assaultrifle",$SoldierName, $PlayerID, $ServerID, $BF4stats);
+			Statsout("Carbine Stats","carbine",$SoldierName, $PlayerID, $ServerID, $BF4stats);
+			Statsout("DMR Stats","dmr",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Light Machine Gun Stats","lmg",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Shot Gun Stats","shotgun",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Submachine Gun Stats","smg",$SoldierName, $PlayerID, $ServerID, $BF4stats);
@@ -488,6 +506,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 			Statsout("Hand Gun Stats","handgun",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Projectile Explosive Stats","projectileexplosive",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Explosive Stats","explosive",$SoldierName, $PlayerID, $ServerID, $BF4stats);
+			Statsout("Impact Stats","impact",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Other Weapon Stats","melee",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			Statsout("Vehicle Stats","none",$SoldierName, $PlayerID, $ServerID, $BF4stats);
 			echo '

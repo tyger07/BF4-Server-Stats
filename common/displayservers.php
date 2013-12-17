@@ -126,12 +126,12 @@ foreach($ServerIDs as $this_ServerID)
 	<tr>
 	<td width="100%" style="text-align: left;">
 	<br/>
-	<div class="mapimage" style="background-image: url(' . $map_img . ');">
+	<div class="mapimage" style="background-image: url(' . $map_img . '); width: 98%;">
 	<div class="simplecontent">
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
-	<br/><font size="3">' . $ServerName . '</font><br/><br/>
+	<br/><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $this_ServerID . '"><font size="3">' . $ServerName . '</a></font><br/><br/>
 	</td>
 	<td width="22%">
 	<br/><br/><font class="information">Current Players In Server:</font> ' . $players . '<br/><br/>
@@ -146,7 +146,7 @@ foreach($ServerIDs as $this_ServerID)
 	<tr>
 	<td width="35%">
 	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $this_ServerID . '"><img src="./images/viewstatsbtn.png" alt="view stats"/></a> &nbsp;
-	<a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . $ServerName . '" target="_blank"><img src="./images/joinbtn.png" alt="join"/></a><br/><br/>
+	<a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . preg_replace('/\+/','%2B',$ServerName) . '" target="_blank"><img src="./images/joinbtn.png" alt="join"/></a><br/><br/>
 	</td>
 	<td width="22%">
 	<font class="information">Players Logged:</font> ' . $total_players . '<br/><br/><br/>

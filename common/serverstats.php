@@ -15,7 +15,7 @@ echo '
 <div class="middlecontent">
 <table width="100%" border="0">
 <tr>
-<th class="headline"><b>Overall Server Stats</b></th>
+<th class="headline"><b>Server Stats</b></th>
 </tr>
 <tr>
 <td>
@@ -45,6 +45,10 @@ if(@mysqli_num_rows($Server_q) != 0)
 	$avghsr = round($Server_r['AvgHSR'],2);
 	$avgkdr = round($Server_r['AvgKDR'],2);
 	$rounds = $Server_r['SumRounds'];
+	// include players.php contents
+	echo '<center><img src="pchart/players.php?server=' . $ServerID . '" alt="Minimum, maximum and average players" title="Minimum, maximum and average players" height="300" width="600" /></center>';
+	// include joinsleaves.php contents
+	echo '<center><img src="pchart/joinsleaves.php?server=' . $ServerID . '" alt="Joins and leaves from server" title="Joins and leaves from server" height="300" width="600" /></center>';
 	echo '
 	<table width="90%" align="center" border="0"><tr>
 	<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>

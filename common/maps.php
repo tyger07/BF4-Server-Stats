@@ -101,52 +101,8 @@ if(@mysqli_num_rows($Mode_q) == 0)
 else
 {
 	echo '<div class="innercontent">';
-	$Chart_q = @mysqli_query($BF4stats,"
-		SELECT SUBSTRING(TimeMapLoad, 1, length(TimeMapLoad) - 9) AS Date, AVG(MaxPlayers) AS Average
-		FROM tbl_mapstats
-		WHERE ServerID = {$ServerID}
-		AND Gamemode != ''
-		AND MapName != ''
-		GROUP BY Date
-		ORDER BY Date DESC LIMIT 7
-	");
-	if(@mysqli_num_rows($Chart_q) != 0)
-	{
-		echo'
-		<br/>
-		<script type="text/javascript" src="//www.google.com/jsapi"></script>
-		<script type="text/javascript">
-			google.load(\'visualization\', \'1\', {packages: [\'imagelinechart\']});
-		</script>
-		<script type="text/javascript">
-			function drawVisualization() {
-				// Create and populate the data table.
-				var data = google.visualization.arrayToDataTable([
-					[\'Date\', \'Average Players\']
-					';
-					while($Chart_r = @mysqli_fetch_assoc($Chart_q))
-					{
-						$Date = date("M d", strtotime($Chart_r['Date']));
-						$Average = $Chart_r['Average'];
-						echo ',
-						[\'' . $Date . '\', ' . $Average . ']
-						';
-					}
-					echo '
-				]);
-				// Create and draw the visualization.
-				new google.visualization.ImageLineChart(document.getElementById(\'visualization\')).
-				draw(data, {width: 600, height: 300, backgroundColor: \'#00000000\', legend: \'right\', colors: \'#000000\'});
-			}
-			google.setOnLoadCallback(drawVisualization);
-		</script>
-		<div id="visualization" style="width: 600px; height: 300px;"></div>
-		<br/>
-		';
-	}
-	// free up chart query memory
-	@mysqli_free_result($Chart_q);
-	echo '
+	// include playersbydate.php contents
+	echo '<br/><center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="Average players per day" title="Average players per day" height="300" width="600" /></center>
 	<table width="98%" align="center" border="0">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
@@ -231,12 +187,12 @@ else
 				echo '
 				<tr>
 				<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
-				<td width="16%" class="tablecontents" style="text-align: left;">' . $MapName . '</td>
-				<td width="16%" class="tablecontents" style="text-align: left;">' . $MapCode . '</td>
-				<td width="16%" class="tablecontents" style="text-align: left;">' . $GameMode . '</td>
-				<td width="15%" class="tablecontents" style="text-align: left;">' . $NumberofRounds . '</td>
-				<td width="16%" class="tablecontents" style="text-align: left;">' . $AveragePlayers . '</td>
-				<td width="16%" class="tablecontents" style="text-align: left;">' . $AveragePopularity . '</td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $MapName . '</font></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $MapCode . '</font></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $GameMode . '</font></td>
+				<td width="15%" class="tablecontents" style="text-align: left;"><font class="information">' . $NumberofRounds . '</font></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $AveragePlayers . '</font></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $AveragePopularity . '</font></td>
 				</tr>
 				';
 			}
