@@ -44,44 +44,44 @@ else
 	// show global home if selected
 	if(isset($_GET['globalhome']) AND !empty($_GET['globalhome']))
 	{
-		// include globalhome.php contents
-		require_once('./common/globalhome.php');
+		// include home.php contents
+		require_once('./common/home.php');
 	}
 	// show global player stats if selected
 	if(isset($_GET['globalsearch']) AND !empty($_GET['globalsearch']))
 	{
-		// include globalplayer.php contents
-		require_once('./common/globalplayer.php');
+		// include player.php contents
+		require_once('./common/player.php');
 	}
 	// show global suspicious players if selected
 	if(isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious']))
 	{
-		// include globalsuspicious.php contents
-		require_once('./common/globalsuspicious.php');
+		// include suspicious.php contents
+		require_once('./common/suspicious.php');
 	}
 	// show global country stats if selected
 	if(isset($_GET['globalcountries']) AND !empty($_GET['globalcountries']))
 	{
-		// include globalcountries.php contents
-		require_once('./common/globalcountries.php');
+		// include countries.php contents
+		require_once('./common/countries.php');
 	}
 	// show global map stats if selected
 	if(isset($_GET['globalmaps']) AND !empty($_GET['globalmaps']))
 	{
-		// include globalmaps.php contents
-		require_once('./common/globalmaps.php');
+		// include maps.php contents
+		require_once('./common/maps.php');
 	}
 	// show global server stats if selected
 	if(isset($_GET['globalserverstats']) AND !empty($_GET['globalserverstats']))
 	{
-		// include globalserverstats.php contents
-		require_once('./common/globalserverstats.php');
+		// include serverstats.php contents
+		require_once('./common/serverstats.php');
 	}
 	// show global players of the week if selected
 	if(isset($_GET['globalpotw']) AND !empty($_GET['globalpotw']))
 	{
-		// include globalpotw.php contents
-		require_once('./common/globalpotw.php');
+		// include potw.php contents
+		require_once('./common/potw.php');
 	}
 }
 echo '

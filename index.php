@@ -666,7 +666,7 @@ $mtime = microtime();
 $mtime = explode(" ",$mtime);
 $mtime = $mtime[1] + $mtime[0];
 $endtime = $mtime;
-$totaltime = round(($endtime - $starttime),2);
+$totaltime = round(($endtime - $starttime),3);
 // display total page load time
 echo '<center><font class="footertext">server made page in ' . $totaltime . ' seconds</font></center>';
 // display total server memory used

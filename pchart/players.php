@@ -63,7 +63,7 @@ $myPicture = new pImage(600,300,$myData,TRUE);
 $myPicture->setFontProperties(array("FontName"=>"fonts/Forgotte.ttf","FontSize"=>12));
 $TextSettings = array("Align"=>TEXT_ALIGN_MIDDLEMIDDLE
 , "R"=>150, "G"=>150, "B"=>150);
-$myPicture->drawText(297,18,"Minimum, maximum and average players, last ". $limit ." rounds",$TextSettings);
+$myPicture->drawText(297,18,"Minimum, maximum, and average players in last ". $limit ." rounds.",$TextSettings);
 
 $myPicture->setShadow(FALSE);
 $myPicture->setGraphArea(50,50,576,270);

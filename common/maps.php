@@ -7,7 +7,18 @@ echo '
 <div class="middlecontent">
 <table width="100%" border="0">
 <tr><td  class="headline">
-<br/><center><b>Map Stats</b></center><br/>
+';
+// if there is a ServerID, this is a server stats page
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	echo '<br/><center><b>Map Stats</b></center><br/>';
+}
+// or else this is a global stats page
+else
+{
+	echo '<br/><center><b>Global Map Stats</b></center><br/>';
+}
+echo '
 </td></tr>
 </table>
 <table width="100%" border="0">
@@ -77,22 +88,49 @@ else
 	$order = 'ASC';
 	$nextorder = 'DESC';
 }
-// query for maps in this server
-$Mode_q = @mysqli_query($BF4stats,"
-	SELECT Gamemode
-	FROM tbl_mapstats
-	WHERE ServerID = {$ServerID}
-	AND Gamemode != ''
-	GROUP BY Gamemode
-	ORDER BY {$rank} {$order}
-");
+// if there is a ServerID, this is a server stats page
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	// query for maps in this server
+	$Mode_q = @mysqli_query($BF4stats,"
+		SELECT Gamemode
+		FROM tbl_mapstats
+		WHERE ServerID = {$ServerID}
+		AND Gamemode != ''
+		GROUP BY Gamemode
+		ORDER BY {$rank} {$order}
+	");
+}
+// or else this is a global stats page
+else
+{
+	// query for maps in this server
+	$Mode_q = @mysqli_query($BF4stats,"
+		SELECT Gamemode
+		FROM tbl_mapstats
+		WHERE Gamemode != ''
+		GROUP BY Gamemode
+		ORDER BY {$rank} {$order}
+	");
+}
 if(@mysqli_num_rows($Mode_q) == 0)
 {
 	echo '
 	<div class="innercontent"><br/>
 	<table width="98%" align="center" border="0">
 	<tr><td>
-	<center><font class="information">No map stats found for found for this server.</font></center>
+	';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<center><font class="information">No map stats found for found for this server.</font></center>';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<center><font class="information">No map stats found for found these servers.</font></center>';
+	}
+	echo '
 	</td></tr>
 	</table><br/>
 	</div>
@@ -102,23 +140,42 @@ else
 {
 	echo '<div class="innercontent">';
 	// include playersbydate.php contents
-	echo '<br/><center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="Average players per day" title="Average players per day" height="300" width="600" /></center>
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<br/><center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<br/><center><img src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
+	}
+	echo '
 	<table width="98%" align="center" border="0">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
 	<th width="16%" style="text-align:left">Map Name</th>
 	<th width="16%" style="text-align:left;">Map Code</th>
-	<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1&amp;rank=Gamemode&amp;order=';
+	';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1&amp;rank=Gamemode&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalmaps=1&amp;rank=Gamemode&amp;order=';
+	}
 	if($rank != 'Gamemode')
 	{
-		echo 'ASC';
+		echo 'ASC"><span class="orderheader">Game Mode</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Game Mode</span></a></th>';
 	}
-	echo '"><span class="orderheader">Game Mode</span></a></th>
-	<th width="15%" style="text-align:left;">Rounds Played</th>
+	echo '<th width="15%" style="text-align:left;">Rounds Played</th>
 	<th width="16%" style="text-align:left;">Average Players</th>
 	<th width="16%" style="text-align:left;">Average Popularity</th>
 	</tr>';
@@ -129,16 +186,33 @@ else
 	while($Mode_r = @mysqli_fetch_assoc($Mode_q))
 	{
 		$Mode = $Mode_r['Gamemode'];
-		// query for game modes for each map
-		$Map_q = @mysqli_query($BF4stats,"
-			SELECT MapName, SUM(NumberofRounds) AS NumberofRounds, AVG(AvgPlayers) AS AveragePlayers, (AVG(AvgPlayers)/AVG(PlayersLeftServer)) AS AVGPop
-			FROM tbl_mapstats
-			WHERE ServerID = {$ServerID}
-			AND Gamemode = '{$Mode}'
-			AND MapName != ''
-			GROUP BY MapName
-			ORDER BY NumberofRounds DESC
-		");
+		// if there is a ServerID, this is a server stats page
+		if(isset($ServerID) AND !is_null($ServerID))
+		{
+			// query for game modes for each map
+			$Map_q = @mysqli_query($BF4stats,"
+				SELECT MapName, SUM(NumberofRounds) AS NumberofRounds, AVG(AvgPlayers) AS AveragePlayers, (AVG(AvgPlayers)/AVG(PlayersLeftServer)) AS AVGPop
+				FROM tbl_mapstats
+				WHERE ServerID = {$ServerID}
+				AND Gamemode = '{$Mode}'
+				AND MapName != ''
+				GROUP BY MapName
+				ORDER BY NumberofRounds DESC
+			");
+		}
+		// or else this is a global stats page
+		else
+		{
+			// query for game modes for each map
+			$Map_q = @mysqli_query($BF4stats,"
+				SELECT MapName, SUM(NumberofRounds) AS NumberofRounds, AVG(AvgPlayers) AS AveragePlayers, (AVG(AvgPlayers)/AVG(PlayersLeftServer)) AS AVGPop
+				FROM tbl_mapstats
+				WHERE Gamemode = '{$Mode}'
+				AND MapName != ''
+				GROUP BY MapName
+				ORDER BY NumberofRounds DESC
+			");
+		}
 		if(@mysqli_num_rows($Map_q) != 0)
 		{
 			$match = 1;

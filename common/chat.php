@@ -73,7 +73,7 @@ if(isset($_GET['rank']) AND !empty($_GET['rank']))
 {
 	$rank = $_GET['rank'];
 	// filter out SQL injection
-	if($rank != 'logDate' AND $rank != 'logSoldierName' AND $rank != 'logSubset' AND $rank != 'logMessage')
+	if($rank != 'logDate' AND $rank != 'logSoldierName' AND $rank != 'logSubset' AND $rank != 'Message')
 	{
 		// unexpected input detected
 		// use default instead
@@ -131,50 +131,47 @@ $count = ($currentpage * 25) - 25;
 if(@mysqli_num_rows($Messages_q) != 0)
 {
 	echo '
+	<br/>
 	<table width="98%" align="center" border="0" class="prettytable">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
 	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=logDate&amp;order=';
 	if($rank != 'logDate')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Date</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Date</span></a></th>';
 	}
-	echo '"><span class="orderheader">Date</span></a></th>
-	<th width="10%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=logSoldierName&amp;order=';
+	echo '<th width="10%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=logSoldierName&amp;order=';
 	if($rank != 'logSoldierName')
 	{
-		echo 'ASC';
+		echo 'ASC"><span class="orderheader">Player</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></th>';
 	}
-	echo '"><span class="orderheader">Player</span></a></th>
-	<th width="7%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=logSubset&amp;order=';
+	echo '<th width="10%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=logSubset&amp;order=';
 	if($rank != 'logSubset')
 	{
-		echo 'ASC';
+		echo 'ASC"><span class="orderheader">Audience</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Audience</span></a></th>';
 	}
-	echo '"><span class="orderheader">Audience</span></a></th>
-	<th width="65%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=logMessage&amp;order=';
-	if($rank != 'logMessage')
+	echo '<th width="62%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1&amp;rank=Message&amp;order=';
+	if($rank != 'Message')
 	{
-		echo 'ASC';
+		echo 'ASC"><span class="orderheader">Message</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Message</span></a></th>';
 	}
-	echo '"><span class="orderheader">Message</span></a></th>
-	</tr>';
+	echo '</tr>';
 	// while there are rows to be fetched...
 	while($Messages_r = @mysqli_fetch_assoc($Messages_q))
 	{

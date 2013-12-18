@@ -101,7 +101,7 @@ $banner_image = './images/bf4-logo.png'; // your desired page banner
 **4)** Enter the URL which you would like users to redirect to if they click your banner image.
 
 
-$banner_url = 'http://open-web-community.com/'; // where clicking the banner will take you
+$banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
 
 
 Enjoy!
@@ -109,6 +109,27 @@ Enjoy!
 
 ## Changelog:
 
+12-18-2013:
+- Made code more uniform and removed unnecessary duplicate code and duplicate files
+- Minor bug fixes
+- Added visual indicator to show which collumn is currently ordered and which direction it is ordered
+- Added more comments in code where needed
+
+12-17-2013:
+- Disabled global stats if only one server is in the database
+- Added more graphs
+- Bug fix for battlelog link
+- Fixed a typo
+- Added players of the week
+- Added missing weapon groups
+
+12-16-2013:
+- Global stats pages finished off with menus and more pages
+
+12-15-2013:
+- Global stats added
+- Ranks simplified to speed up pages
+- Maps in maps page ordered by game mode
 
 12-14-2013:
 - SQL injection security fix by only allowing expected inputs

@@ -10,7 +10,18 @@ echo '
 <td>
 <br/>
 <center>
-These are the top players in this server over the last week.
+';
+// if there is a ServerID, this is a server stats page
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	echo 'These are the top players in this server over the last week.';
+}
+// or else this is a global stats page
+else
+{
+	echo 'These are the top players in these servers over the last week.';
+}
+echo '
 </center>
 <br/>
 </td>
@@ -69,91 +80,169 @@ else
 	$order = 'DESC';
 	$nextorder = 'ASC';
 }
-// query players
-$Player_q = @mysqli_query($BF4stats,"
-	SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
-	FROM tbl_sessions tss
-	INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
-	INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-	WHERE ServerID = {$ServerID}
-	AND tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-	GROUP BY tsp.StatsID
-	ORDER BY {$rank} {$order}
-	LIMIT 10
-");
+// if there is a ServerID, this is a server stats page
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	// query players
+	$Player_q = @mysqli_query($BF4stats,"
+		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
+		FROM tbl_sessions tss
+		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
+		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+		WHERE ServerID = {$ServerID}
+		AND tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		GROUP BY tsp.StatsID
+		ORDER BY {$rank} {$order}, SoldierName {$nextorder}
+		LIMIT 20
+	");
+}
+// or else this is a global stats page
+else
+{
+	// query players
+	$Player_q = @mysqli_query($BF4stats,"
+		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
+		FROM tbl_sessions tss
+		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
+		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+		WHERE tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		GROUP BY tsp.StatsID
+		ORDER BY {$rank} {$order}, SoldierName {$nextorder}
+		LIMIT 20
+	");
+}
 if(@mysqli_num_rows($Player_q) != 0)
 {
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th class="headline"><b>Players of the Week</b></th>';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th class="headline"><b>Global Players of the Week</b></th>';
+	}
 	echo '
-	<th class="headline"><b>Players of the Week</b></th>
 	</tr>
 	<tr>
 	<td>
 	<div class="innercontent">
+	<br/>
 	<table width="98%" align="center" border="0">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
 	<th width="17%" style="text-align:left;">Player</th>
-	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Score&amp;order=';
+	';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Score&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1&amp;rank=Score&amp;order=';
+	}
 	if($rank != 'Score')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Score</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Score</span></a></th>';
 	}
-	echo '"><span class="orderheader">Score</span></a></th>
-	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Kills&amp;order=';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Kills&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1&amp;rank=Kills&amp;order=';
+	}
 	if($rank != 'Kills')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Kills</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></th>';
 	}
-	echo '"><span class="orderheader">Kills</span></a></th>
-	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Deaths&amp;order=';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Deaths&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1&amp;rank=Deaths&amp;order=';
+	}
 	if($rank != 'Deaths')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Deaths</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></th>';
 	}
-	echo '"><span class="orderheader">Deaths</span></a></th>
-	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=KDR&amp;order=';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=KDR&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1&amp;rank=KDR&amp;order=';
+	}
 	if($rank != 'KDR')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Kill/Death Ratio</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Kill/Death Ratio</span></a></th>';
 	}
-	echo '"><span class="orderheader">Kill/Death Ratio</span></a></th>
-	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Headshots&amp;order=';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=Headshots&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1&amp;rank=Headshots&amp;order=';
+	}
 	if($rank != 'Headshots')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Headshots</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshots</span></a></th>';
 	}
-	echo '"><span class="orderheader">Headshots</span></a></th>
-	<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=HSR&amp;order=';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;rank=HSR&amp;order=';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th width="13%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1&amp;rank=HSR&amp;order=';
+	}
 	if($rank != 'HSR')
 	{
-		echo 'DESC';
+		echo 'DESC"><span class="orderheader">Headshot Ratio</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder;
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshot Ratio</span></a></th>';
 	}
-	echo '"><span class="orderheader">Headshot Ratio</span></a></th>
-	</tr>';
+	echo '</tr>';
 	// initialize value
 	$count = 0;
 	while($Player_r = @mysqli_fetch_assoc($Player_q))
@@ -170,7 +259,18 @@ if(@mysqli_num_rows($Player_q) != 0)
 		echo '
 		<tr>
 		<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
-		<td width="17%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $Player_ID . '&amp;search=1">' . $Soldier_Name . '</a></td>
+		';
+		// if there is a ServerID, this is a server stats page
+		if(isset($ServerID) AND !is_null($ServerID))
+		{
+			echo '<td width="17%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $Player_ID . '&amp;search=1">' . $Soldier_Name . '</a></td>';
+		}
+		// or else this is a global stats page
+		else
+		{
+			echo '<td width="17%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
+		}
+		echo '
 		<td width="13%" class="tablecontents" style="text-align: left;">' . $Score . '</td>
 		<td width="13%" class="tablecontents" style="text-align: left;">' . $Kills . '</td>
 		<td width="13%" class="tablecontents" style="text-align: left;">' . $Deaths . '</td>
@@ -184,9 +284,18 @@ if(@mysqli_num_rows($Player_q) != 0)
 }
 else
 {
-	echo '<br/><center><font class="information">No session stats found for this server.</font></center><br/>';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		echo '<td width="100%"><br/><center><font class="information">No session stats found for this server over the last week.</font></center><br/>';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<td width="100%"><br/><center><font class="information">No session stats found for these servers over the last week.</font></center><br/>';
+	}
 }
-// free up server stats query memory
+// free up player stats query memory
 @mysqli_free_result($Player_q);
 echo '
 </td>

@@ -19,7 +19,7 @@ body{
 	text-align: left;
 	height: 100%;
 	width: 100%;
-	background: #140C0A;
+	background: #070300;
 	background-image: url("../images/BF4.jpg");
 	background-position: top left;
 	background-repeat: repeat-x;
@@ -117,6 +117,36 @@ a:hover, a:active{
 .orderheader a:hover, .orderheader a:active{
 	color: #FCC742;
 }
+.orderedASCheader{
+	color: #DAA520;
+	padding-left: 20px;
+	padding-right: 10px;
+	background-image: url("../images/ordereda.gif");
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 0% 50%;
+}
+.orderedASCheader a:link, .orderedASCheader a:visited{
+	color: #DAA520;
+}
+.orderedASCheader a:hover, .orderedASCheader a:active{
+	color: #FCC742;
+}
+.orderedDESCheader{
+	color: #DAA520;
+	padding-left: 20px;
+	padding-right: 10px;
+	background-image: url("../images/orderedd.gif");
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: 0% 50%;
+}
+.orderedDESCheader a:link, .orderedDESCheader a:visited{
+	color: #DAA520;
+}
+.orderedDESCheader a:hover, .orderedDESCheader a:active{
+	color: #FCC742;
+}
 .pagination a:link, .pagination a:visited{
 	color: #DAA520;
 }
@@ -135,7 +165,7 @@ th{
 	background-repeat: repeat;
 	height: 30px;
 	padding: 3px;
-	box-shadow: 0px 0px 15px #111;
+	box-shadow: 0px 0px 1px #000;
 }
 .tablecontents{
 	text-align: left;
@@ -143,7 +173,7 @@ th{
 	background-position: left top;
 	background-repeat: repeat;
 	padding: 3px;
-	box-shadow: 0px 0px 5px #111;
+	box-shadow: 0px 0px 1px #111;
 }
 .inputbox{
 	width: 100px;
@@ -153,9 +183,9 @@ th{
 }
 .button{
 	cursor: pointer;
-	background-color: #111111;
+	background-color: transparent;
 	color: #DAA520;
-	border: 1px solid #444444;
+	border: 0px solid #444444;
 }
 .alertbutton{
 	cursor: pointer;
