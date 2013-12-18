@@ -131,7 +131,7 @@ foreach($ServerIDs as $this_ServerID)
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
-	<br/><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $this_ServerID . '"><font size="3">' . $ServerName . '</a></font><br/><br/>
+	<br/><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $this_ServerID . '"><font size="3">' . $ServerName . '</font></a><br/><br/>
 	</td>
 	<td width="22%">
 	<br/><br/><font class="information">Current Players In Server:</font> ' . $players . '<br/><br/>
