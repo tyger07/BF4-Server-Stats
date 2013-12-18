@@ -370,7 +370,7 @@ elseif((!isset($ServerID) OR is_null($ServerID)) AND ((isset($_GET['globalhome']
 	</tr>
 	<tr>
 	<td>
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><font class="information">Currently viewing:</font>' . $clan_name . '\'s Global Server Stats</a><br/>
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><font class="information">Currently viewing:</font> ' . $clan_name . '\'s Global Server Stats</a><br/>
 	</td>
 	</tr>
 	</table>
@@ -380,6 +380,7 @@ elseif((!isset($ServerID) OR is_null($ServerID)) AND ((isset($_GET['globalhome']
 	</td>
 	</tr>
 	</table>
+	<br/>
 	</div>
 	';
 }
