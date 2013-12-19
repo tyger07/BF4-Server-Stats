@@ -6,8 +6,8 @@
 // hide php notices
 error_reporting(E_ALL ^ E_NOTICE);
 
-// include common.php contents
-require_once('./common/common.php');
+// include config.php contents
+require_once('./config/config.php');
 
 // include functions.php contents
 require_once('./common/functions.php');
@@ -36,9 +36,9 @@ echo '
 <link rel="stylesheet" href="./common/stats.css" type="text/css" />
 ';
 
-// connect to this database
-$BF4stats = @mysqli_connect($db_host, $db_uname, $db_pass, $db_name, $db_port) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
-@mysqli_select_db($BF4stats, "$db_name") or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
+// connect to the stats database
+$BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
+@mysqli_select_db($BF4stats, NAME) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to select the stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
 
 // find all servers in this database
 $ServerID_q = @mysqli_query($BF4stats,"
@@ -142,7 +142,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	{
 		$ServerName_r = @mysqli_fetch_assoc($ServerName_q);
 		$ServerName = $ServerName_r['ServerName'];
-		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . preg_replace('/\+/','%2B',$ServerName);
+		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 	}
 	// a database error occured?
 	// oh well, we will have to do something
@@ -201,7 +201,6 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<meta name="keywords" content="Server,Scoreboard,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Info" />
 		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Scoreboard and Info page." />
 		<title>' . $clan_name . ' BF4 Player Stats - Server Info - ' . $ServerName . '</title>
-		<meta http-equiv="refresh" content="60" />
 		';
 	}
 	elseif(isset($_GET['chat']) AND !empty($_GET['chat']))
@@ -311,6 +310,7 @@ echo '
 <body>
 <br/>
 <div id="pagebody">
+<div id="pagebodyback">
 <br/>
 <table width="100%" cellspacing="1">
 <tr> 
@@ -344,7 +344,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	</table>
 	</td>
 	<td width="10%" style="text-align: right;">
-	<br/><a href="' . $battlelog . '" target="_blank"><img src="./images/joinbtn.png" alt="join" class="joinbutton"/></a><br/>
+	<br/><a href="' . $battlelog . '" target="_blank"><img src="./images/joinbtn.png" alt="join" class="imagebutton"/></a><br/>
 	</td>
 	</tr>
 	</table>
@@ -425,7 +425,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	<td width="25%" style="text-align: left">
 	<form action="' . $_SERVER['PHP_SELF'] . '" method="get">
 	<input type="hidden" name="ServerID" value="' . $ServerID . '" />
-	&nbsp; &nbsp; <font class="information">Player:</font>&nbsp;
+	&nbsp; <font class="information">Player:</font>
 	';
 	// try to fill in search box
 	if(isset($SoldierName) AND !empty($SoldierName) AND $SoldierName != 'Not Found')
@@ -476,7 +476,7 @@ elseif((isset($_GET['globalhome']) AND !empty($_GET['globalhome'])) OR (isset($_
 	<td width="35%" style="text-align: left">
 	<form action="' . $_SERVER['PHP_SELF'] . '" method="get">
 	<input type="hidden" name="globalsearch" value="1" />
-	&nbsp; &nbsp; <font class="information">Player:</font>&nbsp;
+	&nbsp; <font class="information">Player:</font>
 	';
 	// try to fill in search box
 	if(isset($SoldierName) AND !empty($SoldierName) AND $SoldierName != 'Not Found')
@@ -495,7 +495,7 @@ elseif((isset($_GET['globalhome']) AND !empty($_GET['globalhome'])) OR (isset($_
 	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1">Home</a>
 	</td>
 	<td width="15%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;globalpotw=1">Players of Week</a>
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1">Players of Week</a>
 	</td>
 	<td width="10%" style="text-align: center">
 	<a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1">Suspicious</a>
@@ -686,6 +686,7 @@ echo '
 </td>
 </tr>
 </table>
+</div>
 </div>
 <br/>
 </body>

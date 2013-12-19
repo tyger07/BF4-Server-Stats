@@ -3,10 +3,11 @@ include_once("class/pData.class.php");
 include_once("class/pDraw.class.php");
 include_once("class/pImage.class.php");
 
-// include common.php contents
-include_once('../common/common.php');
-$BF4stats = mysqli_connect($db_host, $db_uname, $db_pass, $db_name, $db_port);
+// include config.php contents
+include_once('../config/config.php');
+$BF4stats = mysqli_connect(HOST, USER, PASS, NAME, PORT);
 
+// SQL query limit
 $limit = 50;
 
 // check if a server was provided

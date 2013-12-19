@@ -26,7 +26,7 @@ Download the following file:
 
 http://open-web-community.com/bf4stats/BF4Stats.zip
 
-Extract the files.  You may rename index.php to any name of your choice.
+Extract the files.  You may rename index.php (the one in the root folder not the one in the common folder) to any name of your choice.
 
 You may change the appearance of the page by modifying the stats.css file in the common folder.
 
@@ -46,35 +46,39 @@ For example, this would work:
 $clan_name = 'Ty_ger07\'s Clan'; // your gaming clan or organization name
 
 
-**You must fill in the following information in the common.php file found in the common folder**
+**You must fill in the following information in the config.php file found in the config folder**
 
 
 **1)** Input your stats database host, stats database user name, stats database password, and stats database name.
 
 
-$db_host = ''; // database host
+// DATABASE INFORMATION
 
-$db_port = '3306'; // database port. default is 3306
+DEFINE('HOST', '');													// database host address
 
-$db_name = ''; // database name
+DEFINE('PORT', '3306');												// database port - default is 3306
 
-$db_uname = ''; // database user name
+DEFINE('NAME', '');													// database name
 
-$db_pass = ''; // database password
+DEFINE('USER', '');													// database user name - sometimes the same as the database name
+
+DEFINE('PASS', '');													// database password
 
 
 For example:
 
 
-$db_host = '100.200.300.400'; // database host
+// DATABASE INFORMATION
 
-$db_port = '3306'; // database port. default is 3306
+DEFINE('HOST', '100.200.300.400');									// database host address
 
-$db_name = 'database'; // database name
+DEFINE('PORT', '3306');												// database port - default is 3306
 
-$db_uname = 'user'; // database user name
+DEFINE('NAME', 'database');											// database name
 
-$db_pass = 'pass'; // database password
+DEFINE('USER', 'user');												// database user name - sometimes the same as the database name
+
+DEFINE('PASS', 'pass');												// database password
 
 
 **Note:** Some web server providers (such as GoDaddy) use the same value for database name and database user name.
@@ -109,10 +113,19 @@ Enjoy!
 
 ## Changelog:
 
+12-19-2013:
+- Slightly different directory structure moving the config file from the common folder to the config file and renaming it from common.php to config.php
+- Change database connection variables to contstants
+- Made dog tag names in global pages links to global player stats page
+- Better battlelog link
+- Minor bug fixes
+- Removal of map images since they didn't fit the appearance of the page
+- Sleeker appearance
+
 12-18-2013:
 - Made code more uniform and removed unnecessary duplicate code and duplicate files
 - Minor bug fixes
-- Added visual indicator to show which collumn is currently ordered and which direction it is ordered
+- Added visual indicator to show which column is currently ordered and which direction it is ordered
 - Added more comments in code where needed
 
 12-17-2013:

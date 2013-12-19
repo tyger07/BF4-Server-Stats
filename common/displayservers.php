@@ -65,13 +65,10 @@ foreach($ServerIDs as $this_ServerID)
 		if(in_array($map,$map_array))
 		{
 			$map_name = array_search($map,$map_array);
-			// compile map image
-			$map_img = './images/maps/' . $map . '.png';
 		}
 		// this map is missing!
 		else
 		{
-			$map_img = './images/40.png';
 			$map_name = $map;
 		}
 	}
@@ -80,7 +77,6 @@ foreach($ServerIDs as $this_ServerID)
 	{
 		$map = 'Unknown';
 		$ServerName = 'Unknown';
-		$map_img = './images/40.png';
 	}
 	// free up stats query memory
 	@mysqli_free_result($CurrentMap_q);
@@ -126,8 +122,7 @@ foreach($ServerIDs as $this_ServerID)
 	<tr>
 	<td width="100%" style="text-align: left;">
 	<br/>
-	<div class="mapimage" style="background-image: url(' . $map_img . '); width: 98%;">
-	<div class="simplecontent">
+	<div class="shadowcontent">
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
@@ -145,8 +140,8 @@ foreach($ServerIDs as $this_ServerID)
 	</tr>
 	<tr>
 	<td width="35%">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $this_ServerID . '"><img src="./images/viewstatsbtn.png" alt="view stats"/></a> &nbsp;
-	<a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . preg_replace('/\+/','%2B',$ServerName) . '" target="_blank"><img src="./images/joinbtn.png" alt="join"/></a><br/><br/>
+	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $this_ServerID . '"><img src="./images/viewstatsbtn.png" alt="view stats" class="imagebutton" /></a> &nbsp;
+	<a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName) . '" target="_blank"><img src="./images/joinbtn.png" alt="join" class="imagebutton" /></a><br/><br/>
 	</td>
 	<td width="22%">
 	<font class="information">Players Logged:</font> ' . $total_players . '<br/><br/><br/>
@@ -159,7 +154,6 @@ foreach($ServerIDs as $this_ServerID)
 	</td>
 	</tr>
 	</table>
-	</div>
 	</div>
 	</td>
 	</tr>

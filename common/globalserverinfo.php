@@ -24,7 +24,7 @@ if(@mysqli_num_rows($ServerTotals_q) != 0)
 	<div class="middlecontent">
 	<br/><center>Or view global stats from all of ' . $clan_name . '\'s servers:</center>
 	<br/>
-	<div class="simplecontent" style="width: 98%;">
+	<div class="shadowcontent">
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
@@ -42,7 +42,7 @@ if(@mysqli_num_rows($ServerTotals_q) != 0)
 	</tr>
 	<tr>
 	<td width="35%">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><img src="./images/viewstatsbtn.png" alt="view stats"/></a><br/><br/>
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><img src="./images/viewstatsbtn.png" alt="view stats" class="imagebutton" /></a><br/><br/>
 	</td>
 	<td width="22%">
 	<font class="information">Total Kills:</font> ' . $total_kills . '<br/><br/><br/>
@@ -68,7 +68,7 @@ else
 	<br/>
 	<br/><div class="middlecontent"><br/><center>Or view global stats from all of ' . $clan_name . ' servers:</center><br/></div><br/>
 	<br/>
-	<div class="simplecontent">
+	<div class="shadowcontent">
 	<table width="95%" align="center" border="0">
 	<tr>
 	<td width="35%">
@@ -86,7 +86,7 @@ else
 	</tr>
 	<tr>
 	<td width="35%">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><img src="./images/viewstatsbtn.png" alt="view stats"/></a><br/><br/>
+	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><img src="./images/viewstatsbtn.png" alt="view stats" class="imagebutton" /></a><br/><br/>
 	</td>
 	<td width="22%">
 	<font class="information">Total Kills:</font> Unknown<br/><br/><br/>

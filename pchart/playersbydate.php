@@ -3,10 +3,11 @@ include_once("class/pData.class.php");
 include_once("class/pDraw.class.php");
 include_once("class/pImage.class.php");
 
-// include common.php contents
-include_once('../common/common.php');
-$BF4stats = mysqli_connect($db_host, $db_uname, $db_pass, $db_name, $db_port);
-// $Date = date("M d", strtotime($row['Date']));
+// include config.php contents
+include_once('../config/config.php');
+$BF4stats = mysqli_connect(HOST, USER, PASS, NAME, PORT);
+
+// SQL query limit
 $limit = 7;
 
 // check if a server was provided
@@ -72,12 +73,12 @@ $TextSettings = array("Align"=>TEXT_ALIGN_MIDDLEMIDDLE
 // if so, this is a server stats page
 if(isset($_GET['server']) AND !empty($_GET['server']))
 {
-	$myPicture->drawText(297,18,"Average number of players in server in last ". $limit ." days.",$TextSettings);
+	$myPicture->drawText(297,18,"Average number of players in server in last ". $limit ." days of server activity.",$TextSettings);
 }
 // this must be a global stats page
 else
 {
-	$myPicture->drawText(297,18,"Average number of players in servers in last ". $limit ." days.",$TextSettings);
+	$myPicture->drawText(297,18,"Average number of players in servers in last ". $limit ." days of server activity.",$TextSettings);
 }
 
 $myPicture->setShadow(FALSE);

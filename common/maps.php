@@ -143,12 +143,12 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(isset($ServerID) AND !is_null($ServerID))
 	{
-		echo '<br/><center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
+		echo '<br/><center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<br/><center><img src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
+		echo '<br/><center><img src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
 	}
 	echo '
 	<table width="98%" align="center" border="0">

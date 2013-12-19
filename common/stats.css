@@ -26,7 +26,7 @@ body{
 	background-attachment: fixed;
 	font-family: Arial, Arial, Arial, sans-serif;
 	font-size: 12px;
-	color: #BBBBBB;
+	color: #CCCCCC;
 }
 a, a:visited{
 	color: #DAA520;
@@ -36,18 +36,26 @@ a:hover, a:active{
 	color: #FCC742;
 	text-decoration: none;
 }
-.joinbutton{
-	box-shadow: 0px 0px 15px #666;
+.imagebutton{
+	box-shadow: 2px 2px 20px 2px rgba(0,0,0,0.5)
+}
+.imagebutton:hover, .imagebutton:active{
+	box-shadow: 1px 1px 10px 1px rgba(30,30,30,0.5)
 }
 #pagebody{
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
-	background-image: url("../images/50.png"), linear-gradient(170deg, rgba(100,000,000,0.6), rgba(000,000,100,0.4), rgba(000,000,100,0.3));
+	background-image: linear-gradient(170deg, rgba(100,000,000,0.4), rgba(000,000,100,0.4), rgba(000,000,100,0.3));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;
 	box-shadow: 0px 0px 15px #000;
+}
+/* split these into two separate divs for compatibility view reasons so that there is some change in opacity from background */
+#pagebodyback{
+	background-image: url("../images/50.png");
+	border-radius: 10px;
 }
 .topcontent{
 	margin-left: auto;
@@ -59,7 +67,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	width: 100%;
-	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
+	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.4), rgba(040,040,040,0.2), rgba(000,000,020,0.4));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;
@@ -76,7 +84,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	width: 100%;
-	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.2), rgba(000,000,020,0.8));
+	background-image: url("../images/40.png"), linear-gradient(170deg, rgba(020,000,000,0.4), rgba(040,040,040,0.2), rgba(000,000,020,0.4));
 	background-position: left top;
 	background-repeat: repeat;
 	border-radius: 10px;
@@ -87,16 +95,13 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 }
-.simplecontent{
-	background-image: url("../images/50.png"), linear-gradient(170deg, rgba(020,000,000,0.8), rgba(040,040,040,0.4), rgba(000,000,020,0.8));
+.shadowcontent{
+	margin-left: auto;
+	margin-right: auto;
+	width: 98%;
+	background-image: linear-gradient(170deg, rgba(010,010,020,0.4), rgba(040,040,040,0.2), rgba(010,010,020,0.4));
+	box-shadow: 2px 2px 30px 2px rgba(0,0,0,0.6);
 	border-radius: 10px;
-}
-.mapimage{
-	background-position: left center;
-	background-repeat: repeat;
-	background-size: 100% auto;
-	border-radius: 10px;
-	box-shadow: 2px 2px 20px 2px rgba(0,0,0,0.5);
 }
 .prettyheader{
 	color: #FDD853;
@@ -157,6 +162,7 @@ a:hover, a:active{
 	margin-left: auto;
 	margin-right: auto;
 	padding: 3px;
+	border-radius: 2px;
 }
 th{
 	font-weight: normal;
@@ -166,6 +172,7 @@ th{
 	height: 30px;
 	padding: 3px;
 	box-shadow: 0px 0px 1px #000;
+	border-radius: 2px;
 }
 .tablecontents{
 	text-align: left;
@@ -176,10 +183,10 @@ th{
 	box-shadow: 0px 0px 1px #111;
 }
 .inputbox{
-	width: 100px;
-	background-color: #111111;
+	width: 90px;
+	background-color: transparent;
 	color: #BBBBBB;
-	border: 1px solid #444444;
+	border: 1px solid #222222;
 }
 .button{
 	cursor: pointer;
@@ -195,7 +202,8 @@ th{
 }
 .headline{
 	font-size: 14px;
-	color: #CCCCCC;
+	color: #DDDDDD;
+	border-radius: 4px;
 }
 .teamname{
 	color: #B2DDED;
@@ -204,8 +212,8 @@ th{
 	color: #FF0000;
 }
 .information{
-	color: #888888;
+	color: #AAAAAA;
 }
 .footertext{
-	color: #777777;
+	color: #888888;
 }

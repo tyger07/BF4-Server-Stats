@@ -334,13 +334,10 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			if(in_array($map,$map_array))
 			{
 				$map_name = array_search($map,$map_array);
-				// compile map image
-				$map_img = './images/maps/' . $map . '.png';
 			}
 			// this map is missing!
 			else
 			{
-				$map_img = './images/40.png';
 				$map_name = $map;
 			}
 			echo '
@@ -348,8 +345,7 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			<br/>
 			<table width="98%" align="center" border="0" class="prettytable">
 			<tr>
-			<td class="mapimage" style="background-image: url(' . $map_img . ');">
-			<div class="simplecontent">
+			<td class="shadowcontent">
 			<table width="80%" align="center" border="0">
 			<tr>
 			<td width="10%" style="text-align:left"><br/><br/>&nbsp;<br/><br/></td>
@@ -366,7 +362,6 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/><br/></td>
 			</tr>
 			</table>
-			</div>
 			</td>
 			</tr>
 			</table>
@@ -454,19 +449,15 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 			if(in_array($map,$map_array))
 			{
 				$map_name = array_search($map,$map_array);
-				// compile map image
-				$map_img = './images/maps/' . $map . '.png';
 			}
 			// this map is missing!
 			else
 			{
-				$map_img = './images/40.png';
 				$map_name = $map;
 			}
 			echo '
 			<tr>
-			<td colspan="2" class="mapimage" style="background-image: url(' . $map_img . ');">
-			<div class="simplecontent">
+			<td colspan="2" class="shadowcontent">
 			';
 		}
 		else
@@ -556,7 +547,6 @@ function scoreboard($server_ID, $server_name, $mode_array, $map_array, $squad_ar
 						<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/><br/></td>
 						</tr>
 						</table>
-						</div>
 						</td>
 						</tr>
 						<tr>

@@ -70,10 +70,22 @@ if(@mysqli_num_rows($Server_q) != 0)
 	$avghsr = round($Server_r['AvgHSR'],2);
 	$avgkdr = round($Server_r['AvgKDR'],2);
 	$rounds = $Server_r['SumRounds'];
-	// include players.php contents
-	echo '<center><img src="pchart/players.php?server=' . $ServerID . '" alt="Minimum, maximum and average players" title="Minimum, maximum and average players" height="300" width="600" /></center>';
-	// include joinsleaves.php contents
-	echo '<center><img src="pchart/joinsleaves.php?server=' . $ServerID . '" alt="Joins and leaves from server" title="Joins and leaves from server" height="300" width="600" /></center>';
+	// if there is a ServerID, this is a server stats page
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		// include players.php contents
+		echo '<center><img src="pchart/players.php?server=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center>';
+		// include joinsleaves.php contents
+		echo '<center><img src="pchart/joinsleaves.php?server=' . $ServerID . '" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
+	}
+	// or else this is a global stats page
+	else
+	{
+		// include players.php contents
+		echo '<center><img src="pchart/players.php" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center>';
+		// include joinsleaves.php contents
+		echo '<center><img src="pchart/joinsleaves.php" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
+	}
 	echo '
 	<table width="90%" align="center" border="0"><tr>
 	<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
@@ -123,14 +135,4 @@ echo '
 </table>
 </div>
 ';
-// if there is a ServerID, this is a server stats page
-// it wouldn't make much sense to try to make a global scoreboard, would it?
-if(isset($ServerID) AND !is_null($ServerID))
-{
-	echo '<br/><br/>';
-	// show scoreboard from functions file
-	// input as: server id, server name, array of game modes, array of map names, array of squad names, array of country names, db, origin
-	// we  tell it that the origin in serverstats to affect where rank and order links take it
-	scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_array, $country_array, $BF4stats, 'serverstats');
-}
 ?>
