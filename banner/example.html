@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="content-language" content="en-gb" />
+		<meta http-equiv="content-style-type" content="text/css" />
+		<meta http-equiv="imagetoolbar" content="no" />
+		<meta name="resource-type" content="document" />
+		<meta name="distribution" content="global" />
+		<meta name="copyright" content="2013 Open-Web-Community http://open-web-community.com/" />
+		<meta name="keywords" content="banner example" />
+		<meta name="description" content="banner example" />
+		<title>banner example</title>
+	</head>	
+	<body style="background: url('../images/BF4.jpg'); background-position: top center; background-attachment: fixed; background-color: #000000; background-repeat: repeat-x; color: #000000; font-size: 12px;">
+		<br/><br/>
+		<center>
+			<table width="80%" border="0" align="center">
+				<tr>
+					<td width="33%" valign="top">
+						<br/>
+						<center><b>Displayed as image:</b>
+						<br/>
+						<img src="banner.php?ServerID=3" alt="server" /></center>
+						<br/><br/>
+					</td>
+					<td width="33%" valign="top">
+						<br/>
+						<center><b>Displayed as default iframe:</b>
+						<br/><br/>
+						<iframe src="banner.php?ServerID=3&amp;data=1" width="220px" height="674px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
+						<br/><br/>
+					</td>
+					<td width="33%" valign="top">
+						<br/>
+						<center><b>Displayed as customized iframe:</b>
+						<br/><br/>
+						<iframe src="banner.php?ServerID=3&amp;data=1&amp;bgcolor=CCCCCC&amp;fontcolor=000000&amp;linkcolor=995555&amp;sectionbgcolor=AAAAAA&amp;sectionfontcolor=333333" width="220px" height="674px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
+						<br/><br/>
+					</td>
+				</tr>
+				<tr>
+				<td colspan="3" bgcolor="#888888" style="padding: 8px;">
+					<b>Code for displaying as image:</b><br/><br/>
+					&lt;img src="banner.php?ServerID=3" alt="server" /&gt;
+					<br/><br/><br/>
+					<b>Code for displaying as default iframe:</b><br/><br/>
+					&lt;iframe src="banner.php?ServerID=3&amp;data=1" width="220px" height="674px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;
+					<br/><br/><br/>
+					<b>Code for displaying as customized iframe:</b><br/><br/>
+					&lt;iframe src="banner.php?ServerID=3&amp;data=1&amp;bgcolor=CCCCCC&amp;fontcolor=000000&amp;linkcolor=995555&amp;sectionbgcolor=AAAAAA&amp;sectionfontcolor=333333" width="220px" height="674px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;
+					<br/><br/><br/>
+					<b>Help with URL Query String Codes:</b><br/><br/>
+					<b>ServerID</b>: (required) This is the server ID of the server you are trying to display.  This is required.<br/>
+					ServerID=&lt;number&gt;<br/><br/>
+					<b>data</b>: (optional) Without "Data=1" in the URL query string, the banner will be displayed as an image.<br/>
+					data=1<br/><br/>
+					<b>The following query stringes require "Data=1" to be in the URL query string:</b><br/><br/>
+					<b>bgcolor</b>: (optional) This is the background color.  This must be a 6-digit hexadecimal color.<br/>
+					bgcolor=&lt;number&gt;<br/><br/>
+					<b>fontcolor</b>: (optional) This is the text font color.  This must be a 6-digit hexadecimal color.<br/>
+					fontcolor=&lt;number&gt;<br/><br/>
+					<b>linkcolor</b>: (optional) This is the link font color.  This must be a 6-digit hexadecimal color.<br/>
+					linkcolor=&lt;number&gt;<br/><br/>
+					<b>sectionbgcolor</b>: (optional) This is the background color of certain sections.  This must be a 6-digit hexadecimal color.<br/>
+					sectionbgcolor=&lt;number&gt;<br/><br/>
+					<b>sectionfontcolor</b>: (optional) This is the font color of certain sections.  This must be a 6-digit hexadecimal color.<br/>
+					sectionfontcolor=&lt;number&gt;<br/>
+				</td>
+				</tr>
+			</table>
+		</center>
+		<br/>
+	</body>
+</html>

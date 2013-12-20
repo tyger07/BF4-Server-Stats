@@ -590,65 +590,157 @@ echo '
 // now lets check our stats page sessions
 // stats page sessions are used to monitor how many people are viewing these stats pages
 // check to see if the session table exists
-@mysqli_query($BF4stats,"
-	CREATE TABLE IF NOT EXISTS `ses_{$ServerID}_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default '00000000000', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
-");
+// if there is a serverID, use it
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	@mysqli_query($BF4stats,"
+		CREATE TABLE IF NOT EXISTS `ses_{$ServerID}_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default '00000000000', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+	");
+}
+// otherwise we are global with no id
+else
+{
+	@mysqli_query($BF4stats,"
+		CREATE TABLE IF NOT EXISTS `ses_global_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default '00000000000', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+	");
+}
 // get user's IP address
 $userip = $_SERVER["REMOTE_ADDR"];
 // initialize values
 $now_timestamp = time();
 $old = $now_timestamp - 1800;
 // check if this user already has a session stored
-$exist_query = @mysqli_query($BF4stats,"
-	SELECT `IP`
-	FROM `ses_{$ServerID}_tbl`
-	WHERE `IP` = '{$userip}'
-");
-if(@mysqli_num_rows($exist_query)!=0)
+// if there is a serverID, use it
+if(isset($ServerID) AND !is_null($ServerID))
 {
-	// user IP found, update timestamp
-	@mysqli_query($BF4stats,"
-		UPDATE `ses_{$ServerID}_tbl`
-		SET `timestamp` = {$now_timestamp}
+	$exist_query = @mysqli_query($BF4stats,"
+		SELECT `IP`
+		FROM `ses_{$ServerID}_tbl`
 		WHERE `IP` = '{$userip}'
 	");
 }
+// otherwise we are global with no id
 else
 {
-	// user IP not found, add it to session table
-	@mysqli_query($BF4stats,"
-		INSERT INTO `ses_{$ServerID}_tbl` (`IP`, `timestamp`)
-		VALUES ('{$userip}', {$now_timestamp})
+	$exist_query = @mysqli_query($BF4stats,"
+		SELECT `IP`
+		FROM `ses_global_tbl`
+		WHERE `IP` = '{$userip}'
 	");
+}
+// user IP found, update timestamp
+if(@mysqli_num_rows($exist_query)!=0)
+{
+	// if there is a serverID, use it
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		@mysqli_query($BF4stats,"
+			UPDATE `ses_{$ServerID}_tbl`
+			SET `timestamp` = {$now_timestamp}
+			WHERE `IP` = '{$userip}'
+		");
+	}
+	// otherwise we are global with no id
+	else
+	{
+		@mysqli_query($BF4stats,"
+			UPDATE `ses_global_tbl`
+			SET `timestamp` = {$now_timestamp}
+			WHERE `IP` = '{$userip}'
+		");
+	}
+}
+// user IP not found, add it to session table
+else
+{
+	// if there is a serverID, use it
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		@mysqli_query($BF4stats,"
+			INSERT INTO `ses_{$ServerID}_tbl` (`IP`, `timestamp`)
+			VALUES ('{$userip}', {$now_timestamp})
+		");
+	}
+	// otherwise we are global with no id
+	else
+	{
+		@mysqli_query($BF4stats,"
+			INSERT INTO `ses_global_tbl` (`IP`, `timestamp`)
+			VALUES ('{$userip}', {$now_timestamp})
+		");
+	}
 }
 // free up exist query memory
 @mysqli_free_result($exist_query);
 // find if there are sessions older than 30 minutes
 // check this to avoid optimizing the table (slow) when it isn't necessary
-$old_query = @mysqli_query($BF4stats,"
-	SELECT `timestamp`
-	FROM `ses_{$ServerID}_tbl`
-	WHERE `timestamp` <= {$old}
-");
-if(@mysqli_num_rows($old_query) != 0)
+// if there is a serverID, use it
+if(isset($ServerID) AND !is_null($ServerID))
 {
-	// remove sessions older than 30 minutes
-	@mysqli_query($BF4stats,"
-		DELETE FROM `ses_{$ServerID}_tbl`
+	$old_query = @mysqli_query($BF4stats,"
+		SELECT `timestamp`
+		FROM `ses_{$ServerID}_tbl`
 		WHERE `timestamp` <= {$old}
 	");
-	@mysqli_query($BF4stats,"
-		OPTIMIZE TABLE `ses_{$ServerID}_tbl`
+}
+// otherwise we are global with no ID
+else
+{
+	$old_query = @mysqli_query($BF4stats,"
+		SELECT `timestamp`
+		FROM `ses_global_tbl`
+		WHERE `timestamp` <= {$old}
 	");
+}
+// remove sessions older than 30 minutes
+if(@mysqli_num_rows($old_query) != 0)
+{
+	// if there is a serverID, use it
+	if(isset($ServerID) AND !is_null($ServerID))
+	{
+		@mysqli_query($BF4stats,"
+			DELETE FROM `ses_{$ServerID}_tbl`
+			WHERE `timestamp` <= {$old}
+		");
+		// optimize this session table
+		@mysqli_query($BF4stats,"
+			OPTIMIZE TABLE `ses_{$ServerID}_tbl`
+		");
+	}
+	// otherwise we are global with no id
+	else
+	{
+		@mysqli_query($BF4stats,"
+			DELETE FROM `ses_global_tbl`
+			WHERE `timestamp` <= {$old}
+		");
+		// optimize this session table
+		@mysqli_query($BF4stats,"
+			OPTIMIZE TABLE `ses_global_tbl`
+		");
+	}
 }
 // free up old query memory
 @mysqli_free_result($old_query);
 // count all sessions
-$ses_count = @mysqli_query($BF4stats,"
-	SELECT count(`IP`) as ses
-	FROM `ses_{$ServerID}_tbl`
-	WHERE 1
-");
+// if there is a serverID, use it
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	$ses_count = @mysqli_query($BF4stats,"
+		SELECT count(`IP`) as ses
+		FROM `ses_{$ServerID}_tbl`
+		WHERE 1
+	");
+}
+// otherwise we are global with no ide
+else
+{
+	$ses_count = @mysqli_query($BF4stats,"
+		SELECT count(`IP`) as ses
+		FROM `ses_global_tbl`
+		WHERE 1
+	");
+}
 if(@mysqli_num_rows($ses_count) != 0)
 {
 	$ses_row = @mysqli_fetch_assoc($ses_count);
@@ -668,7 +760,7 @@ $mtime = $mtime[1] + $mtime[0];
 $endtime = $mtime;
 $totaltime = round(($endtime - $starttime),3);
 // display total page load time
-echo '<center><font class="footertext">server made page in ' . $totaltime . ' seconds</font></center>';
+echo '<center><font class="footertext">server compiled page in ' . $totaltime . ' seconds</font></center>';
 // display total server memory used
 echo '<center><font class="footertext">' . round(memory_get_usage(false)/1024,0) . ' KB of server memory used</font></center>';
 echo '

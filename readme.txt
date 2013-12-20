@@ -26,7 +26,7 @@ Download the following file:
 
 http://open-web-community.com/bf4stats/BF4Stats.zip
 
-Extract the files.  You may rename index.php (the one in the root folder not the one in the common folder) to any name of your choice.
+Extract the files.
 
 You may change the appearance of the page by modifying the stats.css file in the common folder.
 
@@ -113,9 +113,13 @@ Enjoy!
 
 ## Changelog:
 
+12-20-2013:
+- Minor bug fix with counting sessions on the index page and global stats pages
+- Added server banner generator for generating server banners for website homepage
+
 12-19-2013:
-- Slightly different directory structure moving the config file from the common folder to the config file and renaming it from common.php to config.php
-- Change database connection variables to contstants
+- Slightly different directory structure moving the config file from the common folder to the config folder and renaming it from common.php to config.php
+- Change database connection variables to constants
 - Made dog tag names in global pages links to global player stats page
 - Better battlelog link
 - Minor bug fixes

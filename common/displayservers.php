@@ -75,7 +75,7 @@ foreach($ServerIDs as $this_ServerID)
 	// some sort of error occured
 	else
 	{
-		$map = 'Unknown';
+		$map_name = 'Unknown';
 		$ServerName = 'Unknown';
 	}
 	// free up stats query memory
@@ -116,7 +116,7 @@ foreach($ServerIDs as $this_ServerID)
 	{
 		$sessions = 'Unknown';
 	}
-	// free up stats query memory
+	// free up session query memory
 	@mysqli_free_result($Session_q);
 	echo '
 	<tr>
