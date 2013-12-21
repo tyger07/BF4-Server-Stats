@@ -288,7 +288,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		if($player1 !== 0)
 		{
 			// player 1 name text
-			imagestring($base, 2, 30, 155, $player1 .':', $dark);
+			imagestring($base, 2, 30, 155, $player1, $dark);
 			// player 1 score
 			imagestring($base, 2, ((imagesx($base) - (strlen($pscore1) * 6)) - 30), 155, $pscore1, $dark);
 		}
@@ -382,7 +382,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// background color?
 	if(isset($_GET['bgcolor']) AND !empty($_GET['bgcolor']))
 	{
-		$bgcolor = $_GET['bgcolor'];
+		$bgcolor = mysqli_real_escape_string($BF4stats, $_GET['bgcolor']);
 	}
 	// use default
 	else
@@ -392,7 +392,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// font color?
 	if(isset($_GET['fontcolor']) AND !empty($_GET['fontcolor']))
 	{
-		$fontcolor = $_GET['fontcolor'];
+		$fontcolor = mysqli_real_escape_string($BF4stats, $_GET['fontcolor']);
 	}
 	// use default
 	else
@@ -402,7 +402,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// link color?
 	if(isset($_GET['linkcolor']) AND !empty($_GET['linkcolor']))
 	{
-		$linkcolor = $_GET['linkcolor'];
+		$linkcolor = mysqli_real_escape_string($BF4stats, $_GET['linkcolor']);
 	}
 	// use default
 	else
@@ -412,7 +412,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// section font color?
 	if(isset($_GET['sectionfontcolor']) AND !empty($_GET['sectionfontcolor']))
 	{
-		$sectionfontcolor = $_GET['sectionfontcolor'];
+		$sectionfontcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionfontcolor']);
 	}
 	// use default
 	else
@@ -422,7 +422,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// section background color?
 	if(isset($_GET['sectionbgcolor']) AND !empty($_GET['sectionbgcolor']))
 	{
-		$sectionbgcolor = $_GET['sectionbgcolor'];
+		$sectionbgcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionbgcolor']);
 	}
 	// use default
 	else
@@ -451,7 +451,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 			background-color: #' . $bgcolor . ';
 			background: #' . $bgcolor . '
 			font-family: Arial, Arial, Arial, sans-serif;
-			font-size: 11px;
+			font-size: 12px;
 			color: #' . $fontcolor . ';
 		}
 		a, a:visited, a:hover, a:active{
@@ -463,7 +463,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 			border-width: 1px;
 			border-color: #000000;
 			width: 214px;
-			height: 668px;
+			height: 938px;
 			padding: 2px;
 		}
 		.section{
@@ -488,8 +488,8 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		$CurrentMap_r = @mysqli_fetch_assoc($CurrentMap_q);
 		$map = $CurrentMap_r['mapName'];
 		$server = $CurrentMap_r['ServerName'];
-		$servername = substr($CurrentMap_r['ServerName'],0,31);
-		if(strlen($CurrentMap_r['ServerName']) > 31)
+		$servername = substr($CurrentMap_r['ServerName'],0,30);
+		if(strlen($CurrentMap_r['ServerName']) > 30)
 		{
 			$servername .= '..';
 		}
@@ -563,26 +563,26 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	<center>
 	<table border="0" align="center" width="198px" style="padding: 1px;">
 	<tr>
-	<td width="50%" style="text-align: left;">
+	<td width="30%" style="text-align: left;">
 	Players:
 	</td>
-	<td width="50%" style="text-align: right;">
+	<td width="70%" style="text-align: right;">
 	' . $players . '/' . $slots . '
 	</td>
 	</tr>
 	<tr>
-	<td width="50%" style="text-align: left;">
+	<td width="30%" style="text-align: left;">
 	Map:
 	</td>
-	<td width="50%" style="text-align: right;">
+	<td width="70%" style="text-align: right;">
 	' . $map_name . '
 	</td>
 	</tr>
 	<tr>
-	<td width="50%" style="text-align: left;">
+	<td width="30%" style="text-align: left;">
 	Mode:
 	</td>
-	<td width="50%" style="text-align: right;">
+	<td width="70%" style="text-align: right;">
 	' . $mode_name . '
 	</td>
 	</tr>
@@ -630,7 +630,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	{
 		echo '
 		<center>
-		<table border="0" align="center" width="198px" style="padding: 2px;">
+		<table border="0" align="center" width="198px" style="padding: 1px;">
 		<tr>
 		';
 		// initialize value
@@ -687,10 +687,10 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	}
 	// free up tickets query memory
 	@mysqli_free_result($Tickets_q);
-	// display top current players
+	// display online players
 	echo '
 	<div class="section"><b>Online Players:</b></div>
-	<div style="height: 184px; overflow-y: auto; overflow-x: hidden;">
+	<div style="height: 405px; overflow-y: auto; overflow-x: hidden;">
 	';
 	// initialize value
 	$count = 0;
@@ -726,6 +726,20 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		echo '
 		</table>
 		</center>';
+	}
+	else
+	{
+		echo '
+		<center>
+		<table border="0" align="center" width="100%" style="padding: 2px;">
+		<tr>
+		<td width="100%" style="text-align: left;">
+		No players online.
+		</td>
+		</tr>
+		</table>
+		</center>
+		';
 	}
 	echo '</div>';
 	// free up player scores query memory
@@ -770,6 +784,20 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		echo '
 		</table>
 		</center>';
+	}
+	else
+	{
+		echo '
+		<center>
+		<table border="0" align="center" width="100%" style="padding: 2px;">
+		<tr>
+		<td width="100%" style="text-align: left;">
+		No players found.
+		</td>
+		</tr>
+		</table>
+		</center>
+		';
 	}
 	// free up player scores query memory
 	@mysqli_free_result($Score_q);
@@ -856,7 +884,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 			background-color: #' . $bgcolor . ';
 			background: #' . $bgcolor . '
 			font-family: Arial, Arial, Arial, sans-serif;
-			font-size: 11px;
+			font-size: 12px;
 			color: #' . $fontcolor . ';
 		}
 		a, a:visited, a:hover, a:active{
