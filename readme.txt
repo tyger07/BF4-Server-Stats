@@ -113,6 +113,9 @@ Enjoy!
 
 ## Changelog:
 
+12-22-2013:
+- More server banner generator help in example file and an additional option to adjust online player count
+
 12-20-2013:
 - Minor bug fix with counting sessions on the index page and global stats pages
 - Added server banner generator for generating server banners for website homepage

@@ -429,6 +429,23 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	{
 		$sectionbgcolor = '0A0C0F';
 	}
+	// online player count?
+	if(isset($_GET['onlinecount']) AND !empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
+	{
+		$onlinecount = mysqli_real_escape_string($BF4stats, $_GET['onlinecount']);
+	}
+	// use default
+	else
+	{
+		$onlinecount = 10;
+	}
+	// figure out this DIV's height based on number of players variable
+	// online count section height in pixels
+	$onlineheight = ($onlinecount * 20) + 6;
+	// total page content height based on onlineheight
+	$contentheight = 530 + $onlineheight;
+	
+	// echo out the header
 	echo '
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -456,6 +473,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		}
 		a, a:visited, a:hover, a:active{
 			color: #' . $linkcolor . ';
+			font-size: 12px;
 			text-decoration: none;
 		}
 		#content{
@@ -463,13 +481,21 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 			border-width: 1px;
 			border-color: #000000;
 			width: 214px;
-			height: 938px;
+			height: ' . $contentheight . 'px;
 			padding: 2px;
+			font-size: 12px;
 		}
 		.section{
 			background-color: #' . $sectionbgcolor . ';
 			color: #' . $sectionfontcolor . ';
 			padding: 4px;
+			font-size: 12px;
+		}
+		.online{
+			height: ' . $onlineheight . 'px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			font-size: 12px;
 		}
 	</style>
 	</head>	
@@ -613,7 +639,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 			echo '
 			<tr>
 			<td width="50%" style="text-align: left;">
-			Team' . $team . ':
+			Team ' . $team . ':
 			</td>
 			<td width="50%" style="text-align: right;">
 			' . $score . '/' . $winning . '
@@ -690,7 +716,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// display online players
 	echo '
 	<div class="section"><b>Online Players:</b></div>
-	<div style="height: 405px; overflow-y: auto; overflow-x: hidden;">
+	<div class="online">
 	';
 	// initialize value
 	$count = 0;
@@ -803,6 +829,12 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	@mysqli_free_result($Score_q);
 	echo '
 	</div>
+	<br/>
+	suggested iframe size:<br/>
+	';
+	$suggestheight = $contentheight + 6;
+	echo '
+	width: 220px height: ' . $suggestheight . 'px
 	</body>
 	</html>
 	';
@@ -815,7 +847,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	// background color?
 	if(isset($_GET['bgcolor']) AND !empty($_GET['bgcolor']))
 	{
-		$bgcolor = $_GET['bgcolor'];
+		$bgcolor = mysqli_real_escape_string($BF4stats, $_GET['bgcolor']);
 	}
 	// use default
 	else
@@ -825,7 +857,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	// font color?
 	if(isset($_GET['fontcolor']) AND !empty($_GET['fontcolor']))
 	{
-		$fontcolor = $_GET['fontcolor'];
+		$fontcolor = mysqli_real_escape_string($BF4stats, $_GET['fontcolor']);
 	}
 	// use default
 	else
@@ -835,7 +867,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	// link color?
 	if(isset($_GET['linkcolor']) AND !empty($_GET['linkcolor']))
 	{
-		$linkcolor = $_GET['linkcolor'];
+		$linkcolor = mysqli_real_escape_string($BF4stats, $_GET['linkcolor']);
 	}
 	// use default
 	else
@@ -845,7 +877,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	// section font color?
 	if(isset($_GET['sectionfontcolor']) AND !empty($_GET['sectionfontcolor']))
 	{
-		$sectionfontcolor = $_GET['sectionfontcolor'];
+		$sectionfontcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionfontcolor']);
 	}
 	// use default
 	else
@@ -855,13 +887,30 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	// section background color?
 	if(isset($_GET['sectionbgcolor']) AND !empty($_GET['sectionbgcolor']))
 	{
-		$sectionbgcolor = $_GET['sectionbgcolor'];
+		$sectionbgcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionbgcolor']);
 	}
 	// use default
 	else
 	{
 		$sectionbgcolor = '0A0C0F';
 	}
+	// online player count?
+	if(isset($_GET['onlinecount']) AND !empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
+	{
+		$onlinecount = mysqli_real_escape_string($BF4stats, $_GET['onlinecount']);
+	}
+	// use default
+	else
+	{
+		$onlinecount = 10;
+	}
+	// figure out this DIV's height based on number of players variable
+	// online count section height in pixels
+	$onlineheight = ($onlinecount * 20) + 6;
+	// total page content height based on onlineheight
+	$contentheight = 530 + $onlineheight;
+	
+	// echo out the header
 	echo '
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -889,6 +938,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 		}
 		a, a:visited, a:hover, a:active{
 			color: #' . $linkcolor . ';
+			font-size: 12px;
 			text-decoration: none;
 		}
 		#content{
@@ -896,13 +946,21 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 			border-width: 1px;
 			border-color: #000000;
 			width: 214px;
-			height: 668px;
+			height: ' . $contentheight . 'px;
 			padding: 2px;
+			font-size: 12px;
 		}
 		.section{
 			background-color: #' . $sectionbgcolor . ';
 			color: #' . $sectionfontcolor . ';
 			padding: 4px;
+			font-size: 12px;
+		}
+		.online{
+			height: ' . $onlineheight . 'px;
+			overflow-y: auto;
+			overflow-x: hidden;
+			font-size: 12px;
 		}
 	</style>
 	</head>	
@@ -914,6 +972,12 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	<br/>
 	You must provide a ServerID.
 	</div>
+	<br/>
+	suggested iframe size:<br/>
+	';
+	$suggestheight = $contentheight + 6;
+	echo '
+	width: 220px height: ' . $suggestheight . 'px
 	</body>
 	</html>
 	';

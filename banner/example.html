@@ -17,38 +17,46 @@
 		<center>
 			<table width="80%" border="0" align="center">
 				<tr>
-					<td width="33%" valign="top">
+					<td width="25%" valign="top">
 						<br/>
 						<center><b>Displayed as image:</b>
 						<br/>
 						<img src="serverbanner.php?ServerID=3" alt="server" /></center>
 						<br/><br/>
 					</td>
-					<td width="33%" valign="top">
+					<td width="25%" valign="top">
 						<br/>
 						<center><b>Displayed as default iframe:</b>
 						<br/><br/>
-						<iframe src="serverbanner.php?ServerID=3&amp;data=1" width="220px" height="944px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
+						<iframe src="serverbanner.php?ServerID=3&amp;data=1" width="220px" height="742px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
 						<br/><br/>
 					</td>
-					<td width="33%" valign="top">
+					<td width="25%" valign="top">
 						<br/>
 						<center><b>Displayed as customized iframe:</b>
 						<br/><br/>
-						<iframe src="serverbanner.php?ServerID=3&amp;data=1&amp;bgcolor=CCCCCC&amp;fontcolor=000000&amp;linkcolor=995555&amp;sectionbgcolor=AAAAAA&amp;sectionfontcolor=333333" width="220px" height="944px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
+						<iframe src="serverbanner.php?ServerID=3&amp;data=1&amp;bgcolor=CCCCCC&amp;fontcolor=000000&amp;linkcolor=995555&amp;sectionbgcolor=AAAAAA&amp;sectionfontcolor=333333&amp;onlinecount=20" width="220px" height="942px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
+						<br/><br/>
+					</td>
+					<td width="25%" valign="top">
+						<br/>
+						<center><b>Incorrectly cropped iframe:</b><br/>
+						(to show suggested size info at bottom)
+						<br/><br/>
+						<iframe src="serverbanner.php?ServerID=3&amp;data=1" width="220px" height="800px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
 						<br/><br/>
 					</td>
 				</tr>
 				<tr>
-				<td colspan="3" bgcolor="#888888" style="padding: 8px;">
+				<td colspan="4" bgcolor="#888888" style="padding: 8px;">
 					<b>Code for displaying as image:</b><br/><br/>
 					&lt;img src="serverbanner.php?ServerID=3" alt="server" /&gt;
 					<br/><br/><br/>
 					<b>Code for displaying as default iframe:</b><br/><br/>
-					&lt;iframe src="serverbanner.php?ServerID=3&amp;data=1" width="220px" height="944px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;
+					&lt;iframe src="serverbanner.php?ServerID=3&amp;data=1" width="220px" height="742px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;
 					<br/><br/><br/>
 					<b>Code for displaying as customized iframe:</b><br/><br/>
-					&lt;iframe src="serverbanner.php?ServerID=3&amp;data=1&amp;bgcolor=CCCCCC&amp;fontcolor=000000&amp;linkcolor=995555&amp;sectionbgcolor=AAAAAA&amp;sectionfontcolor=333333" width="220px" height="944px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;
+					&lt;iframe src="serverbanner.php?ServerID=3&amp;data=1&amp;bgcolor=CCCCCC&amp;fontcolor=000000&amp;linkcolor=995555&amp;sectionbgcolor=AAAAAA&amp;sectionfontcolor=333333&amp;onlinecount=20" width="220px" height="942px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;
 					<br/><br/><br/>
 					<b>Help with URL Query String Codes:</b><br/><br/>
 					<b>ServerID</b>: (required) This is the server ID of the server you are trying to display.  This is required.<br/>
@@ -65,7 +73,10 @@
 					<b>sectionbgcolor</b>: (optional) This is the background color of certain sections.  This must be a 6-digit hexadecimal color.<br/>
 					sectionbgcolor=&lt;number&gt;<br/><br/>
 					<b>sectionfontcolor</b>: (optional) This is the font color of certain sections.  This must be a 6-digit hexadecimal color.<br/>
-					sectionfontcolor=&lt;number&gt;<br/>
+					sectionfontcolor=&lt;number&gt;<br/><br/>
+					<b>onlinecount</b>: (optional) This is the number of players to show in the online players list.  Fewer will take up less vertical space, more will take up more vertical space.<br/>
+					onlinecount=&lt;number&gt;<br/><br/>
+					<b>Hint</b>: At the bottom of the iframe, it will give you the suggest iframe width and height values.  Crop off the iframe to the suggested size to hide the suggested size information at the bottom.<br/>
 				</td>
 				</tr>
 			</table>
