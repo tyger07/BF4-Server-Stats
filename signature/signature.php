@@ -76,6 +76,9 @@ if(isset($_GET['PlayerID']) AND !is_null($_GET['PlayerID']) AND is_numeric($_GET
 	$light = imagecolorallocate($base, 255, 255, 200);
 	$dark = imagecolorallocate($base, 220, 220, 200);
 	
+	// add clan name text
+	imagestring($base, 2, 210, 17, "$clan_name's Servers", $dark);
+	
 	// default is rank
 	if($fav == 0)
 	{
@@ -150,6 +153,10 @@ else
 	
 	// text color
 	$light = imagecolorallocate($base, 255, 255, 200);
+	$dark = imagecolorallocate($base, 220, 220, 200);
+	
+	// add clan name text
+	imagestring($base, 2, 210, 17, "$clan_name's Servers", $dark);
 	
 	// rank image
 	$rank = imagecreatefrompng("$rank");
