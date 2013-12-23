@@ -920,6 +920,37 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	}
 	// free up player data query memory
 	@mysqli_free_result($PlayerData_q);
+	if($soldier_found == 1)
+	{
+		// show signature images
+		echo '
+		<br/><br/>
+		<div class="middlecontent">
+		<table width="100%" border="0">
+		<tr>
+		<th class="headline"><b>Signature Images</b></th>
+		</tr>
+		<tr><td>
+		<div class="innercontent">
+		<br/>
+		<table align="center" width="50%" border="0">
+		<tr>
+		<td style="text-align: left"><center><font class="information">Signature images use global stats from all of ' . $clan_name . '\'s Servers.</font></center><br/></td>
+		</tr>
+		<tr>
+		<td style="text-align: left"><img src="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '" alt="signature" /><br/><a href="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '" target="_blank">http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '</a><br/><br/></td>
+		</tr>
+		<tr>
+		<td style="text-align: left"><img src="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '&amp;fav=1" alt="signature" /><br/><a href="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '&amp;fav=1" target="_blank">http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '&amp;fav=1</a></td>
+		</tr>
+		</table>
+		<br/>
+		</div>
+		</td></tr>
+		</table>
+		</div>
+		';
+	}
 }
 elseif($SoldierName == 'Not Found')
 {

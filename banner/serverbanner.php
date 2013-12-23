@@ -441,9 +441,9 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	}
 	// figure out this DIV's height based on number of players variable
 	// online count section height in pixels
-	$onlineheight = ($onlinecount * 20) + 6;
+	$onlineheight = ($onlinecount * 19) + 6;
 	// total page content height based on onlineheight
-	$contentheight = 530 + $onlineheight;
+	$contentheight = 510 + $onlineheight;
 	
 	// echo out the header
 	echo '
@@ -466,7 +466,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 			padding: 0;
 			text-align: left;
 			background-color: #' . $bgcolor . ';
-			background: #' . $bgcolor . '
+			background: #' . $bgcolor . ';
 			font-family: Arial, Arial, Arial, sans-serif;
 			font-size: 12px;
 			color: #' . $fontcolor . ';
@@ -906,9 +906,9 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 	}
 	// figure out this DIV's height based on number of players variable
 	// online count section height in pixels
-	$onlineheight = ($onlinecount * 20) + 6;
+	$onlineheight = ($onlinecount * 19) + 6;
 	// total page content height based on onlineheight
-	$contentheight = 530 + $onlineheight;
+	$contentheight = 510 + $onlineheight;
 	
 	// echo out the header
 	echo '
@@ -931,7 +931,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 			padding: 0;
 			text-align: left;
 			background-color: #' . $bgcolor . ';
-			background: #' . $bgcolor . '
+			background: #' . $bgcolor . ';
 			font-family: Arial, Arial, Arial, sans-serif;
 			font-size: 12px;
 			color: #' . $fontcolor . ';

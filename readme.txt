@@ -113,6 +113,11 @@ Enjoy!
 
 ## Changelog:
 
+12-23-2013:
+- Added stats  signature generator
+- Added pagination to player of the week pages
+- Added player stats signatures to player stats pages
+
 12-22-2013:
 - More server banner generator help in example file and an additional option to adjust online player count
 

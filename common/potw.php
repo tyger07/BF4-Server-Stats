@@ -33,6 +33,63 @@ echo '
 <table width="100%" border="0">
 <tr>
 ';
+// pagination code thanks to: http://www.phpfreaks.com/tutorial/basic-pagination
+// if there is a ServerID, this is a server stats page
+if(isset($ServerID) AND !is_null($ServerID))
+{
+	// find out how many rows are in the table 
+	$TotalRows_q = @mysqli_query($BF4stats,"
+		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
+		FROM tbl_sessions tss
+		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
+		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+		WHERE ServerID = {$ServerID}
+		AND tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		GROUP BY tsp.StatsID
+	");
+	$numrows = @mysqli_num_rows($TotalRows_q);
+}
+// or else this is a global stats page
+else
+{
+	// find out how many rows are in the table
+	$TotalRows_q = @mysqli_query($BF4stats,"
+		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
+		FROM tbl_sessions tss
+		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
+		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
+		WHERE tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		GROUP BY tsp.StatsID
+	");
+	$numrows = @mysqli_num_rows($TotalRows_q);
+}
+// number of rows to show per page
+$rowsperpage = 25;
+// find out total pages
+$totalpages = ceil($numrows / $rowsperpage);
+// get the current page or set a default
+if(isset($_GET['currentpage']) && is_numeric($_GET['currentpage']))
+{
+	// cast var as int
+	$currentpage = (int) $_GET['currentpage'];
+}
+else
+{
+	// default page num
+	$currentpage = 1;
+}
+// if current page is greater than total pages...
+if($currentpage > $totalpages)
+{
+	// set current page to last page
+	$currentpage = $totalpages;
+}
+// if current page is less than first page...
+if($currentpage < 1)
+{
+	// set current page to first page
+	$currentpage = 1;
+}
 // get current rank query details
 if(isset($_GET['rank']) AND !empty($_GET['rank']))
 {
@@ -80,6 +137,8 @@ else
 	$order = 'DESC';
 	$nextorder = 'ASC';
 }
+// the offset of the list, based on current page 
+$offset = ($currentpage - 1) * $rowsperpage;
 // if there is a ServerID, this is a server stats page
 if(isset($ServerID) AND !is_null($ServerID))
 {
@@ -92,8 +151,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 		WHERE ServerID = {$ServerID}
 		AND tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		GROUP BY tsp.StatsID
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder}
-		LIMIT 20
+		ORDER BY {$rank} {$order}, SoldierName {$nextorder} LIMIT {$offset}, {$rowsperpage}
 	");
 }
 // or else this is a global stats page
@@ -107,8 +165,7 @@ else
 		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
 		WHERE tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		GROUP BY tsp.StatsID
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder}
-		LIMIT 20
+		ORDER BY {$rank} {$order}, SoldierName {$nextorder} LIMIT {$offset}, {$rowsperpage}
 	");
 }
 if(@mysqli_num_rows($Player_q) != 0)
@@ -243,8 +300,8 @@ if(@mysqli_num_rows($Player_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshot Ratio</span></a></th>';
 	}
 	echo '</tr>';
-	// initialize value
-	$count = 0;
+	// offset of player rank count to show on scoreboard
+	$count = ($currentpage * 25) - 25;
 	while($Player_r = @mysqli_fetch_assoc($Player_q))
 	{
 		$count++;
@@ -297,6 +354,108 @@ else
 }
 // free up player stats query memory
 @mysqli_free_result($Player_q);
+// build the pagination links
+// don't display pagination links if no players found
+if(@mysqli_num_rows($TotalRows_q) != 0)
+{
+	echo '
+	<div class="pagination">
+	<center>
+	';
+	// range of num links to show
+	$range = 3;
+	// if on page 1, don't show back links
+	if ($currentpage > 1)
+	{
+		// show << link to go back to first page
+		// if there is a ServerID, this is a server stats page
+		if(isset($ServerID) AND !is_null($ServerID))
+		{
+			echo '<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;currentpage=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;&lt;</a>';
+		}
+		// or else this is a global stats page
+		else
+		{
+			echo '<a href="' . $_SERVER['PHP_SELF'] . '?currentpage=1&amp;globalpotw=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;&lt;</a>';
+		}
+		// get previous page num
+		$prevpage = $currentpage - 1;
+		// show < link to go back one page
+		// if there is a ServerID, this is a server stats page
+		if(isset($ServerID) AND !is_null($ServerID))
+		{
+			echo ' <a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;currentpage=' . $prevpage . '&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;</a> ';
+		}
+		// or else this is a global stats page
+		else
+		{
+			echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $prevpage . '&amp;globalpotw=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;</a> ';
+		}
+	}
+	// loop to show links to range of pages around current page
+	for($x = ($currentpage - $range); $x < (($currentpage + $range) + 1); $x++)
+	{
+		// if it's a valid page number...
+		if (($x > 0) && ($x <= $totalpages))
+		{
+			// if we're on current page...
+			if ($x == $currentpage)
+			{
+				// 'highlight' it but don't make a link
+				echo ' [<font class="information">' . $x . '</font>] ';
+			}
+			else
+			{
+				// make it a link
+				// if there is a ServerID, this is a server stats page
+				if(isset($ServerID) AND !is_null($ServerID))
+				{
+					echo ' <a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;currentpage=' . $x . '&amp;rank=' . $rank . '&amp;order=' . $order . '">' . $x . '</a> ';
+				}
+				// or else this is a global stats page
+				else
+				{
+					echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $x . '&amp;globalpotw=1&amp;rank=' . $rank . '&amp;order=' . $order . '">' . $x . '</a> ';
+				}
+			}
+		}
+	}
+	// if not on last page, show forward links        
+	if ($currentpage != $totalpages)
+	{
+		// get next page
+		$nextpage = $currentpage + 1;
+		// show > link to go forward one page
+		// if there is a ServerID, this is a server stats page
+		if(isset($ServerID) AND !is_null($ServerID))
+		{
+			echo ' <a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;currentpage=' . $nextpage . '&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;</a> ';
+		}
+		// or else this is a global stats page
+		else
+		{
+			echo ' <a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $nextpage . '&amp;globalpotw=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;</a> ';
+		}
+		// show >> link to last page
+		// if there is a ServerID, this is a server stats page
+		if(isset($ServerID) AND !is_null($ServerID))
+		{
+			echo '<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1&amp;currentpage=' . $totalpages . '&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;&gt;</a>';
+		}
+		// or else this is a global stats page
+		else
+		{
+			echo '<a href="' . $_SERVER['PHP_SELF'] . '?currentpage=' . $totalpages . '&amp;globalpotw=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;&gt;</a>';
+		}
+	}
+	echo '
+	</center>
+	</div>
+	';
+}
+// end build pagination links and end block
+// free up total rows query memory
+@mysqli_free_result($TotalRows_q);
 echo '
 </td>
 </tr>

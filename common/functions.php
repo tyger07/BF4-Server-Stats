@@ -193,6 +193,7 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 		while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 		{
 			$weapon_name_displayed = preg_replace("/_/"," ",$Weapon_r['Friendlyname']);
+			$weapon_img = './images/weapons/' . $Weapon_r['Friendlyname'] . '.png';
 			// rename 'death'
 			if($weapon_name_displayed == 'Death')
 			{
@@ -206,7 +207,7 @@ function Statsout($headingprint, $damagetype, $ThisPlayerName, $ThisPlayerID, $s
 			echo '
 			<tr>
 			<td width="1%" style="text-align:left">&nbsp;</td>
-			<td width="22%" class="tablecontents"  style="text-align: left"><font class="information">' . $weapon_name_displayed . ':</font></td>
+			<td width="22%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name_displayed . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name_displayed . ':</font></td></tr></table></td>
 			<td width="19%" class="tablecontents" style="text-align: left">' . $kills . '</td>
 			<td width="19%" class="tablecontents" style="text-align: left">' . $deaths . '</td>
 			<td width="19%" class="tablecontents" style="text-align: left">' . $headshots . '</td>
