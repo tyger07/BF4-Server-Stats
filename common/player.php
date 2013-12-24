@@ -949,7 +949,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		<br/>
 		<font class="information">Forum BBcode:</font>
 		<br/><br/>
-		[URL="' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV0.png"][IMG]' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV0.png[/IMG][/URL]<br/>
+		[URL="' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '"][IMG]' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV0.png[/IMG][/URL]<br/>
 		</td>
 		</tr>
 		<tr>
@@ -960,7 +960,7 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		<br/>
 		<font class="information">Forum BBcode:</font>
 		<br/><br/>
-		[URL="' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV1.png"][IMG]' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV1.png[/IMG][/URL]<br/><br/>
+		[URL="' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '"][IMG]' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV1.png[/IMG][/URL]<br/><br/>
 		</td>
 		</tr>
 		</table>
