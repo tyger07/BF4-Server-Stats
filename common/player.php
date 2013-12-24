@@ -922,6 +922,11 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 	@mysqli_free_result($PlayerData_q);
 	if($soldier_found == 1)
 	{
+		// make new signature images for this PlayerID
+		signature($PlayerID, 0, $clan_name, $BF4stats);
+		signature($PlayerID, 1, $clan_name, $BF4stats);
+		// find current URL
+		$URL = 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']);
 		// show signature images
 		echo '
 		<br/><br/>
@@ -933,15 +938,30 @@ elseif($SoldierName != null AND $SoldierName != 'Not Found')
 		<tr><td>
 		<div class="innercontent">
 		<br/>
-		<table align="center" width="50%" border="0">
+		<table align="center" width="80%" border="0">
 		<tr>
 		<td style="text-align: left"><center><font class="information">Signature images use global stats from all of ' . $clan_name . '\'s Servers.</font></center><br/></td>
 		</tr>
 		<tr>
-		<td style="text-align: left"><img src="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '" alt="signature" /><br/><a href="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '" target="_blank">http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '</a><br/><br/></td>
+		<td style="text-align: left">
+		<br/>Stats image with player\'s rank:<br/><br/>
+		<img src="' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV0.png" alt="signature" />
+		<br/>
+		<font class="information">Forum BBcode:</font>
+		<br/><br/>
+		[URL="' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV0.png"][IMG]' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV0.png[/IMG][/URL]<br/>
+		</td>
 		</tr>
 		<tr>
-		<td style="text-align: left"><img src="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '&amp;fav=1" alt="signature" /><br/><a href="http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '&amp;fav=1" target="_blank">http://open-web-community.com/bf4stats/player-stats/signature/signature.php?PlayerID=' . $PlayerID . '&amp;fav=1</a></td>
+		<td style="text-align: left">
+		<br/><br/><br/>
+		Stats image with player\'s favorite weapon:<br/><br/>
+		<img src="' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV1.png" alt="signature" />
+		<br/>
+		<font class="information">Forum BBcode:</font>
+		<br/><br/>
+		[URL="' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV1.png"][IMG]' . $URL . '/signature/cache/PID' . $PlayerID . 'FAV1.png[/IMG][/URL]<br/><br/>
+		</td>
 		</tr>
 		</table>
 		<br/>

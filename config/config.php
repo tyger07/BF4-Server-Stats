@@ -3,7 +3,7 @@
 // THE FOLLOWING INFORMATION NEEDS TO BE FILLED IN
 
 // DATABASE INFORMATION
-DEFINE('HOST', '');													// database host address
+DEFINE('HOST', '');		// database host address
 DEFINE('PORT', '3306');												// database port - default is 3306
 DEFINE('NAME', '');													// database name
 DEFINE('USER', '');													// database user name - sometimes the same as the database name
