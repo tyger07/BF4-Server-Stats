@@ -61,24 +61,27 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// query for countries
 	$Country_q = mysqli_query($BF4stats,"
-		SELECT tpd.CountryCode, COUNT(tpd.CountryCode) AS PlayerCount
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
-		GROUP BY CountryCode
-		ORDER BY PlayerCount DESC, Score DESC, CountryCode ASC LIMIT 10
+		SELECT tpd.`CountryCode`, COUNT(tpd.`CountryCode`) AS PlayerCount
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND tpd.`GameID` = {$GameID}
+		GROUP BY tpd.`CountryCode`
+		ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
+		LIMIT 10
 	");
 	$CountryMap_q = @mysqli_query($BF4stats,"
-		SELECT tpd.CountryCode, COUNT(tpd.CountryCode) AS PlayerCount
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
-		AND CountryCode != '--'
-		AND CountryCode != ''
-		GROUP BY CountryCode
-		ORDER BY PlayerCount DESC LIMIT 50
+		SELECT tpd.`CountryCode`, COUNT(tpd.`CountryCode`) AS PlayerCount
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND tpd.`GameID` = {$GameID}
+		AND tpd.`CountryCode` != '--'
+		AND tpd.`CountryCode` != ''
+		GROUP BY tpd.`CountryCode`
+		ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
 	");
 }
 // or else this is a global stats page
@@ -86,24 +89,25 @@ else
 {
 	// query for countries
 	$Country_q = mysqli_query($BF4stats,"
-		SELECT tpd.CountryCode, COUNT(tpd.CountryCode) AS PlayerCount
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE 1
-		GROUP BY CountryCode
-		ORDER BY PlayerCount DESC, Score DESC, CountryCode ASC LIMIT 10
+		SELECT tpd.`CountryCode`, COUNT(tpd.`CountryCode`) AS PlayerCount
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tpd.`GameID` = {$GameID}
+		GROUP BY tpd.`CountryCode`
+		ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
+		LIMIT 10
 	");
 	$CountryMap_q = @mysqli_query($BF4stats,"
-		SELECT tpd.CountryCode, COUNT(tpd.CountryCode) AS PlayerCount
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE 1
-		AND CountryCode != '--'
-		AND CountryCode != ''
-		GROUP BY CountryCode
-		ORDER BY PlayerCount DESC LIMIT 50
+		SELECT tpd.`CountryCode`, COUNT(tpd.`CountryCode`) AS PlayerCount
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tpd.`GameID` = {$GameID}
+		AND tpd.`CountryCode` != '--'
+		AND tpd.`CountryCode` != ''
+		GROUP BY tpd.`CountryCode`
+		ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
 	");
 }
 // no country stats found
@@ -386,13 +390,15 @@ else
 		{
 			//query top 10 players in this country
 			$CountryRank_q = @mysqli_query($BF4stats,"
-				SELECT tpd.SoldierName, tpd.PlayerID, tps.Score, tps.Kills, tps.Deaths, tps.Rounds, (tps.Kills/tps.Deaths) AS KDR
-				FROM tbl_playerstats tps
-				INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-				INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-				WHERE tsp.ServerID = {$ServerID}
-				AND tpd.CountryCode = '{$CountryCode}'
-				ORDER BY {$rank} {$order} LIMIT 10
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, tps.`Deaths`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND tpd.`CountryCode` = '{$CountryCode}'
+				AND tpd.`GameID` = {$GameID}
+				ORDER BY {$rank} {$order}
+				LIMIT 10
 			");
 		}
 		// or else this is a global stats page
@@ -400,13 +406,15 @@ else
 		{
 			//query top 10 players in this country
 			$CountryRank_q = @mysqli_query($BF4stats,"
-				SELECT tpd.SoldierName, tpd.PlayerID, SUM(tps.Score) AS Score, SUM(tps.Kills) AS Kills, SUM(tps.Deaths) AS Deaths, SUM(tps.Rounds) AS Rounds, (SUM(tps.Kills)/SUM(tps.Deaths)) AS KDR
-				FROM tbl_playerstats tps
-				INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-				INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-				WHERE tpd.CountryCode = '{$CountryCode}'
-				GROUP BY SoldierName
-				ORDER BY {$rank} {$order} LIMIT 10
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`CountryCode` = '{$CountryCode}'
+				AND tpd.`GameID` = {$GameID}
+				GROUP BY tpd.`SoldierName`
+				ORDER BY {$rank} {$order}
+				LIMIT 10
 			");
 		}
 		// no players found

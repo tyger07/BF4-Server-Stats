@@ -40,9 +40,9 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// query server stats
 	$Server_q = @mysqli_query($BF4stats,"
-		SELECT `CountPlayers`, `SumKills`, (SumHeadshots/SumKills) AS AvgHSR, (SumKills/SumDeaths) AS AvgKDR, SumRounds, `SumDeaths`, `AvgScore`, `AvgKills`, `AvgHeadshots`, `AvgDeaths`, `AvgSuicide`, `AvgTKs`
-		FROM tbl_server_stats
-		WHERE ServerID = {$ServerID}
+		SELECT `CountPlayers`, `SumKills`, (`SumHeadshots`/`SumKills`) AS AvgHSR, (`SumKills`/`SumDeaths`) AS AvgKDR, `SumRounds`, `SumDeaths`, `AvgScore`, `AvgKills`, `AvgHeadshots`, `AvgDeaths`, `AvgSuicide`, `AvgTKs`
+		FROM `tbl_server_stats`
+		WHERE `ServerID` = {$ServerID}
 	");
 }
 // or else this is a global stats page
@@ -50,8 +50,8 @@ else
 {
 	// query server stats
 	$Server_q = @mysqli_query($BF4stats,"
-		SELECT SUM(`CountPlayers`) AS CountPlayers, SUM(`SumKills`) AS SumKills, (SUM(SumHeadshots)/SUM(SumKills)) AS AvgHSR, (SUM(SumKills)/SUM(SumDeaths)) AS AvgKDR, SUM(SumRounds) AS SumRounds, SUM(`SumDeaths`) AS SumDeaths, AVG(`AvgScore`) AS AvgScore, AVG(`AvgKills`) AS AvgKills, AVG(`AvgHeadshots`) AS AvgHeadshots, AVG(`AvgDeaths`) AS AvgDeaths, AVG(`AvgSuicide`) AS AvgSuicide, AVG(`AvgTKs`) AS AvgTKs
-		FROM tbl_server_stats
+		SELECT SUM(`CountPlayers`) AS CountPlayers, SUM(`SumKills`) AS SumKills, (SUM(`SumHeadshots`)/SUM(`SumKills`)) AS AvgHSR, (SUM(`SumKills`)/SUM(`SumDeaths`)) AS AvgKDR, SUM(`SumRounds`) AS SumRounds, SUM(`SumDeaths`) AS SumDeaths, AVG(`AvgScore`) AS AvgScore, AVG(`AvgKills`) AS AvgKills, AVG(`AvgHeadshots`) AS AvgHeadshots, AVG(`AvgDeaths`) AS AvgDeaths, AVG(`AvgSuicide`) AS AvgSuicide, AVG(`AvgTKs`) AS AvgTKs
+		FROM `tbl_server_stats`
 		WHERE 1
 	");
 }

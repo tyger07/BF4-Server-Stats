@@ -35,9 +35,9 @@ echo'
 // find out how many rows are in the table
 $TotalRows_q = @mysqli_query($BF4stats,"
 	SELECT count(`logDate`) AS count
-	FROM tbl_chatlog
+	FROM `tbl_chatlog`
 	WHERE `ServerID` = {$ServerID}
-	AND logMessage != ''
+	AND `logMessage` != ''
 ");
 $TotalRows_r = @mysqli_fetch_row($TotalRows_q);
 $numrows = $TotalRows_r[0];
@@ -120,10 +120,11 @@ $offset = ($currentpage - 1) * $rowsperpage;
 // get the info from the db 
 $Messages_q = @mysqli_query($BF4stats,"
 	SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
-	FROM tbl_chatlog
+	FROM `tbl_chatlog`
 	WHERE `ServerID` = {$ServerID}
-	AND logMessage != ''
-	ORDER BY {$rank} {$order}, `logDate` DESC LIMIT {$offset}, {$rowsperpage}
+	AND `logMessage` != ''
+	ORDER BY {$rank} {$order}, `logDate` DESC
+	LIMIT {$offset}, {$rowsperpage}
 ");
 // offset count
 $count = ($currentpage * 25) - 25;
@@ -183,12 +184,13 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		$count++;
 		// see if this player has server stats in this server yet
 		$PlayerID_q = @mysqli_query($BF4stats,"
-			SELECT tpd.PlayerID
-			FROM tbl_playerstats tps
-			INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-			INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-			WHERE tsp.ServerID = {$ServerID}
-			AND SoldierName = '{$logSoldierName}'
+			SELECT tpd.`PlayerID`
+			FROM `tbl_playerstats` tps
+			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE tsp.`ServerID` = {$ServerID}
+			AND tpd.`SoldierName` = '{$logSoldierName}'
+			AND tpd.`GameID` = {$GameID}
 		");
 		// server stats found for this player in this server
 		if(@mysqli_num_rows($PlayerID_q) == 1)
@@ -209,7 +211,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		// if this player has stats in this server, provide a link to their stats page
 		if($PlayerID != null)
 		{
-			echo '<td width="10%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $logSoldierName . '&amp;search=1">' . $logSoldierName . '</a></td>';
+			echo '<td width="10%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $logSoldierName . '</a></td>';
 		}
 		// otherwise just display their name without a link
 		else
@@ -221,6 +223,8 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		<td width="65%" class="tablecontents" style="text-align: left;">' . $logMessage . '</td>
 		</tr>
 		';
+		// free up player ID query memory
+		@mysqli_free_result($PlayerID_q);
 	}
 }
 else
@@ -232,8 +236,6 @@ else
 	</tr>
 	';
 }
-// free up player ID query memory
-@mysqli_free_result($PlayerID_q);
 // free up messages query memory
 @mysqli_free_result($Messages_q);
 // build the pagination links

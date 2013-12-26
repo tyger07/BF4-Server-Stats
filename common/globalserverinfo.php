@@ -5,8 +5,8 @@
 
 // query for server totals
 $ServerTotals_q = @mysqli_query($BF4stats,"
-	SELECT SUM(CountPlayers) AS total_players, SUM(SumRounds) AS total_rounds, SUM(SumPlaytime) AS total_playtime, SUM(SumKills) AS total_kills, SUM(SumDeaths) AS total_deaths, SUM(SumHeadshots) AS total_headshots
-	FROM tbl_server_stats
+	SELECT SUM(`CountPlayers`) AS total_players, SUM(`SumRounds`) AS total_rounds, SUM(`SumPlaytime`) AS total_playtime, SUM(`SumKills`) AS total_kills, SUM(`SumDeaths`) AS total_deaths, SUM(`SumHeadshots`) AS total_headshots
+	FROM `tbl_server_stats`
 	WHERE 1
 ");
 if(@mysqli_num_rows($ServerTotals_q) != 0)

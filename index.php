@@ -40,12 +40,36 @@ echo '
 $BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
 @mysqli_select_db($BF4stats, NAME) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to select the stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
 
+// initialize value as null
+$GameID = null;
+
+// first we need to find the GameID
+// we will use the most common GameID in this database
+$Server_q = @mysqli_query($BF4stats,"
+	SELECT `GameID`, COUNT(`GameID`) AS magnitude
+	FROM `tbl_server`
+	GROUP BY `GameID`
+	ORDER BY magnitude DESC
+	LIMIT 1
+");
+
+// the server info was found
+if(@mysqli_num_rows($Server_q) == 1)
+{
+	$Server_r = @mysqli_fetch_assoc($Server_q);
+	$GameID = $Server_r['GameID'];
+}
+
+// free up server info query memory
+@mysqli_free_result($Server_q);
+
 // find all servers in this database
 $ServerID_q = @mysqli_query($BF4stats,"
 	SELECT `ServerID`
 	FROM `tbl_server`
-	WHERE 1
+	WHERE `GameID` = {$GameID}
 ");
+
 // at least one server was found
 if(@mysqli_num_rows($ServerID_q) != 0)
 {
@@ -57,103 +81,195 @@ if(@mysqli_num_rows($ServerID_q) != 0)
 		$ServerIDs[] = $ServerID_r['ServerID'];
 	}
 }
-// no result found
-// assume database connection error
-// there must be at least one server, right?
-else
-{
-	$ServerIDs = array('1');
-}
+
 // free up server id query memory
 @mysqli_free_result($ServerID_q);
 
-// initialize $ServerID as null
+// initialize values as null
 $ServerID = null;
+$SoldierName = null;
+$PlayerID = null;
 
-// initilize $SoldierName as 'Not Found'
-$SoldierName = 'Not Found';
-
-// lets see if a SoldierName or PlayerID was provided to us
-// if so, we will use this quite a bit later to compile soldier stats pages
-// first look for a SoldierName
-if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
+// was a server ID given in the URL?  Is it a valid server ID?
+// if so, we must not be looking at global stats
+if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
 {
-	// remove spaces from name input
-	// and make it safe
-	$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
-	// remove dangerous / invalid characters from input
-	if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
+	// assign $ServerID variable
+	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
+	
+	// find this server info
+	$Server_q = @mysqli_query($BF4stats,"
+		SELECT `ServerName`
+		FROM `tbl_server`
+		WHERE `ServerID` = {$ServerID}
+		AND `GameID` = {$GameID}
+	");
+	
+	// the server info was found
+	if(@mysqli_num_rows($Server_q) == 1)
 	{
-		$SoldierName = 'Not Found';
+		$Server_r = @mysqli_fetch_assoc($Server_q);
+		$ServerName = $Server_r['ServerName'];
+		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 	}
-}
-// then look for PlayerID
-if(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']))
-{
-	// make sure player id provided is a number
-	if(is_numeric($_GET['PlayerID']))
+	
+	// free up server info query memory
+	@mysqli_free_result($Server_q);
+	
+	// lets see if a SoldierName or PlayerID was provided to us in the URL
+	// we will try to find this player in this server and convert everything to PlayerID
+	// first look for a SoldierName in URL and try to convert it to PlayerID
+	if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
+	{
+		// remove spaces from name input
+		$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
+		
+		// if there are dangerous characters, just stop
+		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
+		{
+			$SoldierName = null;
+		}
+		
+		// or else find this PlayerID
+		else
+		{
+			$PlayerID_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`
+				FROM `tbl_playerdata`
+				WHERE `SoldierName` = '{$SoldierName}'
+				AND `GameID` = {$GameID}
+			");
+			
+			// was there a result?
+			if(@mysqli_num_rows($PlayerID_q) == 1)
+			{
+				$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
+				$PlayerID = $PlayerID_r['PlayerID'];
+			}
+			
+			// otherwise null variables
+			else
+			{
+				$PlayerID = null;
+			}
+			
+			// free up player id query memory
+			@mysqli_free_result($PlayerID_q);
+		}
+	}
+	
+	// then look for PlayerID in URL and make sure it is valid
+	if(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
 	{
 		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
+		
 		// search for soldier name using provided player ID
 		$SoldierName_q = @mysqli_query($BF4stats,"
 			SELECT `SoldierName`
 			FROM `tbl_playerdata`
 			WHERE `PlayerID` = {$PlayerID}
+			AND `GameID` = {$GameID}
 		");
+		
+		// was there a result?
 		if(@mysqli_num_rows($SoldierName_q) == 1)
 		{
 			$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
 			$SoldierName = $SoldierName_r['SoldierName'];
 		}
+		
+		// otherwise null variables
 		else
 		{
-			$SoldierName = 'Not Found';
+			$SoldierName = null;
+			$PlayerID = null;
 		}
+		
 		// free up soldier name query memory
 		@mysqli_free_result($SoldierName_q);
 	}
-	// invalid
-	else
+}
+
+// no server id in URL
+// this must be a global stats page
+else
+{
+	// lets see if a SoldierName or PlayerID was provided to us in the URL
+	// first look for a SoldierName in URL and try to convert it to PlayerID
+	if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
 	{
-		$SoldierName = 'Not Found';
+		// remove spaces from name input
+		$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
+		
+		// if there are dangerous characters, just stop
+		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
+		{
+			$SoldierName = null;
+		}
+		
+		// or else find this PlayerID
+		else
+		{
+			$PlayerID_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`
+				FROM `tbl_playerdata`
+				WHERE `SoldierName` = '{$SoldierName}'
+				AND `GameID` = {$GameID}
+			");
+			
+			// was there a result?
+			if(@mysqli_num_rows($PlayerID_q) == 1)
+			{
+				$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
+				$PlayerID = $PlayerID_r['PlayerID'];
+			}
+			
+			// otherwise null variables
+			else
+			{
+				$PlayerID = null;
+			}
+			
+			// free up player ID query memory
+			@mysqli_free_result($PlayerID_q);
+		}
+	}
+	
+	// then look for PlayerID in URL and make sure it is valid
+	if(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
+	{
+		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
+		
+		// search for soldier name using provided player ID
+		$SoldierName_q = @mysqli_query($BF4stats,"
+			SELECT `SoldierName`
+			FROM `tbl_playerdata`
+			WHERE `PlayerID` = {$PlayerID}
+			AND `GameID` = {$GameID}
+		");
+		
+		// was there a result?
+		if(@mysqli_num_rows($SoldierName_q) == 1)
+		{
+			$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
+			$SoldierName = $SoldierName_r['SoldierName'];
+		}
+		
+		// otherwise null variables
+		else
+		{
+			$SoldierName = null;
+			$PlayerID = null;
+		}
+		
+		// free up soldier name query memory
+		@mysqli_free_result($SoldierName_q);
 	}
 }
 
-// was a server ID given in the URL?  Is it a valid server ID?
-// if so, we will initialize the $ServerID variable which will be used often in the rest of this page
-// and we will find this server, create a battlelog link, and finish this server's page header
+// this is not a global stats page
 if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
 {
-	// this is momentus!
-	// this is important!
-	// this means that you are  viewing a server page and not the index!
-	// assign the ServerID variable with this server ID
-	// this ServerID variable will be used over and over again
-	// this is easily the most important variable in this code
-	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
-	// find this server name
-	$ServerName_q = @mysqli_query($BF4stats,"
-		SELECT `ServerName`
-		FROM `tbl_server`
-		WHERE `ServerID` = {$ServerID}
-	");
-	// the server name was found
-	if(@mysqli_num_rows($ServerName_q) == 1)
-	{
-		$ServerName_r = @mysqli_fetch_assoc($ServerName_q);
-		$ServerName = $ServerName_r['ServerName'];
-		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
-	}
-	// a database error occured?
-	// oh well, we will have to do something
-	else
-	{
-		$ServerName = 'Not Found';
-		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
-	}
-	// free up server name query memory
-	@mysqli_free_result($ServerName_q);
-
 	// change page title, meta description, and keywords depending on the page content
 	if(isset($_GET['search']) AND !empty($_GET['search']))
 	{
@@ -727,7 +843,7 @@ if(@mysqli_num_rows($old_query) != 0)
 if(isset($ServerID) AND !is_null($ServerID))
 {
 	$ses_count = @mysqli_query($BF4stats,"
-		SELECT count(`IP`) as ses
+		SELECT count(`IP`) AS ses
 		FROM `ses_{$ServerID}_tbl`
 		WHERE 1
 	");
@@ -736,7 +852,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 else
 {
 	$ses_count = @mysqli_query($BF4stats,"
-		SELECT count(`IP`) as ses
+		SELECT count(`IP`) AS ses
 		FROM `ses_global_tbl`
 		WHERE 1
 	");

@@ -12,7 +12,7 @@ foreach($ServerIDs as $this_ServerID)
 	// get server stats
 	$Stats_q = @mysqli_query($BF4stats,"
 		SELECT `CountPlayers`, `SumScore`, `SumKills`
-		FROM tbl_server_stats
+		FROM `tbl_server_stats`
 		WHERE `ServerID` = {$this_ServerID}
 	");
 	if(@mysqli_num_rows($Stats_q) != 0)
@@ -22,7 +22,7 @@ foreach($ServerIDs as $this_ServerID)
 		$score = $Stats_r['SumScore'];
 		$kills = $Stats_r['SumKills'];
 	}
-	// some sort of error occured
+	// some sort of error occurred
 	else
 	{
 		$total_players = 'Unknown';
@@ -33,8 +33,8 @@ foreach($ServerIDs as $this_ServerID)
 	@mysqli_free_result($Stats_q);
 	// get current players
 	$CurrentPlayers_q = @mysqli_query($BF4stats,"
-		SELECT count(`TeamID`) AS count
-		FROM tbl_currentplayers
+		SELECT count(`Soldiername`) AS count
+		FROM `tbl_currentplayers`
 		WHERE `ServerID` = {$this_ServerID}
 	");
 	if(@mysqli_num_rows($CurrentPlayers_q) != 0)
@@ -42,7 +42,7 @@ foreach($ServerIDs as $this_ServerID)
 		$CurrentPlayers_r = @mysqli_fetch_assoc($CurrentPlayers_q);
 		$players = $CurrentPlayers_r['count'];
 	}
-	// some sort of error occured
+	// some sort of error occurred
 	else
 	{
 		$players = 'Unknown';
@@ -52,8 +52,9 @@ foreach($ServerIDs as $this_ServerID)
 	// get current map
 	$CurrentMap_q = @mysqli_query($BF4stats,"
 		SELECT `mapName`, `ServerName`
-		FROM tbl_server
+		FROM `tbl_server`
 		WHERE `ServerID` = {$this_ServerID}
+		AND `GameID` = {$GameID}
 	");
 	if(@mysqli_num_rows($CurrentMap_q) != 0)
 	{

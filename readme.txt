@@ -113,6 +113,10 @@ Enjoy!
 
 ## Changelog:
 
+12-26-2013:
+- Fixed a stats conformity issue by filtering out false database data for players with incorrect secondary Player IDs.
+- Fixed signature images by allowing most data to be available in the signature image even if weapon stats are disabled.
+
 12-23-2013:
 - Added stats  signature generator
 - Added pagination to player of the week pages

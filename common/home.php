@@ -71,9 +71,9 @@ if(isset($ServerID) AND !is_null($ServerID))
 	if(!($_GET['topplayers']))
 	{
 		// show scoreboard
-		// input as: server id, server name, array of game modes, array of map names, array of squad names, array of country names, db, origin
+		// input as: server id, server name, array of game modes, array of map names, array of squad names, array of country names, db, GameID
 		// we use a null origin to indicate that we are not at a sub page
-		scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_array, $country_array, $BF4stats, null);
+		scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_array, $country_array, $BF4stats, $GameID);
 		echo '<br/><br/>';
 	}
 }
@@ -108,11 +108,12 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// find out how many rows are in the table 
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT COUNT(tpd.SoldierName)
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
+		SELECT COUNT(tpd.`SoldierName`)
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND tpd.`GameID` = {$GameID}
 	");
 	$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
 	$numrows = $TotalRows_r[0];
@@ -122,12 +123,12 @@ else
 {
 	// find out how many rows are in the table
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT SUM(tps.Score) AS Score
-		FROM tbl_playerdata tpd
-		INNER JOIN tbl_server_player tsp ON tsp.PlayerID = tpd.PlayerID
-		INNER JOIN tbl_playerstats tps ON tps.StatsID = tsp.StatsID
-		WHERE 1
-		GROUP BY tpd.PlayerID
+		SELECT SUM(tps.`Score`) AS Score
+		FROM `tbl_playerdata` tpd
+		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+		WHERE tpd.`GameID` = {$GameID}
+		GROUP BY tpd.`PlayerID`
 	");
 	$numrows = @mysqli_num_rows($TotalRows_q);
 }
@@ -212,12 +213,14 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// get the info from the db 
 	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.SoldierName, tpd.PlayerID, tps.Score, tps.Kills, tps.Deaths, (tps.Kills/tps.Deaths) AS KDR, tps.Rounds, tps.Headshots, (tps.Headshots/tps.Kills) AS HSR
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder} LIMIT {$offset}, {$rowsperpage}
+		SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, tps.`Rounds`, tps.`Headshots`, (tps.`Headshots`/tps.`Kills`) AS HSR
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND tpd.`GameID` = {$GameID}
+		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+		LIMIT {$offset}, {$rowsperpage}
 	");
 }
 // or else this is a global stats page
@@ -225,13 +228,14 @@ else
 {
 	// get the info from the db 
 	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.SoldierName, tpd.PlayerID, SUM(tps.Score) AS Score, SUM(tps.Kills) AS Kills, SUM(tps.Deaths) AS Deaths, (SUM(tps.Kills)/SUM(tps.Deaths)) AS KDR, SUM(tps.Rounds) AS Rounds, SUM(tps.Headshots) AS Headshots, (SUM(tps.Headshots)/SUM(tps.Kills)) AS HSR
-		FROM tbl_playerdata tpd
-		INNER JOIN tbl_server_player tsp ON tsp.PlayerID = tpd.PlayerID
-		INNER JOIN tbl_playerstats tps ON tps.StatsID = tsp.StatsID
-		WHERE 1
-		GROUP BY tpd.PlayerID
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder} LIMIT {$offset}, {$rowsperpage}
+		SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Rounds`) AS Rounds, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+		FROM `tbl_playerdata` tpd
+		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+		WHERE tpd.`GameID` = {$GameID}
+		GROUP BY tpd.`PlayerID`
+		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+		LIMIT {$offset}, {$rowsperpage}
 	");
 }
 // offset of player rank count to show on scoreboard

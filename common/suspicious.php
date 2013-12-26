@@ -91,13 +91,14 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// check for suspicious players
 	$Suspicious_q = @mysqli_query($BF4stats,"
-		SELECT tpd.SoldierName, tps.Kills, tps.Deaths, tps.Headshots, tps.Rounds, (tps.Kills/tps.Deaths) AS KDR, (tps.Headshots/tps.Kills) AS HSR, tpd.PlayerID
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
-		AND (((tps.Kills/tps.Deaths) > 5 AND (tps.Headshots/tps.Kills) > 0.70 AND tps.Kills > 30 AND tps.Rounds > 1) OR ((tps.Kills/tps.Deaths) > 10 AND tps.Kills > 50 AND tps.Rounds > 1))
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder}
+		SELECT tpd.`SoldierName`, tps.`Kills`, tps.`Deaths`, tps.`Headshots`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+		AND tpd.`GameID` = {$GameID}
+		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 	");
 }
 // or else this is a global stats page
@@ -105,13 +106,14 @@ else
 {
 	// check for suspicious players
 	$Suspicious_q = @mysqli_query($BF4stats,"
-		SELECT tpd.SoldierName, SUM(tps.Kills) AS Kills, SUM(tps.Deaths) AS Deaths, SUM(tps.Headshots) AS Headshots, SUM(tps.Rounds) AS Rounds, (SUM(tps.Kills)/SUM(tps.Deaths)) AS KDR, (SUM(tps.Headshots)/SUM(tps.Kills)) AS HSR, tpd.PlayerID
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE (((tps.Kills/tps.Deaths) > 5 AND (tps.Headshots/tps.Kills) > 0.70 AND tps.Kills > 30 AND tps.Rounds > 1) OR ((tps.Kills/tps.Deaths) > 10 AND tps.Kills > 50 AND tps.Rounds > 1))
-		GROUP BY SoldierName
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder}
+		SELECT tpd.`SoldierName`, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+		AND tpd.`GameID` = {$GameID}
+		GROUP BY tpd.`SoldierName`
+		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 	");
 }
 // no suspicious players found

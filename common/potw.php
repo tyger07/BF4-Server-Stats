@@ -39,13 +39,14 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// find out how many rows are in the table 
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
-		FROM tbl_sessions tss
-		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE ServerID = {$ServerID}
-		AND tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-		GROUP BY tsp.StatsID
+		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(`Kills`) AS Kills, SUM(`Deaths`) AS Deaths, (SUM(`Kills`)/SUM(`Deaths`)) AS KDR, SUM(`Headshots`) AS Headshots, (SUM(`Headshots`)/SUM(`Kills`)) AS HSR
+		FROM `tbl_sessions` tss
+		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		AND tpd.`GameID` = {$GameID}
+		GROUP BY tsp.`StatsID`
 	");
 	$numrows = @mysqli_num_rows($TotalRows_q);
 }
@@ -54,12 +55,13 @@ else
 {
 	// find out how many rows are in the table
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
-		FROM tbl_sessions tss
-		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-		GROUP BY tsp.StatsID
+		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(`Kills`) AS Kills, SUM(`Deaths`) AS Deaths, (SUM(`Kills`)/SUM(`Deaths`)) AS KDR, SUM(`Headshots`) AS Headshots, (SUM(`Headshots`)/SUM(`Kills`)) AS HSR
+		FROM `tbl_sessions` tss
+		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		AND tpd.`GameID` = {$GameID}
+		GROUP BY tsp.`StatsID`
 	");
 	$numrows = @mysqli_num_rows($TotalRows_q);
 }
@@ -144,14 +146,16 @@ if(isset($ServerID) AND !is_null($ServerID))
 {
 	// query players
 	$Player_q = @mysqli_query($BF4stats,"
-		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
-		FROM tbl_sessions tss
-		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE ServerID = {$ServerID}
-		AND tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-		GROUP BY tsp.StatsID
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder} LIMIT {$offset}, {$rowsperpage}
+		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(`Kills`) AS Kills, SUM(`Deaths`) AS Deaths, (SUM(`Kills`)/SUM(`Deaths`)) AS KDR, SUM(`Headshots`) AS Headshots, (SUM(`Headshots`)/SUM(`Kills`)) AS HSR
+		FROM `tbl_sessions` tss
+		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		AND tpd.`GameID` = {$GameID}
+		GROUP BY tsp.`StatsID`
+		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+		LIMIT {$offset}, {$rowsperpage}
 	");
 }
 // or else this is a global stats page
@@ -159,13 +163,15 @@ else
 {
 	// query players
 	$Player_q = @mysqli_query($BF4stats,"
-		SELECT tpd.PlayerID, tpd.SoldierName, SUM(tss.Score) AS Score, SUM(Kills) AS Kills, SUM(Deaths) AS Deaths, (SUM(Kills)/SUM(Deaths)) AS KDR, SUM(Headshots) AS Headshots, (SUM(Headshots)/SUM(Kills)) AS HSR
-		FROM tbl_sessions tss
-		INNER JOIN tbl_server_player tsp ON tss.StatsID = tsp.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tss.Starttime BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-		GROUP BY tsp.StatsID
-		ORDER BY {$rank} {$order}, SoldierName {$nextorder} LIMIT {$offset}, {$rowsperpage}
+		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(`Kills`) AS Kills, SUM(`Deaths`) AS Deaths, (SUM(`Kills`)/SUM(`Deaths`)) AS KDR, SUM(`Headshots`) AS Headshots, (SUM(`Headshots`)/SUM(`Kills`)) AS HSR
+		FROM `tbl_sessions` tss
+		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+		AND tpd.`GameID` = {$GameID}
+		GROUP BY tsp.`StatsID`
+		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+		LIMIT {$offset}, {$rowsperpage}
 	");
 }
 if(@mysqli_num_rows($Player_q) != 0)

@@ -16,8 +16,8 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	// then lets do some queries to get the data we will need
 	// get current number of players
 	$CurrentPlayers_q = @mysqli_query($BF4stats,"
-		SELECT count(`TeamID`) AS count
-		FROM tbl_currentplayers
+		SELECT count(`TeamID`) AS `count`
+		FROM `tbl_currentplayers`
 		WHERE `ServerID` = {$ServerID}
 	");
 	if(@mysqli_num_rows($CurrentPlayers_q) != 0)
@@ -90,7 +90,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	// get current map
 	$CurrentMap_q = @mysqli_query($BF4stats,"
 		SELECT `mapName`, `ServerName`, `maxSlots`, `Gamemode`
-		FROM tbl_server
+		FROM `tbl_server`
 		WHERE `ServerID` = {$ServerID}
 	");
 	if(@mysqli_num_rows($CurrentMap_q) != 0)
@@ -165,8 +165,8 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	// query for scores
 	$Score_q = @mysqli_query($BF4stats,"
 		SELECT `Soldiername`, `Score`
-		FROM tbl_currentplayers
-		WHERE ServerID = {$ServerID}
+		FROM `tbl_currentplayers`
+		WHERE `ServerID` = {$ServerID}
 		ORDER BY `Score` DESC
 		LIMIT 7
 	");
@@ -506,7 +506,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// get current map
 	$CurrentMap_q = @mysqli_query($BF4stats,"
 		SELECT `mapName`, `ServerName`, `maxSlots`, `Gamemode`
-		FROM tbl_server
+		FROM `tbl_server`
 		WHERE `ServerID` = {$ServerID}
 	");
 	if(@mysqli_num_rows($CurrentMap_q) != 0)
@@ -568,7 +568,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// get current number of players
 	$CurrentPlayers_q = @mysqli_query($BF4stats,"
 		SELECT count(`TeamID`) AS count
-		FROM tbl_currentplayers
+		FROM `tbl_currentplayers`
 		WHERE `ServerID` = {$ServerID}
 	");
 	if(@mysqli_num_rows($CurrentPlayers_q) != 0)
@@ -723,8 +723,8 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	// query for player scores
 	$Score_q = @mysqli_query($BF4stats,"
 		SELECT `Soldiername`, `Score`
-		FROM tbl_currentplayers
-		WHERE ServerID = {$ServerID}
+		FROM `tbl_currentplayers`
+		WHERE `ServerID` = {$ServerID}
 		ORDER BY `Score` DESC
 	");
 	if(@mysqli_num_rows($Score_q) != 0)
@@ -778,12 +778,12 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	$count = 0;
 	// query for player scores
 	$Score_q = @mysqli_query($BF4stats,"
-		SELECT tpd.SoldierName, tps.Score
-		FROM tbl_playerstats tps
-		INNER JOIN tbl_server_player tsp ON tsp.StatsID = tps.StatsID
-		INNER JOIN tbl_playerdata tpd ON tsp.PlayerID = tpd.PlayerID
-		WHERE tsp.ServerID = {$ServerID}
-		ORDER BY Score DESC, SoldierName ASC LIMIT 10
+		SELECT tpd.`SoldierName`, tps.`Score`
+		FROM `tbl_playerstats` tps
+		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		WHERE tsp.`ServerID` = {$ServerID}
+		ORDER BY tps.`Score` DESC, tpd.`SoldierName` ASC LIMIT 10
 	");
 	if(@mysqli_num_rows($Score_q) != 0)
 	{
