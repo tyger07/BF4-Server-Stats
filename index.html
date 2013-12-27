@@ -1,42 +1,40 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Bf4-server-stats : BF4 Server Stats Page using XpKiller's PRoCon stats logging plugin." />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Bf4-server-stats</title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Bf4-server-stats by tyger07</title>
   </head>
 
   <body>
+    <div id="container">
+      <div class="inner">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/tyger07/BF4-Server-Stats">View on GitHub</a>
-
-          <h1 id="project_title">Bf4-server-stats</h1>
-          <h2 id="project_tagline">BF4 Server Stats Page using XpKiller's PRoCon stats logging plugin.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/tyger07/BF4-Server-Stats/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/tyger07/BF4-Server-Stats/tarball/master">Download this project as a tar.gz file</a>
-            </section>
+        <header>
+          <h1>Bf4-server-stats</h1>
+          <h2>BF4 Server Stats Page using XpKiller's PRoCon stats logging plugin.</h2>
         </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h2>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/tyger07/BF4-Server-Stats/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/tyger07/BF4-Server-Stats/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/tyger07/BF4-Server-Stats" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h2>
 <a name="bf4-server-stats-overview" class="anchor" href="#bf4-server-stats-overview"><span class="octicon octicon-link"></span></a>BF4 Server Stats Overview</h2>
 
-<p>This is a very simple and fast loading game server player stats webpage as requested by Friegide in these forums.  The page is designed to provide minimal performance impact on your web server while still providing much very useful statistical data.  This page requires the use of a stats database which is created by XpKiller's BF4 Chat, GUID, Stats and Mapstats Logger Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's thread.</p>
-
-<p>Each copy of this stats page code is designed to be used with one game server.  Multiple copies of the file using different names or placed in different directories can be used to create multiple stats pages.</p>
+<p>This page requires the use of a stats database which is created by XpKiller's PRoCon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's plugin thread.</p>
 
 <h2>
 <a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
@@ -57,7 +55,7 @@
 
 <p><a href="http://open-web-community.com/bf4stats/BF4Stats.zip">http://open-web-community.com/bf4stats/BF4Stats.zip</a></p>
 
-<p>Extract the files.  You may rename index.php to any name of your choice.</p>
+<p>Extract the files.</p>
 
 <p>You may change the appearance of the page by modifying the stats.css file in the common folder.</p>
 
@@ -73,31 +71,35 @@ For example, this would work:</p>
 
 <p>$clan_name = 'Ty_ger07\'s Clan'; // your gaming clan or organization name</p>
 
-<p><strong>You must fill in the following information in the common.php file found in the common folder</strong></p>
+<p><strong>You must fill in the following information in the config.php file found in the config folder</strong></p>
 
 <p><strong>1)</strong> Input your stats database host, stats database user name, stats database password, and stats database name.</p>
 
-<p>$db_host = ''; // database host</p>
+<p>// DATABASE INFORMATION</p>
 
-<p>$db_port = '3306'; // database port. default is 3306</p>
+<p>DEFINE('HOST', '');                                                 // database host address</p>
 
-<p>$db_name = ''; // database name</p>
+<p>DEFINE('PORT', '3306');                                             // database port - default is 3306</p>
 
-<p>$db_uname = ''; // database user name</p>
+<p>DEFINE('NAME', '');                                                 // database name</p>
 
-<p>$db_pass = ''; // database password</p>
+<p>DEFINE('USER', '');                                                 // database user name - sometimes the same as the database name</p>
+
+<p>DEFINE('PASS', '');                                                 // database password</p>
 
 <p>For example:</p>
 
-<p>$db_host = '100.200.300.400'; // database host</p>
+<p>// DATABASE INFORMATION</p>
 
-<p>$db_port = '3306'; // database port. default is 3306</p>
+<p>DEFINE('HOST', '100.200.300.400');                                  // database host address</p>
 
-<p>$db_name = 'database'; // database name</p>
+<p>DEFINE('PORT', '3306');                                             // database port - default is 3306</p>
 
-<p>$db_uname = 'user'; // database user name</p>
+<p>DEFINE('NAME', 'database');                                         // database name</p>
 
-<p>$db_pass = 'pass'; // database password</p>
+<p>DEFINE('USER', 'user');                                             // database user name - sometimes the same as the database name</p>
+
+<p>DEFINE('PASS', 'pass');                                             // database password</p>
 
 <p><strong>Note:</strong> Some web server providers (such as GoDaddy) use the same value for database name and database user name.</p>
 
@@ -115,14 +117,70 @@ For example, this would work:</p>
 
 <p><strong>4)</strong> Enter the URL which you would like users to redirect to if they click your banner image.</p>
 
-<p>$banner_url = '<a href="http://open-web-community.com/">http://open-web-community.com/</a>'; // where clicking the banner will take you</p>
+<p>$banner_url = '<a href="http://tyger07.github.io/BF4-Server-Stats/">http://tyger07.github.io/BF4-Server-Stats/</a>'; // where clicking the banner will take you</p>
 
 <p>Enjoy!</p>
 
 <h2>
 <a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog:</h2>
 
-<p>12-14-2013:</p>
+<p>12-26-2013:</p>
+
+<ul>
+<li>Fixed a stats conformity issue by filtering out false database data for players with incorrect secondary Player IDs.</li>
+<li>Fixed signature images by allowing most data to be available in the signature image even if weapon stats are disabled.</li>
+</ul><p>12-23-2013:</p>
+
+<ul>
+<li>Added stats  signature generator</li>
+<li>Added pagination to player of the week pages</li>
+<li>Added player stats signatures to player stats pages</li>
+</ul><p>12-22-2013:</p>
+
+<ul>
+<li>More server banner generator help in example file and an additional option to adjust online player count</li>
+</ul><p>12-20-2013:</p>
+
+<ul>
+<li>Minor bug fix with counting sessions on the index page and global stats pages</li>
+<li>Added server banner generator for generating server banners for website homepage</li>
+</ul><p>12-19-2013:</p>
+
+<ul>
+<li>Slightly different directory structure moving the config file from the common folder to the config folder and renaming it from common.php to config.php</li>
+<li>Change database connection variables to constants</li>
+<li>Made dog tag names in global pages links to global player stats page</li>
+<li>Better battlelog link</li>
+<li>Minor bug fixes</li>
+<li>Removal of map images since they didn't fit the appearance of the page</li>
+<li>Sleeker appearance</li>
+</ul><p>12-18-2013:</p>
+
+<ul>
+<li>Made code more uniform and removed unnecessary duplicate code and duplicate files</li>
+<li>Minor bug fixes</li>
+<li>Added visual indicator to show which column is currently ordered and which direction it is ordered</li>
+<li>Added more comments in code where needed</li>
+</ul><p>12-17-2013:</p>
+
+<ul>
+<li>Disabled global stats if only one server is in the database</li>
+<li>Added more graphs</li>
+<li>Bug fix for battlelog link</li>
+<li>Fixed a typo</li>
+<li>Added players of the week</li>
+<li>Added missing weapon groups</li>
+</ul><p>12-16-2013:</p>
+
+<ul>
+<li>Global stats pages finished off with menus and more pages</li>
+</ul><p>12-15-2013:</p>
+
+<ul>
+<li>Global stats added</li>
+<li>Ranks simplified to speed up pages</li>
+<li>Maps in maps page ordered by game mode</li>
+</ul><p>12-14-2013:</p>
 
 <ul>
 <li>SQL injection security fix by only allowing expected inputs</li>
@@ -169,18 +227,25 @@ For example, this would work:</p>
 <ul>
 <li>Initial release modified and transferred over from BF3 stats page version</li>
 </ul>
-      </section>
+        </section>
+
+        <footer>
+          Bf4-server-stats is maintained by <a href="https://github.com/tyger07">tyger07</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+                  <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("bf4 stats page");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+      </div>
     </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Bf4-server-stats maintained by <a href="https://github.com/tyger07">tyger07</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
   </body>
 </html>
