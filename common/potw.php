@@ -343,7 +343,7 @@ if(@mysqli_num_rows($Player_q) != 0)
 		</tr>
 		';
 	}
-	echo '</table><br/></div>';
+	echo '</table></div>';
 }
 else
 {

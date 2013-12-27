@@ -384,12 +384,12 @@ elseif($SoldierName != null)
 			<tr>
 			<td>
 			<div class="innercontent">
-			<table width="70%" align="center" border="0">
+			<table width="80%" align="center" border="0">
 			<tr>
 			';
 			// get this player's ranks
-			// input as: server id, soldier, db
-			rank($ServerID, $PlayerID, $BF4stats);
+			// input as: server id, soldier, db, game id
+			rank($ServerID, $PlayerID, $BF4stats, $GameID);
 			echo '
 			</tr>
 			</table>
