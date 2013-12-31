@@ -46,7 +46,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 		WHERE tsp.`ServerID` = {$ServerID}
 		AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		AND tpd.`GameID` = {$GameID}
-		GROUP BY tsp.`StatsID`
+		GROUP BY tpd.`PlayerID`
 	");
 	$numrows = @mysqli_num_rows($TotalRows_q);
 }
@@ -61,7 +61,7 @@ else
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		AND tpd.`GameID` = {$GameID}
-		GROUP BY tsp.`StatsID`
+		GROUP BY tpd.`PlayerID`
 	");
 	$numrows = @mysqli_num_rows($TotalRows_q);
 }
@@ -153,7 +153,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 		WHERE tsp.`ServerID` = {$ServerID}
 		AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		AND tpd.`GameID` = {$GameID}
-		GROUP BY tsp.`StatsID`
+		GROUP BY tpd.`PlayerID`
 		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 		LIMIT {$offset}, {$rowsperpage}
 	");
@@ -169,7 +169,7 @@ else
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		AND tpd.`GameID` = {$GameID}
-		GROUP BY tsp.`StatsID`
+		GROUP BY tpd.`PlayerID`
 		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 		LIMIT {$offset}, {$rowsperpage}
 	");

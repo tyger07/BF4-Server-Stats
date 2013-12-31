@@ -24,7 +24,7 @@ http://validator.w3.org/check?uri=http%3A%2F%2Fopen-web-community.com%2Fbf4stats
 
 Download the following file:
 
-http://open-web-community.com/bf4stats/BF4Stats.zip
+https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
 Extract the files.
 
@@ -112,6 +112,9 @@ Enjoy!
 
 
 ## Changelog:
+
+12-30-2013
+- Fixed players of the week page grouping by player id instead of stats id to remove duplicates
 
 12-26-2013:
 - Fixed a stats conformity issue by filtering out false database data for players with incorrect secondary Player IDs.
