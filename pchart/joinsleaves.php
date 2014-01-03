@@ -15,13 +15,28 @@ $limit = 50;
 if(isset($_GET['server']) AND !empty($_GET['server']))
 {
 	$id = mysqli_real_escape_string($BF4stats, $_GET['server']);
-	$query  = "SELECT `PlayersJoinedServer`, `PlayersLeftServer` FROM `tbl_mapstats` WHERE ServerID = ". $id ." LIMIT {$limit}";
+	$query  = "
+		SELECT `PlayersJoinedServer`, `PlayersLeftServer`
+		FROM `tbl_mapstats`
+		WHERE `ServerID` = {$id}
+		AND `Gamemode` != ''
+		AND `MapName` != ''
+		ORDER BY `TimeRoundStarted` DESC
+		LIMIT {$limit}
+	";
 	$result = mysqli_query($BF4stats, $query);
 }
 // this must be a global stats page
 else
 {
-	$query  = "SELECT `PlayersJoinedServer`, `PlayersLeftServer` FROM `tbl_mapstats` WHERE 1 LIMIT {$limit}";
+	$query  = "
+		SELECT `PlayersJoinedServer`, `PlayersLeftServer`
+		FROM `tbl_mapstats`
+		WHERE `Gamemode` != ''
+		AND `MapName` != ''
+		ORDER BY `TimeRoundStarted` DESC
+		LIMIT {$limit}
+	";
 	$result = mysqli_query($BF4stats, $query);
 }
 

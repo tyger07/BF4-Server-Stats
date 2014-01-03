@@ -16,25 +16,29 @@ if(isset($_GET['server']) AND !empty($_GET['server']))
 {
 	$id = mysqli_real_escape_string($BF4stats, $_GET['server']);
 	$query  = "
-		SELECT SUBSTRING(TimeMapLoad, 1, length(TimeMapLoad) - 9) AS Date, AVG(MaxPlayers) AS Average
-		FROM tbl_mapstats
-		WHERE ServerID = {$id}
-		AND Gamemode != ''
-		AND MapName != ''
-		GROUP BY Date
-		ORDER BY Date DESC LIMIT {$limit}";
+		SELECT SUBSTRING(`TimeMapLoad`, 1, length(`TimeMapLoad`) - 9) AS Date, AVG(`MaxPlayers`) AS Average
+		FROM `tbl_mapstats`
+		WHERE `ServerID` = {$id}
+		AND `Gamemode` != ''
+		AND `MapName` != ''
+		GROUP BY `Date`
+		ORDER BY `Date` DESC
+		LIMIT {$limit}
+	";
 	$result = mysqli_query($BF4stats, $query);
 }
 // this must be a global stats page
 else
 {
 	$query  = "
-		SELECT SUBSTRING(TimeMapLoad, 1, length(TimeMapLoad) - 9) AS Date, AVG(MaxPlayers) AS Average
-		FROM tbl_mapstats
-		WHERE Gamemode != ''
-		AND MapName != ''
-		GROUP BY Date
-		ORDER BY Date DESC LIMIT {$limit}";
+		SELECT SUBSTRING(`TimeMapLoad`, 1, length(`TimeMapLoad`) - 9) AS Date, AVG(`MaxPlayers`) AS Average
+		FROM `tbl_mapstats`
+		WHERE `Gamemode` != ''
+		AND `MapName` != ''
+		GROUP BY `Date`
+		ORDER BY `Date` DESC
+		LIMIT {$limit}
+	";
 	$result = mysqli_query($BF4stats, $query);
 }
 

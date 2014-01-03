@@ -671,10 +671,10 @@ if(isset($ServerID) AND !is_null($ServerID))
 		// include chat.php contents
 		require_once('./common/chat.php');
 	}
-	// begin chat logic
+	// begin potw logic
 	if(isset($_GET['potw']) AND !empty($_GET['potw']))
 	{
-		// include chat.php contents
+		// include potw.php contents
 		require_once('./common/potw.php');
 	}
 	// begin home page logic
