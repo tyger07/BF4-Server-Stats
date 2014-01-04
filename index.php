@@ -37,8 +37,8 @@ echo '
 ';
 
 // connect to the stats database
-$BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
-@mysqli_select_db($BF4stats, NAME) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><br/><center><b>Unable to select the stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></body></html>");
+$BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
+@mysqli_select_db($BF4stats, NAME) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>Unable to select stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
 
 // initialize value as null
 $GameID = null;
@@ -55,6 +55,12 @@ if(@mysqli_num_rows($Server_q) == 1)
 {
 	$Server_r = @mysqli_fetch_assoc($Server_q);
 	$GameID = $Server_r['GameID'];
+}
+// BF4 not found in this database
+else
+{
+	// display error and die
+	die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>The game 'BF4' was not found in this database! Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
 }
 
 // free up server info query memory
@@ -77,6 +83,12 @@ if(@mysqli_num_rows($ServerID_q) != 0)
 	{
 		$ServerIDs[] = $ServerID_r['ServerID'];
 	}
+}
+// no BF4 servers were found
+else
+{
+	// display error and die
+	die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>No 'BF4' servers were found in this database! Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
 }
 
 // free up server id query memory

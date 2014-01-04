@@ -125,6 +125,7 @@ Enjoy!
 1-3-2014:
 - Fixed server info graphs showing old data instead of new data.
 - Use GameID associated specifically with 'BF4' instead of just the most common GameID in the database.
+- Better error explanations if database doesn't connect or BF4 servers aren't found in the database.
 
 12-30-2013:
 - Fixed players of the week page grouping by player id instead of stats id to remove duplicates
