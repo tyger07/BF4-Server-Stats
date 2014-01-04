@@ -3,6 +3,15 @@
 
 This page requires the use of a stats database which is created by XpKiller's PRoCon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's plugin thread.
 
+For best compatibility with this code, use the following settings in XpKiller's PRoCon logging plugin:
+"Enable Statslogging?" : Yes
+"Enable Weaponstats?" : Yes
+"Enable Livescoreboard in DB?" : Yes
+"tableSuffix" : None
+"MapStats ON?" : Yes
+"Session ON?" : Yes
+"Save Sessiondata to DB?" : Yes
+"Log playerdata only (no playerstats)?" : No
 
 
 ## Demo
@@ -113,7 +122,11 @@ Enjoy!
 
 ## Changelog:
 
-12-30-2013
+1-3-2014:
+- Fixed server info graphs showing old data instead of new data.
+- Use GameID associated specifically with 'BF4' instead of just the most common GameID in the database.
+
+12-30-2013:
 - Fixed players of the week page grouping by player id instead of stats id to remove duplicates
 
 12-26-2013:

@@ -44,13 +44,10 @@ $BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Pl
 $GameID = null;
 
 // first we need to find the GameID
-// we will use the most common GameID in this database
 $Server_q = @mysqli_query($BF4stats,"
-	SELECT `GameID`, COUNT(`GameID`) AS magnitude
-	FROM `tbl_server`
-	GROUP BY `GameID`
-	ORDER BY magnitude DESC
-	LIMIT 1
+	SELECT `GameID`
+	FROM `tbl_games`
+	WHERE `Name` = 'BF4'
 ");
 
 // the server info was found
