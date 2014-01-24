@@ -122,9 +122,10 @@ Enjoy!
 
 ## Changelog:
 
-1-23-14
+1-23-2014:
 - Bug fixes
 - Code size reduction
+- Style changes
 - Added map pie chart to maps page and moved daily player quantity data chart from maps page to server info page
 - Reverted back to on-demand signature images instead of caching signature images on the server (for server space usage reasons and to ensure up-to-date data is displayed)
 
