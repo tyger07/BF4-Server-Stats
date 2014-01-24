@@ -10,7 +10,7 @@ include_once('../common/constants.php');
 
 // we will need a server ID from the URL query string!
 // if no data query string is provided, this is an image
-if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND (!isset($_GET['data']) OR empty($_GET['data'])))
+if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND empty($_GET['data']))
 {
 	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
 	// then lets do some queries to get the data we will need
@@ -347,7 +347,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	imagedestroy($base);
 }
 // this is an image but no server ID was provided!
-elseif(!isset($_GET['data']) OR empty($_GET['data']))
+elseif(empty($_GET['data']))
 {
 	// start outputting the image
 	header("Content-type: image/png");
@@ -375,12 +375,12 @@ elseif(!isset($_GET['data']) OR empty($_GET['data']))
 	imagedestroy($base);
 }
 // this is an iframe showind data
-elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND isset($_GET['data']) AND !empty($_GET['data']))
+elseif(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND !empty($_GET['data']))
 {
 	// get query string options
 	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
 	// background color?
-	if(isset($_GET['bgcolor']) AND !empty($_GET['bgcolor']))
+	if(!empty($_GET['bgcolor']))
 	{
 		$bgcolor = mysqli_real_escape_string($BF4stats, $_GET['bgcolor']);
 	}
@@ -390,7 +390,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		$bgcolor = '1D2023';
 	}
 	// font color?
-	if(isset($_GET['fontcolor']) AND !empty($_GET['fontcolor']))
+	if(!empty($_GET['fontcolor']))
 	{
 		$fontcolor = mysqli_real_escape_string($BF4stats, $_GET['fontcolor']);
 	}
@@ -400,7 +400,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		$fontcolor = 'BBBBBB';
 	}
 	// link color?
-	if(isset($_GET['linkcolor']) AND !empty($_GET['linkcolor']))
+	if(!empty($_GET['linkcolor']))
 	{
 		$linkcolor = mysqli_real_escape_string($BF4stats, $_GET['linkcolor']);
 	}
@@ -410,7 +410,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		$linkcolor = '439BC8';
 	}
 	// section font color?
-	if(isset($_GET['sectionfontcolor']) AND !empty($_GET['sectionfontcolor']))
+	if(!empty($_GET['sectionfontcolor']))
 	{
 		$sectionfontcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionfontcolor']);
 	}
@@ -420,7 +420,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		$sectionfontcolor = 'AAAAAA';
 	}
 	// section background color?
-	if(isset($_GET['sectionbgcolor']) AND !empty($_GET['sectionbgcolor']))
+	if(!empty($_GET['sectionbgcolor']))
 	{
 		$sectionbgcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionbgcolor']);
 	}
@@ -430,7 +430,7 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 		$sectionbgcolor = '0A0C0F';
 	}
 	// online player count?
-	if(isset($_GET['onlinecount']) AND !empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
+	if(!empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
 	{
 		$onlinecount = mysqli_real_escape_string($BF4stats, $_GET['onlinecount']);
 	}
@@ -840,12 +840,12 @@ elseif(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_G
 	';
 }
 // this is an iframe but no server ID was provided!
-elseif(isset($_GET['data']) AND !empty($_GET['data']))
+elseif(!empty($_GET['data']))
 {
 	// get query string options
 	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
 	// background color?
-	if(isset($_GET['bgcolor']) AND !empty($_GET['bgcolor']))
+	if(!empty($_GET['bgcolor']))
 	{
 		$bgcolor = mysqli_real_escape_string($BF4stats, $_GET['bgcolor']);
 	}
@@ -855,7 +855,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 		$bgcolor = '1D2023';
 	}
 	// font color?
-	if(isset($_GET['fontcolor']) AND !empty($_GET['fontcolor']))
+	if(!empty($_GET['fontcolor']))
 	{
 		$fontcolor = mysqli_real_escape_string($BF4stats, $_GET['fontcolor']);
 	}
@@ -865,7 +865,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 		$fontcolor = 'BBBBBB';
 	}
 	// link color?
-	if(isset($_GET['linkcolor']) AND !empty($_GET['linkcolor']))
+	if(!empty($_GET['linkcolor']))
 	{
 		$linkcolor = mysqli_real_escape_string($BF4stats, $_GET['linkcolor']);
 	}
@@ -875,7 +875,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 		$linkcolor = '439BC8';
 	}
 	// section font color?
-	if(isset($_GET['sectionfontcolor']) AND !empty($_GET['sectionfontcolor']))
+	if(!empty($_GET['sectionfontcolor']))
 	{
 		$sectionfontcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionfontcolor']);
 	}
@@ -885,7 +885,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 		$sectionfontcolor = 'AAAAAA';
 	}
 	// section background color?
-	if(isset($_GET['sectionbgcolor']) AND !empty($_GET['sectionbgcolor']))
+	if(!empty($_GET['sectionbgcolor']))
 	{
 		$sectionbgcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionbgcolor']);
 	}
@@ -895,7 +895,7 @@ elseif(isset($_GET['data']) AND !empty($_GET['data']))
 		$sectionbgcolor = '0A0C0F';
 	}
 	// online player count?
-	if(isset($_GET['onlinecount']) AND !empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
+	if(!empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
 	{
 		$onlinecount = mysqli_real_escape_string($BF4stats, $_GET['onlinecount']);
 	}

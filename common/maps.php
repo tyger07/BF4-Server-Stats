@@ -9,7 +9,7 @@ echo '
 <tr><td  class="headline">
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '<br/><center><b>Map Stats</b></center><br/>';
 }
@@ -36,13 +36,9 @@ echo '
 <div class="middlecontent">
 <table width="100%" border="0">
 <tr>
-<th class="headline"><b>Map Stats</b></th>
-</tr>
-<tr>
-<td>
 ';
 // get current rank query details
-if(isset($_GET['rank']) AND !empty($_GET['rank']))
+if(!empty($_GET['rank']))
 {
 	$rank = $_GET['rank'];
 	// filter out SQL injection
@@ -59,7 +55,7 @@ else
 	$rank = 'Gamemode';
 }
 // get current order query details
-if(isset($_GET['order']) AND !empty($_GET['order']))
+if(!empty($_GET['order']))
 {
 	$order = $_GET['order'];
 	// filter out SQL injection
@@ -89,7 +85,7 @@ else
 	$nextorder = 'DESC';
 }
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// query for maps in this server
 	$Mode_q = @mysqli_query($BF4stats,"
@@ -116,12 +112,13 @@ else
 if(@mysqli_num_rows($Mode_q) == 0)
 {
 	echo '
+	<td>
 	<div class="innercontent"><br/>
 	<table width="98%" align="center" border="0">
 	<tr><td>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<center><font class="information">No map stats found for found for this server.</font></center>';
 	}
@@ -138,17 +135,23 @@ if(@mysqli_num_rows($Mode_q) == 0)
 }
 else
 {
-	echo '<div class="innercontent">';
-	// include playersbydate.php contents
+	echo '
+	<th class="headline"><b>Map Stats</b></th>
+	</tr>
+	<tr>
+	<td>
+	<div class="innercontent">
+	';
+	// include maps.php contents
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
-		echo '<br/><center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
+		echo '<br/><center><img src="pchart/maps.php?server=' . $ServerID . '" alt="maps played" title="maps played" /></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<br/><center><img src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
+		echo '<br/><center><img src="pchart/maps.php" alt="maps played" title="maps played" /></center><br/>';
 	}
 	echo '
 	<table width="98%" align="center" border="0">
@@ -158,7 +161,7 @@ else
 	<th width="16%" style="text-align:left;">Map Code</th>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1&amp;rank=Gamemode&amp;order=';
 	}
@@ -187,7 +190,7 @@ else
 	{
 		$Mode = $Mode_r['Gamemode'];
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			// query for game modes for each map
 			$Map_q = @mysqli_query($BF4stats,"

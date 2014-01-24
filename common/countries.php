@@ -9,7 +9,7 @@ echo '
 <tr><td  class="headline">
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '<br/><center><b>Country Stats</b></center><br/>';
 }
@@ -26,14 +26,14 @@ echo '
 <br/>
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
-	echo '<center>These are the countries players in this server reside in and the stats for the top 10 most common countries.</center>';
+	echo '<center>This server is most popular in the following countries.</center>';
 }
 // or else this is a global stats page
 else
 {
-	echo '<center>These are the countries players from these servers reside in and the stats for the top 10 most common countries.</center>';
+	echo '<center>These servers are most popular in the following countries.</center>';
 }
 echo '
 <br/>
@@ -47,17 +47,9 @@ echo '
 <div class="middlecontent">
 <table width="100%" border="0">
 <tr>
-<th class="headline"><b>Country Stats</b></th>
-</tr>
-<tr>
-<td><br/>
-<div class="innercontent">
-<table width="100%" border="0">
-<tr>
-<td>
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// query for countries
 	$Country_q = mysqli_query($BF4stats,"
@@ -116,12 +108,17 @@ else
 if(@mysqli_num_rows($Country_q) == 0)
 {
 	echo '
+	<td><br/>
+	<div class="innercontent">
+	<table width="100%" border="0">
+	<tr>
+	<td>
 	<div class="innercontent">
 	<table width="95%" align="center" border="0">
 	<tr><td>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo'<center><font class="information">No country stats found for this server.</font></center>';
 	}
@@ -139,7 +136,17 @@ if(@mysqli_num_rows($Country_q) == 0)
 // found country stats
 else
 {
-	echo '<div class="innerinnercontent">';
+	echo '
+	<th class="headline"><b>Country Stats</b></th>
+	</tr>
+	<tr>
+	<td><br/>
+	<div class="innercontent">
+	<table width="100%" border="0">
+	<tr>
+	<td>
+	<div class="innerinnercontent">
+	';
 	// initialize values
 	$count = 0;
 	$mapcount = 0;
@@ -227,7 +234,7 @@ else
 		// initialize value
 		$country_count = 0;
 		// get current rank query details
-		if(isset($_GET['rank']) AND !empty($_GET['rank']))
+		if(!empty($_GET['rank']))
 		{
 			$rank = $_GET['rank'];
 			// filter out SQL injection
@@ -244,7 +251,7 @@ else
 			$rank = 'Score';
 		}
 		// get current order query details
-		if(isset($_GET['order']) AND !empty($_GET['order']))
+		if(!empty($_GET['order']))
 		{
 			$order = $_GET['order'];
 			// filter out SQL injection
@@ -276,18 +283,17 @@ else
 		echo '
 		<table width="98%" align="center" border="0">
 		<tr>
-		<td width="1%" style="text-align:left">&nbsp;</td>
 		<td width="3%" class="tablecontents" style="text-align:left">#</td>
 		';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
-			echo '<td width="21%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=SoldierName&amp;order=';
+			echo '<td width="22%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=SoldierName&amp;order=';
 		}
 		// or else this is a global stats page
 		else
 		{
-			echo '<td width="21%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalcountries=1&amp;rank=SoldierName&amp;order=';
+			echo '<td width="22%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalcountries=1&amp;rank=SoldierName&amp;order=';
 		}
 		if($rank != 'SoldierName')
 		{
@@ -298,7 +304,7 @@ else
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></td>';
 		}
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="15%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=Score&amp;order=';
 		}
@@ -316,7 +322,7 @@ else
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Score</span></a></td>';
 		}
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="15%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=Rounds&amp;order=';
 		}
@@ -334,7 +340,7 @@ else
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Rounds Played</span></a></td>';
 		}
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="15%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=Kills&amp;order=';
 		}
@@ -352,7 +358,7 @@ else
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></td>';
 		}
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="15%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=Deaths&amp;order=';
 		}
@@ -370,7 +376,7 @@ else
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></td>';
 		}
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="15%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1&amp;rank=KDR&amp;order=';
 		}
@@ -389,7 +395,7 @@ else
 		}
 		echo '</tr>';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			//query top 10 players in this country
 			$CountryRank_q = @mysqli_query($BF4stats,"
@@ -447,18 +453,17 @@ else
 				$KDR = round($CountryRank_r['KDR'],2);
 				echo '
 				<tr>
-				<td width="1%" style="text-align: left;">&nbsp;</td>
 				<td width="3%" class="tablecontents" style="text-align: left;"><font class="information">' . $country_count . ':</font></td>
 				';
 				// if there is a ServerID, this is a server stats page
-				if(isset($ServerID) AND !is_null($ServerID))
+				if(!empty($ServerID))
 				{
-					echo '<td width="21%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $SoldierName . '</a></td>';
+					echo '<td width="22%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $SoldierName . '</a></td>';
 				}
 				// or else this is a global stats page
 				else
 				{
-					echo '<td width="21%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '">' . $SoldierName . '</a></td>';
+					echo '<td width="22%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 				}
 				echo '
 				<td width="15%" class="tablecontents" style="text-align: left;">' . $Score . '</td>

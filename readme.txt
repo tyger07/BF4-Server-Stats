@@ -122,6 +122,12 @@ Enjoy!
 
 ## Changelog:
 
+1-23-14
+- Bug fixes
+- Code size reduction
+- Added map pie chart to maps page and moved daily player quantity data chart from maps page to server info page
+- Reverted back to on-demand signature images instead of caching signature images on the server (for server space usage reasons and to ensure up-to-date data is displayed)
+
 1-3-2014:
 - Fixed server info graphs showing old data instead of new data.
 - Use GameID associated specifically with 'BF4' instead of just the most common GameID in the database.

@@ -101,7 +101,7 @@ $PlayerID = null;
 
 // was a server ID given in the URL?  Is it a valid server ID?
 // if so, we must not be looking at global stats
-if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
+if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
 {
 	// assign $ServerID variable
 	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
@@ -128,12 +128,12 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	// lets see if a SoldierName or PlayerID was provided to us in the URL
 	// we will try to find this player in this server and convert everything to PlayerID
 	// first look for a SoldierName in URL and try to convert it to PlayerID
-	if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
+	if(!empty($_GET['SoldierName']))
 	{
 		// remove spaces from name input
 		$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
 		
-		// if there are dangerous characters, just stop
+		// if there are dangerous characters, null it out
 		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
 		{
 			$SoldierName = null;
@@ -168,7 +168,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 	}
 	
 	// then look for PlayerID in URL and make sure it is valid
-	if(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
+	if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
 	{
 		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
 		
@@ -205,12 +205,12 @@ else
 {
 	// lets see if a SoldierName or PlayerID was provided to us in the URL
 	// first look for a SoldierName in URL and try to convert it to PlayerID
-	if(isset($_GET['SoldierName']) AND !empty($_GET['SoldierName']))
+	if(!empty($_GET['SoldierName']))
 	{
 		// remove spaces from name input
 		$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
 		
-		// if there are dangerous characters, just stop
+		// if there are dangerous characters, null it out
 		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
 		{
 			$SoldierName = null;
@@ -245,7 +245,7 @@ else
 	}
 	
 	// then look for PlayerID in URL and make sure it is valid
-	if(isset($_GET['PlayerID']) AND !empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
+	if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
 	{
 		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
 		
@@ -277,10 +277,10 @@ else
 }
 
 // this is not a global stats page
-if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
+if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
 {
 	// change page title, meta description, and keywords depending on the page content
-	if(isset($_GET['search']) AND !empty($_GET['search']))
+	if(!empty($_GET['search']))
 	{
 		echo '
 		<meta name="keywords" content="' . $SoldierName . ',' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -288,7 +288,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<title>' . $clan_name . ' BF4 Player Stats - ' . $SoldierName . ' - ' . $ServerName . '</title>
 		';
 	}
-	elseif(isset($_GET['suspicious']) AND !empty($_GET['suspicious']))
+	elseif(!empty($_GET['suspicious']))
 	{
 		echo '
 		<meta name="keywords" content="Suspicious,Players,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -296,7 +296,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<title>' . $clan_name . ' BF4 Player Stats - Suspicious Players - ' . $ServerName . '</title>
 		';
 	}
-	elseif(isset($_GET['topplayers']) AND !empty($_GET['topplayers']))
+	elseif(!empty($_GET['topplayers']))
 	{
 		echo '
 		<meta name="keywords" content="Top,Players,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -304,7 +304,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<title>' . $clan_name . ' BF4 Player Stats - Top Players - ' . $ServerName . '</title>
 		';
 	}
-	elseif(isset($_GET['countries']) AND !empty($_GET['countries']))
+	elseif(!empty($_GET['countries']))
 	{
 		echo '
 		<meta name="keywords" content="Country,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -312,7 +312,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<title>' . $clan_name . ' BF4 Player Stats - Country Stats - ' . $ServerName . '</title>
 		';
 	}
-	elseif(isset($_GET['maps']) AND !empty($_GET['maps']))
+	elseif(!empty($_GET['maps']))
 	{
 		echo '
 		<meta name="keywords" content="Map,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -320,7 +320,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<title>' . $clan_name . ' BF4 Player Stats - Map Stats - ' . $ServerName . '</title>
 		';
 	}
-	elseif(isset($_GET['serverstats']) AND !empty($_GET['serverstats']))
+	elseif(!empty($_GET['serverstats']))
 	{
 		echo '
 		<meta name="keywords" content="Server,Scoreboard,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Info" />
@@ -328,7 +328,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<title>' . $clan_name . ' BF4 Player Stats - Server Info - ' . $ServerName . '</title>
 		';
 	}
-	elseif(isset($_GET['chat']) AND !empty($_GET['chat']))
+	elseif(!empty($_GET['chat']))
 	{
 		echo '
 		<meta name="keywords" content="Chat,' . $ServerName . ',' . $clan_name . ',BF4,Player,Recent,Server" />
@@ -337,7 +337,7 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 		<meta http-equiv="refresh" content="60" />
 		';
 	}
-	elseif(isset($_GET['potw']) AND !empty($_GET['potw']))
+	elseif(!empty($_GET['potw']))
 	{
 		echo '
 		<meta name="keywords" content="Players of the Week,' . $ServerName . ',' . $clan_name . ',BF4,Player,Server" />
@@ -358,8 +358,8 @@ if(isset($_GET['ServerID']) AND !empty($_GET['ServerID']) AND is_numeric($_GET['
 // no server ID was given in the URL or an invalid server ID was given, so use index page header or global stats page header
 else
 {
-	// use main global stats header if selected
-	if(isset($_GET['globalhome']) AND !empty($_GET['globalhome']))
+	// change page title, meta description, and keywords depending on the page content
+	if(!empty($_GET['globalhome']))
 	{
 		echo '
 		<meta name="keywords" content="Home,Top,Players,Global,' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -367,8 +367,7 @@ else
 		<title>' . $clan_name . ' BF4 GLobal Player Stats - Home Page</title>
 		';
 	}
-	// or else at global player stats page
-	elseif(isset($_GET['globalsearch']) AND !empty($_GET['globalsearch']))
+	elseif(!empty($_GET['globalsearch']))
 	{
 		echo '
 		<meta name="keywords" content="' . $SoldierName . ',' . $clan_name . ',BF4,Global,Player,Stats,Server" />
@@ -376,8 +375,7 @@ else
 		<title>' . $clan_name . ' BF4 Global Player Stats - ' . $SoldierName . '</title>
 		';
 	}
-	// or else at global suspicious page
-	elseif(isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious']))
+	elseif(!empty($_GET['globalsuspicious']))
 	{
 		echo '
 		<meta name="keywords" content="Global,Suspicious,Players,' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -385,8 +383,7 @@ else
 		<title>' . $clan_name . ' BF4 Global Player Stats - Suspicious Players</title>
 		';
 	}
-	// or else at global countries page
-	elseif(isset($_GET['globalcountries']) AND !empty($_GET['globalcountries']))
+	elseif(!empty($_GET['globalcountries']))
 	{
 		echo '
 		<meta name="keywords" content="Global,Country,' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -394,8 +391,7 @@ else
 		<title>' . $clan_name . ' BF4 Global Player Stats - Country Stats</title>
 		';
 	}
-	// or else at global maps page
-	elseif(isset($_GET['globalmaps']) AND !empty($_GET['globalmaps']))
+	elseif(!empty($_GET['globalmaps']))
 	{
 		echo '
 		<meta name="keywords" content="Global,Map,' . $clan_name . ',BF4,Player,Stats,Server" />
@@ -403,8 +399,7 @@ else
 		<title>' . $clan_name . ' BF4 Global Player Stats - Map Stats</title>
 		';
 	}
-	// or else at global server stats page
-	elseif(isset($_GET['globalserverstats']) AND !empty($_GET['globalserverstats']))
+	elseif(!empty($_GET['globalserverstats']))
 	{
 		echo '
 		<meta name="keywords" content="Server,Global,' . $clan_name . ',BF4,Player,Stats,Info" />
@@ -412,7 +407,7 @@ else
 		<title>' . $clan_name . ' BF4 Global Player Stats - Server Info</title>
 		';
 	}
-	elseif(isset($_GET['globalpotw']) AND !empty($_GET['globalpotw']))
+	elseif(!empty($_GET['globalpotw']))
 	{
 		echo '
 		<meta name="keywords" content="Players of the Week,Global,' . $clan_name . ',BF4,Player,Server" />
@@ -420,7 +415,6 @@ else
 		<title>' . $clan_name . ' BF4 Global Player Stats - Players of the Week</title>
 		';
 	}
-	// or else use the server stats index page header
 	else
 	{
 		echo '
@@ -447,7 +441,7 @@ echo '
 ';
 // $ServerID is provided, so we are at a server page
 // display server index link
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '
 	<br/>
@@ -479,7 +473,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 }
 // $ServerID was not provided, so we are at a global stats page
 // display global index link
-elseif((!isset($ServerID) OR is_null($ServerID)) AND ((isset($_GET['globalhome']) AND !empty($_GET['globalhome'])) OR (isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])) OR (isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious'])) OR (isset($_GET['globalcountries']) AND !empty($_GET['globalcountries'])) OR (isset($_GET['globalmaps']) AND !empty($_GET['globalmaps'])) OR (isset($_GET['globalserverstats']) AND !empty($_GET['globalserverstats'])) OR (isset($_GET['globalpotw']) AND !empty($_GET['globalpotw']))))
+elseif(empty($ServerID) AND (!empty($_GET['globalhome']) OR !empty($_GET['globalsearch']) OR !empty($_GET['globalsuspicious']) OR !empty($_GET['globalcountries']) OR !empty($_GET['globalmaps']) OR !empty($_GET['globalserverstats']) OR !empty($_GET['globalpotw'])))
 {
 	echo '
 	<br/>
@@ -541,7 +535,7 @@ echo '
 <tr>
 <td>';
 // if this is a server stats page, display server stats page menu
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '
 	<div class="menucontent">
@@ -553,7 +547,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	&nbsp; <font class="information">Player:</font>
 	';
 	// try to fill in search box
-	if(isset($SoldierName) AND !empty($SoldierName) AND $SoldierName != 'Not Found')
+	if(!empty($SoldierName) AND $SoldierName != 'Not Found')
 	{
 		echo '<input type="text" class="inputbox" value="' . $SoldierName . '" name="SoldierName" />';
 	}
@@ -592,7 +586,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	';
 }
 // if this is a global stats page, display global stats page menu
-elseif((isset($_GET['globalhome']) AND !empty($_GET['globalhome'])) OR (isset($_GET['globalsearch']) AND !empty($_GET['globalsearch'])) OR (isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious'])) OR (isset($_GET['globalcountries']) AND !empty($_GET['globalcountries'])) OR (isset($_GET['globalmaps']) AND !empty($_GET['globalmaps'])) OR (isset($_GET['globalserverstats']) AND !empty($_GET['globalserverstats'])) OR (isset($_GET['globalpotw']) AND !empty($_GET['globalpotw'])))
+elseif(!empty($_GET['globalhome']) OR !empty($_GET['globalsearch']) OR !empty($_GET['globalsuspicious']) OR !empty($_GET['globalcountries']) OR !empty($_GET['globalmaps']) OR !empty($_GET['globalserverstats']) OR !empty($_GET['globalpotw']))
 {
 	echo '
 	<div class="menucontent">
@@ -604,7 +598,7 @@ elseif((isset($_GET['globalhome']) AND !empty($_GET['globalhome'])) OR (isset($_
 	&nbsp; <font class="information">Player:</font>
 	';
 	// try to fill in search box
-	if(isset($SoldierName) AND !empty($SoldierName) AND $SoldierName != 'Not Found')
+	if(!empty($SoldierName) AND $SoldierName != 'Not Found')
 	{
 		echo '<input type="text" class="inputbox" value="' . $SoldierName . '" name="SoldierName" />';
 	}
@@ -641,47 +635,47 @@ elseif((isset($_GET['globalhome']) AND !empty($_GET['globalhome'])) OR (isset($_
 }
 echo '<br/>';
 // lets  do the server stats page logic first
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// page content depending on searches
 	// begin search player logic
-	if(isset($_GET['search']) AND !empty($_GET['search']))
+	if(!empty($_GET['search']))
 	{
 		// include player.php contents
 		require_once('./common/player.php');
 	}
 	// begin suspicious players logic
-	if(isset($_GET['suspicious']) AND !empty($_GET['suspicious']))
+	if(!empty($_GET['suspicious']))
 	{
 		// include suspicious.php contents
 		require_once('./common/suspicious.php');
 	}
 	// begin top countries logic
-	if(isset($_GET['countries']) AND !empty($_GET['countries']))
+	if(!empty($_GET['countries']))
 	{
 		// include countries.php contents
 		require_once('./common/countries.php');
 	}
 	// begin map stats logic
-	if(isset($_GET['maps']) AND !empty($_GET['maps']))
+	if(!empty($_GET['maps']))
 	{
 		// include maps.php contents
 		require_once('./common/maps.php');
 	}
 	// begin server stats logic
-	if(isset($_GET['serverstats']) AND !empty($_GET['serverstats']))
+	if(!empty($_GET['serverstats']))
 	{
 		// include serverstats.php contents
 		require_once('./common/serverstats.php');
 	}
 	// begin chat logic
-	if(isset($_GET['chat']) AND !empty($_GET['chat']))
+	if(!empty($_GET['chat']))
 	{
 		// include chat.php contents
 		require_once('./common/chat.php');
 	}
 	// begin potw logic
-	if(isset($_GET['potw']) AND !empty($_GET['potw']))
+	if(!empty($_GET['potw']))
 	{
 		// include potw.php contents
 		require_once('./common/potw.php');
@@ -694,7 +688,7 @@ if(isset($ServerID) AND !is_null($ServerID))
 	}
 }
 // begin index page logic
-if(!isset($ServerID) OR is_null($ServerID))
+if(empty($ServerID))
 {
 	// include index.php (the one in the common folder) contents
 	require_once('./common/index.php');
@@ -716,7 +710,7 @@ echo '
 // stats page sessions are used to monitor how many people are viewing these stats pages
 // check to see if the session table exists
 // if there is a serverID, use it
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `ses_{$ServerID}_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default '00000000000', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
@@ -736,7 +730,7 @@ $now_timestamp = time();
 $old = $now_timestamp - 1800;
 // check if this user already has a session stored
 // if there is a serverID, use it
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	$exist_query = @mysqli_query($BF4stats,"
 		SELECT `IP`
@@ -757,7 +751,7 @@ else
 if(@mysqli_num_rows($exist_query)!=0)
 {
 	// if there is a serverID, use it
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		@mysqli_query($BF4stats,"
 			UPDATE `ses_{$ServerID}_tbl`
@@ -779,7 +773,7 @@ if(@mysqli_num_rows($exist_query)!=0)
 else
 {
 	// if there is a serverID, use it
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		@mysqli_query($BF4stats,"
 			INSERT INTO `ses_{$ServerID}_tbl` (`IP`, `timestamp`)
@@ -800,7 +794,7 @@ else
 // find if there are sessions older than 30 minutes
 // check this to avoid optimizing the table (slow) when it isn't necessary
 // if there is a serverID, use it
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	$old_query = @mysqli_query($BF4stats,"
 		SELECT `timestamp`
@@ -821,7 +815,7 @@ else
 if(@mysqli_num_rows($old_query) != 0)
 {
 	// if there is a serverID, use it
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		@mysqli_query($BF4stats,"
 			DELETE FROM `ses_{$ServerID}_tbl`
@@ -849,7 +843,7 @@ if(@mysqli_num_rows($old_query) != 0)
 @mysqli_free_result($old_query);
 // count all sessions
 // if there is a serverID, use it
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	$ses_count = @mysqli_query($BF4stats,"
 		SELECT count(`IP`) AS ses
@@ -887,8 +881,7 @@ $totaltime = round(($endtime - $starttime),3);
 // display total page load time
 echo '<center><font class="footertext">server compiled page in ' . $totaltime . ' seconds</font></center>';
 // display total server memory used
-echo '<center><font class="footertext">' . round(memory_get_usage(false)/1024,0) . ' KB of server memory used</font></center>';
-echo '
+echo '<center><font class="footertext">' . round(memory_get_usage(false)/1024,0) . ' KB of server memory used</font></center><br/>
 </td></tr>
 </table>
 </td>

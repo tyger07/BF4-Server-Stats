@@ -9,7 +9,7 @@ echo '
 <tr><td  class="headline">
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '<br/><center><b>Server Info</b></center><br/>';
 }
@@ -26,17 +26,9 @@ echo '
 <div class="middlecontent">
 <table width="100%" border="0">
 <tr>
-<th class="headline"><b>Server Stats</b></th>
-</tr>
-<tr>
-<td>
-<div class="innercontent"><br/>
-<table width="95%" align="center" border="0">
-<tr>
-<td>
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// query server stats
 	$Server_q = @mysqli_query($BF4stats,"
@@ -57,6 +49,16 @@ else
 }
 if(@mysqli_num_rows($Server_q) != 0)
 {
+	echo '
+	<th class="headline"><b>Server Stats</b></th>
+	</tr>
+	<tr>
+	<td>
+	<div class="innercontent"><br/>
+	<table width="95%" align="center" border="0">
+	<tr>
+	<td>
+	';
 	$Server_r = @mysqli_fetch_assoc($Server_q);
 	$players = round($Server_r['CountPlayers'],2);
 	$kills = round($Server_r['SumKills'],2);
@@ -71,8 +73,10 @@ if(@mysqli_num_rows($Server_q) != 0)
 	$avgkdr = round($Server_r['AvgKDR'],2);
 	$rounds = $Server_r['SumRounds'];
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
+		// include playersbydate.php contents
+		echo '<center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
 		// include players.php contents
 		echo '<center><img src="pchart/players.php?server=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center>';
 		// include joinsleaves.php contents
@@ -81,6 +85,8 @@ if(@mysqli_num_rows($Server_q) != 0)
 	// or else this is a global stats page
 	else
 	{
+		// include playersbydate.php contents
+		echo '<center><img src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
 		// include players.php contents
 		echo '<center><img src="pchart/players.php" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center>';
 		// include joinsleaves.php contents
@@ -113,14 +119,28 @@ if(@mysqli_num_rows($Server_q) != 0)
 else
 {
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
-		echo '<center><font class="information">No server stats found for this server.</font></center><br/>';
+		echo '
+		<td>
+		<div class="innercontent"><br/>
+		<table width="95%" align="center" border="0">
+		<tr>
+		<td>
+		<center><font class="information">No server stats found for this server.</font></center><br/>
+		';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<center><font class="information">No server stats found for these servers.</font></center><br/>';
+		echo '
+		<td>
+		<div class="innercontent"><br/>
+		<table width="95%" align="center" border="0">
+		<tr>
+		<td>
+		<center><font class="information">No server stats found for these servers.</font></center><br/>
+		';
 	}
 }
 // free up server stats query memory

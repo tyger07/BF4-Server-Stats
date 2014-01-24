@@ -12,7 +12,7 @@ $limit = 7;
 
 // check if a server was provided
 // if so, this is a server stats page
-if(isset($_GET['server']) AND !empty($_GET['server']))
+if(!empty($_GET['server']))
 {
 	$id = mysqli_real_escape_string($BF4stats, $_GET['server']);
 	$query  = "
@@ -75,7 +75,7 @@ $myPicture->setFontProperties(array("FontName"=>"fonts/Forgotte.ttf","FontSize"=
 $TextSettings = array("Align"=>TEXT_ALIGN_MIDDLEMIDDLE
 , "R"=>150, "G"=>150, "B"=>150);
 // if so, this is a server stats page
-if(isset($_GET['server']) AND !empty($_GET['server']))
+if(!empty($_GET['server']))
 {
 	$myPicture->drawText(297,18,"Average number of players in server in last ". $limit ." days of server activity.",$TextSettings);
 }

@@ -12,15 +12,13 @@ $limit = 50;
 
 // check if a server was provided
 // if so, this is a server stats page
-if(isset($_GET['server']) AND !empty($_GET['server']))
+if(!empty($_GET['server']))
 {
 	$id = mysqli_real_escape_string($BF4stats, $_GET['server']);
 	$query  = "
 		SELECT `MinPlayers`, `MaxPlayers`, `AvgPlayers`
 		FROM `tbl_mapstats`
 		WHERE `ServerID` = {$id}
-		AND `Gamemode` != ''
-		AND `MapName` != ''
 		ORDER BY `TimeRoundStarted` DESC
 		LIMIT {$limit}
 	";
@@ -32,8 +30,7 @@ else
 	$query  = "
 		SELECT `MinPlayers`, `MaxPlayers`, `AvgPlayers`
 		FROM `tbl_mapstats`
-		WHERE `Gamemode` != ''
-		AND `MapName` != ''
+		WHERE 1
 		ORDER BY `TimeRoundStarted` DESC
 		LIMIT {$limit}
 	";

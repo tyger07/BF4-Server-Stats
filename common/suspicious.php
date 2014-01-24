@@ -9,7 +9,7 @@ echo '
 <tr><td  class="headline">
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '<br/><center><b>Suspicious Players</b></center><br/>';
 }
@@ -34,13 +34,9 @@ echo  '
 <div  class="middlecontent">
 <table width="100%" border="0">
 <tr>
-<th class="headline"><b>Suspicious Players</b></th>
-</tr>
-<tr>
-<td>
 ';
 // get current rank query details
-if(isset($_GET['rank']) AND !empty($_GET['rank']))
+if(!empty($_GET['rank']))
 {
 	$rank = $_GET['rank'];
 	// filter out SQL injection
@@ -57,7 +53,7 @@ else
 	$rank = 'KDR';
 }
 // get current order query details
-if(isset($_GET['order']) AND !empty($_GET['order']))
+if(!empty($_GET['order']))
 {
 	$order = $_GET['order'];
 	// filter out SQL injection
@@ -87,7 +83,7 @@ else
 	$nextorder = 'ASC';
 }
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// check for suspicious players
 	$Suspicious_q = @mysqli_query($BF4stats,"
@@ -120,12 +116,13 @@ else
 if(@mysqli_num_rows($Suspicious_q) == 0)
 {
 	echo '
+	<td>
 	<div class="innercontent">
 	<table width="98%" align="center" border="0">
 	<tr><td>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<br/><center><font class="information">No suspicious players found in this server.</font></center>';
 	}
@@ -145,6 +142,10 @@ if(@mysqli_num_rows($Suspicious_q) == 0)
 else
 {
 	echo '
+	<th class="headline"><b>Suspicious Players</b></th>
+	</tr>
+	<tr>
+	<td>
 	<div class="innercontent">
 	<br/>
 	<table width="98%" align="center" class="prettytable" border="0">
@@ -152,7 +153,7 @@ else
 	<th width="5%" style="text-align:left">#</th>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=SoldierName&amp;order=';
 	}
@@ -170,7 +171,7 @@ else
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=KDR&amp;order=';
 	}
@@ -188,7 +189,7 @@ else
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Kill/Death Raio</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=HSR&amp;order=';
 	}
@@ -206,7 +207,7 @@ else
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshot Ratio</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=Rounds&amp;order=';
 	}
@@ -242,7 +243,7 @@ else
 		<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
 		';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="25%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $SoldierName . '</a></td>';
 		}

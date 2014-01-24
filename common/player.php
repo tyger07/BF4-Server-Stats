@@ -34,7 +34,7 @@ elseif($SoldierName != null)
 	<center>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<b>Statistics Data for ' .$SoldierName . '</b>';
 	}
@@ -59,7 +59,7 @@ elseif($SoldierName != null)
 	// initialize value
 	$soldier_found = 0;
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		// get player stats
 		$PlayerData_q = @mysqli_query($BF4stats,"
@@ -112,7 +112,7 @@ elseif($SoldierName != null)
 		<center>
 		';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<font class="alert">No unique player data found for "' . $SoldierName . '" in this server.</font>';
 		}
@@ -126,7 +126,7 @@ elseif($SoldierName != null)
 		</td></tr></table></div><br/>
 		';
 		// get current rank query details
-		if(isset($_GET['rank']) AND !empty($_GET['rank']))
+		if(!empty($_GET['rank']))
 		{
 			$rank = $_GET['rank'];
 			// filter out SQL injection
@@ -143,7 +143,7 @@ elseif($SoldierName != null)
 			$rank = 'SoldierName';
 		}
 		// get current order query details
-		if(isset($_GET['order']) AND !empty($_GET['order']))
+		if(!empty($_GET['order']))
 		{
 			$order = $_GET['order'];
 			// filter out SQL injection
@@ -173,7 +173,7 @@ elseif($SoldierName != null)
 			$nextorder = 'DESC';
 		}
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			// check to see if there are any players who match a similar name
 			$PlayerMatch_q = @mysqli_query($BF4stats,"
@@ -221,7 +221,7 @@ elseif($SoldierName != null)
 			<th width="5%" style="text-align:left">#</th>
 			';
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=SoldierName&amp;order=';
 			}
@@ -239,7 +239,7 @@ elseif($SoldierName != null)
 				echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></th>';
 			}
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Score&amp;order=';
 			}
@@ -257,7 +257,7 @@ elseif($SoldierName != null)
 				echo $nextorder . '"><span class="ordered' . $order . 'header">Score</span></a></th>';
 			}
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Rounds&amp;order=';
 			}
@@ -275,7 +275,7 @@ elseif($SoldierName != null)
 				echo $nextorder . '"><span class="ordered' . $order . 'header">Rounds Played</span></a></th>';
 			}
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Kills&amp;order=';
 			}
@@ -293,7 +293,7 @@ elseif($SoldierName != null)
 				echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></th>';
 			}
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Deaths&amp;order=';
 			}
@@ -311,7 +311,7 @@ elseif($SoldierName != null)
 				echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></th>';
 			}
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				echo '<th width="17%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=KDR&amp;order=';
 			}
@@ -346,7 +346,7 @@ elseif($SoldierName != null)
 				<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
 				';
 				// if there is a ServerID, this is a server stats page
-				if(isset($ServerID) AND !is_null($ServerID))
+				if(!empty($ServerID))
 				{
 					echo '<td width="18%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $Player_ID . '&amp;search=1">' . $Soldier_Name . '</a></td>';
 				}
@@ -376,7 +376,7 @@ elseif($SoldierName != null)
 		// there is no such thing as global rank in database
 		// and computing it is too slow with lots of players in global
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '
 			<th class="headline"><b>Ranks</b></th>
@@ -510,7 +510,7 @@ elseif($SoldierName != null)
 	{
 		echo '<br/>';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			// get weapon stats for weapon graph
 			$Weapon_q = @mysqli_query($BF4stats,"
@@ -590,7 +590,7 @@ elseif($SoldierName != null)
 								$hmax = $kills + 50;
 							}
 							echo ',
-							[\'' . $weapon . '\', ' . $kills . ', ' . $deaths . ', ' . $headshots . ',  ' . $hsr . ']
+							[\'' . $weapon . '\', ' . $kills . ', ' . $deaths . ', ' . $headshots . ',  ' . $hsr * 100 . ']
 							';
 						}
 						echo '
@@ -620,7 +620,7 @@ elseif($SoldierName != null)
 			</center>
 			';
 			// if there is a ServerID, this is a server stats page
-			if(isset($ServerID) AND !is_null($ServerID))
+			if(!empty($ServerID))
 			{
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
@@ -678,7 +678,7 @@ elseif($SoldierName != null)
 	if($soldier_found == 1)
 	{
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			// query for dog tags this user has collected
 			$DogTag_q = @mysqli_query($BF4stats,"
@@ -732,10 +732,9 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<tr>
-			<td width="1%" style="text-align: left">&nbsp;</td>
 			<td width="5%" class="tablecontents" style="text-align: left">#</td>
 			<td width="47%" class="tablecontents" style="text-align: left">Victim</td>
-			<td width="47%" class="tablecontents" style="text-align: left">Count</td>
+			<td width="48%" class="tablecontents" style="text-align: left">Count</td>
 			</tr>
 			';
 			while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
@@ -746,11 +745,10 @@ elseif($SoldierName != null)
 				$count++;
 				echo '
 				<tr>
-				<td width="1%" style="text-align: left">&nbsp;</td>
 				<td width="5%" class="tablecontents" style="text-align: left"><font class="information">' . $count . ':</font></td>
 				';
 				// if there is a ServerID, this is a server stats page
-				if(isset($ServerID) AND !is_null($ServerID))
+				if(!empty($ServerID))
 				{
 					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $VictimID . '&amp;search=1">' . $Victim . '</a></td>';
 				}
@@ -760,7 +758,7 @@ elseif($SoldierName != null)
 					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $VictimID . '">' . $Victim . '</a></td>';
 				}
 				echo '
-				<td width="47%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
+				<td width="48%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
 				</tr>
 				';
 			}
@@ -769,8 +767,7 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<tr>
-			<td width="1%" style="text-align: left">&nbsp;</td>
-			<td width="99%" class="tablecontents" colspan="3" style="text-align: left"><font class="information">' . $SoldierName . ' has not collected any dog tags.</font></td>
+			<td width="100%" class="tablecontents" colspan="3" style="text-align: left"><font class="information">' . $SoldierName . ' has not collected any dog tags.</font></td>
 			</tr>
 			';
 		}
@@ -781,7 +778,7 @@ elseif($SoldierName != null)
 		</div>
 		';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			// find who has killed this player
 			$DogTag_q = @mysqli_query($BF4stats,"
@@ -828,10 +825,9 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<tr>
-			<td width="1%" style="text-align: left">&nbsp;</td>
 			<td width="5%" class="tablecontents" style="text-align: left">#</td>
 			<td width="47%" class="tablecontents" style="text-align: left">Killer</td>
-			<td width="47%" class="tablecontents" style="text-align: left">Count</td>
+			<td width="48%" class="tablecontents" style="text-align: left">Count</td>
 			</tr>
 			';
 			while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
@@ -842,11 +838,10 @@ elseif($SoldierName != null)
 				$count++;
 				echo '
 				<tr>
-				<td width="1%" style="text-align: left">&nbsp;</td>
 				<td width="5%" class="tablecontents" style="text-align: left"><font class="information">' . $count . ':</font></td>
 				';
 				// if there is a ServerID, this is a server stats page
-				if(isset($ServerID) AND !is_null($ServerID))
+				if(!empty($ServerID))
 				{
 					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $KillerID . '&amp;search=1">' . $Killer . '</a></td>';
 				}
@@ -856,7 +851,7 @@ elseif($SoldierName != null)
 					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $KillerID . '">' . $Killer . '</a></td>';
 				}
 				echo '
-				<td width="47%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
+				<td width="48%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
 				</tr>
 				';
 			}
@@ -865,8 +860,7 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<tr>
-			<td width="1%" style="text-align: left">&nbsp;</td>
-			<td width="99%" class="tablecontents" colspan="3" style="text-align: left"><font class="information">No one has gotten ' . $SoldierName . '\'s tags.</font></td>
+			<td width="100%" class="tablecontents" colspan="3" style="text-align: left"><font class="information">No one has gotten ' . $SoldierName . '\'s tags.</font></td>
 			</tr>
 			';
 		}
@@ -886,9 +880,6 @@ elseif($SoldierName != null)
 		// make sure the GD extension is available
 		if(extension_loaded('gd') AND function_exists('gd_info'))
 		{
-			// make new signature images for this PlayerID
-			signature($PlayerID, 0, $clan_name, $BF4stats, $GameID);
-			signature($PlayerID, 1, $clan_name, $BF4stats, $GameID);
 			// find current URL info
 			$host = 'http://' . $_SERVER['HTTP_HOST'];
 			$dir = dirname($_SERVER['PHP_SELF']);
@@ -911,19 +902,25 @@ elseif($SoldierName != null)
 			<tr>
 			<td style="text-align: left; padding: 30px;" valign="top" width="50%">
 			Stats image with player\'s rank:<br/><br/>
-			<img src="' . $host . $dir . '/signature/cache/PID' . $PlayerID . 'FAV0.png" alt="signature" />
+			';
+			// include signature.php image
+			echo '
+			<img src="./signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=0" alt="signature" />
 			<br/>
 			<font class="information">Forum BBcode:</font>
 			<br/><br/>
-			[URL="' . $host . $file . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '"][IMG]' . $host . $dir . '/signature/cache/PID' . $PlayerID . 'FAV0.png[/IMG][/URL]<br/>
+			[URL=' . $host . $file . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=0[/IMG][/URL]<br/>
 			</td>
 			<td style="text-align: left; padding: 30px;" valign="top" width="50%">
 			Stats image with player\'s favorite weapon:<br/><br/>
-			<img src="' . $host . $dir . '/signature/cache/PID' . $PlayerID . 'FAV1.png" alt="signature" />
+			';
+			// include signature.php image
+			echo '
+			<img src="./signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=1" alt="signature" />
 			<br/>
 			<font class="information">Forum BBcode:</font>
 			<br/><br/>
-			[URL="' . $host . $file . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '"][IMG]' . $host . $dir . '/signature/cache/PID' . $PlayerID . 'FAV1.png[/IMG][/URL]<br/>
+			[URL=' . $host . $file . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=1[/IMG][/URL]<br/>
 			</td>
 			</tr>
 			</table>
@@ -947,7 +944,7 @@ elseif($SoldierName == 'Not Found')
 	<center>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<font class="alert">The selected player ID was not found in this server.</font>';
 	}

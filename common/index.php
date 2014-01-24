@@ -4,7 +4,7 @@
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // don't show this text unless only at the index page
-if((!isset($_GET['globalhome']) OR empty($_GET['globalhome'])) AND (!isset($_GET['globalsearch']) OR empty($_GET['globalsearch'])) AND (!isset($_GET['globalsuspicious']) OR empty($_GET['globalsuspicious'])) AND (!isset($_GET['globalcountries']) OR empty($_GET['globalcountries'])) AND (!isset($_GET['globalmaps']) OR empty($_GET['globalmaps'])) AND (!isset($_GET['globalserverstats']) OR empty($_GET['globalserverstats'])) AND (!isset($_GET['globalpotw']) OR empty($_GET['globalpotw'])))
+if(empty($_GET['globalhome']) AND empty($_GET['globalsearch']) AND empty($_GET['globalsuspicious']) AND empty($_GET['globalcountries']) AND empty($_GET['globalmaps']) AND empty($_GET['globalserverstats']) AND empty($_GET['globalpotw']))
 {
 	echo '
 	<div class="middlecontent">
@@ -42,43 +42,43 @@ else
 	<td valign="top" align="center">
 	';
 	// show global home if selected
-	if(isset($_GET['globalhome']) AND !empty($_GET['globalhome']))
+	if(!empty($_GET['globalhome']))
 	{
 		// include home.php contents
 		require_once('./common/home.php');
 	}
 	// show global player stats if selected
-	if(isset($_GET['globalsearch']) AND !empty($_GET['globalsearch']))
+	if(!empty($_GET['globalsearch']))
 	{
 		// include player.php contents
 		require_once('./common/player.php');
 	}
 	// show global suspicious players if selected
-	if(isset($_GET['globalsuspicious']) AND !empty($_GET['globalsuspicious']))
+	if(!empty($_GET['globalsuspicious']))
 	{
 		// include suspicious.php contents
 		require_once('./common/suspicious.php');
 	}
 	// show global country stats if selected
-	if(isset($_GET['globalcountries']) AND !empty($_GET['globalcountries']))
+	if(!empty($_GET['globalcountries']))
 	{
 		// include countries.php contents
 		require_once('./common/countries.php');
 	}
 	// show global map stats if selected
-	if(isset($_GET['globalmaps']) AND !empty($_GET['globalmaps']))
+	if(!empty($_GET['globalmaps']))
 	{
 		// include maps.php contents
 		require_once('./common/maps.php');
 	}
 	// show global server stats if selected
-	if(isset($_GET['globalserverstats']) AND !empty($_GET['globalserverstats']))
+	if(!empty($_GET['globalserverstats']))
 	{
 		// include serverstats.php contents
 		require_once('./common/serverstats.php');
 	}
 	// show global players of the week if selected
-	if(isset($_GET['globalpotw']) AND !empty($_GET['globalpotw']))
+	if(!empty($_GET['globalpotw']))
 	{
 		// include potw.php contents
 		require_once('./common/potw.php');

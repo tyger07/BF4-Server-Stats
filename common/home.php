@@ -5,7 +5,7 @@
 
 echo '<div class="middlecontent">';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// change heading text based on if this is welcome page or top players page
 	if(!($_GET['topplayers']))
@@ -46,7 +46,7 @@ echo '
 <br/>
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	echo '<center>Statistics data presented is not from all BF4 servers.  These are the statistics of each player only in this server.</center>';
 }
@@ -64,7 +64,7 @@ echo '
 <br/>
 ';
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// show scoreboard on welcome page
 	// but not on top players page
@@ -85,26 +85,9 @@ echo '
 <table width="100%" border="0">
 <tr>
 ';
-// if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
-{
-	echo '<th class="headline"><b>Top Players</b></th>';
-}
-// or else this is a global stats page
-else
-{
-	echo '<th class="headline"><b>Global Top Players in ' . $clan_name . '\'s Servers</b></th>';
-}
-echo '
-</tr>
-<tr>
-<td>
-<div class="innercontent">
-<br/>
-';
 // pagination code thanks to: http://www.phpfreaks.com/tutorial/basic-pagination
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// find out how many rows are in the table 
 	$TotalRows_q = @mysqli_query($BF4stats,"
@@ -160,7 +143,7 @@ if($currentpage < 1)
 	$currentpage = 1;
 }
 // get current rank query details
-if(isset($_GET['rank']) AND !empty($_GET['rank']))
+if(!empty($_GET['rank']))
 {
 	$rank = $_GET['rank'];
 	// filter out SQL injection
@@ -177,7 +160,7 @@ else
 	$rank = 'Score';
 }
 // get current order query details
-if(isset($_GET['order']) AND !empty($_GET['order']))
+if(!empty($_GET['order']))
 {
 	$order = $_GET['order'];
 	// filter out SQL injection
@@ -209,7 +192,7 @@ else
 // the offset of the list, based on current page 
 $offset = ($currentpage - 1) * $rowsperpage;
 // if there is a ServerID, this is a server stats page
-if(isset($ServerID) AND !is_null($ServerID))
+if(!empty($ServerID))
 {
 	// get the info from the db 
 	$Players_q  = @mysqli_query($BF4stats,"
@@ -243,13 +226,28 @@ $count = ($currentpage * 25) - 25;
 // check if there are rows returned
 if(@mysqli_num_rows($Players_q) != 0)
 {
+	// if there is a ServerID, this is a server stats page
+	if(!empty($ServerID))
+	{
+		echo '<th class="headline"><b>Top Players</b></th>';
+	}
+	// or else this is a global stats page
+	else
+	{
+		echo '<th class="headline"><b>Global Top Players in ' . $clan_name . '\'s Servers</b></th>';
+	}
 	echo '
+	</tr>
+	<tr>
+	<td>
+	<div class="innercontent">
+	<br/>
 	<table width="98%" align="center" class="prettytable" border="0">
 	<tr>
 	<th width="5%" style="text-align:left">#</th>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=SoldierName&amp;order=';
 	}
@@ -267,7 +265,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=Score&amp;order=';
 	}
@@ -285,7 +283,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Score</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=Rounds&amp;order=';
 	}
@@ -303,7 +301,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Rounds Played</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=Kills&amp;order=';
 	}
@@ -321,7 +319,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=Deaths&amp;order=';
 	}
@@ -339,7 +337,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=KDR&amp;order=';
 	}
@@ -357,7 +355,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered'. $order . 'header">Kill/Death Ratio</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=Headshots&amp;order=';
 	}
@@ -375,7 +373,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshots</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<th width="11%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $currentpage . '&amp;rank=HSR&amp;order=';
 	}
@@ -411,7 +409,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		<td class="tablecontents" width="5%"><font class="information">' . $count . ':</font></td>
 		';
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="18%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $SoldierName . '</a></td>';
 		}
@@ -436,11 +434,13 @@ if(@mysqli_num_rows($Players_q) != 0)
 else
 {
 	echo '
+	<td>
+	<div class="innercontent">
 	<table width="95%" align="center" border="0">
 	<tr>
 	';
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		echo '<td style="text-align: left;" width="100%"><br/><center><font class="information">No player stats found for this server.</font></center><br/></td>';
 	}
@@ -454,11 +454,9 @@ else
 	</table>
 	';
 }
-// free up players query memory
-@mysqli_free_result($Players_q);
 // build the pagination links
 // don't display pagination links if no players found
-if(@mysqli_num_rows($TotalRows_q) != 0)
+if(@mysqli_num_rows($Players_q) != 0)
 {
 	echo '
 	<div class="pagination">
@@ -471,7 +469,7 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 	{
 		// show << link to go back to first page
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=1&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;&lt;</a>';
 		}
@@ -484,7 +482,7 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 		$prevpage = $currentpage - 1;
 		// show < link to go back one page
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo ' <a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $prevpage . '&amp;rank=' . $rank . '&amp;order=' . $order . '">&lt;</a> ';
 		}
@@ -510,7 +508,7 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 			{
 				// make it a link
 				// if there is a ServerID, this is a server stats page
-				if(isset($ServerID) AND !is_null($ServerID))
+				if(!empty($ServerID))
 				{
 					echo ' <a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $x . '&amp;rank=' . $rank . '&amp;order=' . $order . '">' . $x . '</a> ';
 				}
@@ -529,7 +527,7 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 		$nextpage = $currentpage + 1;
 		// show > link to go forward one page
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo ' <a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $nextpage . '&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;</a> ';
 		}
@@ -540,7 +538,7 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 		}
 		// show >> link to last page
 		// if there is a ServerID, this is a server stats page
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;topplayers=1&amp;currentpage=' . $totalpages . '&amp;rank=' . $rank . '&amp;order=' . $order . '">&gt;&gt;</a>';
 		}
@@ -558,6 +556,8 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 // end build pagination links and end block
 // free up total rows query memory
 @mysqli_free_result($TotalRows_q);
+// free up players query memory
+@mysqli_free_result($Players_q);
 echo '
 </div>
 </td>

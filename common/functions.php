@@ -7,7 +7,7 @@
 function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 {
 	// get current rank query details
-	if(isset($_GET['rank']) AND !empty($_GET['rank']))
+	if(!empty($_GET['rank']))
 	{
 		$rank = $_GET['rank'];
 		// filter out SQL injection
@@ -24,7 +24,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 		$rank = 'Kills';
 	}
 	// get current order query details
-	if(isset($_GET['order']) AND !empty($_GET['order']))
+	if(!empty($_GET['order']))
 	{
 		$order = $_GET['order'];
 		// filter out SQL injection
@@ -54,7 +54,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 		$nextorder = 'ASC';
 	}
 	// if there is a ServerID, this is a server stats page
-	if(isset($ServerID) AND !is_null($ServerID))
+	if(!empty($ServerID))
 	{
 		// see if this player has used this category's weapons
 		$Weapon_q = @mysqli_query($BF4stats,"
@@ -99,17 +99,16 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 		</table>
 		<table align="center" width="98%" border="0">
 		<tr>
-		<td width="1%" style="text-align:left">&nbsp;</td>
 		';
 		// if server id is not null, this is a server query
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
-			echo '<td width="22%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Friendlyname&amp;order=';
+			echo '<td width="23%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Friendlyname&amp;order=';
 		}
 		// otherwise it is a global player query
 		else
 		{
-			echo '<td width="21%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=Friendlyname&amp;order=';
+			echo '<td width="23%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=Friendlyname&amp;order=';
 		}
 		if($rank != 'Friendlyname')
 		{
@@ -120,7 +119,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Weapon Name</span></a></td>';
 		}
 		// if server id is not null, this is a server query
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Kills&amp;order=';
 		}
@@ -138,7 +137,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></td>';
 		}
 		// if server id is not null, this is a server query
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Deaths&amp;order=';
 		}
@@ -156,7 +155,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></td>';
 		}
 		// if server id is not null, this is a server query
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Headshots&amp;order=';
 		}
@@ -174,7 +173,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Headshots</span></a></td>';
 		}
 		// if server id is not null, this is a server query
-		if(isset($ServerID) AND !is_null($ServerID))
+		if(!empty($ServerID))
 		{
 			echo '<td width="20%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=HSR&amp;order=';
 		}
@@ -208,8 +207,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			$weaponID = $Weapon_r['WeaponID'];
 			echo '
 			<tr>
-			<td width="1%" style="text-align:left">&nbsp;</td>
-			<td width="22%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name_displayed . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name_displayed . ':</font></td></tr></table></td>
+			<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name_displayed . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name_displayed . ':</font></td></tr></table></td>
 			<td width="19%" class="tablecontents" style="text-align: left">' . $kills . '</td>
 			<td width="19%" class="tablecontents" style="text-align: left">' . $deaths . '</td>
 			<td width="19%" class="tablecontents" style="text-align: left">' . $headshots . '</td>
@@ -542,7 +540,7 @@ function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_arra
 		$mode_shown = 0;
 		$last_team = -1;
 		// get current rank query details
-		if(isset($_GET['rank']) AND !empty($_GET['rank']))
+		if(!empty($_GET['rank']))
 		{
 			$rank = $_GET['rank'];
 			// filter out SQL injection
@@ -559,7 +557,7 @@ function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_arra
 			$rank = 'Score';
 		}
 		// get current order query details
-		if(isset($_GET['order']) AND !empty($_GET['order']))
+		if(!empty($_GET['order']))
 		{
 			$order = $_GET['order'];
 			// filter out SQL injection
@@ -1058,154 +1056,5 @@ function textuncleaner($content)
 	$content = preg_replace("/&gt;/",">",$content);
 	$content = preg_replace("/&amp;/","&",$content);
 	return $content;
-}
-// function to make player stats signature image
-function signature($PlayerID, $FAV, $clan_name, $BF4stats, $GameID)
-{
-	// initialize defaults
-	$found = 0;
-	
-	// query for this player's info
-	$q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tpd.`GlobalRank`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Rounds`) AS Rounds, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
-		FROM `tbl_playerstats` tps
-		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE tpd.`PlayerID` = {$PlayerID}
-		AND tpd.`GameID` = {$GameID}
-	");
-	if(mysqli_num_rows($q) == 1)
-	{
-		$found = 1;
-		$r = @mysqli_fetch_assoc($q);
-		$rank = $r['GlobalRank'];
-		$rank_img = './images/ranks/r' . $r['GlobalRank'] . '.png';
-		$soldier = $r['SoldierName'];
-		$score = $r['Score'];
-		$kills = $r['Kills'];
-		$deaths = $r['Deaths'];
-		$kdr = round($r['KDR'],2);
-		$rounds = $r['Rounds'];
-		$headshots = $r['Headshots'];
-		$hsr = round(($r['HSR']*100),2);
-		// query for this player's weapon stats
-		$wq = @mysqli_query($BF4stats,"
-			SELECT tw.`Friendlyname`, SUM(tws.`Kills`) AS weaponKills
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			INNER JOIN `tbl_weapons_stats` tws ON tws.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_weapons` tw ON tw.`WeaponID` = tws.`WeaponID`
-			WHERE tpd.`PlayerID` = {$PlayerID}
-			AND (tw.`Damagetype` = 'assaultrifle' OR tw.`Damagetype` = 'lmg' OR tw.`Damagetype` = 'shotgun' OR tw.`Damagetype` = 'smg' OR tw.`Damagetype` = 'sniperrifle' OR tw.`Damagetype` = 'handgun' OR tw.`Damagetype` = 'projectileexplosive' OR tw.`Damagetype` = 'explosive' OR tw.`Damagetype` = 'melee' OR tw.`Damagetype` = 'none' OR tw.`Damagetype` = 'carbine' OR tw.`Damagetype` = 'dmr' OR tw.`Damagetype` = 'impact')
-			AND tpd.`GameID` = {$GameID}
-			GROUP BY tw.`Friendlyname`
-			ORDER BY weaponKills DESC
-			LIMIT 1
-		");
-		// are there weapon stats?
-		if(mysqli_num_rows($wq) != 0)
-		{
-			$wr = @mysqli_fetch_assoc($wq);
-			$weapon = preg_replace("/_/"," ",$wr['Friendlyname']);
-			// rename 'death'
-			if($weapon == 'Death')
-			{
-				$weapon = 'Machinery';
-			}
-			$weapon_img = './images/weapons/' . $wr['Friendlyname'] . '.png';
-			$weapon_kills = $wr['weaponkills'];
-		}
-		// or else default
-		else
-		{
-			$rank_img = './images/ranks/missing.png';
-			$weapon_img = './images/weapons/missing.png';
-			$weapon = 'Unknown';
-			$weapon_kills = 'Unknown';
-		}
-	}
-	else
-	{
-		$rank_img = './images/ranks/missing.png';
-		$weapon_img = './images/weapons/missing.png';
-	}
-	
-	// free up player info query memory
-	@mysqli_free_result($q);
-	
-	// free up weapon query memory
-	@mysqli_free_result($wq);
-	
-	// base image
-	$base = imagecreatefrompng('./signature/images/background.png');
-	
-	// text color
-	$light = imagecolorallocate($base, 255, 255, 255);
-	$yellow = imagecolorallocate($base, 252, 199, 66);
-	$dark = imagecolorallocate($base, 200, 200, 190);
-	
-	// add clan name text
-	imagestring($base, 2, 220, 17, $clan_name . '\'s Servers', $dark);
-	
-	// default is rank
-	if($FAV == 0)
-	{
-		// rank image
-		$rank = imagecreatefrompng($rank_img);
-		
-		// copy the rank image onto the background image
-		imagecopy($base, $rank, 0, 2, 0, 0, 94, 94);
-		$white = imagecolorallocate($rank, 255, 255, 255);
-		imagecolortransparent($base, $white);
-		imagealphablending($base, false);
-		imagesavealpha($base, true);
-	}
-	// otherwise use weapon
-	else
-	{
-		// weapon image
-		$rank = imagecreatefrompng($weapon_img);
-		
-		// copy the rank image onto the background image
-		imagecopy($base, $rank, 0, 20, 0, 0, 94, 56);
-		$white = imagecolorallocate($rank, 255, 255, 255);
-		imagecolortransparent($base, $white);
-		imagealphablending($base, false);
-		imagesavealpha($base, true);
-	}
-	
-	// if this soldier was found...
-	if($found == 1)
-	{
-		// add text to image
-		imagestring($base, 2, 110, 17, $soldier, $light);
-		imagestring($base, 1, 130, 40, 'Score:', $yellow);
-		imagestring($base, 1, 170, 40, $score, $yellow);
-		imagestring($base, 1, 130, 50, 'Kills:', $yellow);
-		imagestring($base, 1, 170, 50, $kills, $yellow);
-		imagestring($base, 1, 130, 60, 'Deaths:', $yellow);
-		imagestring($base, 1, 170, 60, $deaths, $yellow);
-		imagestring($base, 1, 130, 70, 'KDR:', $yellow);
-		imagestring($base, 1, 170, 70, $kdr, $yellow);
-		imagestring($base, 1, 230, 40, 'Favorite:', $yellow);
-		imagestring($base, 1, 290, 40, $weapon, $yellow);
-		imagestring($base, 1, 230, 50, 'Rounds:', $yellow);
-		imagestring($base, 1, 290, 50, $rounds, $yellow);
-		imagestring($base, 1, 230, 60, 'Headshots:', $yellow);
-		imagestring($base, 1, 290, 60, $headshots, $yellow);
-		imagestring($base, 1, 230, 70, 'HSR:', $yellow);
-		imagestring($base, 1, 290, 70, $hsr . ' %', $yellow);
-	}
-	// this soldier was not found
-	else
-	{
-		// add text to image
-		imagestring($base, 4, 150, 40, 'This player has no stats.', $light);
-	}
-	
-	// compile image
-	imagepng($base, './signature/cache/PID' . $PlayerID . 'FAV' . $FAV . '.png');
-	imagedestroy($base);
 }
 ?>

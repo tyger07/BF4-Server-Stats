@@ -22,14 +22,6 @@ echo'
 <div class="middlecontent">
 <table width="100%" border="0">
 <tr>
-<th class="headline"><b>Chat Results</b></th>
-</tr>
-<tr>
-<td>
-<div class="innercontent">
-<table width="100%" border="0">
-<tr>
-<td>
 ';
 // pagination code thanks to: http://www.phpfreaks.com/tutorial/basic-pagination
 // find out how many rows are in the table
@@ -69,7 +61,7 @@ if($currentpage < 1)
 	$currentpage = 1;
 }
 // get current rank query details
-if(isset($_GET['rank']) AND !empty($_GET['rank']))
+if(!empty($_GET['rank']))
 {
 	$rank = $_GET['rank'];
 	// filter out SQL injection
@@ -86,7 +78,7 @@ else
 	$rank = 'logDate';
 }
 // get current order query details
-if(isset($_GET['order']) AND !empty($_GET['order']))
+if(!empty($_GET['order']))
 {
 	$order = $_GET['order'];
 	// filter out SQL injection
@@ -132,6 +124,14 @@ $count = ($currentpage * 25) - 25;
 if(@mysqli_num_rows($Messages_q) != 0)
 {
 	echo '
+	<th class="headline"><b>Chat Results</b></th>
+	</tr>
+	<tr>
+	<td>
+	<div class="innercontent">
+	<table width="100%" border="0">
+	<tr>
+	<td>
 	<br/>
 	<table width="98%" align="center" border="0" class="prettytable">
 	<tr>
@@ -230,18 +230,18 @@ if(@mysqli_num_rows($Messages_q) != 0)
 else
 {
 	echo '
-	<table width="98%" align="center" border="0" class="prettytable">
+	<td>
+	<div class="innercontent">
+	<table width="100%" border="0">
 	<tr>
 	<td style="text-align: left;" width="100%" colspan="5"><br/><center><font class="information">No chat content found for this server.</font></center><br/></td>
 	</tr>
 	';
 }
-// free up messages query memory
-@mysqli_free_result($Messages_q);
 // build the pagination links
 echo '</table>';
 // if no chat was found, don't display pagination links
-if(@mysqli_num_rows($TotalRows_q) != 0)
+if(@mysqli_num_rows($Messages_q) != 0)
 {
 	echo '
 	<div class="pagination">
@@ -291,15 +291,17 @@ if(@mysqli_num_rows($TotalRows_q) != 0)
 	echo '
 	</center>
 	</div>
+	</td>
+	</tr>
+	</table>
 	';
 }
 // end build pagination links and end block
 // free up total rows query memory
 @mysqli_free_result($TotalRows_q);
+// free up messages query memory
+@mysqli_free_result($Messages_q);
 echo '
-</td>
-</tr>
-</table>
 </div>
 </td>
 </tr>
