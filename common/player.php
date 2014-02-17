@@ -691,7 +691,7 @@ elseif($SoldierName != null)
 				WHERE tpd.`PlayerID` = {$PlayerID}
 				AND tpd.`GameID` = {$GameID}
 				AND tsp.`ServerID` = {$ServerID}
-				ORDER BY Count DESC
+				ORDER BY Count DESC, Victim ASC
 			");
 		}
 		// or else this is a global stats page
@@ -708,7 +708,7 @@ elseif($SoldierName != null)
 				WHERE tpd.`PlayerID` = {$PlayerID}
 				AND tpd.`GameID` = {$GameID}
 				GROUP BY Victim
-				ORDER BY Count DESC
+				ORDER BY Count DESC, Victim ASC
 			");
 		}
 		// initialize value
@@ -791,7 +791,7 @@ elseif($SoldierName != null)
 				WHERE tpd2.`PlayerID` = {$PlayerID}
 				AND tpd2.`GameID` = {$GameID}
 				AND tsp.`ServerID` = {$ServerID}
-				ORDER BY Count DESC
+				ORDER BY Count DESC, Killer ASC
 			");
 		}
 		// or else this is a global stats page
@@ -808,7 +808,7 @@ elseif($SoldierName != null)
 				WHERE tpd2.`PlayerID` = {$PlayerID}
 				AND tpd2.`GameID` = {$GameID}
 				GROUP BY Killer
-				ORDER BY Count DESC
+				ORDER BY Count DESC, Killer ASC
 			");
 		}
 		// initialize value
