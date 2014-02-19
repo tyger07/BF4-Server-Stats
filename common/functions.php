@@ -662,16 +662,55 @@ function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_arra
 				// player is actually assigned to a team
 				else
 				{
-					// change team name based on team number and game mode
-					if($mode == 'RushLarge0')
+					// change team name displayed on scoreboard based on team number and game mode
+					if(($mode == 'ConquestLarge0') OR ($mode == 'ConquestSmall0') OR ($mode == 'Domination0') OR ($mode == 'Elimination0') OR ($mode == 'Obliteration') OR ($mode == 'TeamDeathMatch0') OR ($mode == 'AirSuperiority0') OR ($mode == 'CaptureTheFlag0'))
 					{
 						if($this_team == 1)
 						{
 							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Journey') OR ($map == 'MP_TheDish'))
 							{
-								$team_name = 'RU Attackers';
+								$team_name = 'RU Army';
 							}
-							elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors'))
+							elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
+							{
+								$team_name = 'US Army';
+							}
+							else
+							{
+								$team_name = 'US Army';
+							}
+						}
+						elseif($this_team == 2)
+						{
+							if($map == 'MP_Abandoned')
+							{
+								$team_name = 'US Army';
+							}
+							elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004'))
+							{
+								$team_name = 'CN Army';
+							}
+							elseif(($map == 'MP_Prison') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
+							{
+								$team_name = 'RU Army';
+							}
+							else
+							{
+								$team_name = 'CN Army';
+							}
+						}
+						// something unexpected occurred and a correct team name was not found
+						// just name the team based on team number instead
+						else
+						{
+							$team_name = 'Team ' . $this_team;
+						}
+					}
+					elseif($mode == 'RushLarge0')
+					{
+						if($this_team == 1)
+						{
+							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
 							{
 								$team_name = 'US Attackers';
 							}
@@ -682,15 +721,11 @@ function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_arra
 						}
 						elseif($this_team == 2)
 						{
-							if($map == 'MP_Abandoned')
-							{
-								$team_name = 'US Defenders';
-							}
-							elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors'))
+							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004'))
 							{
 								$team_name = 'CN Defenders';
 							}
-							elseif($map == 'MP_Prison')
+							elseif(($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
 							{
 								$team_name = 'RU Defenders';
 							}
@@ -699,50 +734,7 @@ function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_arra
 								$team_name = 'Defenders';
 							}
 						}
-						// something unexpected occured and a correct team name was not found
-						// just name the team based on team number instead
-						else
-						{
-							$team_name = 'Team ' . $this_team;
-						}
-					}
-					elseif(($mode == 'ConquestLarge0') OR ($mode == 'ConquestSmall0') OR ($mode == 'Domination0') OR ($mode == 'Elimination0') OR ($mode == 'Obliteration') OR ($mode == 'TeamDeathMatch0'))
-					{
-						if($this_team == 1)
-						{
-							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Journey') OR ($map == 'MP_TheDish'))
-							{
-								$team_name = 'RU Army';
-							}
-							elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors'))
-							{
-								$team_name = 'US Army';
-							}
-							else
-							{
-								$team_name = 'US Army';
-							}
-						}
-						elseif($this_team == 2)
-						{
-							if($map == 'MP_Abandoned')
-							{
-								$team_name = 'US Army';
-							}
-							elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors'))
-							{
-								$team_name = 'CN Army';
-							}
-							elseif($map == 'MP_Prison')
-							{
-								$team_name = 'RU Army';
-							}
-							else
-							{
-								$team_name = 'RU Army';
-							}
-						}
-						// something unexpected occured and a correct team name was not found
+						// something unexpected occurred and a correct team name was not found
 						// just name the team based on team number instead
 						else
 						{
@@ -767,14 +759,14 @@ function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_arra
 						{
 							$team_name = 'Delta';
 						}
-						// something unexpected occured and a correct team name was not found
+						// something unexpected occurred and a correct team name was not found
 						// just name the team based on team number instead
 						else
 						{
 							$team_name = 'Team ' . $this_team;
 						}
 					}
-					// something unexpected occured and a correct team name was not found
+					// something unexpected occurred and a correct team name was not found
 					// just name the team based on team number instead
 					else
 					{

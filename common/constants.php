@@ -34,7 +34,11 @@ $map_array = array(
 	'Silk Road'				=>	'XP1_001',
 	'Altai Range'			=>	'XP1_002',
 	'Guilin Peaks'			=>	'XP1_003',
-	'Dragon Pass'			=>	'XP1_004'
+	'Dragon Pass'			=>	'XP1_004',
+	'Caspian Border'		=>	'XP0_Caspian',
+	'Firestorm'				=>	'XP0_Firestorm',
+	'Operation Metro'		=>	'XP0_Metro',
+	'Gulf Of Oman'			=>	'XP0_Oman'
 	// note comma between each line but no comma at the end
 );
 
