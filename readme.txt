@@ -122,6 +122,13 @@ Enjoy!
 
 ## Changelog:
 
+2-19-2014:
+- Added missing Second Assault banner images
+- Added updated pChart API
+
+2-18-2014:
+- Added Second Assault Maps, Mode, and Weapons
+
 1-23-2014:
 - Bug fixes
 - Code size reduction
