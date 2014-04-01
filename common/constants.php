@@ -286,8 +286,7 @@ $weapon_array = array(
 	'GOL Sniper Magnum'			=>	'GOL',
 	'M60E4'						=>	'M60E4',
 	// naval strike
-	'AA Mine'					=>	'AA Mine',
-	'AA Mine'					=>	'AAMine',
+	'AA Mine'					=>	'AA_Mine',
 	'AEK-971 M320 3GL'			=>	'AEK971_M320_3GL',
 	'AK-12 M320 3GL'			=>	'AK12_M320_3GL',
 	'AR-160'					=>	'AR160',
