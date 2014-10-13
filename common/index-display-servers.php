@@ -174,5 +174,5 @@ else
 }
 // free up basic query memory
 @mysqli_free_result($PlayerCount_q);
-echo '</div';
+echo '</div>';
 ?>
