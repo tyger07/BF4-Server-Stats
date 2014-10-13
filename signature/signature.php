@@ -2,10 +2,10 @@
 
 // first connect to the database
 // and include necessary files
-include_once('../config/config.php');
-include_once('../common/connect.php');
-include_once('../common/case.php');
-include_once('../common/constants.php');
+require_once('../config/config.php');
+require_once('../common/connect.php');
+require_once('../common/case.php');
+require_once('../common/constants.php');
 
 // we will need a server ID from the URL query string!
 // if no data query string is provided, this is an image
@@ -153,22 +153,22 @@ if(!empty($pid) && !empty($gid))
 	{
 		// add text to image
 		imagestring($base, 2, 110, 17, $soldier, $light);
-		imagestring($base, 1, 130, 40, 'Score:', $yellow);
-		imagestring($base, 1, 170, 40, $score, $yellow);
-		imagestring($base, 1, 130, 50, 'Kills:', $yellow);
-		imagestring($base, 1, 170, 50, $kills, $yellow);
-		imagestring($base, 1, 130, 60, 'Deaths:', $yellow);
-		imagestring($base, 1, 170, 60, $deaths, $yellow);
-		imagestring($base, 1, 130, 70, 'KDR:', $yellow);
-		imagestring($base, 1, 170, 70, $kdr, $yellow);
-		imagestring($base, 1, 230, 40, 'Favorite:', $yellow);
-		imagestring($base, 1, 290, 40, $weapon, $yellow);
-		imagestring($base, 1, 230, 50, 'Rounds:', $yellow);
-		imagestring($base, 1, 290, 50, $rounds, $yellow);
-		imagestring($base, 1, 230, 60, 'Headshots:', $yellow);
-		imagestring($base, 1, 290, 60, $headshots, $yellow);
-		imagestring($base, 1, 230, 70, 'HSR:', $yellow);
-		imagestring($base, 1, 290, 70, $hsr . ' %', $yellow);
+		imagestring($base, 2, 120, 40, 'Score:', $yellow);
+		imagestring($base, 2, 165, 40, $score, $yellow);
+		imagestring($base, 2, 120, 50, 'Kills:', $yellow);
+		imagestring($base, 2, 165, 50, $kills, $yellow);
+		imagestring($base, 2, 120, 60, 'Deaths:', $yellow);
+		imagestring($base, 2, 165, 60, $deaths, $yellow);
+		imagestring($base, 2, 120, 70, 'KDR:', $yellow);
+		imagestring($base, 2, 165, 70, $kdr, $yellow);
+		imagestring($base, 2, 230, 40, 'Favorite:', $yellow);
+		imagestring($base, 2, 295, 40, $weapon, $yellow);
+		imagestring($base, 2, 230, 50, 'Rounds:', $yellow);
+		imagestring($base, 2, 295, 50, $rounds, $yellow);
+		imagestring($base, 2, 230, 60, 'Headshots:', $yellow);
+		imagestring($base, 2, 295, 60, $headshots, $yellow);
+		imagestring($base, 2, 230, 70, 'HSR:', $yellow);
+		imagestring($base, 2, 295, 70, $hsr . ' %', $yellow);
 	}
 	// this soldier was not found
 	else
