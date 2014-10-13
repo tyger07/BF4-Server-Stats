@@ -1,29 +1,29 @@
 <?php
-
 include_once("class/pData.class.php");
 include_once("class/pDraw.class.php");
 include_once("class/pPie.class.php");
 include_once("class/pImage.class.php");
 
-// include common.php contents
+// first connect to the database
+// and include necessary files
 include_once('../config/config.php');
+include_once('../common/connect.php');
+include_once('../common/case.php');
 include_once('../common/constants.php');
-$BF4stats = mysqli_connect(HOST, USER, PASS, NAME, PORT);
  
 // check if a server was provided
 // if so, this is a server stats page
-if(!empty($_GET['server']))
+if(!empty($sid))
 {
-	$id = mysqli_real_escape_string($BF4stats, $_GET['server']);
 	$query = "
 		SELECT `MapName`, SUM(`NumberofRounds`) AS number
 		FROM `tbl_mapstats`
-		WHERE `ServerID` = {$id}
+		WHERE `ServerID` = {$sid}
 		AND `Gamemode` != ''
 		GROUP BY `MapName`
 		ORDER BY number DESC
 	"; 
-	$result = mysqli_query($BF4stats, $query);
+	$result = @mysqli_query($BF4stats, $query);
 }
 // this must be a global stats page
 else
@@ -35,7 +35,7 @@ else
 		GROUP BY `MapName`
 		ORDER BY number DESC
 	"; 
-	$result = mysqli_query($BF4stats, $query);
+	$result = @mysqli_query($BF4stats, $query);
 } 
 
 if($result)

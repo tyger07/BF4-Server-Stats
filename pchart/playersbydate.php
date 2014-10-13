@@ -3,29 +3,30 @@ include_once("class/pData.class.php");
 include_once("class/pDraw.class.php");
 include_once("class/pImage.class.php");
 
-// include config.php contents
+// first connect to the database
+// and include necessary files
 include_once('../config/config.php');
-$BF4stats = mysqli_connect(HOST, USER, PASS, NAME, PORT);
+include_once('../common/connect.php');
+include_once('../common/case.php');
 
 // SQL query limit
 $limit = 7;
 
 // check if a server was provided
 // if so, this is a server stats page
-if(!empty($_GET['server']))
+if(!empty($sid))
 {
-	$id = mysqli_real_escape_string($BF4stats, $_GET['server']);
 	$query  = "
 		SELECT SUBSTRING(`TimeMapLoad`, 1, length(`TimeMapLoad`) - 9) AS Date, AVG(`MaxPlayers`) AS Average
 		FROM `tbl_mapstats`
-		WHERE `ServerID` = {$id}
+		WHERE `ServerID` = {$sid}
 		AND `Gamemode` != ''
 		AND `MapName` != ''
 		GROUP BY `Date`
 		ORDER BY `Date` DESC
 		LIMIT {$limit}
 	";
-	$result = mysqli_query($BF4stats, $query);
+	$result = @mysqli_query($BF4stats, $query);
 }
 // this must be a global stats page
 else
@@ -39,7 +40,7 @@ else
 		ORDER BY `Date` DESC
 		LIMIT {$limit}
 	";
-	$result = mysqli_query($BF4stats, $query);
+	$result = @mysqli_query($BF4stats, $query);
 }
 
 if($result)
@@ -75,7 +76,7 @@ $myPicture->setFontProperties(array("FontName"=>"fonts/Forgotte.ttf","FontSize"=
 $TextSettings = array("Align"=>TEXT_ALIGN_MIDDLEMIDDLE
 , "R"=>150, "G"=>150, "B"=>150);
 // if so, this is a server stats page
-if(!empty($_GET['server']))
+if(!empty($sid))
 {
 	$myPicture->drawText(297,18,"Average number of players in server in last ". $limit ." days of server activity.",$TextSettings);
 }

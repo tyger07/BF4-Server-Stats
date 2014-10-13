@@ -4,55 +4,8 @@
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // function to find player's weapon stats
-function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
+function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerID, $BF4stats)
 {
-	// get current rank query details
-	if(!empty($_GET['rank']))
-	{
-		$rank = $_GET['rank'];
-		// filter out SQL injection
-		if($rank != 'Friendlyname' AND $rank != 'Kills' AND $rank != 'Deaths' AND $rank != 'Headshots' AND $rank != 'HSR')
-		{
-			// unexpected input detected
-			// use default instead
-			$rank = 'Kills';
-		}
-	}
-	// set default if no rank provided in URL
-	else
-	{
-		$rank = 'Kills';
-	}
-	// get current order query details
-	if(!empty($_GET['order']))
-	{
-		$order = $_GET['order'];
-		// filter out SQL injection
-		if($order != 'DESC' AND $order != 'ASC')
-		{
-			// unexpected input detected
-			// use default instead
-			$order = 'DESC';
-			$nextorder = 'ASC';
-		}
-		else
-		{
-			if($order == 'DESC')
-			{
-				$nextorder = 'ASC';
-			}
-			else
-			{
-				$nextorder = 'DESC';
-			}
-		}
-	}
-	// set default if no order provided in URL
-	else
-	{
-		$order = 'DESC';
-		$nextorder = 'ASC';
-	}
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
@@ -67,7 +20,7 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			AND tpd.`PlayerID` = {$PlayerID}
 			AND tws.`Damagetype` = '{$damagetype}'
 			AND wa.`Kills` > 0
-			ORDER BY {$rank} {$order}
+			ORDER BY Kills DESC
 		");
 	}
 	// or else this is a global stats page
@@ -84,121 +37,41 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			AND tws.`Damagetype` = '{$damagetype}'
 			AND wa.`Kills` > 0
 			GROUP BY tws.`Friendlyname`
-			ORDER BY {$rank} {$order}
+			ORDER BY Kills DESC
 		");
 	}
 	// see if we have any records for this player for this category
 	if(@mysqli_num_rows($Weapon_q) != 0)
 	{
 		echo '
-		<div class="innercontent">
-		<table width="98%" border="0">
+		<table class="prettytable">
 		<tr>
-		<th style="text-align: left;">' . $headingprint . '</th>
+		<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
+		<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
+		<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
+		<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
+		<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
 		</tr>
-		</table>
-		<table align="center" width="98%" border="0">
-		<tr>
 		';
-		// if server id is not null, this is a server query
-		if(!empty($ServerID))
-		{
-			echo '<td width="23%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Friendlyname&amp;order=';
-		}
-		// otherwise it is a global player query
-		else
-		{
-			echo '<td width="23%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=Friendlyname&amp;order=';
-		}
-		if($rank != 'Friendlyname')
-		{
-			echo 'ASC"><span class="orderheader">Weapon Name</span></a></td>';
-		}
-		else
-		{
-			echo $nextorder . '"><span class="ordered' . $order . 'header">Weapon Name</span></a></td>';
-		}
-		// if server id is not null, this is a server query
-		if(!empty($ServerID))
-		{
-			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Kills&amp;order=';
-		}
-		// otherwise it is a global player query
-		else
-		{
-			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=Kills&amp;order=';
-		}
-		if($rank != 'Kills')
-		{
-			echo 'DESC"><span class="orderheader">Kills</span></a></td>';
-		}
-		else
-		{
-			echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></td>';
-		}
-		// if server id is not null, this is a server query
-		if(!empty($ServerID))
-		{
-			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Deaths&amp;order=';
-		}
-		// otherwise it is a global player query
-		else
-		{
-			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=Deaths&amp;order=';
-		}
-		if($rank != 'Deaths')
-		{
-			echo 'DESC"><span class="orderheader">Deaths</span></a></td>';
-		}
-		else
-		{
-			echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></td>';
-		}
-		// if server id is not null, this is a server query
-		if(!empty($ServerID))
-		{
-			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=Headshots&amp;order=';
-		}
-		// otherwise it is a global player query
-		else
-		{
-			echo '<td width="19%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=Headshots&amp;order=';
-		}
-		if($rank != 'Headshots')
-		{
-			echo 'DESC"><span class="orderheader">Headshots</span></a></td>';
-		}
-		else
-		{
-			echo $nextorder . '"><span class="ordered' . $order . 'header">Headshots</span></a></td>';
-		}
-		// if server id is not null, this is a server query
-		if(!empty($ServerID))
-		{
-			echo '<td width="20%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1&amp;rank=HSR&amp;order=';
-		}
-		// otherwise it is a global player query
-		else
-		{
-			echo '<td width="20%" class="tablecontents" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '&amp;rank=HSR&amp;order=';
-		}
-		if($rank != 'HSR')
-		{
-			echo 'DESC"><span class="orderheader">Headshot Ratio</span></a></td>';
-		}
-		else
-		{
-			echo $nextorder . '"><span class="ordered' . $order . 'header">Headshot Ratio</span></a></td>';
-		}
-		echo '</tr>';
 		while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 		{
-			$weapon_name_displayed = preg_replace("/_/"," ",$Weapon_r['Friendlyname']);
-			$weapon_img = './images/weapons/' . $Weapon_r['Friendlyname'] . '.png';
-			// rename 'death'
-			if($weapon_name_displayed == 'Death')
+			$weapon = $Weapon_r['Friendlyname'];
+			// rename 'Death'
+			if($weapon == 'Death')
 			{
-				$weapon_name_displayed = 'Machinery';
+				$weapon = 'Machinery';
+			}
+			// convert weapon to friendly name
+			if(in_array($weapon,$weapon_array))
+			{
+				$weapon_name = array_search($weapon,$weapon_array);
+				$weapon_img = './images/weapons/' . $weapon . '.png';
+			}
+			// this weapon is missing!
+			else
+			{
+				$weapon_name = preg_replace("/_/"," ",$weapon);
+				$weapon_img = './images/weapons/missing.png';
 			}
 			$kills = $Weapon_r['Kills'];
 			$deaths = $Weapon_r['Deaths'];
@@ -207,21 +80,22 @@ function Statsout($headingprint, $damagetype, $PlayerID, $ServerID, $BF4stats)
 			$weaponID = $Weapon_r['WeaponID'];
 			echo '
 			<tr>
-			<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name_displayed . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name_displayed . ':</font></td></tr></table></td>
-			<td width="19%" class="tablecontents" style="text-align: left">' . $kills . '</td>
-			<td width="19%" class="tablecontents" style="text-align: left">' . $deaths . '</td>
-			<td width="19%" class="tablecontents" style="text-align: left">' . $headshots . '</td>
-			<td width="20%" class="tablecontents" style="text-align: left">' . $ratio . ' <font class="information">%</font></td>
+			<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
+			<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
+			<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
+			<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
+			<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
 			</tr>
 			';
 		}
 		// free up weapon query memory
 		@mysqli_free_result($Weapon_q);
 		echo '
-		</table></div>
+		</table>
 		';
 	}
 }
+
 // rank queries function for player stats page
 function rank($ServerID, $PlayerID, $BF4stats, $GameID)
 {
@@ -319,7 +193,7 @@ function rank($ServerID, $PlayerID, $BF4stats, $GameID)
 		$ScoreRank = 'Unknown';
 		$KillsRank = 'Unknown';
 	}
-	// query server stats
+	// query for player count
 	$Server_q = @mysqli_query($BF4stats,"
 		SELECT `CountPlayers`
 		FROM `tbl_server_stats`
@@ -337,700 +211,266 @@ function rank($ServerID, $PlayerID, $BF4stats, $GameID)
 		$Players = 'Unknown';
 	}
 	echo '
-	<td width="25%" style="text-align:left"><br/><font class="information">Score:</font> ' . $ScoreRank . '<font class="information"> / </font>' . $Players . '<br/></td>
-	<td width="25%" style="text-align:center"><br/><font class="information">Kills:</font> ' . $KillsRank . '<font class="information"> / </font>' . $Players . '<br/></td>
-	<td width="25%" style="text-align:center"><br/><font class="information">Kill/Death Ratio:</font> ' . $KDRrank . '<font class="information"> / </font>' . $Players . '<br/></td>
-	<td width="25%" style="text-align:right"><br/><font class="information">Headshot Ratio:</font> ' . $HSRrank . '<font class="information"> / </font>' . $Players . '<br/></td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">Score</span></td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">Kills</span></td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">KDR</span></td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">Headshot Percent</span></td>
+	</tr>
+	<tr>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">#</span> ' . $ScoreRank . ' <span class="information">of</span> ' . $Players . '</td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">#</span> ' . $KillsRank . ' <span class="information">of</span> ' . $Players . '</td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">#</span> ' . $KDRrank . ' <span class="information">of</span> ' . $Players . '</td>
+	<td width="25%" class="tablecontents" style="padding-left: 10px;"><span class="information">#</span> ' . $HSRrank . ' <span class="information">of</span> ' . $Players . '</td>
 	';
 	// free up player rank query memory
 	@mysqli_free_result($Rank_q);
 	// free up server query memory
 	@mysqli_free_result($Server_q);
 }
-// function to create and display scoreboard
-function scoreboard($ServerID, $ServerName, $mode_array, $map_array, $squad_array, $country_array, $BF4stats, $GameID)
+
+// function to create pagination links
+function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$order,$query)
 {
-	echo'
-	<div class="middlecontent">
-	<table width="100%" border="0">
-	<tr>
-	<th class="headline"><b>Scoreboard</b></th>
-	</tr>
-	<tr>
-	<td>
-	';
-	// query for player in server and order them by team
-	$Scoreboard_q = @mysqli_query($BF4stats,"
-		SELECT `TeamID`
-		FROM `tbl_currentplayers`
-		WHERE `ServerID` = {$ServerID}
-		ORDER BY `TeamID` ASC
-	");
-	// no players were found in the server
-	// display basic server information
-	if(@mysqli_num_rows($Scoreboard_q) == 0)
+	echo '<div class="pagination">';
+	// reduce pagination width if few page results were found
+	if($totalpages == 1)
 	{
-		// initialize values
-		$mode_name = 'Unknown';
-		$map_name = 'Unknown';
-		$mode = 'Unknown';
-		// figure out current game mode and map name
-		$Basic_q = @mysqli_query($BF4stats,"
-			SELECT `mapName`, `Gamemode`, `maxSlots`, `usedSlots`, `ServerName`
-			FROM `tbl_server`
-			WHERE `ServerID` = {$ServerID}
-			AND `GameID` = {$GameID}
-		");
-		// information was found
-		if(@mysqli_num_rows($Basic_q) != 0)
-		{
-			$Basic_r = @mysqli_fetch_assoc($Basic_q);
-			$used_slots = $Basic_r['usedSlots'];
-			$available_slots = $Basic_r['maxSlots'];
-			$name = substr($Basic_r['ServerName'],0,25) . ' ...';
-			$mode = $Basic_r['Gamemode'];
-			// convert mode to friendly name
-			if(in_array($mode,$mode_array))
-			{
-				$mode_name = array_search($mode,$mode_array);
-			}
-			// this mode is missing!
-			else
-			{
-				$mode_name = $mode;
-			}
-			$map = $Basic_r['mapName'];
-			// convert map to friendly name
-			// first find if this map name is even in the map array
-			if(in_array($map,$map_array))
-			{
-				$map_name = array_search($map,$map_array);
-			}
-			// this map is missing!
-			else
-			{
-				$map_name = $map;
-			}
-			echo '
-			<div class="innercontent">
-			<br/>
-			<table width="98%" align="center" border="0" class="prettytable">
-			<tr>
-			<td class="shadowcontent">
-			<table width="80%" align="center" border="0">
-			<tr>
-			<td width="10%" style="text-align:left"><br/><br/>&nbsp;<br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Game Mode:</font><br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/>' . $mode_name . '<br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Map:</font><br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/>' . $map_name . '<br/><br/></td>
-			</tr>
-			<tr>
-			<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
-			<td width="22%" style="text-align:left"><font class="information">Server Name:</font><br/><br/><br/></td>
-			<td width="22%" style="text-align:left">' . $name . '<br/><br/><br/></td>
-			<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/><br/></td>
-			<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/><br/></td>
-			</tr>
-			</table>
-			</td>
-			</tr>
-			</table>
-			<br/>
-			</div>
-			';
-		}
-		// an error occured
-		// display blank information
-		else
-		{
-			echo '
-			<div class="innercontent">
-			<br/>
-			<table width="98%" align="center" border="0">
-			<tr>
-			<td>
-			<table width="80%" align="center" border="0">
-			<tr>
-			<td width="10%" style="text-align:left"><br/><br/>&nbsp;<br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Game Mode:</font><br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/>Unknown<br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Map:</font><br/><br/></td>
-			<td width="22%" style="text-align:left"><br/><br/>Unknown<br/><br/></td>
-			</tr>
-			<tr>
-			<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
-			<td width="22%" style="text-align:left"><font class="information">Server Name:</font><br/><br/><br/></td>
-			<td width="22%" style="text-align:left">Unknown<br/><br/><br/></td>
-			<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/><br/></td>
-			<td width="22%" style="text-align:left">Unknown<br/><br/><br/></td>
-			</tr>
-			</table>
-			</td>
-			</tr>
-			</table>
-			<br/>
-			</div>
-			';
-		}
-		// free up basic query memory
-		@mysqli_free_result($Basic_q);
+		echo '<table class="prettytable" style="width: 10%">';
 	}
-	// players were found in the server
-	// display teams and players
+	elseif($totalpages <= 3 && $totalpages >= 2)
+	{
+		echo '<table class="prettytable" style="width: 30%">';
+	}
 	else
 	{
-		echo '
-		<div class="innercontent">
-		<br/>
-		<table width="98%" align="center" border="0">
-		';
-		// initialize values
-		$mode_name = 'Unknown';
-		$map_name = 'Unknown';
-		$mode = 'Unknown';
-		$count2 = 0;
-		// figure out current game mode and map name
-		$Basic_q = @mysqli_query($BF4stats,"
-			SELECT `mapName`, `Gamemode`, `maxSlots`, `usedSlots`, `ServerName`
-			FROM `tbl_server`
-			WHERE `ServerID` = {$ServerID}
-			AND `GameID` = {$GameID}
-		");
-		if(@mysqli_num_rows($Basic_q) != 0)
-		{
-			$Basic_r = @mysqli_fetch_assoc($Basic_q);
-			$used_slots = $Basic_r['usedSlots'];
-			$available_slots = $Basic_r['maxSlots'];
-			$name = substr($Basic_r['ServerName'],0,25) . ' ...';
-			$mode = $Basic_r['Gamemode'];
-			// convert mode to friendly name
-			// first find if this mode is even in the mode array
-			if(in_array($mode,$mode_array))
-			{
-				$mode_name = array_search($mode,$mode_array);
-			}
-			// this mode is missing!
-			else
-			{
-				$mode_name = $mode;
-			}
-			$map = $Basic_r['mapName'];
-			// convert map to friendly name
-			// first find if this map name is even in the map array
-			if(in_array($map,$map_array))
-			{
-				$map_name = array_search($map,$map_array);
-			}
-			// this map is missing!
-			else
-			{
-				$map_name = $map;
-			}
-			echo '
-			<tr>
-			<td colspan="2" class="shadowcontent">
-			';
-		}
-		else
-		{
-			echo '<tr><td colspan="2"><div>';
-		}
-		// initialize values
-		$mode_shown = 0;
-		$last_team = -1;
-		// get current rank query details
-		if(!empty($_GET['rank']))
-		{
-			$rank = $_GET['rank'];
-			// filter out SQL injection
-			if($rank != 'Score' AND $rank != 'Kills' AND $rank != 'Deaths' AND $rank != 'SquadID')
-			{
-				// unexpected input detected
-				// use default instead
-				$rank = 'Score';
-			}
-		}
-		// set default if no rank provided in URL
-		else
-		{
-			$rank = 'Score';
-		}
-		// get current order query details
-		if(!empty($_GET['order']))
-		{
-			$order = $_GET['order'];
-			// filter out SQL injection
-			if($order != 'DESC' AND $order != 'ASC')
-			{
-				// unexpected input detected
-				// use default instead
-				$order = 'DESC';
-				$nextorder = 'ASC';
-			}
-			else
-			{
-				if($order == 'DESC')
-				{
-					$nextorder = 'ASC';
-				}
-				else
-				{
-					$nextorder = 'DESC';
-				}
-			}
-		}
-		// set default if no order provided in URL
-		else
-		{
-			$order = 'DESC';
-			$nextorder = 'ASC';
-		}
-		while($Scoreboard_r = @mysqli_fetch_assoc($Scoreboard_q))
-		{
-			$this_team = $Scoreboard_r['TeamID'];
-			// change to a different collumn or row of the scoreboard when the team number changes
-			if($this_team != $last_team)
-			{
-				// if the game mode has more than 2 teams, the third team should be moved down to the next row of the scoreboard
-				if($this_team == 3)
-				{
-					echo '</tr><tr><td colspan="2">&nbsp;</td></tr><tr>';
-				}
-				// only show the server header information once
-				if($mode_shown == 0)
-				{
-					if(@mysqli_num_rows($Basic_q) != 0)
-					{
-						echo '
-						<table width="80%" align="center" border="0">
-						<tr>
-						<td width="10%" style="text-align:left"><br/><br/>&nbsp;<br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Game Mode:</font><br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/>' . $mode_name . '<br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Map:</font><br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/>' . $map_name . '<br/><br/></td>
-						</tr>
-						<tr>
-						<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
-						<td width="22%" style="text-align:left"><font class="information">Server Name:</font><br/><br/><br/></td>
-						<td width="22%" style="text-align:left">' . $name . '<br/><br/><br/></td>
-						<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/><br/></td>
-						<td width="22%" style="text-align:left">' . $used_slots . ' <font class="information">/</font> ' . $available_slots . '<br/><br/><br/></td>
-						</tr>
-						</table>
-						</td>
-						</tr>
-						<tr>
-						';
-					}
-					// an error occured
-					// display blank information
-					else
-					{
-						echo '
-						<table width="80%" align="center" border="0">
-						<tr>
-						<td width="10%" style="text-align:left"><br/><br/>&nbsp;<br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Game Mode:</font><br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/>Unknown<br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/><font class="information">Current Map:</font><br/><br/></td>
-						<td width="22%" style="text-align:left"><br/><br/>Unknown<br/><br/></td>
-						</tr>
-						<tr>
-						<td width="10%" style="text-align:left">&nbsp;<br/><br/></td>
-						<td width="22%" style="text-align:left"><font class="information">Server Name:</font><br/><br/><br/></td>
-						<td width="22%" style="text-align:left">Unknown<br/><br/><br/></td>
-						<td width="22%" style="text-align:left"><font class="information">Server Slots:</font><br/><br/><br/></td>
-						<td width="22%" style="text-align:left">Unknown<br/><br/><br/></td>
-						</tr>
-						</table>
-						</div>
-						</td>
-						</tr>
-						<tr>
-						';
-					}
-					$mode_shown = 1;
-				}
-				// change team name shown depending on team number
-				// team 0 is 'loading in'
-				if($this_team == 0)
-				{
-					$team_name = 'Loading In';
-				}
-				// player is actually assigned to a team
-				else
-				{
-					// change team name displayed on scoreboard based on team number and game mode
-					if(($mode == 'ConquestLarge0') OR ($mode == 'ConquestSmall0') OR ($mode == 'Domination0') OR ($mode == 'Elimination0') OR ($mode == 'Obliteration') OR ($mode == 'TeamDeathMatch0') OR ($mode == 'AirSuperiority0') OR ($mode == 'CaptureTheFlag0'))
-					{
-						if($this_team == 1)
-						{
-							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Journey') OR ($map == 'MP_TheDish'))
-							{
-								$team_name = 'RU Army';
-							}
-							elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
-							{
-								$team_name = 'US Army';
-							}
-							else
-							{
-								$team_name = 'US Army';
-							}
-						}
-						elseif($this_team == 2)
-						{
-							if($map == 'MP_Abandoned')
-							{
-								$team_name = 'US Army';
-							}
-							elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004'))
-							{
-								$team_name = 'CN Army';
-							}
-							elseif(($map == 'MP_Prison') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
-							{
-								$team_name = 'RU Army';
-							}
-							else
-							{
-								$team_name = 'CN Army';
-							}
-						}
-						// something unexpected occurred and a correct team name was not found
-						// just name the team based on team number instead
-						else
-						{
-							$team_name = 'Team ' . $this_team;
-						}
-					}
-					elseif($mode == 'RushLarge0')
-					{
-						if($this_team == 1)
-						{
-							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
-							{
-								$team_name = 'US Attackers';
-							}
-							else
-							{
-								$team_name = 'Attackers';
-							}
-						}
-						elseif($this_team == 2)
-						{
-							if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004'))
-							{
-								$team_name = 'CN Defenders';
-							}
-							elseif(($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
-							{
-								$team_name = 'RU Defenders';
-							}
-							else
-							{
-								$team_name = 'Defenders';
-							}
-						}
-						// something unexpected occurred and a correct team name was not found
-						// just name the team based on team number instead
-						else
-						{
-							$team_name = 'Team ' . $this_team;
-						}
-					}
-					elseif(($mode == 'SquadDeathMatch0'))
-					{
-						if($this_team == 1)
-						{
-							$team_name = 'Alpha';
-						}
-						elseif($this_team == 2)
-						{
-							$team_name = 'Bravo';
-						}
-						elseif($this_team == 3)
-						{
-							$team_name = 'Charlie';
-						}
-						elseif($this_team == 4)
-						{
-							$team_name = 'Delta';
-						}
-						// something unexpected occurred and a correct team name was not found
-						// just name the team based on team number instead
-						else
-						{
-							$team_name = 'Team ' . $this_team;
-						}
-					}
-					// something unexpected occurred and a correct team name was not found
-					// just name the team based on team number instead
-					else
-					{
-						$team_name = 'Team ' . $this_team;
-					}
-				}
-				// the player is not on a team yet, the "loading in" collumn is formatted different than the team collumns (it extends over two team collumns)
-				if($this_team == 0)
-				{
-					echo '<td valign="top" colspan="2"><br/>';
-				}
-				// this is a team collumn
-				else
-				{
-					echo '<td valign="top" class="prettytable">';
-				}
-				// the "loading in" team does not have scores
-				if($this_team != 0)
-				{
-					// query for scores
-					$Score_q = @mysqli_query($BF4stats,"
-						SELECT `Score`, `WinningScore`
-						FROM `tbl_teamscores`
-						WHERE `ServerID` = {$ServerID}
-						AND `TeamID` = {$this_team}
-					");
-					if(@mysqli_num_rows($Score_q) != 0)
-					{
-						while($Score_r = @mysqli_fetch_assoc($Score_q))
-						{
-							$Score = $Score_r['Score'];
-							$WinningScore = $Score_r['WinningScore'];
-							if($WinningScore == 0)
-							{
-								echo '<br/><b><font class="teamname">' . $team_name . '</font></b> &nbsp; <font class="information">Tickets Remaining:</font> ' . $Score;
-							}
-							else
-							{
-								echo '<br/><b><font class="teamname">' . $team_name . '</font></b> &nbsp; <font class="information">Tickets:</font> ' . $Score . '<font class="information">/</font>' . $WinningScore;
-							}
-						}
-					}
-					// an error occured
-					// display blank information
-					else
-					{
-						echo '<b><font class="teamname">' . $team_name . '</font></b>';
-					}
-					// free up score query memory
-					@mysqli_free_result($Score_q);
-				}
-				echo '
-				<table width="100%" align="center" border="0" class="prettytable">
-				<tr>
-				';
-				// this formatting is changed depending on if this is a real team or is the "loading in" team
-				// this is the "loading in" team
-				if($this_team == 0)
-				{
-					echo '
-					<th width="15%" style="text-align:left">' . $team_name . '</th>
-					<th width="40%" colspan="3" style="text-align:left">Player</th>
-					';
-				}
-				// this is a real team
-				else
-				{
-					echo '
-					<th width="5%" style="text-align:left">#</th>
-					<th width="51%" colspan="2" style="text-align:left">Player</th>
-					';
-				}
-				// if player is loading in, don't show the score, kills, deaths, or squad name headers
-				if($this_team != 0)
-				{
-					echo '<th width="10%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;rank=Score&amp;order=';
-					if($rank != 'Score')
-					{
-						echo 'DESC"><span class="orderheader">Score</span></a></th>';
-					}
-					else
-					{
-						echo $nextorder . '"><span class="ordered' . $order . 'header">Score</span></a></th>';
-					}
-					echo '<th width="10%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;rank=Kills&amp;order=';
-					if($rank != 'Kills')
-					{
-						echo 'DESC"><span class="orderheader">Kills</span></a></th>';
-					}
-					else
-					{
-						echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></th>';
-					}
-					echo '<th width="10%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;rank=Deaths&amp;order=';
-					if($rank != 'Deaths')
-					{
-						echo 'DESC"><span class="orderheader">Deaths</span></a></th>';
-					}
-					else
-					{
-						echo $nextorder . '"><span class="ordered' . $order . 'header">Deaths</span></a></th>';
-					}
-					echo '<th width="14%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;rank=SquadID&amp;order=';
-					if($rank != 'SquadID')
-					{
-						echo 'ASC"><span class="orderheader">Squad</span></a></th>';
-					}
-					else
-					{
-						echo $nextorder . '"><span class="ordered' . $order . 'header">Squad</span></a></th>';
-					}
-				}
-				echo'</tr>';
-				// query for all players on this team
-				$Team_q = @mysqli_query($BF4stats,"
-					SELECT `Soldiername`, `Score`, `Kills`, `Deaths`, `TeamID`, `SquadID`, `CountryCode`
-					FROM `tbl_currentplayers`
-					WHERE `ServerID` = {$ServerID}
-					AND `TeamID` = {$this_team}
-					ORDER BY {$rank} {$order}
-				");
-				// if team query worked and players were found on this team
-				if(@mysqli_num_rows($Team_q) != 0)
-				{
-					$count = 1;
-					while($Team_r = @mysqli_fetch_assoc($Team_q))
-					{
-						$player = $Team_r['Soldiername'];
-						// see if this player has server stats in this server yet
-						$PlayerID_q = @mysqli_query($BF4stats,"
-							SELECT tpd.`PlayerID`
-							FROM `tbl_playerstats` tps
-							INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-							INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-							WHERE tsp.`ServerID` = {$ServerID}
-							AND tpd.`SoldierName` = '{$player}'
-							AND tpd.`GameID` = {$GameID}
-						");
-						// server stats found for this player in this server
-						if(@mysqli_num_rows($PlayerID_q) == 1)
-						{
-							$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
-							$PlayerID = $PlayerID_r['PlayerID'];
-						}
-						// this player needs to finish this round to get server stats in this server
-						else
-						{
-							$PlayerID = null;
-						}
-						$score = $Team_r['Score'];
-						$kills = $Team_r['Kills'];
-						$deaths = $Team_r['Deaths'];
-						$team = $Team_r['TeamID'];
-						$squad = $Team_r['SquadID'];
-						// convert squad name to friendly name
-						// first find out if this squad name is the list of squad names
-						if(in_array($squad,$squad_array))
-						{
-							$squad_name = array_search($squad,$squad_array);
-						}
-						// this squad is missing!
-						else
-						{
-							$squad_name = $squad;
-						}
-						$country = strtoupper($Team_r['CountryCode']);
-						// convert country name to friendly name
-						// and compile flag image
-						// first find out if this country name is the list of country names
-						if(in_array($country,$country_array))
-						{
-							$country_name = array_search($country,$country_array);
-							// compile country flag image
-							// if country is null or unknown, use generic image
-							if(($country == '') OR ($country == '--'))
-							{
-								$country_img = './images/flags/none.png';
-							}
-							else
-							{
-								$country_img = './images/flags/' . strtolower($country) . '.png';	
-							}
-						}
-						// this country is missing!
-						else
-						{
-							$country_name = $country;
-							$country_img = './images/flags/none.png';
-						}
-						echo '
-						<tr>
-						<td class="tablecontents" width="5%" style="text-align:left"><font class="information">' . $count . ':</font></td>
-						';
-						// if this player has stats in this server, provide a link to their stats page
-						if($PlayerID != null)
-						{
-							echo '<td class="tablecontents" width="26%" style="text-align:left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $player . '</a></td>';
-						}
-						// otherwise just display their name without a link
-						else
-						{
-							echo '<td class="tablecontents" width="26%" style="text-align:left">' . $player . '</td>';
-						}
-						echo '
-						<td class="tablecontents" width="26%" style="text-align:left"><img src="' . $country_img . '" alt="' . $country_name . '"/> ' . $country_name . '</td>
-						';
-						// if player is loading in, don't show the score, kills, deaths, or squad name
-						if($this_team != 0)
-						{
-							echo '
-							<td class="tablecontents" width="10%" style="text-align:left">' . $score . '</td>
-							<td class="tablecontents" width="10%" style="text-align:left">' . $kills . '</td>
-							<td class="tablecontents" width="10%" style="text-align:left">' . $deaths . '</td>
-							<td class="tablecontents" width="14%" style="text-align:left">' . $squad_name . '</td>
-							';
-						}
-						$count++;
-						echo '</tr>';
-					}
-				}
-				// no players were found on this team!
-				// some sort of database error must have occured
-				// this is bad..
-				// playing damage control
-				else
-				{
-					echo '
-					<tr>
-					<td class="tablecontents" width="5%" style="text-align:left">&nbsp;</td>
-					<td class="tablecontents" width="95%" style="text-align:left" colspan="5"><font class="information">An error occured!</font></td>
-					</tr>
-					';
-				}
-				echo '</table></td>';
-				// the formatting between the "loading in" team and the other actual teams is different
-				if($this_team == 0)
-				{
-					echo '</tr><tr>';
-				}
-			}
-			// remember to track which team we just probed
-			$last_team = $this_team;
-		}
-		// free up player ID query memory
-		@mysqli_free_result($PlayerID_q);
-		// free up team query memory
-		@mysqli_free_result($Team_q);
-		echo '
-		</tr>
-		</table>
-		<br/>
-		</div>
-		';
+		echo '<table class="prettytable" style="width: 60%">';
 	}
-	// free up basic query memory
-	@mysqli_free_result($Basic_q);
-	// free up score board query memory
-	@mysqli_free_result($Scoreboard_q);
+	echo '<tr>';
+	// range of number of links to show
+	// the range changes at the lowest and highest numbers to make the number of link outputs the same
+	// low end
+	if($currentpage == 4)
+	{
+		$range = 4;
+	}
+	elseif($currentpage == 3)
+	{
+		$range = 5;
+	}
+	elseif($currentpage == 2)
+	{
+		$range = 6;
+	}
+	elseif($currentpage == 1)
+	{
+		$range = 7;
+	}
+	// high end
+	elseif($currentpage == ($totalpages - 3))
+	{
+		$range = 4;
+	}
+	elseif($currentpage == ($totalpages - 2))
+	{
+		$range = 5;
+	}
+	elseif($currentpage == ($totalpages - 1))
+	{
+		$range = 6;
+	}
+	elseif($currentpage == $totalpages)
+	{
+		$range = 7;
+	}
+	// the default if not at the low or high end
+	else
+	{
+		$range = 3;
+	}
+	// if on page 1, don't show earlier page links
+	if ($currentpage > 1)
+	{
+		// show first page link to go back to first page
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			if(!empty($query))
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">1</a></td>';
+			}
+			else
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '">1</a></td>';
+			}
+		}
+		// or else this is a global stats page
+		else
+		{
+			if(!empty($query))
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">1</a></td>';
+			}
+			else
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '">1</a></td>';
+			}
+		}
+		// get previous page number
+		$prevpage = $currentpage - 1;
+		// show ... as spacer if beyond the first pages
+		if (($currentpage - $range) > 3)
+		{
+			echo ' <td width="9%" class="pagspace">...</td> ';
+		}
+		// show page 2 instead of ... if the ... would have represented page 2 anyways
+		elseif (($currentpage - $range) == 3)
+		{
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				if(!empty($query))
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">2</a></td>';
+				}
+				else
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '">2</a></td>';
+				}
+			}
+			// or else this is a global stats page
+			else
+			{
+				if(!empty($query))
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">2</a></td>';
+				}
+				else
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '">2</a></td>';
+				}
+			}
+		}
+	}
+	// loop to show links to pages in a range of pages around current page
+	for($x = ($currentpage - $range); $x < (($currentpage + $range) + 1); $x++)
+	{
+		// handle the first and last pages differently
+		if ((($x == 1) || ($x == $totalpages)) && ($x == $currentpage))
+		{
+			// 'highlight' the current page but don't make it a link
+			echo ' <td width="9%" class="pagcountselected"><font class="information">' . $x . '</font></td> ';
+		}
+		// if it's a valid page number... and isn't the first or last page
+		if (($x > 1) && ($x < $totalpages))
+		{
+			// if we're on current page...
+			if ($x == $currentpage)
+			{
+				// 'highlight' the current page but don't make it a link
+				echo ' <td width="9%" class="pagcountselected"><font class="information">' . $x . '</font></td> ';
+			}
+			else
+			{
+				// make it a link
+				// if there is a ServerID, this is a server stats page
+				if(!empty($ServerID))
+				{
+					if(!empty($query))
+					{
+						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $x . '</a></td> ';
+					}
+					else
+					{
+						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $x . '</a></td> ';
+					}
+				}
+				// or else this is a global stats page
+				else
+				{
+					if(!empty($query))
+					{
+						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $x . '</a></td> ';
+					}
+					else
+					{
+						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $x . '</a></td> ';
+					}
+				}
+			}
+		}
+	}
+	// if not on last page, show forward links        
+	if ($currentpage != $totalpages)
+	{
+		// get next page
+		$nextpage = $currentpage + 1;
+		// show ... as spacer if before the last pages
+		if (($currentpage + $range) < ($totalpages - 2))
+		{
+			echo ' <td width="9%" class="pagspace">...</td> ';
+		}
+		// show 2nd-to-last page instead of ... if the ... would have represented 2nd-to-last page anyways
+		elseif(($currentpage + $range) == ($totalpages - 2))
+		{
+			$onelesstotalpages = $totalpages - 1;
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				if(!empty($query))
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $onelesstotalpages . '</a></td>';
+				}
+				else
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $onelesstotalpages . '</a></td>';
+				}
+			}
+			// or else this is a global stats page
+			else
+			{
+				if(!empty($query))
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $onelesstotalpages . '</a></td>';
+				}
+				else
+				{
+					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $onelesstotalpages . '</a></td>';
+				}
+			}
+		}
+		// show last page link
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			if(!empty($query))
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $totalpages . '</a></td>';
+			}
+			else
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $totalpages . '</a></td>';
+			}
+		}
+		// or else this is a global stats page
+		else
+		{
+			if(!empty($query))
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $totalpages . '</a></td>';
+			}
+			else
+			{
+				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $totalpages . '</a></td>';
+			}
+		}
+	}
 	echo '
-	</td></tr>
+	</tr>
 	</table>
 	</div>
 	';
 }
+
 // function to replace dangerous characters in content
 function textcleaner($content)
 {
@@ -1040,6 +480,7 @@ function textcleaner($content)
 	$content = preg_replace("/>/","&gt;",$content);
 	return $content;
 }
+
 // function to reverse cleaning operation
 function textuncleaner($content)
 {

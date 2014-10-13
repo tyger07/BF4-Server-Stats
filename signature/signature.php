@@ -1,16 +1,15 @@
 <?php
 
 // first connect to the database
-// include config.php contents
+// and include necessary files
 include_once('../config/config.php');
-$BF4stats = mysqli_connect(HOST, USER, PASS, NAME, PORT);
-
-// then include constants.php
+include_once('../common/connect.php');
+include_once('../common/case.php');
 include_once('../common/constants.php');
 
 // we will need a server ID from the URL query string!
 // if no data query string is provided, this is an image
-if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']) AND !empty($_GET['GameID']) AND is_numeric($_GET['GameID']))
+if(!empty($pid) && !empty($gid))
 {
 	// initialize defaults
 	$PlayerID = 0;
@@ -18,15 +17,12 @@ if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']) AND !empty($_GET[
 	$found = 0;
 	
 	// assign variable to input
-	$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
-	$GameID = mysqli_real_escape_string($BF4stats, $_GET['GameID']);
-	if(!empty($_GET['FAV']) AND is_numeric($_GET['FAV']))
+	$PlayerID = $pid;
+	$GameID = $gid;
+	if(!empty($_GET['fav']) AND is_numeric($_GET['fav']))
 	{
-		$FAV = mysqli_real_escape_string($BF4stats, $_GET['FAV']);
+		$fav = mysqli_real_escape_string($BF4stats, $_GET['fav']);
 	}
-	
-	// initialize defaults
-	$found = 0;
 	
 	// query for this player's info
 	$q = @mysqli_query($BF4stats,"
@@ -70,13 +66,24 @@ if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']) AND !empty($_GET[
 		if(mysqli_num_rows($wq) != 0)
 		{
 			$wr = @mysqli_fetch_assoc($wq);
-			$weapon = preg_replace("/_/"," ",$wr['Friendlyname']);
-			// rename 'death'
+			$weapon = $wr['Friendlyname'];
+			// rename 'Death'
 			if($weapon == 'Death')
 			{
 				$weapon = 'Machinery';
 			}
-			$weapon_img = '../images/weapons/' . $wr['Friendlyname'] . '.png';
+			// convert weapon to friendly name
+			if(in_array($weapon,$weapon_array))
+			{
+				$weapon = array_search($weapon,$weapon_array);
+				$weapon_img = '../images/weapons/' . $wr['Friendlyname'] . '.png';
+			}
+			// this weapon is missing!
+			else
+			{
+				$weapon = preg_replace("/_/"," ",$weapon);
+				$weapon_img = '../images/weapons/missing.png';
+			}
 			$weapon_kills = $wr['weaponkills'];
 		}
 		// or else default
@@ -115,7 +122,7 @@ if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']) AND !empty($_GET[
 	imagestring($base, 2, 220, 17, $clan_name . '\'s Servers', $dark);
 	
 	// default is rank
-	if($FAV == 0)
+	if($fav == 0)
 	{
 		// rank image
 		$rank = imagecreatefrompng($rank_img);

@@ -4,41 +4,22 @@
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
 echo '
-<div class="middlecontent">
-<table width="100%" border="0">
-<tr><td  class="headline">
-';
-// if there is a ServerID, this is a server stats page
-if(!empty($ServerID))
-{
-	echo '<br/><center><b>Suspicious Players</b></center><br/>';
-}
-// or else this is a global stats page
-else
-{
-	echo '<br/><center><b>Global Suspicious Players</b></center><br/>';
-}
-echo  '
-</td></tr>
-</table>
-<table width="100%" border="0">
-<tr><td>
+<div class="subsection">
+<div class="headline">
+Just because a player shows up as being suspicious does not necessarily mean that they are cheating.
+</div>
+</div>
 <br/>
-<center><b>Just because a player shows up on the list as being suspicious does not necessarily mean they are cheating.</b><br />
-<font class="information">The search algorithm makes sure that there is an appropriate sample size used before marking the player as suspicious.</font></center>
-<br/>
-</td></tr>
-</table>
+<div class="subsection">
+<div class="headline">
+The search algorithm uses an appropriate sample size before marking the player as suspicious.
+</div>
 </div>
 <br/><br/>
-<div  class="middlecontent">
-<table width="100%" border="0">
-<tr>
 ';
 // get current rank query details
-if(!empty($_GET['rank']))
+if(!empty($rank))
 {
-	$rank = $_GET['rank'];
 	// filter out SQL injection
 	if($rank != 'SoldierName' AND $rank != 'KDR' AND $rank != 'HSR' AND $rank != 'Rounds')
 	{
@@ -53,9 +34,8 @@ else
 	$rank = 'KDR';
 }
 // get current order query details
-if(!empty($_GET['order']))
+if(!empty($order))
 {
-	$order = $_GET['order'];
 	// filter out SQL injection
 	if($order != 'DESC' AND $order != 'ASC')
 	{
@@ -115,52 +95,42 @@ else
 // no suspicious players found
 if(@mysqli_num_rows($Suspicious_q) == 0)
 {
-	echo '
-	<td>
-	<div class="innercontent">
-	<table width="98%" align="center" border="0">
-	<tr><td>
-	';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<br/><center><font class="information">No suspicious players found in this server.</font></center>';
+		echo '
+		<div class="subsection">
+		<div class="headline">No suspicious players found in this server.</div>
+		</div>
+		';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<br/><center><font class="information">No suspicious players found in these servers.</font></center>';
+		echo '
+		<div class="subsection">
+		<div class="headline">No suspicious players found in these servers.</div>
+		</div>
+		';
 	}
-	echo '
-	</td></tr>
-	</table>
-	<br/>
-	</div>
-	';
 }
 // found suspicious players
 else
 {
 	echo '
-	<th class="headline"><b>Suspicious Players</b></th>
-	</tr>
+	<table class="prettytable">
 	<tr>
-	<td>
-	<div class="innercontent">
-	<br/>
-	<table width="98%" align="center" class="prettytable" border="0">
-	<tr>
-	<th width="5%" style="text-align:left">#</th>
+	<th width="5%" class="countheader">#</th>
 	';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=SoldierName&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=SoldierName&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1&amp;rank=SoldierName&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=SoldierName&amp;o=';
 	}
 	if($rank != 'SoldierName')
 	{
@@ -173,12 +143,12 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=KDR&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=KDR&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1&amp;rank=KDR&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=KDR&amp;o=';
 	}
 	if($rank != 'KDR')
 	{
@@ -191,12 +161,12 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=HSR&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=HSR&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1&amp;rank=HSR&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=HSR&amp;o=';
 	}
 	if($rank != 'HSR')
 	{
@@ -209,12 +179,12 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1&amp;rank=Rounds&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=Rounds&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1&amp;rank=Rounds&amp;order=';
+		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=Rounds&amp;o=';
 	}
 	if($rank != 'Rounds')
 	{
@@ -240,36 +210,30 @@ else
 		$count++;
 		echo '
 		<tr>
-		<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
+		<td width="5%" class="count"><span class="information">' . $count . '</span></td>
 		';
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			echo '<td width="25%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $PlayerID . '&amp;search=1">' . $SoldierName . '</a></td>';
+			echo '<td width="25%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 		}
 		// or else this is a global stats page
 		else
 		{
-			echo '<td width="25%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '">' . $SoldierName . '</a></td>';
+			echo '<td width="25%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 		}
 		echo '
-		<td width="20%" class="tablecontents" style="text-align: left;">' . $KDR . '</td>
-		<td width="25%" class="tablecontents" style="text-align: left;">' . $HSpercent . ' <font class="information">%</font></td>
-		<td width="25%" class="tablecontents" style="text-align: left;">' . $Rounds . '</td>
+		<td width="20%" class="tablecontents">' . $KDR . '</td>
+		<td width="25%" class="tablecontents">' . $HSpercent . ' <span class="information">%</span></td>
+		<td width="25%" class="tablecontents">' . $Rounds . '</td>
 		</tr>
 		';
 	}
 	echo '
 	</table>
-	<br/>
-	</div>
 	';
 }
 // free up suspicious query memory
 @mysqli_free_result($Suspicious_q);
-echo '
-</td></tr>
-</table>
-</div>
-';
+
 ?>

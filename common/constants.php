@@ -312,6 +312,24 @@ $weapon_array = array(
 	// note comma at the end of each line except for the last line
 );
 
+// make an array of weapon categories
+$cat_array = array(
+	'Assault'		=>	'assaultrifle',
+	'Carbine'		=>	'carbine',
+	'DMR'			=>	'dmr',
+	'LMG'			=>	'lmg',
+	'Shotgun'		=>	'shotgun',
+	'SMG'			=>	'smg',
+	'Sniper'		=>	'sniperrifle',
+	'Handgun'		=>	'handgun',
+	'Projectile'	=>	'projectileexplosive',
+	'Explosive'		=>	'explosive',
+	'Impact'		=>	'impact',
+	'Melee'			=>	'melee',
+	'Vehicle'		=>	'none'
+	// note comma at the end of each line except for the last line
+);
+
 // make an array of squad names
 // this is just the phonetic alphabet
 $squad_array = array(

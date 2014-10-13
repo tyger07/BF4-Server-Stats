@@ -1,46 +1,11 @@
 <?php
-// server stats maps page by Ty_ger07 at http://open-web-community.com/
+// server maps stats page by Ty_ger07 at http://open-web-community.com/
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
-echo '
-<div class="middlecontent">
-<table width="100%" border="0">
-<tr><td  class="headline">
-';
-// if there is a ServerID, this is a server stats page
-if(!empty($ServerID))
-{
-	echo '<br/><center><b>Map Stats</b></center><br/>';
-}
-// or else this is a global stats page
-else
-{
-	echo '<br/><center><b>Global Map Stats</b></center><br/>';
-}
-echo '
-</td></tr>
-</table>
-<table width="100%" border="0">
-<tr><td>
-<br/>
-<center>Average Polularity is calculated as average players in the server for each map divided by average players leaving for each map.  Higher is better.</center>
-<br/>
-</td></tr>
-</table>
-</div>
-<br/><br/>
-<table width="100%" border="0">
-<tr>
-<td valign="top" align="center">
-<div class="middlecontent">
-<table width="100%" border="0">
-<tr>
-';
 // get current rank query details
-if(!empty($_GET['rank']))
+if(!empty($rank))
 {
-	$rank = $_GET['rank'];
 	// filter out SQL injection
 	if($rank != 'Gamemode')
 	{
@@ -55,9 +20,8 @@ else
 	$rank = 'Gamemode';
 }
 // get current order query details
-if(!empty($_GET['order']))
+if(!empty($order))
 {
-	$order = $_GET['order'];
 	// filter out SQL injection
 	if($order != 'DESC' AND $order != 'ASC')
 	{
@@ -111,64 +75,73 @@ else
 }
 if(@mysqli_num_rows($Mode_q) == 0)
 {
-	echo '
-	<td>
-	<div class="innercontent"><br/>
-	<table width="98%" align="center" border="0">
-	<tr><td>
-	';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<center><font class="information">No map stats found for found for this server.</font></center>';
+		echo '
+		<div class="subsection">
+		<div class="headline">No map stats found for this server.</div>
+		</div>
+		';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<center><font class="information">No map stats found for found these servers.</font></center>';
+		echo '
+		<div class="subsection">
+		<div class="headline">No map stats found for these servers.</div>
+		</div>
+		';
 	}
-	echo '
-	</td></tr>
-	</table><br/>
-	</div>
-	';
 }
 else
 {
 	echo '
-	<th class="headline"><b>Map Stats</b></th>
-	</tr>
+	<table class="prettytable">
 	<tr>
-	<td>
-	<div class="innercontent">
+	<td class="tablecontents">
 	';
-	// include maps.php contents
+	// include maps.php image contents
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<br/><center><img src="pchart/maps.php?server=' . $ServerID . '" alt="maps played" title="maps played" /></center><br/>';
+		echo '<br/><center><div class="embed"><br/><img src="pchart/maps.php?sid=' . $ServerID . '" alt="maps played" title="maps played" /></div></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<br/><center><img src="pchart/maps.php" alt="maps played" title="maps played" /></center><br/>';
+		echo '<br/><center><div class="embed"><br/><img src="pchart/maps.php" alt="maps played" title="maps played" /></div></center><br/>';
 	}
 	echo '
-	<table width="98%" align="center" border="0">
+	</td>
+	</tr>
+	</table>
+	<br/>
+	<table class="prettytable">
 	<tr>
-	<th width="5%" style="text-align:left">#</th>
+	<td class="tablecontents">
+	<center>Average Polularity is calculated as average players in the server for each map divided by average players leaving for each map.  Higher is better.</center>
+	</td>
+	</tr>
+	<tr>
+	<td width="100%" style="text-align: left; height: 5px;" colspan="7"></td>
+	</tr>
+	</table>
+	<table class="prettytable" width="98%" align="center" border="0">
+	<tr>
+	<th width="5%" class="countheader">#</th>
 	<th width="16%" style="text-align:left">Map Name</th>
 	<th width="16%" style="text-align:left;">Map Code</th>
 	';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1&amp;rank=Gamemode&amp;order=';
+		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=maps&amp;r=Gamemode&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalmaps=1&amp;rank=Gamemode&amp;order=';
+		echo '<th width="16%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?p=maps&amp;r=Gamemode&amp;o=';
 	}
 	if($rank != 'Gamemode')
 	{
@@ -178,10 +151,15 @@ else
 	{
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Game Mode</span></a></th>';
 	}
-	echo '<th width="15%" style="text-align:left;">Rounds Played</th>
+	echo '
+	<th width="15%" style="text-align:left;">Rounds Played</th>
 	<th width="16%" style="text-align:left;">Average Players</th>
 	<th width="16%" style="text-align:left;">Average Popularity</th>
-	</tr>';
+	</tr>
+	<tr>
+	<td width="100%" style="text-align: left; height: 5px;" colspan="7"></td>
+	</tr>
+	';
 	// initialize value
 	$count = 0;
 	$match = 0;
@@ -248,7 +226,7 @@ else
 				// don't show average popularity if sample size is small
 				if($NumberofRounds <= 4)
 				{
-					$AveragePopularity = '<font class="information">not enough data</font>';
+					$AveragePopularity = '<span class="information">not enough data</span>';
 				}
 				else
 				{
@@ -258,18 +236,18 @@ else
 				// add a space between mode changes
 				if($last_mode !== $Mode AND $last_mode !== 0)
 				{
-					echo '<tr><td width="100%" class="tablecontents" style="text-align: left;" colspan="7">&nbsp;</td></tr>';
+					echo '<tr><td width="100%" style="text-align: left; height: 5px;" colspan="7"></td></tr>';
 					$last_mode = $Mode;
 				}
 				echo '
 				<tr>
-				<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
-				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $MapName . '</font></td>
-				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $MapCode . '</font></td>
-				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $GameMode . '</font></td>
-				<td width="15%" class="tablecontents" style="text-align: left;"><font class="information">' . $NumberofRounds . '</font></td>
-				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $AveragePlayers . '</font></td>
-				<td width="16%" class="tablecontents" style="text-align: left;"><font class="information">' . $AveragePopularity . '</font></td>
+				<td width="5%" class="count"><span class="information">' . $count . '</span></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><span class="information">' . $MapName . '</span></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><span class="information">' . $MapCode . '</span></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><span class="information">' . $GameMode . '</span></td>
+				<td width="15%" class="tablecontents" style="text-align: left;"><span class="information">' . $NumberofRounds . '</span></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><span class="information">' . $AveragePlayers . '</span></td>
+				<td width="16%" class="tablecontents" style="text-align: left;"><span class="information">' . $AveragePopularity . '</span></td>
 				</tr>
 				';
 			}
@@ -282,23 +260,16 @@ else
 	{
 		echo '
 		<tr>
-		<td width="100%" class="tablecontents" style="text-align: left;" colspan="7"><font class="information">No information found.</font></td>
+		<td width="5%" class="count">&nbsp;</td>
+		<td width="95%" class="tablecontents" style="text-align: left;" colspan="6"><span class="information">No information found.</span></td>
 		</tr>
 		';
 	}
 	echo '
 	</table>
-	<br/>
-	</div>
 	';
 }
 // free up mode query memory
 @mysqli_free_result($Mode_q);
-echo '
-</td></tr>
-</table>
-</div>
-</td></tr>
-</table>
-';
+
 ?>

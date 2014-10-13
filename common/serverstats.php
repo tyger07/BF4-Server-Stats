@@ -3,30 +3,6 @@
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
-echo '
-<div class="middlecontent">
-<table width="100%" border="0">
-<tr><td  class="headline">
-';
-// if there is a ServerID, this is a server stats page
-if(!empty($ServerID))
-{
-	echo '<br/><center><b>Server Info</b></center><br/>';
-}
-// or else this is a global stats page
-else
-{
-	echo '<br/><center><b>Global Server Info</b></center><br/>';
-}
-echo '
-</td></tr>
-</table>
-</div>
-<br/><br/>
-<div class="middlecontent">
-<table width="100%" border="0">
-<tr>
-';
 // if there is a ServerID, this is a server stats page
 if(!empty($ServerID))
 {
@@ -50,14 +26,23 @@ else
 if(@mysqli_num_rows($Server_q) != 0)
 {
 	echo '
-	<th class="headline"><b>Server Stats</b></th>
-	</tr>
+	<div id="tabs">
+	';
+	// if there is a ServerID, this is a server stats page
+	if(!empty($ServerID))
+	{
+		echo '
+		<ul>
+		<li><div class="subscript">1</div><a href="#tabs-1">Graphs / Info</a></li>
+		<li><div class="subscript">2</div><a href="./common/server-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '">Banner</a></li>
+		</ul>
+		';
+	}
+	echo '
+	<div id="tabs-1">
+	<table class="prettytable">
 	<tr>
-	<td>
-	<div class="innercontent"><br/>
-	<table width="95%" align="center" border="0">
-	<tr>
-	<td>
+	<td class="tablecontents">
 	';
 	$Server_r = @mysqli_fetch_assoc($Server_q);
 	$players = round($Server_r['CountPlayers'],2);
@@ -76,44 +61,55 @@ if(@mysqli_num_rows($Server_q) != 0)
 	if(!empty($ServerID))
 	{
 		// include playersbydate.php contents
-		echo '<center><img src="pchart/playersbydate.php?server=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
+		echo '<br/><center><img class="embed" src="pchart/playersbydate.php?sid=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
 		// include players.php contents
-		echo '<center><img src="pchart/players.php?server=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center>';
+		echo '<center><img class="embed" src="pchart/players.php?sid=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
 		// include joinsleaves.php contents
-		echo '<center><img src="pchart/joinsleaves.php?server=' . $ServerID . '" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
+		echo '<center><img class="embed" src="pchart/joinsleaves.php?sid=' . $ServerID . '" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
 		// include playersbydate.php contents
-		echo '<center><img src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center>';
+		echo '<br/><center><img class="embed" src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
 		// include players.php contents
-		echo '<center><img src="pchart/players.php" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center>';
+		echo '<center><img class="embed" src="pchart/players.php" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
 		// include joinsleaves.php contents
-		echo '<center><img src="pchart/joinsleaves.php" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
+		echo '<center><img class="embed" src="pchart/joinsleaves.php" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
 	}
 	echo '
+	</td>
+	</tr>
+	</table>
+	<table class="prettytable">
+	<tr>
+	<td class="tablecontents">
 	<table width="90%" align="center" border="0"><tr>
 	<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Total Players: </font>' . $players . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Total Kills: </font>' . $kills . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Total Deaths: </font>' . $deaths . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Total Players: </span>' . $players . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Total Kills: </span>' . $kills . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Total Deaths: </span>' . $deaths . '<br/><br/></td>
 	</tr><tr>
 	<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Total Rounds: </font>' . $rounds . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Team Kills: </font>' . $avgtks . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Suicides: </font>' . $avgsuicide . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Total Rounds: </span>' . $rounds . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Team Kills: </span>' . $avgtks . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Suicides: </span>' . $avgsuicide . '<br/><br/></td>
 	</tr><tr>
 	<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Score: </font>' . $avgscore . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Kills: </font>' . $avgkills . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Deaths: </font>' . $avgdeaths . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Score: </span>' . $avgscore . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Kills: </span>' . $avgkills . '<br/><br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Deaths: </span>' . $avgdeaths . '<br/><br/></td>
 	</tr><tr>
-	<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Headshots: </font>' . $avgheadshots . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Kill/Death Ratio: </font>' . $avgkdr . '<br/><br/></td>
-	<td style="text-align: left;" width="30%"><font class="information">Average Headshot Ratio: </font>' . $avghsr . '<br/><br/></td>
+	<td style="text-align: left;" width="10%">&nbsp;<br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Headshots: </span>' . $avgheadshots . '<br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Kill/Death Ratio: </span>' . $avgkdr . '<br/></td>
+	<td style="text-align: left;" width="30%"><span class="information">Average Headshot Ratio: </span>' . $avghsr . '<br/></td>
 	</tr></table>
+	</td>
+	</tr>
+	</table>
+	</div>
+	</div>
 	';
 }
 else
@@ -122,37 +118,22 @@ else
 	if(!empty($ServerID))
 	{
 		echo '
-		<td>
-		<div class="innercontent"><br/>
-		<table width="95%" align="center" border="0">
-		<tr>
-		<td>
-		<center><font class="information">No server stats found for this server.</font></center><br/>
+		<div class="subsection">
+		<div class="headline">No server stats found for this server.</div>
+		</div>
 		';
 	}
 	// or else this is a global stats page
 	else
 	{
 		echo '
-		<td>
-		<div class="innercontent"><br/>
-		<table width="95%" align="center" border="0">
-		<tr>
-		<td>
-		<center><font class="information">No server stats found for these servers.</font></center><br/>
+		<div class="subsection">
+		<div class="headline">No server stats found for these servers.</div>
+		</div>
 		';
 	}
 }
 // free up server stats query memory
 @mysqli_free_result($Server_q);
-echo '
-</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-';
+
 ?>

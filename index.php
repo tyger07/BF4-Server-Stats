@@ -6,13 +6,9 @@
 // hide php notices
 error_reporting(E_ALL ^ E_NOTICE);
 
-// include config.php contents
+// include necessary files
 require_once('./config/config.php');
-
-// include functions.php contents
 require_once('./common/functions.php');
-
-// include constants.php contents
 require_once('./common/constants.php');
 
 // start counting page load time
@@ -21,7 +17,7 @@ $mtime = explode(" ",$mtime);
 $mtime = $mtime[1] + $mtime[0];
 $starttime = $mtime;
 
-// output the header
+// start buffering HTML output
 echo '
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
@@ -37,74 +33,29 @@ echo '
 ';
 
 // connect to the stats database
-$BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>Unable to access stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
-@mysqli_select_db($BF4stats, NAME) or die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>Unable to select stats database. Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
-
-// initialize value as null
-$GameID = null;
-
-// first we need to find the GameID
-$Server_q = @mysqli_query($BF4stats,"
-	SELECT `GameID`
-	FROM `tbl_games`
-	WHERE `Name` = 'BF4'
-");
-
-// the server info was found
-if(@mysqli_num_rows($Server_q) == 1)
-{
-	$Server_r = @mysqli_fetch_assoc($Server_q);
-	$GameID = $Server_r['GameID'];
-}
-// BF4 not found in this database
-else
-{
-	// display error and die
-	die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>The game 'BF4' was not found in this database! Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
-}
-
-// free up server info query memory
-@mysqli_free_result($Server_q);
-
-// find all servers in this database
-$ServerID_q = @mysqli_query($BF4stats,"
-	SELECT `ServerID`
-	FROM `tbl_server`
-	WHERE `GameID` = {$GameID}
-");
-
-// at least one server was found
-if(@mysqli_num_rows($ServerID_q) != 0)
-{
-	// initialize empty array
-	$ServerIDs = array();
-	// add found servers ID to array
-	while($ServerID_r = @mysqli_fetch_assoc($ServerID_q))
-	{
-		$ServerIDs[] = $ServerID_r['ServerID'];
-	}
-}
-// no BF4 servers were found
-else
-{
-	// display error and die
-	die ("<title>BF4 Player Stats - Error</title></head><body><br/><div id='pagebody'><div id='pagebodyback'><br/><center><b>No 'BF4' servers were found in this database! Please notify this website's administrator.</b></center><br/><center>If you are the administrator, please seek assistance <a href='https://forum.myrcon.com/showthread.php?6854-Server-Stats-page-for-XpKiller-s-BF4-Chat-GUID-Stats-and-Mapstats-Logger' target='_blank'>here</a>.</center><br/></div></div></body></html>");
-}
-
-// free up server id query memory
-@mysqli_free_result($ServerID_q);
+require_once('./common/connect.php');
 
 // initialize values as null
 $ServerID = null;
+$ServerName = null;
 $SoldierName = null;
 $PlayerID = null;
 
+// if there is only one server, no need for index
+if(count($ServerIDs) == 1)
+{
+	$ServerID = $ServerIDs[0];
+}
+
+// include case file for $_GET variables
+require_once('./common/case.php');
+
 // was a server ID given in the URL?  Is it a valid server ID?
 // if so, we must not be looking at global stats
-if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
+if(!empty($sid) && in_array($sid,$ServerIDs) && empty($ServerID))
 {
 	// assign $ServerID variable
-	$ServerID = mysqli_real_escape_string($BF4stats, $_GET['ServerID']);
+	$ServerID = $sid;
 	
 	// find this server info
 	$Server_q = @mysqli_query($BF4stats,"
@@ -121,6 +72,12 @@ if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GE
 		$ServerName = $Server_r['ServerName'];
 		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 	}
+	// error?  what?  This will probably never happen.
+	else
+	{
+		$ServerName = 'Error';
+		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
+	}
 	
 	// free up server info query memory
 	@mysqli_free_result($Server_q);
@@ -128,25 +85,25 @@ if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GE
 	// lets see if a SoldierName or PlayerID was provided to us in the URL
 	// we will try to find this player in this server and convert everything to PlayerID
 	// first look for a SoldierName in URL and try to convert it to PlayerID
-	if(!empty($_GET['SoldierName']))
+	if(!empty($player))
 	{
-		// remove spaces from name input
-		$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
+		$SoldierName = $player;
 		
-		// if there are dangerous characters, null it out
-		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
+		// if there are dangerous characters, null out the input to prevent injection
+		if((strpos($SoldierName,'`') !== false) || (strpos($SoldierName,'\'') !== false) || (strpos($SoldierName,'=') !== false))
 		{
 			$SoldierName = null;
 		}
-		
 		// or else find this PlayerID
 		else
 		{
 			$PlayerID_q = @mysqli_query($BF4stats,"
-				SELECT `PlayerID`
-				FROM `tbl_playerdata`
-				WHERE `SoldierName` = '{$SoldierName}'
-				AND `GameID` = {$GameID}
+				SELECT tpd.`PlayerID`
+				FROM  `tbl_playerdata` tpd
+				INNER JOIN  `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
+				WHERE tpd.`SoldierName` = '{$SoldierName}'
+				AND tsp.`ServerID` = {$ServerID}
+				AND tpd.`GameID` = {$GameID}
 			");
 			
 			// was there a result?
@@ -155,7 +112,6 @@ if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GE
 				$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
 				$PlayerID = $PlayerID_r['PlayerID'];
 			}
-			
 			// otherwise null variables
 			else
 			{
@@ -168,16 +124,18 @@ if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GE
 	}
 	
 	// then look for PlayerID in URL and make sure it is valid
-	if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
+	if(!empty($pid))
 	{
-		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
+		$PlayerID = $pid;
 		
 		// search for soldier name using provided player ID
 		$SoldierName_q = @mysqli_query($BF4stats,"
-			SELECT `SoldierName`
-			FROM `tbl_playerdata`
-			WHERE `PlayerID` = {$PlayerID}
-			AND `GameID` = {$GameID}
+			SELECT tpd.`SoldierName`
+			FROM `tbl_playerdata` tpd
+			INNER JOIN  `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
+			WHERE tpd.`PlayerID` = {$PlayerID}
+			AND tsp.`ServerID` = {$ServerID}
+			AND tpd.`GameID` = {$GameID}
 		");
 		
 		// was there a result?
@@ -186,7 +144,6 @@ if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GE
 			$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
 			$SoldierName = $SoldierName_r['SoldierName'];
 		}
-		
 		// otherwise null variables
 		else
 		{
@@ -198,24 +155,122 @@ if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GE
 		@mysqli_free_result($SoldierName_q);
 	}
 }
-
+// server id is inherited since this is the only server
+elseif(!empty($ServerID))
+{	
+	// find this server info
+	$Server_q = @mysqli_query($BF4stats,"
+		SELECT `ServerName`
+		FROM `tbl_server`
+		WHERE `ServerID` = {$ServerID}
+		AND `GameID` = {$GameID}
+	");
+	
+	// the server info was found
+	if(@mysqli_num_rows($Server_q) == 1)
+	{
+		$Server_r = @mysqli_fetch_assoc($Server_q);
+		$ServerName = $Server_r['ServerName'];
+		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+	}
+	// error?  what?  This will probably never happen.
+	else
+	{
+		$ServerName = 'Error';
+		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
+	}
+	
+	// free up server info query memory
+	@mysqli_free_result($Server_q);
+	
+	// lets see if a SoldierName or PlayerID was provided to us in the URL
+	// we will try to find this player in this server and convert everything to PlayerID
+	// first look for a SoldierName in URL and try to convert it to PlayerID
+	if(!empty($player))
+	{
+		$SoldierName = $player;
+		
+		// if there are dangerous characters, null out the input to prevent injection
+		if((strpos($SoldierName,'`') !== false) || (strpos($SoldierName,'\'') !== false) || (strpos($SoldierName,'=') !== false))
+		{
+			$SoldierName = null;
+		}
+		// or else find this PlayerID
+		else
+		{
+			$PlayerID_q = @mysqli_query($BF4stats,"
+				SELECT tpd.`PlayerID`
+				FROM  `tbl_playerdata` tpd
+				INNER JOIN  `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
+				WHERE tpd.`SoldierName` = '{$SoldierName}'
+				AND tsp.`ServerID` = {$ServerID}
+				AND tpd.`GameID` = {$GameID}
+			");
+			
+			// was there a result?
+			if(@mysqli_num_rows($PlayerID_q) == 1)
+			{
+				$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
+				$PlayerID = $PlayerID_r['PlayerID'];
+			}
+			// otherwise null variables
+			else
+			{
+				$PlayerID = null;
+			}
+			
+			// free up player id query memory
+			@mysqli_free_result($PlayerID_q);
+		}
+	}
+	
+	// then look for PlayerID in URL and make sure it is valid
+	if(!empty($pid))
+	{
+		$PlayerID = $pid;
+		
+		// search for soldier name using provided player ID
+		$SoldierName_q = @mysqli_query($BF4stats,"
+			SELECT tpd.`SoldierName`
+			FROM `tbl_playerdata` tpd
+			INNER JOIN  `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
+			WHERE tpd.`PlayerID` = {$PlayerID}
+			AND tsp.`ServerID` = {$ServerID}
+			AND tpd.`GameID` = {$GameID}
+		");
+		
+		// was there a result?
+		if(@mysqli_num_rows($SoldierName_q) == 1)
+		{
+			$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
+			$SoldierName = $SoldierName_r['SoldierName'];
+		}
+		// otherwise null variables
+		else
+		{
+			$SoldierName = null;
+			$PlayerID = null;
+		}
+		
+		// free up soldier name query memory
+		@mysqli_free_result($SoldierName_q);
+	}
+}
 // no server id in URL
 // this must be a global stats page
 else
 {
 	// lets see if a SoldierName or PlayerID was provided to us in the URL
 	// first look for a SoldierName in URL and try to convert it to PlayerID
-	if(!empty($_GET['SoldierName']))
+	if(!empty($player))
 	{
-		// remove spaces from name input
-		$SoldierName = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['SoldierName'])));
+		$SoldierName = $player;
 		
-		// if there are dangerous characters, null it out
-		if((strpos($SoldierName,'`') !== false) OR (strpos($SoldierName,'\'') !== false) OR (strpos($SoldierName,'=') !== false))
+		// if there are dangerous characters, null out the input to prevent injection
+		if((strpos($SoldierName,'`') !== false) || (strpos($SoldierName,'\'') !== false) || (strpos($SoldierName,'=') !== false))
 		{
 			$SoldierName = null;
 		}
-		
 		// or else find this PlayerID
 		else
 		{
@@ -232,7 +287,6 @@ else
 				$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
 				$PlayerID = $PlayerID_r['PlayerID'];
 			}
-			
 			// otherwise null variables
 			else
 			{
@@ -245,9 +299,9 @@ else
 	}
 	
 	// then look for PlayerID in URL and make sure it is valid
-	if(!empty($_GET['PlayerID']) AND is_numeric($_GET['PlayerID']))
+	if(!empty($pid))
 	{
-		$PlayerID = mysqli_real_escape_string($BF4stats, $_GET['PlayerID']);
+		$PlayerID = $pid;
 		
 		// search for soldier name using provided player ID
 		$SoldierName_q = @mysqli_query($BF4stats,"
@@ -263,7 +317,6 @@ else
 			$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
 			$SoldierName = $SoldierName_r['SoldierName'];
 		}
-		
 		// otherwise null variables
 		else
 		{
@@ -276,568 +329,948 @@ else
 	}
 }
 
-// this is not a global stats page
-if(!empty($_GET['ServerID']) AND is_numeric($_GET['ServerID']) AND in_array($_GET['ServerID'],$ServerIDs))
+// change page title, meta description, and keywords depending on the page content
+if(!empty($page))
 {
-	// change page title, meta description, and keywords depending on the page content
-	if(!empty($_GET['search']))
+	if($page == 'player')
 	{
-		echo '
-		<meta name="keywords" content="' . $SoldierName . ',' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server player stats page for ' . $SoldierName . '." />
-		<title>' . $clan_name . ' BF4 Player Stats - ' . $SoldierName . ' - ' . $ServerName . '</title>
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="' . $SoldierName . ',' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' player stats page for ' . $SoldierName . '." />
+			<title>' . $clan_name . ' BF4 Stats - ' . $SoldierName . ' - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="' . $SoldierName . ',' . $clan_name . ',BF4,Player,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global player stats page for ' . $SoldierName . '." />
+			<title>' . $clan_name . ' BF4 Stats - ' . $SoldierName . ' - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['suspicious']))
+	elseif($page == 'suspicious')
 	{
-		echo '
-		<meta name="keywords" content="Suspicious,Players,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Suspicious Players page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Suspicious Players - ' . $ServerName . '</title>
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Suspicious,Players,' . $ServerName . ',' . $clan_name . ',BF4,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Suspicious Players page." />
+			<title>' . $clan_name . ' BF4 Stats - Suspicious Players - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Suspicious,Players,' . $clan_name . ',BF4,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Suspicious Players page." />
+			<title>' . $clan_name . ' BF4 Stats - Suspicious Players - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['topplayers']))
+	elseif($page == 'leaders')
 	{
-		echo '
-		<meta name="keywords" content="Top,Players,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server player stats page of Top Players." />
-		<title>' . $clan_name . ' BF4 Player Stats - Top Players - ' . $ServerName . '</title>
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Top,Players,' . $ServerName . ',' . $clan_name . ',BF4,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Top Players page." />
+			<title>' . $clan_name . ' BF4 Stats - Top Players - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Top,Players,' . $clan_name . ',BF4,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Top Players page." />
+			<title>' . $clan_name . ' BF4 Stats - Top Players - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['countries']))
+	elseif($page == 'countries')
 	{
-		echo '
-		<meta name="keywords" content="Country,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Country Stats page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Country Stats - ' . $ServerName . '</title>
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Country,Stats,' . $ServerName . ',' . $clan_name . ',BF4" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Country Stats page." />
+			<title>' . $clan_name . ' BF4 Stats - Country Stats - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Country,Stats,' . $clan_name . ',BF4" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Country Stats page." />
+			<title>' . $clan_name . ' BF4 Stats - Country Stats - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['maps']))
+	elseif($page == 'maps')
 	{
-		echo '
-		<meta name="keywords" content="Map,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Map Stats page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Map Stats - ' . $ServerName . '</title>
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Map,Stats,' . $ServerName . ',' . $clan_name . ',BF4" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Map Stats page." />
+			<title>' . $clan_name . ' BF4 Stats - Map Stats - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Map,Stats,' . $clan_name . ',BF4" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Map Stats page." />
+			<title>' . $clan_name . ' BF4 Stats - Map Stats - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['serverstats']))
+	elseif($page == 'server')
 	{
-		echo '
-		<meta name="keywords" content="Server,Scoreboard,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Info" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Scoreboard and Info page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Server Info - ' . $ServerName . '</title>
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Server,Stats,' . $ServerName . ',' . $clan_name . ',BF4,Info" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Server Info page." />
+			<title>' . $clan_name . ' BF4 Stats - Server Info - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Server,Stats,' . $clan_name . ',BF4,Info" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Server Info page." />
+			<title>' . $clan_name . ' BF4 Stats - Server Info - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['chat']))
+	elseif($page == 'chat')
 	{
-		echo '
-		<meta name="keywords" content="Chat,' . $ServerName . ',' . $clan_name . ',BF4,Player,Recent,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Chat Content page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Recent Chat - ' . $ServerName . '</title>
-		<meta http-equiv="refresh" content="60" />
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Chat,Recent,' . $ServerName . ',' . $clan_name . ',BF4" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Chat Content page." />
+			<title>' . $clan_name . ' BF4 Stats - Chat Log - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Chat,Recent,' . $clan_name . ',BF4" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Chat Content page." />
+			<title>' . $clan_name . ' BF4 Stats - Chat Log - Global Stats</title>
+			';
+		}
 	}
-	elseif(!empty($_GET['potw']))
+	elseif($page == 'home')
 	{
-		echo '
-		<meta name="keywords" content="Players of the Week,' . $ServerName . ',' . $clan_name . ',BF4,Player,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server Players of the Week page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Players of the Week - ' . $ServerName . '</title>
-		';
-	}
-	else
-	{
-		echo '
-		<meta name="keywords" content="Home,Top,Players,' . $ServerName . ',' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' server main player stats page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Home Page - ' . $ServerName . '</title>
-		<meta http-equiv="refresh" content="60" />
-		';
+		// this is not a global stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Home,' . $ServerName . ',' . $clan_name . ',BF4,Server,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' stats Home Page." />
+			<title>' . $clan_name . ' BF4 Stats - Home Page - ' . $ServerName . '</title>
+			';
+		}
+		// this is a global stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Home,' . $clan_name . ',BF4,Server,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global stats Home Page." />
+			<title>' . $clan_name . ' BF4 Stats - Home Page - Global Stats</title>
+			';
+		}
 	}
 }
-// no server ID was given in the URL or an invalid server ID was given, so use index page header or global stats page header
 else
 {
-	// change page title, meta description, and keywords depending on the page content
-	if(!empty($_GET['globalhome']))
+	// this is not a global stats page
+	if(!empty($ServerID))
 	{
 		echo '
-		<meta name="keywords" content="Home,Top,Players,Global,' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global top players stats page." />
-		<title>' . $clan_name . ' BF4 GLobal Player Stats - Home Page</title>
+		<meta name="keywords" content="Home,' . $ServerName . ',' . $clan_name . ',BF4,Server,Stats" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' stats Home Page." />
+		<title>' . $clan_name . ' BF4 Stats - Home Page - ' . $ServerName . '</title>
 		';
 	}
-	elseif(!empty($_GET['globalsearch']))
-	{
-		echo '
-		<meta name="keywords" content="' . $SoldierName . ',' . $clan_name . ',BF4,Global,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server player stats page for ' . $SoldierName . '." />
-		<title>' . $clan_name . ' BF4 Global Player Stats - ' . $SoldierName . '</title>
-		';
-	}
-	elseif(!empty($_GET['globalsuspicious']))
-	{
-		echo '
-		<meta name="keywords" content="Global,Suspicious,Players,' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Suspicious Players page." />
-		<title>' . $clan_name . ' BF4 Global Player Stats - Suspicious Players</title>
-		';
-	}
-	elseif(!empty($_GET['globalcountries']))
-	{
-		echo '
-		<meta name="keywords" content="Global,Country,' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Country Stats page." />
-		<title>' . $clan_name . ' BF4 Global Player Stats - Country Stats</title>
-		';
-	}
-	elseif(!empty($_GET['globalmaps']))
-	{
-		echo '
-		<meta name="keywords" content="Global,Map,' . $clan_name . ',BF4,Player,Stats,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Map Stats page." />
-		<title>' . $clan_name . ' BF4 Global Player Stats - Map Stats</title>
-		';
-	}
-	elseif(!empty($_GET['globalserverstats']))
-	{
-		echo '
-		<meta name="keywords" content="Server,Global,' . $clan_name . ',BF4,Player,Stats,Info" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Info page." />
-		<title>' . $clan_name . ' BF4 Global Player Stats - Server Info</title>
-		';
-	}
-	elseif(!empty($_GET['globalpotw']))
-	{
-		echo '
-		<meta name="keywords" content="Players of the Week,Global,' . $clan_name . ',BF4,Player,Server" />
-		<meta name="description" content="This is our ' . $clan_name . ' BF4 global server Players of the Week page." />
-		<title>' . $clan_name . ' BF4 Global Player Stats - Players of the Week</title>
-		';
-	}
+	// this is a global stats page
 	else
 	{
 		echo '
-		<meta name="keywords" content="BF4,Player,Stats,Server,Index,' . $clan_name . '" />
-		<meta name="description" content="This is the ' . $clan_name . ' BF4 player stats server index page." />
-		<title>' . $clan_name . ' BF4 Player Stats - Index Page</title>
+		<meta name="keywords" content="Index,' . $clan_name . ',BF4,Server,Stats" />
+		<meta name="description" content="This is our ' . $clan_name . ' BF4 stats Index Page." />
+		<title>' . $clan_name . ' BF4 Stats - Index Page</title>
 		';
 	}
 }
+
+// start javascript scripts
+
+// skip code execution if not needed
+// index page doesn't need most of this
+if(!empty($page) || !empty($ServerID))
+{
+	// load necessary files
+	echo '
+	<link rel="stylesheet" href="./common/jquery-ui.css" />
+	<script type="text/javascript" src="./common/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="./common/jquery-ui.js"></script>
+	';
+	
+	// search chat on demand
+	if($page == 'chat')
+	{
+		echo '
+		<script type="text/javascript">
+		function searchOnDemand(str)
+		{
+			if(str=="")
+			{
+				document.getElementById("txtDefault").innerHTML=\'<br/><div class="subsection"><div class="headline">Please enter a search query.</div></div>\';
+				return;
+			}
+			if(str.length <= 2 && xmlhttp.readyState == 4)
+			{
+				document.getElementById("txtDefault").innerHTML=\'<br/><div class="subsection"><div class="headline">Search query must be at least three characters in length.</div></div>\';
+				return;
+			}
+			if(str.length >= 3)
+			{
+				if (window.XMLHttpRequest)
+				{
+					// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp=new XMLHttpRequest();
+				}
+				else
+				{
+					// code for IE6, IE5
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				xmlhttp.onreadystatechange=function()
+				{
+					if (xmlhttp.readyState==4 && xmlhttp.status==200)
+					{
+						document.getElementById("txtDefault").innerHTML=xmlhttp.responseText;
+					}
+				}
+				xmlhttp.open("GET","./common/chat-search.php?p=chat';
+				if(!empty($ServerID))
+				{
+					echo '&sid=' . $ServerID;
+				}
+				echo '&gid=' . $GameID . '&q="+str,true);
+				xmlhttp.send();
+			}
+		}
+		</script>
+		';
+	}
+	// jquery tabs
+	echo '
+	<script type="text/javascript">
+	$(function()
+	{
+		$( "#tabs, #tabs2" ).tabs(
+		{
+			beforeLoad: function( event, ui )
+			{
+				ui.jqXHR.error(function()
+				{
+					ui.panel.html(
+					"<div class=\"subsection\"><div class=\"headline\">Couldn\'t load this tab!</div></div>" );
+				});
+			}
+		});
+	});
+	</script>
+	';
+	// jquery auto-find players in input box
+	echo '
+	<script type="text/javascript">
+	$(function()
+	{
+		function log( message )
+		{
+			$( "<div>" ).text( message ).prependTo( "#log" );
+			$( "#log" ).scrollTop( 0 );
+		}
+
+		$( "#soldiers" ).autocomplete(
+		{
+			source: "./common/player-search.php?';
+			if(!empty($ServerID))
+			{
+				echo 'sid=' . $ServerID . '&';
+			}
+			echo 'gid=' . $GameID . '",
+			minLength: 2,
+			select: function( event, ui )
+			{
+				if(ui.item)
+				{
+					$(\'#soldiers\').val(ui.item.value);
+				}
+				$(\'#ajaxsearch\').submit();
+			}
+		});
+	});
+	</script>
+	';
+	// jquery auto refresh scoreboard every 20 seconds
+	if($page == 'home' && !empty($ServerID))
+	{
+		echo '
+		<script type="text/javascript">
+		$(function() {
+			function callAjax(){
+				$(\'#scoreboard\').load("./common/scoreboard-live.php?p=home&sid=' . $ServerID . '&gid=' . $GameID;
+				if(!empty($_GET['rank']))
+				{
+					echo '&rank=' . $_GET['rank'];
+				}
+				if(!empty($_GET['order']))
+				{
+					echo '&order=' . $_GET['order'];
+				}
+				echo '");
+			}
+			setInterval(callAjax, 20000 );
+		});
+		</script>
+		';
+	}
+	// jquery auto refresh chat every 20 seconds
+	if($page == 'chat')
+	{
+		echo '
+		<script type="text/javascript">
+		$(function() {
+			function callAjax(){
+				$(\'#chat\').load("./common/chat-live.php?p=chat&gid=' . $GameID;
+				if(!empty($ServerID))
+				{
+					echo '&sid=' . $ServerID;
+				}
+				if(!empty($currentpage))
+				{
+					echo '&cp=' . $currentpage;
+				}
+				if(!empty($rank))
+				{
+					echo '&r=' . $rank;
+				}
+				if(!empty($order))
+				{
+					echo '&o=' . $order;
+				}
+				if(!empty($query))
+				{
+					echo '&q=' . urlencode($query);
+				}
+				echo '");
+			}
+			setInterval(callAjax, 20000 );
+		});
+		</script>
+		';
+	}
+}
+// jquery auto refresh index page server list every 20 seconds
+else
+{
+	// load necessary file and run script
+	echo '
+	<script type="text/javascript" src="./common/jquery-1.10.2.js"></script>
+	<script type="text/javascript">
+	$(function() {
+		function callAjax(){
+			$(\'#servers\').load("./common/index-display-servers-live.php?gid=' . $GameID . '");
+		}
+		setInterval(callAjax, 20000 );
+	});
+	</script>
+	';
+}
+// end of scripts
 echo '
 </head>
 <body>
-<br/>
-<div id="pagebody">
-<div id="pagebodyback">
-<br/>
-<table width="100%" cellspacing="1">
-<tr> 
-<td>
-<div>
-<div class="topcontent">
-<center><a href="' . $banner_url . '" target="_blank"><img alt="BF4 Stats Page Copyright 2013 Open-Web-Community" border="0" src="' . $banner_image . '" /></a></center>
+<div class="body-grid"></div>
+<div id="topcontent">
+<div id="topbanner">
+<a href="' . $banner_url . '" target="_blank"><img alt="BF4 Stats Page Copyright 2013 Open-Web-Community" border="0" src="' . $banner_image . '" style="height: 96px;"/></a>
 </div>
+</div>
+<div id="topmenu">
 ';
-// $ServerID is provided, so we are at a server page
-// display server index link
-if(!empty($ServerID))
-{
-	echo '
-	<br/>
-	<div class="topcontent">
-	<table width="98%" align="center" border="0">
-	<tr>
-	<td width="90%">
-	<table width="100%" border="0">
-	<tr>
-	<td>
-	<br/><a href="' . $_SERVER['PHP_SELF'] . '"><font size="3">Return to ' . $clan_name . ' Stats Index Page</font></a><br/>
-	</td>
-	</tr>
-	<tr>
-	<td>
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '"><font class="information">Currently viewing:</font> ' . $ServerName . '</a><br/>
-	</td>
-	</tr>
-	</table>
-	</td>
-	<td width="10%" style="text-align: right;">
-	<br/><a href="' . $battlelog . '" target="_blank"><img src="./images/joinbtn.png" alt="join" class="imagebutton"/></a><br/>
-	</td>
-	</tr>
-	</table>
-	<br/>
-	</div>
-	';
-}
-// $ServerID was not provided, so we are at a global stats page
-// display global index link
-elseif(empty($ServerID) AND (!empty($_GET['globalhome']) OR !empty($_GET['globalsearch']) OR !empty($_GET['globalsuspicious']) OR !empty($_GET['globalcountries']) OR !empty($_GET['globalmaps']) OR !empty($_GET['globalserverstats']) OR !empty($_GET['globalpotw'])))
-{
-	echo '
-	<br/>
-	<div class="topcontent">
-	<table width="98%" align="center" border="0">
-	<tr>
-	<td width="90%">
-	<table width="100%" border="0">
-	<tr>
-	<td>
-	<br/><a href="' . $_SERVER['PHP_SELF'] . '"><font size="3">Return to ' . $clan_name . ' Stats Index Page</font></a><br/>
-	</td>
-	</tr>
-	<tr>
-	<td>
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1"><font class="information">Currently viewing:</font> ' . $clan_name . '\'s Global Server Stats</a><br/>
-	</td>
-	</tr>
-	</table>
-	</td>
-	<td width="10%" style="text-align: right;">
-	&nbsp;
-	</td>
-	</tr>
-	</table>
-	<br/>
-	</div>
-	';
-}
-// already at index page
-// no need to display index link
-// display empty content
-else
-{
-	echo '
-	<div class="topcontent">
-	<table width="98%" align="center" border="0">
-	<tr>
-	<td width="75%">
-	</td>
-	<td width="25%" style="float: right;">
-	</td>
-	</tr>
-	</table>
-	</div>
-	';
-}
-echo '
-<table border="0" width="100%" align="center">
-<tr>
-<td>
-<center>
-<table width="100%">
-<tr>
-<td width="1%">
-</td>
-<td>
-<table width="100%">
-<tr>
-<td>';
+
+// include displayservers.php contents
+require_once('./common/display-servers.php');
+
+echo '</div>';
+
 // if this is a server stats page, display server stats page menu
 if(!empty($ServerID))
 {
-	echo '
-	<div class="menucontent">
-	<table align="center" width="100%" border="0">
-	<tr>
-	<td width="25%" style="text-align: left">
-	<form action="' . $_SERVER['PHP_SELF'] . '" method="get">
-	<input type="hidden" name="ServerID" value="' . $ServerID . '" />
-	&nbsp; <font class="information">Player:</font>
-	';
-	// try to fill in search box
-	if(!empty($SoldierName) AND $SoldierName != 'Not Found')
+	echo '<div id="menucontent">';
+	if($page == 'player')
 	{
-		echo '<input type="text" class="inputbox" value="' . $SoldierName . '" name="SoldierName" />';
+		echo '<div class="menuitemselected" style="width: 19%">';
 	}
 	else
 	{
-		echo '<input type="text" class="inputbox" name="SoldierName" />';
+		echo '<div class="menuitems" style="width: 19%">';
 	}
 	echo '
-	<input type="submit" name="search" value="Search" title="Search" class="button" />
+	<form id="ajaxsearch" action="' . $_SERVER['PHP_SELF'] . '" method="get">
+	&nbsp; <span class="information">Player:</span>
+	<input type="hidden" name="p" value="player" />
+	<input type="hidden" name="sid" value="' . $ServerID . '" />
+	<input id="soldiers" type="text" class="inputbox" ';
+	// try to fill in search box
+	if(!empty($SoldierName))
+	{
+		echo 'value="' . $SoldierName . '" ';
+	}
+	echo 'name="player" />
 	</form>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '">Home</a>
-	</td>
-	<td width="15%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;potw=1">Players of Week</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;suspicious=1">Suspicious</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;chat=1">Chat</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;countries=1">Countries</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;maps=1">Maps</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;serverstats=1">Server Info</a>
-	</td>
-	</tr>
-	</table>
+	</div>
+	';
+	if($page == 'home')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=home&amp;sid=' . $ServerID . '">Home</a>
+	</div>
+	';
+	if($page == 'leaders')
+	{
+		echo '<div class="menuitemselected" style="width: 13%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 13%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=leaders&amp;sid=' . $ServerID . '">Leaderboard</a>
+	</div>
+	';
+	if($page == 'suspicious')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;sid=' . $ServerID . '">Suspicious</a>
+	</div>
+	';
+	if($page == 'chat')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;sid=' . $ServerID . '">Chat</a>
+	</div>
+	';
+	if($page == 'countries')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=countries&amp;sid=' . $ServerID . '">Countries</a>
+	</div>
+	';
+	if($page == 'maps')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=maps&amp;sid=' . $ServerID . '">Maps</a>
+	</div>
+	';
+	if($page == 'server')
+	{
+		echo '<div class="menuitemselected" style="width: 13%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 13%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=server&amp;sid=' . $ServerID . '">Server Info</a>
+	</div>
 	</div>
 	';
 }
 // if this is a global stats page, display global stats page menu
-elseif(!empty($_GET['globalhome']) OR !empty($_GET['globalsearch']) OR !empty($_GET['globalsuspicious']) OR !empty($_GET['globalcountries']) OR !empty($_GET['globalmaps']) OR !empty($_GET['globalserverstats']) OR !empty($_GET['globalpotw']))
+elseif(empty($ServerID) && (!empty($page)))
 {
-	echo '
-	<div class="menucontent">
-	<table align="center" width="100%" border="0">
-	<tr>
-	<td width="35%" style="text-align: left">
-	<form action="' . $_SERVER['PHP_SELF'] . '" method="get">
-	<input type="hidden" name="globalsearch" value="1" />
-	&nbsp; <font class="information">Player:</font>
-	';
-	// try to fill in search box
-	if(!empty($SoldierName) AND $SoldierName != 'Not Found')
+	echo '<div id="menucontent">';
+	if($page == 'player')
 	{
-		echo '<input type="text" class="inputbox" value="' . $SoldierName . '" name="SoldierName" />';
+		echo '<div class="menuitemselected" style="width: 19%">';
 	}
 	else
 	{
-		echo '<input type="text" class="inputbox" name="SoldierName" />';
+		echo '<div class="menuitems" style="width: 19%">';
 	}
 	echo '
-	<input type="submit" name="search" value="Search" title="Search" class="button" />
+	<form id="ajaxsearch" action="' . $_SERVER['PHP_SELF'] . '" method="get">
+	&nbsp; <span class="information">Player:</span>
+	<input type="hidden" name="p" value="player" />
+	<input id="soldiers" type="text" class="inputbox" ';
+	// try to fill in search box
+	if(!empty($SoldierName))
+	{
+		echo 'value="' . $SoldierName . '" ';
+	}
+	echo 'name="player" />
 	</form>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalhome=1">Home</a>
-	</td>
-	<td width="15%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalpotw=1">Players of Week</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalsuspicious=1">Suspicious</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalcountries=1">Countries</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalmaps=1">Maps</a>
-	</td>
-	<td width="10%" style="text-align: center">
-	<a href="' . $_SERVER['PHP_SELF'] . '?globalserverstats=1">Server Info</a>
-	</td>
-	</tr>
-	</table>
+	</div>
+	';
+	if($page == 'home')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=home">Home</a>
+	</div>
+	';
+	if($page == 'leaders')
+	{
+		echo '<div class="menuitemselected" style="width: 13%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 13%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=leaders">Leaderboard</a>
+	</div>
+	';
+	if($page == 'suspicious')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=suspicious">Suspicious</a>
+	</div>
+	';
+	if($page == 'chat')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=chat">Chat</a>
+	</div>
+	';
+	if($page == 'countries')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=countries">Countries</a>
+	</div>
+	';
+	if($page == 'maps')
+	{
+		echo '<div class="menuitemselected" style="width: 11%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 11%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=maps">Maps</a>
+	</div>
+	';
+	if($page == 'server')
+	{
+		echo '<div class="menuitemselected" style="width: 13%">';
+	}
+	else
+	{
+		echo '<div class="menuitems" style="width: 13%">';
+	}
+	echo '
+	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=server">Server Info</a>
+	</div>
 	</div>
 	';
 }
-echo '<br/>';
+
+echo '<div id="pagebody">';
+if(!empty($page))
+{
+	if(!empty($ServerID))
+	{
+		echo '
+		<div style="font-size: 10px; text-align: left; padding: 2px;">
+		<a href="' . $_SERVER['PHP_SELF'] . '">Index</a>
+		&bull;
+		' . $ServerName . '
+		</div>
+		';
+	}
+	else
+	{
+		echo '
+		<div style="font-size: 10px; text-align: left; padding: 2px;">
+		<a href="' . $_SERVER['PHP_SELF'] . '">Index</a>
+		&bull;
+		Combined Stats
+		</div>
+		';
+	}
+	
+	echo '
+	<div class="title">
+	';
+	if($page == 'player')
+	{
+		echo 'PLAYER STATS';
+	}
+	elseif($page == 'suspicious')
+	{
+		echo 'SUSPICIOUS PLAYERS';
+	}
+	elseif($page == 'countries')
+	{
+		echo 'COUNTRY STATS';
+	}
+	elseif($page == 'maps')
+	{
+		echo 'MAP STATS';
+	}
+	elseif($page == 'server')
+	{
+		echo 'SERVER INFORMATION';
+	}
+	elseif($page == 'chat')
+	{
+		echo 'CHAT LOG';
+	}
+	elseif($page == 'leaders')
+	{
+		echo 'LEADERBOARD';
+	}
+	elseif($page == 'home')
+	{
+		echo 'HOME PAGE';
+	}
+	echo '
+	</div>
+	<div class="clear"></div>
+	';
+}
+elseif(empty($page) && empty($ServerID))
+{
+	echo '
+	<div style="font-size: 10px; text-align: left; padding: 2px;">Select a Server Below</div>
+	<div class="title">
+	STATS INDEX
+	</div>
+	<div class="clear"></div>
+	';
+}
+
 // lets  do the server stats page logic first
 if(!empty($ServerID))
 {
-	// page content depending on searches
-	// begin search player logic
-	if(!empty($_GET['search']))
-	{
-		// include player.php contents
-		require_once('./common/player.php');
+	// page content depending on selection
+	if(!empty($page))
+	{	
+		if($page == 'player')
+		{
+			// include player.php contents
+			require_once('./common/player.php');
+		}
+		elseif($page == 'suspicious')
+		{
+			// include suspicious.php contents
+			require_once('./common/suspicious.php');
+		}
+		elseif($page == 'countries')
+		{
+			// include countries.php contents
+			require_once('./common/countries.php');
+		}
+		elseif($page == 'maps')
+		{
+			// include maps.php contents
+			require_once('./common/maps.php');
+		}
+		elseif($page == 'server')
+		{
+			// include serverstats.php contents
+			require_once('./common/serverstats.php');
+		}
+		elseif($page == 'chat')
+		{
+			// include chat.php contents
+			require_once('./common/chat.php');
+		}
+		elseif($page == 'leaders')
+		{
+			// include leaders.php contents
+			require_once('./common/leaders.php');
+		}
+		elseif($page == 'home')
+		{
+			// include home.php contents
+			require_once('./common/home.php');
+		}
 	}
-	// begin suspicious players logic
-	if(!empty($_GET['suspicious']))
-	{
-		// include suspicious.php contents
-		require_once('./common/suspicious.php');
-	}
-	// begin top countries logic
-	if(!empty($_GET['countries']))
-	{
-		// include countries.php contents
-		require_once('./common/countries.php');
-	}
-	// begin map stats logic
-	if(!empty($_GET['maps']))
-	{
-		// include maps.php contents
-		require_once('./common/maps.php');
-	}
-	// begin server stats logic
-	if(!empty($_GET['serverstats']))
-	{
-		// include serverstats.php contents
-		require_once('./common/serverstats.php');
-	}
-	// begin chat logic
-	if(!empty($_GET['chat']))
-	{
-		// include chat.php contents
-		require_once('./common/chat.php');
-	}
-	// begin potw logic
-	if(!empty($_GET['potw']))
-	{
-		// include potw.php contents
-		require_once('./common/potw.php');
-	}
-	// begin home page logic
-	if(($_GET['topplayers']) OR !(($_GET['search']) OR ($_GET['suspicious']) OR ($_GET['countries']) OR ($_GET['maps']) OR ($_GET['serverstats']) OR ($_GET['chat']) OR ($_GET['potw'])))
+	else
 	{
 		// include home.php contents
 		require_once('./common/home.php');
 	}
 }
-// begin index page logic
-if(empty($ServerID))
+
+// or else begin global stats logic
+elseif(empty($ServerID))
 {
-	// include index.php (the one in the common folder) contents
-	require_once('./common/index.php');
+	// don't show this text unless only at the index page
+	if(empty($page))
+	{
+		// include player.php contents
+		require_once('./common/index-display-servers.php');
+	}
+
+	// or else a global stats page has been selected
+	// page content depending on selection
+	else
+	{
+		if($page == 'player')
+		{
+			// include player.php contents
+			require_once('./common/player.php');
+		}
+		elseif($page == 'suspicious')
+		{
+			// include suspicious.php contents
+			require_once('./common/suspicious.php');
+		}
+		elseif($page == 'countries')
+		{
+			// include countries.php contents
+			require_once('./common/countries.php');
+		}
+		elseif($page == 'maps')
+		{
+			// include maps.php contents
+			require_once('./common/maps.php');
+		}
+		elseif($page == 'server')
+		{
+			// include serverstats.php contents
+			require_once('./common/serverstats.php');
+		}
+		elseif($page == 'chat')
+		{
+			// include chat.php contents
+			require_once('./common/chat.php');
+		}
+		elseif($page == 'leaders')
+		{
+			// include leaders.php contents
+			require_once('./common/leaders.php');
+		}
+		elseif($page == 'home')
+		{
+			// include home.php contents
+			require_once('./common/home.php');
+		}
+	}
 }
+
 echo '
 <br/>
 <br/>
-<div class="middlecontent">
-<table width="100%" border="0">
-<tr><td>
-<br/>
-<center>[ <font class="information">Stats provided by <a href="https://forum.myrcon.com/showthread.php?6698-_BF4-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s PRoCon logging plugin</a></font> ]  &nbsp; [ <font class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></font> ]</center>
-<br/>
-</td></tr>
-</table>
+<div class="subsection">
+<center>[ <span class="information">Stats provided by <a href="https://forum.myrcon.com/showthread.php?6698-_BF4-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s PRoCon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</center>
 </div>
 ';
 // now lets check our stats page sessions
 // stats page sessions are used to monitor how many people are viewing these stats pages
 // check to see if the session table exists
+// build query
+$query = 'CREATE TABLE IF NOT EXISTS `ses_';
 // if there is a serverID, use it
 if(!empty($ServerID))
 {
-	@mysqli_query($BF4stats,"
-		CREATE TABLE IF NOT EXISTS `ses_{$ServerID}_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default '00000000000', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
-	");
+	$query .= $ServerID;
 }
-// otherwise we are global with no id
 else
 {
-	@mysqli_query($BF4stats,"
-		CREATE TABLE IF NOT EXISTS `ses_global_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default '00000000000', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin
-	");
+	$query .= 'global';
 }
+$query .= '_tbl` (`IP` VARCHAR(45) NULL DEFAULT NULL, `timestamp` int(11) NOT NULL default \'00000000000\', PRIMARY KEY (`IP`)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_bin';
+// run query
+@mysqli_query($BF4stats,$query);
 // get user's IP address
 $userip = $_SERVER["REMOTE_ADDR"];
 // initialize values
 $now_timestamp = time();
 $old = $now_timestamp - 1800;
 // check if this user already has a session stored
+// build query
+$query = 'SELECT `IP` FROM `ses_';
 // if there is a serverID, use it
 if(!empty($ServerID))
 {
-	$exist_query = @mysqli_query($BF4stats,"
-		SELECT `IP`
-		FROM `ses_{$ServerID}_tbl`
-		WHERE `IP` = '{$userip}'
-	");
+	$query .= $ServerID;
 }
-// otherwise we are global with no id
 else
 {
-	$exist_query = @mysqli_query($BF4stats,"
-		SELECT `IP`
-		FROM `ses_global_tbl`
-		WHERE `IP` = '{$userip}'
-	");
+	$query .= 'global';
 }
+$query .= '_tbl` WHERE `IP` = \'' . $userip . '\'';
+// run query
+$exist_query = @mysqli_query($BF4stats,$query);
 // user IP found, update timestamp
-if(@mysqli_num_rows($exist_query)!=0)
+if(@mysqli_num_rows($exist_query) != 0)
 {
+	// build query
+	$query = 'UPDATE `ses_';
 	// if there is a serverID, use it
 	if(!empty($ServerID))
 	{
-		@mysqli_query($BF4stats,"
-			UPDATE `ses_{$ServerID}_tbl`
-			SET `timestamp` = {$now_timestamp}
-			WHERE `IP` = '{$userip}'
-		");
+		$query .= $ServerID;
 	}
-	// otherwise we are global with no id
 	else
 	{
-		@mysqli_query($BF4stats,"
-			UPDATE `ses_global_tbl`
-			SET `timestamp` = {$now_timestamp}
-			WHERE `IP` = '{$userip}'
-		");
+		$query .= 'global';
 	}
+	$query .= '_tbl` SET `timestamp` = ' . $now_timestamp . ' WHERE `IP` = ' . $userip;
+	// run query
+	@mysqli_query($BF4stats,$query);
 }
 // user IP not found, add it to session table
 else
 {
+	// build query
+	$query = 'INSERT INTO `ses_';
 	// if there is a serverID, use it
 	if(!empty($ServerID))
 	{
-		@mysqli_query($BF4stats,"
-			INSERT INTO `ses_{$ServerID}_tbl` (`IP`, `timestamp`)
-			VALUES ('{$userip}', {$now_timestamp})
-		");
+		$query .= $ServerID;
 	}
-	// otherwise we are global with no id
 	else
 	{
-		@mysqli_query($BF4stats,"
-			INSERT INTO `ses_global_tbl` (`IP`, `timestamp`)
-			VALUES ('{$userip}', {$now_timestamp})
-		");
+		$query .= 'global';
 	}
+	$query .= '_tbl` (`IP`, `timestamp`) VALUES (\'' . $userip . '\', ' . $now_timestamp . ')';
+	// run query
+	@mysqli_query($BF4stats,$query);
 }
 // free up exist query memory
 @mysqli_free_result($exist_query);
 // find if there are sessions older than 30 minutes
 // check this to avoid optimizing the table (slow) when it isn't necessary
+// build query
+$query = 'SELECT `timestamp` FROM `ses_';
 // if there is a serverID, use it
 if(!empty($ServerID))
 {
-	$old_query = @mysqli_query($BF4stats,"
-		SELECT `timestamp`
-		FROM `ses_{$ServerID}_tbl`
-		WHERE `timestamp` <= {$old}
-	");
+	$query .= $ServerID;
 }
-// otherwise we are global with no ID
 else
 {
-	$old_query = @mysqli_query($BF4stats,"
-		SELECT `timestamp`
-		FROM `ses_global_tbl`
-		WHERE `timestamp` <= {$old}
-	");
+	$query .= 'global';
 }
+$query .= '_tbl` WHERE `timestamp` <= ' . $old;
+// run query
+$old_query = @mysqli_query($BF4stats,$query);
 // remove sessions older than 30 minutes
 if(@mysqli_num_rows($old_query) != 0)
 {
+	// build query
+	$query = 'DELETE FROM `ses_';
 	// if there is a serverID, use it
 	if(!empty($ServerID))
 	{
-		@mysqli_query($BF4stats,"
-			DELETE FROM `ses_{$ServerID}_tbl`
-			WHERE `timestamp` <= {$old}
-		");
-		// optimize this session table
-		@mysqli_query($BF4stats,"
-			OPTIMIZE TABLE `ses_{$ServerID}_tbl`
-		");
+		$query .= $ServerID;
 	}
-	// otherwise we are global with no id
 	else
 	{
-		@mysqli_query($BF4stats,"
-			DELETE FROM `ses_global_tbl`
-			WHERE `timestamp` <= {$old}
-		");
-		// optimize this session table
-		@mysqli_query($BF4stats,"
-			OPTIMIZE TABLE `ses_global_tbl`
-		");
+		$query .= 'global';
 	}
+	$query .= '_tbl` WHERE `timestamp` <= ' . $old;
+	// run query
+	@mysqli_query($BF4stats,$query);
+	// optimize this session table
+	// build query
+	$query = 'OPTIMIZE TABLE `ses_';
+	// if there is a serverID, use it
+	if(!empty($ServerID))
+	{
+		$query .= $ServerID;
+	}
+	else
+	{
+		$query .= 'global';
+	}
+	$query .= '_tbl`';
+	// run query
+	@mysqli_query($BF4stats,$query);
 }
 // free up old query memory
 @mysqli_free_result($old_query);
@@ -864,11 +1297,11 @@ if(@mysqli_num_rows($ses_count) != 0)
 {
 	$ses_row = @mysqli_fetch_assoc($ses_count);
 	$ses = $ses_row['ses'];
-	echo '<br/><center><font class="footertext">' . $ses . ' users viewing these BF4 stats pages</font></center>';
+	echo '<br/><center><span class="footertext">' . $ses . ' users viewing these BF4 stats pages</span></center>';
 }
 else
 {
-	echo '<br/><center><font class="footertext">an error occured while counting sessions</font></center>';
+	echo '<br/><center><span class="footertext">an error occured while counting sessions</span></center>';
 }
 // free up session count query memory
 @mysqli_free_result($ses_count);
@@ -879,32 +1312,16 @@ $mtime = $mtime[1] + $mtime[0];
 $endtime = $mtime;
 $totaltime = round(($endtime - $starttime),3);
 // display total page load time
-echo '<center><font class="footertext">server compiled page in ' . $totaltime . ' seconds</font></center>';
+echo '<center><span class="footertext">server compiled page in ' . $totaltime . ' seconds</span></center>';
 // display total server memory used
-echo '<center><font class="footertext">' . round(memory_get_usage(false)/1024,0) . ' KB of server memory used</font></center><br/>
-</td></tr>
-</table>
-</td>
-<td width="1%"></td>
-</tr>
-</table>
-</center>
-</td>
-</tr> 
-</table>
+echo '<center><span class="footertext">' . round(memory_get_usage(false)/1024,0) . ' KB of server memory used</span></center><br/>
 </div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<br/>
 </body>
 </html>
 ';
-// flush ouput buffers to the client in case it is necessary for this server
+// flush output buffers to the client in case it is necessary for this server
 // servers should do this automatically
-// but it doesn't hurt to do it manaully anyways
+// but it doesn't hurt to do it manually anyway
 flush();
 ob_flush();
 ?>

@@ -3,59 +3,20 @@
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
-
+// no soldiername input from GET
 if($SoldierName == null)
 {
 	echo '
-	<div class="middlecontent">
-	<table width="100%" border="0">
-	<tr>
-	<td>
-	<br/>
-	<center>
-	<font class="alert">Please enter a player name.</font>
-	</center>
-	<br/>
-	</td>
-	</tr>
-	</table>
+	<div class="subsection">
+	<div class="headline">
+	Please enter a player name.
+	</div>
 	</div>
 	';
 }
 // SoldierName from GET has been determined
 elseif($SoldierName != null)
 {
-	echo '
-	<div class="middlecontent">
-	<table width="100%" border="0">
-	<tr>
-	<td class="headline">
-	<br/>
-	<center>
-	';
-	// if there is a ServerID, this is a server stats page
-	if(!empty($ServerID))
-	{
-		echo '<b>Statistics Data for ' .$SoldierName . '</b>';
-	}
-	// or else this is a global stats page
-	else
-	{
-		echo '<b>Global Statistics Data for ' .$SoldierName . ' in ' . $clan_name . '\'s Servers</b>';
-	}
-	echo '
-	</center>
-	<br/>
-	</td>
-	</tr>
-	</table>
-	</div>
-	<br/>
-	<br/>
-	<div class="middlecontent">
-	<table width="100%" border="0">
-	<tr>
-	';
 	// initialize value
 	$soldier_found = 0;
 	// if there is a ServerID, this is a server stats page
@@ -63,7 +24,7 @@ elseif($SoldierName != null)
 	{
 		// get player stats
 		$PlayerData_q = @mysqli_query($BF4stats,"
-			SELECT tpd.`CountryCode`, tpd.`PlayerID`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`
+			SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`
 			FROM `tbl_playerstats` tps
 			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -87,72 +48,71 @@ elseif($SoldierName != null)
 			WHERE `PlayerID` = {$PlayerID}
 			AND `GameID` = {$GameID}
 		");
+		// was a soldier found?
 		if(@mysqli_num_rows($Find_q) != 0)
 		{
 			$soldier_found = 1;
+			// get player stats
+			$PlayerData_q = @mysqli_query($BF4stats,"
+				SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+			");
 		}
 		// free up soldier find query memory
 		@mysqli_free_result($Find_q);
-		// get player stats
-		$PlayerData_q = @mysqli_query($BF4stats,"
-			SELECT tpd.`CountryCode`, tpd.`PlayerID`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			WHERE tpd.`PlayerID` = {$PlayerID}
-			AND tpd.`GameID` = {$GameID}
-		");
 	}
 	// if no stats were found for player name, display this
 	if($soldier_found == 0)
 	{
 		echo '
-		<td>
-		<br/>
-		<center>
+		<div class="subsection">
+		<div class="headline">
 		';
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			echo '<font class="alert">No unique player data found for "' . $SoldierName . '" in this server.</font>';
+			echo '<span class="information">No unique player data found for "' . $SoldierName . '" in this server.</span>';
 		}
 		// or else this is a global stats page
 		else
 		{
-			echo '<font class="alert">No unique player data found for "' . $SoldierName . '" in these servers.</font>';
+			echo '<span class="information">No unique player data found for "' . $SoldierName . '" in these servers.</span>';
 		}
 		echo '
-		</center><br/>
-		</td></tr></table></div><br/>
+		</div>
+		</div>
+		<br/>
 		';
 		// get current rank query details
-		if(!empty($_GET['rank']))
+		if(!empty($rank))
 		{
-			$rank = $_GET['rank'];
 			// filter out SQL injection
 			if($rank != 'SoldierName' AND $rank != 'Score' AND $rank != 'Rounds' AND $rank != 'Kills' AND $rank != 'Deaths' AND $rank != 'KDR')
 			{
 				// unexpected input detected
 				// use default instead
-				$rank = 'SoldierName'; 
+				$rank = 'Score'; 
 			}
 		}
 		// set default if no rank provided in URL
 		else
 		{
-			$rank = 'SoldierName';
+			$rank = 'Score';
 		}
 		// get current order query details
-		if(!empty($_GET['order']))
+		if(!empty($order))
 		{
-			$order = $_GET['order'];
 			// filter out SQL injection
 			if($order != 'DESC' AND $order != 'ASC')
 			{
 				// unexpected input detected
 				// use default instead
-				$order = 'ASC';
-				$nextorder = 'DESC';
+				$order = 'DESC';
+				$nextorder = 'ASC';
 			}
 			else
 			{
@@ -169,8 +129,8 @@ elseif($SoldierName != null)
 		// set default if no order provided in URL
 		else
 		{
-			$order = 'ASC';
-			$nextorder = 'DESC';
+			$order = 'DESC';
+			$nextorder = 'ASC';
 		}
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
@@ -185,6 +145,7 @@ elseif($SoldierName != null)
 				AND tpd.`SoldierName` LIKE '%{$SoldierName}%'
 				AND tpd.`GameID` = {$GameID}
 				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT 0, 20
 			");
 		}
 		// or else this is a global stats page
@@ -200,35 +161,32 @@ elseif($SoldierName != null)
 				AND tpd.`GameID` = {$GameID}
 				GROUP BY tpd.`SoldierName`
 				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT 0, 20
 			");
 		}
 		// if a similar name was found, display this
 		if(@mysqli_num_rows($PlayerMatch_q) != 0)
 		{
 			echo '
+			<div class="subsection">
+			<div class="headline">
+			Here are some players with names similar to "' . $SoldierName . '".
+			</div>
+			</div>
 			<br/>
-			<div class="middlecontent">
-			<table width="100%" border="0">
+			<table class="prettytable">
 			<tr>
-			<th class="headline"><b>Here are some players with names similar to "' . $SoldierName . '":</b></th>
-			</tr>
-			<tr>
-			<td>
-			<div class="innercontent">
-			<br/>
-			<table width="98%" align="center" border="0">
-			<tr>
-			<th width="5%" style="text-align:left">#</th>
+			<th width="3%" class="countheader">#</th>
 			';
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=SoldierName&amp;order=';
+				echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=SoldierName&amp;o=';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<th width="18%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=SoldierName&amp;order=';
+				echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=SoldierName&amp;o=';
 			}
 			if($rank != 'SoldierName')
 			{
@@ -241,12 +199,12 @@ elseif($SoldierName != null)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Score&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=Score&amp;o=';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Score&amp;order=';
+				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=Score&amp;o=';
 			}
 			if($rank != 'Score')
 			{
@@ -259,30 +217,30 @@ elseif($SoldierName != null)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Rounds&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=Rounds&amp;o=';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Rounds&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=Rounds&amp;o=';
 			}
 			if($rank != 'Rounds')
 			{
-				echo 'DESC"><span class="orderheader">Rounds Played</span></a></th>';
+				echo 'DESC"><span class="orderheader">Rounds</span></a></th>';
 			}
 			else
 			{
-				echo $nextorder . '"><span class="ordered' . $order . 'header">Rounds Played</span></a></th>';
+				echo $nextorder . '"><span class="ordered' . $order . 'header">Rounds</span></a></th>';
 			}
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Kills&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=Kills&amp;o=';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Kills&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=Kills&amp;o=';
 			}
 			if($rank != 'Kills')
 			{
@@ -295,12 +253,12 @@ elseif($SoldierName != null)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=Deaths&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=Deaths&amp;o=';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<th width="15%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=Deaths&amp;order=';
+				echo '<th width="15%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=Deaths&amp;o=';
 			}
 			if($rank != 'Deaths')
 			{
@@ -313,20 +271,20 @@ elseif($SoldierName != null)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<th width="17%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;SoldierName=' . $SoldierName . '&amp;search=1&amp;rank=KDR&amp;order=';
+				echo '<th width="17%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=KDR&amp;o=';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<th width="17%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;SoldierName=' . $SoldierName . '&amp;rank=KDR&amp;order=';
+				echo '<th width="17%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=KDR&amp;o=';
 			}
 			if($rank != 'KDR')
 			{
-				echo 'DESC"><span class="orderheader">Kill/Death Ratio</span></a></th>';
+				echo 'DESC"><span class="orderheader">KDR</span></a></th>';
 			}
 			else
 			{
-				echo $nextorder . '"><span class="ordered' . $order . 'header">Kill/Death Ratio</span></a></th>';
+				echo $nextorder . '"><span class="ordered' . $order . 'header">KDR</span></a></th>';
 			}
 			echo '</tr>';
 			// initialize value
@@ -343,28 +301,30 @@ elseif($SoldierName != null)
 				$Rounds = $PlayerMatch_r['Rounds'];
 				echo '
 				<tr>
-				<td width="5%" class="tablecontents" style="text-align: left;"><font class="information">' . $count . ':</font></td>
+				<td width="3%" class="count"><span class="information">' . $count . '</span></td>
 				';
 				// if there is a ServerID, this is a server stats page
 				if(!empty($ServerID))
 				{
-					echo '<td width="18%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $Player_ID . '&amp;search=1">' . $Soldier_Name . '</a></td>';
+					echo '<td width="20%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
 				}
 				// or else this is a global stats page
 				else
 				{
-					echo '<td width="18%" class="tablecontents" style="text-align: left;"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
+					echo '<td width="20%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
 				}
 				echo'
-				<td width="15%" class="tablecontents" style="text-align: left;">' . $Score . '</td>
-				<td width="15%" class="tablecontents" style="text-align: left;">' . $Rounds . '</td>
-				<td width="15%" class="tablecontents" style="text-align: left;">' . $Kills . '</td>
-				<td width="15%" class="tablecontents" style="text-align: left;">' . $Deaths . '</td>
-				<td width="17%" class="tablecontents" style="text-align: left;">' . $KDR . '</td>
+				<td width="15%" class="tablecontents">' . $Score . '</td>
+				<td width="15%" class="tablecontents">' . $Rounds . '</td>
+				<td width="15%" class="tablecontents">' . $Kills . '</td>
+				<td width="15%" class="tablecontents">' . $Deaths . '</td>
+				<td width="17%" class="tablecontents">' . $KDR . '</td>
 				</tr>
 				';
 			}
-			echo '</table><br/></div>';
+			echo '
+			</table>
+			';
 		}
 		// free up player match query memory
 		@mysqli_free_result($PlayerMatch_q);
@@ -372,6 +332,13 @@ elseif($SoldierName != null)
 	// this unique player was found
 	elseif($soldier_found == 1)
 	{
+		echo '
+		<div class="subsection">
+		<div class="headline">
+		' . $SoldierName . '
+		</div>
+		</div>
+		';
 		// only show ranks if this is not a global stats page
 		// there is no such thing as global rank in database
 		// and computing it is too slow with lots of players in global
@@ -379,12 +346,12 @@ elseif($SoldierName != null)
 		if(!empty($ServerID))
 		{
 			echo '
-			<th class="headline"><b>Ranks</b></th>
-			</tr>
+			<br/>
+			<br/>
+			<table class="prettytable">
 			<tr>
-			<td>
-			<div class="innercontent">
-			<table width="80%" align="center" border="0">
+			<th colspan="4"><center>Ranks in ' . $ServerName . '</center></th>
+			</tr>
 			<tr>
 			';
 			// get this player's ranks
@@ -393,28 +360,8 @@ elseif($SoldierName != null)
 			echo '
 			</tr>
 			</table>
-			<br/>
-			</div>
-			';
-			echo '
-			</td>
-			</tr>
-			</table>
-			</div>
-			';
-			echo '
-			<br/><br/>
-			<div class="middlecontent">
-			<table width="100%" border="0">
-			<tr>
 			';
 		}
-		echo '
-		<th class="headline"><b>Overview</b></th>
-		</tr>
-		<tr>
-		<td>
-		';
 		// get information from the query
 		$PlayerData_r = @mysqli_fetch_assoc($PlayerData_q);
 		$CountryCode = strtoupper($PlayerData_r['CountryCode']);
@@ -455,64 +402,76 @@ elseif($SoldierName != null)
 		$TKs = $PlayerData_r['TKs'];
 		$Wins = $PlayerData_r['Wins'];
 		$Losses = $PlayerData_r['Losses'];
-		$WLR = round($PlayerData_r['WLR'],2);
+		$WLR = round(($PlayerData_r['WLR']*100),2);
 		$HighScore = $PlayerData_r['HighScore'];
 		$FirstSeen = date("M d Y", strtotime($PlayerData_r['FirstSeenOnServer']));
 		$LastSeen = date("M d Y", strtotime($PlayerData_r['LastSeenOnServer']));
 		$PlayerID = $PlayerData_r['PlayerID'];
+		$rank = $PlayerData_r['GlobalRank'];
+		$rank_img = './images/ranks/r' . $rank . '.png';
 		echo '
-		<div class="innercontent">
 		<br/>
-		<table width="90%" align="center" border="0">
+		<br/>
+		<table class="prettytable">
 		<tr>
-		<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Country: </font><img src="' . $country_img . '" alt="' . $country_name . '"/> ' . $country . '<font class="information"> (</font>' . $CountryCode . '<font class="information">)</font><br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">First Visit: </font>' . $FirstSeen . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Last Visit: </font>' . $LastSeen . '<br/><br/></td>
-		</tr><tr>
-		<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Kills: </font>' . $Kills . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Deaths: </font>' . $Deaths . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Kill/Death Ratio: </font>' . $KDR . '<br/><br/></td>
-		</tr><tr>
-		<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Killstreak: </font>' . $Killstreak . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Deathstreak: </font>' . $Deathstreak . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Team Kills: </font>' . $TKs . '<br/><br/></td>
-		</tr><tr>
-		<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Headshots: </font>' . $Headshots . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Headshot Ratio: </font>' . $HSpercent . '<font class="information"> %</font><br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Suicides: </font>' . $Suicides . '<br/><br/></td>
-		</tr><tr>
-		<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Wins: </font>' . $Wins . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Losses: </font>' . $Losses . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Win/Loss Ratio: </font>' . $WLR . '<br/><br/></td>
-		</tr><tr>
-		<td style="text-align: left;" width="10%">&nbsp;<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Total Score: </font>' . $Score . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">High Score: </font>' . $HighScore . '<br/><br/></td>
-		<td width="30%" style="text-align: left;"> <font class="information">Rounds Played: </font>' . $Rounds . '<br/><br/></td>
+		<th width="15%" style="text-align: center;"><img src="' . $rank_img . '" alt="' . $rank . '"/></th>
+		<th width="85%" colspan="5"><div class="headline">Overview</div></th>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Country</th>
+		<td width="18%" class="tablecontents"><img src="' . $country_img . '" alt="' . $country_name . '"/> ' . $country . '<span class="information"> (</span>' . $CountryCode . '<span class="information">)</span></td>
+		<th width="15%" style="padding-left: 10px;">First Visit</th>
+		<td width="18%" class="tablecontents">' . $FirstSeen . '</td>
+		<th width="15%" style="padding-left: 10px;">Last Visit</th>
+		<td width="18%" class="tablecontents">' . $LastSeen . '</td>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Kills</th>
+		<td width="18%" class="tablecontents">' . $Kills . '</td>
+		<th width="15%" style="padding-left: 10px;">Deaths</th>
+		<td width="18%" class="tablecontents">' . $Deaths . '</td>
+		<th width="15%" style="padding-left: 10px;">KDR</th>
+		<td width="18%" class="tablecontents">' . $KDR . '</td>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Suicides</th>
+		<td width="18%" class="tablecontents">' . $Suicides . '</td>
+		<th width="15%" style="padding-left: 10px;">Headshots</th>
+		<td width="18%" class="tablecontents">' . $Headshots . '</td>
+		<th width="15%" style="padding-left: 10px;">Headshot Percent</th>
+		<td width="18%" class="tablecontents">' . $HSpercent . '<span class="information"> %</span></td>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Wins</th>
+		<td width="18%" class="tablecontents">' . $Wins . '</td>
+		<th width="15%" style="padding-left: 10px;">Losses</th>
+		<td width="18%" class="tablecontents">' . $Losses . '</td>
+		<th width="15%" style="padding-left: 10px;">Wins / Losses</th>
+		<td width="18%" class="tablecontents">' . $WLR . '<span class="information"> %</span></td>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Kill-streak</th>
+		<td width="18%" class="tablecontents">' . $Killstreak . '</td>
+		<th width="15%" style="padding-left: 10px;">Death-streak</th>
+		<td width="18%" class="tablecontents">' . $Deathstreak . '</td>
+		<th width="15%" style="padding-left: 10px;">Team Kills</th>
+		<td width="18%" class="tablecontents">' . $TKs . '</td>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Total Score</th>
+		<td width="18%" class="tablecontents">' . $Score . '</td>
+		<th width="15%" style="padding-left: 10px;">High Score</th>
+		<td width="18%" class="tablecontents">' . $HighScore . '</td>
+		<th width="15%" style="padding-left: 10px;">Rounds Played</th>
+		<td width="18%" class="tablecontents">' . $Rounds . '</td>
 		</tr>
 		</table>
-		</div>
+		<br/>
 		';
-	}
-	echo '
-	</td>
-	</tr>
-	</table>
-	</div>
-	';
-	// double check that a matching player was found
-	if($soldier_found == 1)
-	{
-		echo '<br/>';
+		// get weapon stats for weapon graph
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// get weapon stats for weapon graph
 			$Weapon_q = @mysqli_query($BF4stats,"
 				SELECT tws.`Friendlyname`, wa.`Kills`, wa.`Deaths`, wa.`Headshots`, (wa.`Headshots`/wa.`Kills`) AS HSR
 				FROM `tbl_weapons_stats` wa
@@ -529,7 +488,6 @@ elseif($SoldierName != null)
 		// or else this is a global stats page
 		else
 		{
-			// get weapon stats for weapon graph
 			$Weapon_q = @mysqli_query($BF4stats,"
 				SELECT tws.`Friendlyname`, SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, wa.`WeaponID`, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
 				FROM `tbl_weapons_stats` wa
@@ -547,13 +505,9 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<br/>
-			<div class="middlecontent">
-			<table width="100%" border="0">
+			<table class="prettytable">
 			<tr>
-			<th class="headline"><b>Weapons</b></th>
-			</tr>
-			<tr>
-			<td>
+			<td class="tablecontents">
 			<script type="text/javascript" src="//www.google.com/jsapi"></script>
 			<script type="text/javascript">
 				google.load(\'visualization\', \'1\', {packages: [\'corechart\']});
@@ -568,11 +522,21 @@ elseif($SoldierName != null)
 						$hmax = 0;
 						while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 						{
-							$weapon = preg_replace("/_/"," ",$Weapon_r['Friendlyname']);
-							// rename 'death'
+							$weapon = $Weapon_r['Friendlyname'];
+							// rename 'Death'
 							if($weapon == 'Death')
 							{
 								$weapon = 'Machinery';
+							}
+							// convert weapon to friendly name
+							if(in_array($weapon,$weapon_array))
+							{
+								$weapon = array_search($weapon,$weapon_array);
+							}
+							// this weapon is missing!
+							else
+							{
+								$weapon = preg_replace("/_/"," ",$weapon);
 							}
 							$deaths = $Weapon_r['Deaths'];
 							$kills = $Weapon_r['Kills'];
@@ -597,15 +561,15 @@ elseif($SoldierName != null)
 					]);
 					var options = {
 						title: \'Headshots\',
-						titleTextStyle: {color: \'#444\', bold: \'false\'},
-						legend: {textStyle: {color: \'#444\'}},
-						hAxis: {title: \'Kills\', titleTextStyle: {color: \'#444\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $hmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#222\'},
-						vAxis: {title: \'Deaths\', titleTextStyle: {color: \'#444\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $vmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#222\'},
+						titleTextStyle: {color: \'#666\', bold: \'false\'},
+						legend: {textStyle: {color: \'#666\'}},
+						hAxis: {title: \'Kills\', titleTextStyle: {color: \'#666\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $hmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#333\'},
+						vAxis: {title: \'Deaths\', titleTextStyle: {color: \'#666\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $vmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#333\'},
 						bubble: {textStyle: {color: \'#888\', fontSize: 12}, stroke: \'transparent\'},
 						backgroundColor: \'transparent\',
 						chartArea: {left: 20, top: 50, width: "90%", height: "70%"},
-						colorAxis: {minValue: 0, colors: [\'#000064\', \'#640000\'], legend: {textStyle: {color: \'#444\'}, position: \'top\'}},
-						sizeAxis: {minValue: 0, maxValue: 1, minSize: 40, maxSize: 60},
+						colorAxis: {minValue: 0, colors: [\'#333333\', \'#640000\'], legend: {textStyle: {color: \'#666\'}, position: \'top\'}},
+						sizeAxis: {minValue: 0, maxValue: 1, minSize: 30, maxSize: 50},
 						tooltip: {textStyle: {color: \'#AA0000\'}}
 					};
 					// Create and draw the visualization.
@@ -615,268 +579,352 @@ elseif($SoldierName != null)
 				}
 				google.setOnLoadCallback(drawVisualization);
 			</script>
+			<br/>
 			<center>
-			<div id="visualization" style="width: 98%; height: 250px;"></div>
+			<div id="visualization" class="embed"></div>
 			</center>
+			<br/>
+			</td>
+			</tr>
+			</table>
+			<br/>
 			';
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
+				// find out which weapons this player has stats for
+				$Weapon_q2 = @mysqli_query($BF4stats,"
+					SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills
+					FROM `tbl_weapons_stats` wa
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
+					WHERE tsp.`ServerID` = {$ServerID}
+					AND tpd.`PlayerID` = {$PlayerID}
+					AND wa.`Kills` > 0
+					AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'none' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
+					GROUP BY tws.`Damagetype`
+					ORDER BY Kills DESC
+				");
+				// initialize empty array
+				$WeaponCodes = array();
+				// add the damage type to an array which we will step through
+				while($Weapon_r2 = @mysqli_fetch_array($Weapon_q2))
+				{
+					$WeaponCodes[] = $Weapon_r2['Damagetype'];
+				}
+				// display weapon category tabs
+				// clean up first tab's name
+				// find clean name in array
+				if(in_array($WeaponCodes['0'],$cat_array))
+				{
+					$code_Displayed = array_search($WeaponCodes['0'],$cat_array);
+				}
+				// not found in array.  use ugly version :(
+				else
+				{
+					$code_Displayed = $WeaponCodes['0'];
+				}
+				echo '
+				<div id="tabs">
+				<ul>
+				<li><div class="subscript">1</div><a href="#tabs-1">' . $code_Displayed . '</a></li>
+				';
+				$count_tracker = 1;
+				// step through the weapon categories for creating tabs
+				foreach($WeaponCodes AS $this_WeaponCode)
+				{
+					// first one was already created; skip it
+					if($this_WeaponCode != $WeaponCodes['0'])
+					{
+						// clean up name
+						// find clean name in array
+						if(in_array($this_WeaponCode,$cat_array))
+						{
+							$code_Displayed2 = array_search($this_WeaponCode,$cat_array);
+						}
+						// not found in array.  use ugly version :(
+						else
+						{
+							$code_Displayed2 = $this_WeaponCode;
+						}
+						$count_tracker++;
+						echo '<li><div class="subscript">' . $count_tracker . '</div><a href="./common/weapon-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;c=' . $this_WeaponCode . '">' . $code_Displayed2 . '</a></li>';
+					}
+				}
+				echo '
+				</ul>
+				<div id="tabs-1">
+				';
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
-				Statsout("Assault Rifle Stats","assaultrifle", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Carbine Stats","carbine", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Designated Marksman Rifle Stats","dmr", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Light Machine Gun Stats","lmg", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Shot Gun Stats","shotgun", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Submachine Gun Stats","smg", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Sniper Rifle Stats","sniperrifle", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Hand Gun Stats","handgun", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Projectile Explosive Stats","projectileexplosive", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Explosive Stats","explosive", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Impact Stats","impact", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Other Weapon Stats","melee", $PlayerID, $ServerID, $BF4stats);
-				Statsout("Vehicle Stats","none", $PlayerID, $ServerID, $BF4stats);
+				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, $ServerID, $BF4stats);
+				echo '</div>';
 			}
 			// or else this is a global stats page
 			// we could probably just use the above since $ServerID has already been determined to be null
 			// but I am paranoid
 			else
 			{
+				// find out which weapons this player has stats for
+				$Weapon_q2 = @mysqli_query($BF4stats,"
+					SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills
+					FROM `tbl_weapons_stats` wa
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND wa.`Kills` > 0
+					AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'none' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
+					GROUP BY tws.`Damagetype`
+					ORDER BY Kills DESC
+				");
+				// initialize empty array
+				$WeaponCodes = array();
+				// add the damage type to an array which we will step through
+				while($Weapon_r2 = @mysqli_fetch_array($Weapon_q2))
+				{
+					$WeaponCodes[] = $Weapon_r2['Damagetype'];
+				}
+				// display weapon category tabs
+				// clean up first tab's name
+				// find clean name in array
+				if(in_array($WeaponCodes['0'],$cat_array))
+				{
+					$code_Displayed = array_search($WeaponCodes['0'],$cat_array);
+				}
+				// not found in array.  use ugly version :(
+				else
+				{
+					$code_Displayed = $WeaponCodes['0'];
+				}
+				echo '
+				<div id="tabs">
+				<ul>
+				<li><div class="subscript">1</div><a href="#tabs-1">' . $code_Displayed . '</a></li>
+				';
+				$count_tracker = 1;
+				// step through the weapon categories for creating tabs
+				foreach($WeaponCodes AS $this_WeaponCode)
+				{
+					// first one was already created; skip it
+					if($this_WeaponCode != $WeaponCodes['0'])
+					{
+						// clean up name
+						// find clean name in array
+						if(in_array($this_WeaponCode,$cat_array))
+						{
+							$code_Displayed2 = array_search($this_WeaponCode,$cat_array);
+						}
+						// not found in array.  use ugly version :(
+						else
+						{
+							$code_Displayed2 = $this_WeaponCode;
+						}
+						$count_tracker++;
+						echo '<li><div class="subscript">' . $count_tracker . '</div><a href="./common/weapon-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;c=' . $this_WeaponCode . '">' . $code_Displayed2 . '</a></li>';
+					}
+				}
+				echo '
+				</ul>
+				<div id="tabs-1">
+				';
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
-				// we set ServerID to null to indicate to the function to do a global query
-				Statsout("Assault Rifle Stats","assaultrifle", $PlayerID, null, $BF4stats);
-				Statsout("Carbine Stats","carbine", $PlayerID, null, $BF4stats);
-				Statsout("Designated Marksman Rifle Stats","dmr", $PlayerID, null, $BF4stats);
-				Statsout("Light Machine Gun Stats","lmg", $PlayerID, null, $BF4stats);
-				Statsout("Shot Gun Stats","shotgun", $PlayerID, null, $BF4stats);
-				Statsout("Submachine Gun Stats","smg", $PlayerID, null, $BF4stats);
-				Statsout("Sniper Rifle Stats","sniperrifle", $PlayerID, null, $BF4stats);
-				Statsout("Hand Gun Stats","handgun", $PlayerID, null, $BF4stats);
-				Statsout("Projectile Explosive Stats","projectileexplosive", $PlayerID, null, $BF4stats);
-				Statsout("Explosive Stats","explosive", $PlayerID, null, $BF4stats);
-				Statsout("Impact Stats","impact", $PlayerID, null, $BF4stats);
-				Statsout("Other Weapon Stats","melee", $PlayerID, null, $BF4stats);
-				Statsout("Vehicle Stats","none", $PlayerID, null, $BF4stats);
+				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, null, $BF4stats);
+				echo '</div>';
 			}
 			echo '
+			</div>
 			<br/>
-			</td>
-			</tr>
+			';
+			// free up weapon category query memory
+			@mysqli_free_result($Weapon_q2);
+		}
+		// free up weapon chart query memory
+		@mysqli_free_result($Weapon_q);
+		// begin dog tag stats
+		// check to see if the player has gotten anyone's tags
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			// query for dog tags this user has collected
+			$DogTag_q1 = @mysqli_query($BF4stats,"
+				SELECT tpd.`PlayerID`
+				FROM `tbl_dogtags` dt
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` = {$ServerID}
+				LIMIT 1
+			");
+		}
+		// or else this is a global stats page
+		else
+		{
+			// query for dog tags this user has collected
+			$DogTag_q1 = @mysqli_query($BF4stats,"
+				SELECT tpd.`PlayerID`
+				FROM `tbl_dogtags` dt
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				LIMIT 1
+			");
+		}
+		// or if anyone has gotten his
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			// find who has killed this player
+			$DogTag_q2 = @mysqli_query($BF4stats,"
+				SELECT tpd.`PlayerID`
+				FROM `tbl_dogtags` dt
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`VictimID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` = {$ServerID}
+				LIMIT 1
+			");
+		}
+		// or else this is a global stats page
+		else
+		{
+			// find who has killed this player
+			$DogTag_q2 = @mysqli_query($BF4stats,"
+				SELECT tpd.`PlayerID`
+				FROM `tbl_dogtags` dt
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`VictimID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				LIMIT 1
+			");
+		}
+		// only display dogtag block if this player has dogtags or someone has this player's dogtags
+		if(@mysqli_num_rows($DogTag_q1) != 0 || @mysqli_num_rows($DogTag_q2) != 0)
+		{
+			echo '<br/>';
+			// initialize value
+			$count = 0;
+			echo '
+			<div id="tabs2">
+			<ul>
+			<li><div class="subscript">1</div><a href="#tabs2-1">Dog Tags Collected</a></li>
+			';
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				echo '<li><div class="subscript">2</div><a href="./common/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
+			}
+			// or else this is a global stats page
+			else
+			{
+				echo '<li><div class="subscript">2</div><a href="./common/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
+			}
+			echo '
+			</ul>
+			<div id="tabs2-1">
+			<table class="prettytable">
+			';
+			// check to see if the player has gotten anyone's tags
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				// query for dog tags this user has collected
+				$DogTag_q = @mysqli_query($BF4stats,"
+					SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
+					FROM `tbl_dogtags` dt
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+					INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` = {$ServerID}
+					ORDER BY Count DESC, Victim ASC
+				");
+			}
+			// or else this is a global stats page
+			else
+			{
+				// query for dog tags this user has collected
+				$DogTag_q = @mysqli_query($BF4stats,"
+					SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
+					FROM `tbl_dogtags` dt
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+					INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					GROUP BY Victim
+					ORDER BY Count DESC, Victim ASC
+				");
+			}
+			if(@mysqli_num_rows($DogTag_q) != 0)
+			{
+				echo '
+				<tr>
+				<th width="5%" class="countheader">#</th>
+				<th width="47%" style="text-align: left;padding-left: 10px;">Victim</th>
+				<th width="48%" style="text-align: left;padding-left: 5px;"><span class="orderedDESCheader">Count</span></th>
+				</tr>
+				';
+				while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
+				{
+					$Victim = $DogTag_r['Victim'];
+					$VictimID = $DogTag_r['VictimID'];
+					$KillCount = $DogTag_r['Count'];
+					$count++;
+					echo '
+					<tr>
+					<td width="5%" class="count"><span class="information">' . $count . '</span></td>
+					';
+					// if there is a ServerID, this is a server stats page
+					if(!empty($ServerID))
+					{
+						echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px;"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;pid=' . $VictimID . '&amp;p=player">' . $Victim . '</a></td>';
+					}
+					// or else this is a global stats page
+					else
+					{
+						echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px;"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $VictimID . '">' . $Victim . '</a></td>';
+					}
+					echo '
+					<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+					</tr>
+					';
+				}
+			}
+			else
+			{
+				echo '
+				<tr>
+				<td width="100%" class="tablecontents" colspan="3" style="text-align: left;padding-left: 10px;"><div class="headline">' . $SoldierName . ' has not collected any dog tags.</div></td>
+				</tr>
+				';
+			}
+			// free up dog tag query memory
+			@mysqli_free_result($DogTag_q);
+			echo '
 			</table>
+			</div>
 			</div>
 			<br/>
 			';
 		}
-		// free up weapon chart query memory
-		@mysqli_free_result($Weapon_q);
-		echo '<br/>';
-	}
-	// begin dog tag stats
-	// double check that a matching player was found
-	if($soldier_found == 1)
-	{
-		// if there is a ServerID, this is a server stats page
-		if(!empty($ServerID))
-		{
-			// query for dog tags this user has collected
-			$DogTag_q = @mysqli_query($BF4stats,"
-				SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-				INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-				AND tsp.`ServerID` = {$ServerID}
-				ORDER BY Count DESC, Victim ASC
-			");
-		}
-		// or else this is a global stats page
-		else
-		{
-			// query for dog tags this user has collected
-			$DogTag_q = @mysqli_query($BF4stats,"
-				SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-				INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-				GROUP BY Victim
-				ORDER BY Count DESC, Victim ASC
-			");
-		}
-		// initialize value
-		$count = 0;
-		echo '
-		<div class="middlecontent">
-		<table width="100%" border="0">
-		<tr>
-		<th class="headline"><b>Dogtags</b></th>
-		</tr>
-		</table>
-		<div class="innercontent">
-		<br/>
-		<table width="98%" align="center" border="0">
-		<tr>
-		<th width="100%" colspan="4" style="text-align:left">Dog tags collected by ' . $SoldierName . ':</th>
-		</tr>
-		';
-		// check to see if the player has gotten anyone's tags
-		if(@mysqli_num_rows($DogTag_q) != 0)
-		{
-			echo '
-			<tr>
-			<td width="5%" class="tablecontents" style="text-align: left">#</td>
-			<td width="47%" class="tablecontents" style="text-align: left">Victim</td>
-			<td width="48%" class="tablecontents" style="text-align: left">Count</td>
-			</tr>
-			';
-			while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
-			{
-				$Victim = $DogTag_r['Victim'];
-				$VictimID = $DogTag_r['VictimID'];
-				$KillCount = $DogTag_r['Count'];
-				$count++;
-				echo '
-				<tr>
-				<td width="5%" class="tablecontents" style="text-align: left"><font class="information">' . $count . ':</font></td>
-				';
-				// if there is a ServerID, this is a server stats page
-				if(!empty($ServerID))
-				{
-					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $VictimID . '&amp;search=1">' . $Victim . '</a></td>';
-				}
-				// or else this is a global stats page
-				else
-				{
-					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $VictimID . '">' . $Victim . '</a></td>';
-				}
-				echo '
-				<td width="48%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
-				</tr>
-				';
-			}
-		}
-		else
-		{
-			echo '
-			<tr>
-			<td width="100%" class="tablecontents" colspan="3" style="text-align: left"><font class="information">' . $SoldierName . ' has not collected any dog tags.</font></td>
-			</tr>
-			';
-		}
-		// free up dog tag query memory
-		@mysqli_free_result($DogTag_q);
-		echo '
-		</table>
-		</div>
-		';
-		// if there is a ServerID, this is a server stats page
-		if(!empty($ServerID))
-		{
-			// find who has killed this player
-			$DogTag_q = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName` AS Killer, tpd.`PlayerID` AS KillerID, dt.`Count`
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-				INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-				WHERE tpd2.`PlayerID` = {$PlayerID}
-				AND tpd2.`GameID` = {$GameID}
-				AND tsp.`ServerID` = {$ServerID}
-				ORDER BY Count DESC, Killer ASC
-			");
-		}
-		// or else this is a global stats page
-		else
-		{
-			// find who has killed this player
-			$DogTag_q = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName` AS Killer, tpd.`PlayerID` AS KillerID, SUM(dt.`Count`) AS Count
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-				INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-				WHERE tpd2.`PlayerID` = {$PlayerID}
-				AND tpd2.`GameID` = {$GameID}
-				GROUP BY Killer
-				ORDER BY Count DESC, Killer ASC
-			");
-		}
-		// initialize value
-		$count = 0;
-		echo '
-		<div class="innercontent"><br/>
-		<table width="98%" align="center" border="0">
-		<tr>
-		<th width="100%" colspan="4" style="text-align:left">Players who have collected ' . $SoldierName . '\'s dog tags:</th>
-		</tr>
-		';
-		// check to see if anyone has got the player's tags
-		if(@mysqli_num_rows($DogTag_q) != 0)
-		{
-			echo '
-			<tr>
-			<td width="5%" class="tablecontents" style="text-align: left">#</td>
-			<td width="47%" class="tablecontents" style="text-align: left">Killer</td>
-			<td width="48%" class="tablecontents" style="text-align: left">Count</td>
-			</tr>
-			';
-			while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
-			{
-				$Killer = $DogTag_r['Killer'];
-				$KillerID = $DogTag_r['KillerID'];
-				$KillCount = $DogTag_r['Count'];
-				$count++;
-				echo '
-				<tr>
-				<td width="5%" class="tablecontents" style="text-align: left"><font class="information">' . $count . ':</font></td>
-				';
-				// if there is a ServerID, this is a server stats page
-				if(!empty($ServerID))
-				{
-					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?ServerID=' . $ServerID . '&amp;PlayerID=' . $KillerID . '&amp;search=1">' . $Killer . '</a></td>';
-				}
-				// or else this is a global stats page
-				else
-				{
-					echo '<td width="47%" class="tablecontents" style="text-align: left"><a href="' . $_SERVER['PHP_SELF'] . '?globalsearch=1&amp;PlayerID=' . $KillerID . '">' . $Killer . '</a></td>';
-				}
-				echo '
-				<td width="48%" class="tablecontents" style="text-align: left">' . $KillCount . '</td>
-				</tr>
-				';
-			}
-		}
-		else
-		{
-			echo '
-			<tr>
-			<td width="100%" class="tablecontents" colspan="3" style="text-align: left"><font class="information">No one has gotten ' . $SoldierName . '\'s tags.</font></td>
-			</tr>
-			';
-		}
-		// free up dog tag query memory
-		@mysqli_free_result($DogTag_q);
-		echo '
-		</table>
-		</div>
-		<br/>
-		</div>
-		';
-	}
-	// free up player data query memory
-	@mysqli_free_result($PlayerData_q);
-	if($soldier_found == 1)
-	{
+		// free up dog tag query1 memory
+		@mysqli_free_result($DogTag_q1);
+		// free up dog tag query2 memory
+		@mysqli_free_result($DogTag_q2);
+		// free up player data query memory
+		@mysqli_free_result($PlayerData_q);
+		// signature images...
+		
 		// make sure the GD extension is available
 		if(extension_loaded('gd') AND function_exists('gd_info'))
 		{
@@ -886,79 +934,58 @@ elseif($SoldierName != null)
 			$file = $_SERVER['PHP_SELF'];
 			// show signature images
 			echo '
-			<br/><br/>
-			<div class="middlecontent">
-			<table width="100%" border="0">
-			<tr>
-			<th class="headline"><b>Signature Images</b></th>
-			</tr>
-			<tr><td>
-			<div class="innercontent">
 			<br/>
-			<table align="center" width="98%" border="0">
+			<div class="subsection"><center><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></center></div>
+			<table class="prettytable">
 			<tr>
-			<td style="text-align: left;" colspan="2"><center><font class="information">Signature images use global stats from all of ' . $clan_name . '\'s Servers.</font></center><br/></td>
-			</tr>
-			<tr>
-			<td style="text-align: left; padding: 30px;" valign="top" width="50%">
+			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
 			Stats image with player\'s rank:<br/><br/>
 			';
 			// include signature.php image
 			echo '
-			<img src="./signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=0" alt="signature" />
+			<img src="./signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=0" alt="signature" />
 			<br/>
-			<font class="information">Forum BBcode:</font>
+			<span class="information">BBcode:</span>
 			<br/><br/>
-			[URL=' . $host . $file . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=0[/IMG][/URL]<br/>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=0[/IMG][/URL]</span><br/>
 			</td>
-			<td style="text-align: left; padding: 30px;" valign="top" width="50%">
+			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
 			Stats image with player\'s favorite weapon:<br/><br/>
 			';
 			// include signature.php image
 			echo '
-			<img src="./signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=1" alt="signature" />
+			<img src="./signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=1" alt="signature" />
 			<br/>
-			<font class="information">Forum BBcode:</font>
+			<span class="information">BBcode:</span>
 			<br/><br/>
-			[URL=' . $host . $file . '?globalsearch=1&amp;PlayerID=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?PlayerID=' . $PlayerID . '&amp;GameID=' . $GameID . '&amp;FAV=1[/IMG][/URL]<br/>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=1[/IMG][/URL]</span><br/>
 			</td>
 			</tr>
 			</table>
 			<br/>
-			</div>
-			</td></tr>
-			</table>
-			</div>
 			';
 		}
 	}
 }
+// this shouldn't happen, but we will make sure
 elseif($SoldierName == 'Not Found')
 {
 	echo '
-	<div class="middlecontent">
-	<table width="100%" border="0">
-	<tr>
-	<td>
-	<br/>
-	<center>
+	<div class="subsection">
+	<div class="headline">
 	';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<font class="alert">The selected player ID was not found in this server.</font>';
+		echo 'The selected player ID was not found in this server.';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<font class="alert">The selected player ID was not found in these servers.</font>';
+		echo 'The selected player ID was not found in these servers.';
 	}
 	echo '
-	</center>
-	<br/>
-	</td>
-	</tr>
-	</table>
+	</div>
 	</div>
 	';
 }
@@ -967,26 +994,15 @@ if($SoldierName != null AND $SoldierName != 'Not Found')
 {
 	echo '
 	<br/><br/>
-	<div class="middlecontent">
-	<table width="100%" border="0">
+	<div class="subsection"><center><span class="information">External Links for "' . $SoldierName . '"</span></center></div>
+	<table class="prettytable">
 	<tr>
-	<th class="headline"><b>External Links for ' . $SoldierName . '</b></th>
-	</tr>
-	<tr><td>
-	<div class="innercontent">
-	<br/>
-	<table align="center" width="95%" border="0">
-	<tr>
-	<td width="33%" style="text-align: center"><font class="information">Battlelog Stats: </font><a href="http://battlelog.battlefield.com/bf4/user/' . $SoldierName . '" target="_blank">www.Battlelog.Battlefield.com</a></td>
-	<td width="33%" style="text-align: center"><font class="information">BF4 Stats: </font><a href="http://bf4stats.com/pc/' . $SoldierName . '" target="_blank">www.BF4stats.com</a></td>
-	<td width="33%" style="text-align: center"><font class="information">Metabans: </font><a href="http://metabans.com/search/' . $SoldierName . '" target="_blank">www.Metabans.com</a></td>
+	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">Battlelog Stats: </span><a href="http://battlelog.battlefield.com/bf4/user/' . $SoldierName . '" target="_blank">www.Battlelog.Battlefield.com</a></td>
+	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">BF4DB: </span><a href="http://bf4db.com/players?name=' . $SoldierName . '" target="_blank">www.BF4db.com</a></td>
+	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">Metabans: </span><a href="http://metabans.com/search/' . $SoldierName . '" target="_blank">www.Metabans.com</a></td>
 	</tr>
 	</table>
 	<br/>
-	</div>
-	</td></tr>
-	</table>
-	</div>
 	';
 }
 ?>

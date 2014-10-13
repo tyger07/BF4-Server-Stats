@@ -1,46 +1,31 @@
 <?php
-// server stats chat page by Ty_ger07 at http://open-web-community.com/
+// chat_search asynchronous for server stats page by Ty_ger07 at http://open-web-community.com/
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
-echo'
-<div class="subsection" style="margin-bottom: 4px;">
-<form action="' . $_SERVER['PHP_SELF'] . '" method="get">
-<span class="information">Search:</span>
-<input type="hidden" name="p" value="chat" />
-';
-if(!empty($ServerID))
+// include required files
+require_once('../config/config.php');
+require_once('../common/functions.php');
+require_once('../common/connect.php');
+require_once('../common/case.php');
+
+// default variables to null
+$ServerID = null;
+$P = null;
+$GameID = null;
+// get values
+if(!empty($page))
 {
-	echo '<input type="hidden" name="sid" value="' . $ServerID . '" />';
+	$P = $page;
 }
-if(!empty($query))
+if(!empty($sid))
 {
-	echo '<input type="text" class="messagebox" name="q" value="' . $query . '" onkeyup="searchOnDemand(this.value)" />';
+	$ServerID = $sid;
 }
-else
+if(!empty($gid))
 {
-	echo '<input type="text" class="messagebox" name="q" onkeyup="searchOnDemand(this.value)" />';
+	$GameID = $gid;
 }
-echo '
-</form>
-</div>
-<div id="txtDefault">
-<div id="chat" style="position: relative;">
-';
-// updating text...
-echo '
-<div id="fadein" style="position: absolute; top: -31px; left: -150px; display: none;">
-<div class="subsection" style="width: 100px;">
-<center>Updating ...</center>
-</div>
-</div>
-';
-// fadein javascript
-echo '
-<script type="text/javascript">
-$("#fadein").delay(19000).fadeIn("slow");
-</script>
-';
 
 // initialize value as null
 $date_query = null;
@@ -113,6 +98,42 @@ if(!empty($query) && !(($timestamp = strtotime($query)) === false))
 		}
 	}
 }
+
+// updating text...
+echo '
+<div id="fadein" style="position: absolute; top: -31px; left: -150px; display: none;">
+<div class="subsection" style="width: 100px;">
+<center>Updating ...</center>
+</div>
+</div>
+';
+// last updated text...
+echo '
+<div id="fadeaway" style="position: absolute; top: -31px; left: -150px;">
+<div class="subsection" style="width: 100px;">
+<center>Updated <span id="timestamp"></span></center>
+</div>
+</div>
+';
+// find out client's current time with javascript
+echo '
+<script type="text/javascript">
+var date = new Date();
+var hours = date.getHours();
+var minutes = date.getMinutes();
+if (hours.toString() == "0")
+{
+hours = "12";
+}
+if (minutes.toString().length == 1)
+{
+minutes = "0" + minutes;
+}
+document.getElementById("timestamp").innerHTML = hours + \':\' + minutes;
+$("#fadeaway").finish().show().delay(1000).fadeOut("slow");
+$("#fadein").delay(19000).fadeIn("slow");
+</script>
+';
 
 // show current search content
 if(!empty($query))
@@ -398,12 +419,12 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;sid=' . $ServerID . '&amp;r=logDate&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;sid=' . $ServerID . '&amp;r=logDate&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;r=logDate&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;r=logDate&amp;o=';
 	}
 	if($rank != 'logDate')
 	{
@@ -431,12 +452,12 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=logSoldierName&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=logSoldierName&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;cp=1&amp;r=logSoldierName&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;cp=1&amp;r=logSoldierName&amp;o=';
 	}
 	if($rank != 'logSoldierName')
 	{
@@ -464,12 +485,12 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=logSubset&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=logSubset&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;cp=1&amp;r=logSubset&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;cp=1&amp;r=logSubset&amp;o=';
 	}
 	if($rank != 'logSubset')
 	{
@@ -497,12 +518,12 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=Message&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=Message&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<a href="' . $_SERVER['PHP_SELF'] . '?p=chat&amp;cp=1&amp;r=Message&amp;o=';
+		echo '<a href="./index.php?p=chat&amp;cp=1&amp;r=Message&amp;o=';
 	}
 	if($rank != 'Message')
 	{
@@ -585,12 +606,12 @@ if(@mysqli_num_rows($Messages_q) != 0)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<td width="13%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
+				echo '<td width="13%" class="tablecontents"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<td width="13%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
+				echo '<td width="13%" class="tablecontents"><a href="./index.php?p=player&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
 			}
 		}
 		// otherwise just display their name without a link
@@ -608,7 +629,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	}
 	echo '</table>';
 	// build the pagination links
-	pagination_links($ServerID,$_SERVER['PHP_SELF'],$page,$currentpage,$totalpages,$rank,$order,$query);
+	pagination_links($ServerID,'index.php',$P,$currentpage,$totalpages,$rank,$order,$query);
 }
 else
 {
@@ -637,8 +658,4 @@ else
 // free up messages query memory
 @mysqli_free_result($Messages_q);
 
-echo '
-</div>
-</div>
-';
 ?>
