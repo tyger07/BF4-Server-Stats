@@ -1,9 +1,10 @@
-## BF4 Server Stats Overview
+## BF4 Server Stats Webpage Overview
 
+This page requires the use of a stats database which is created by XpKiller's Procon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.
+If you need help with his plugin, you must seek assistance in XpKiller's plugin thread:
+https://forum.myrcon.com/showthread.php?6698-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-2
 
-This page requires the use of a stats database which is created by XpKiller's PRoCon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's plugin thread.
-
-For best compatibility with this code, use the following settings in XpKiller's PRoCon logging plugin:
+For best compatibility with this webstats page, use the following settings in XpKiller's Procon logging plugin:
 "Enable Statslogging?" : Yes
 "Enable Weaponstats?" : Yes
 "Enable Livescoreboard in DB?" : Yes
@@ -13,53 +14,44 @@ For best compatibility with this code, use the following settings in XpKiller's 
 "Save Sessiondata to DB?" : Yes
 "Log playerdata only (no playerstats)?" : No
 
+This webpage code requires that you have access to a web server running a modern version of php and requires that you have permission to modify files on the web server.
+
 
 ## Demo
 
+The following demo does not use a live database connected to a live server, so the stats data presented will be out of date and the Players of the Week portion in the demo will likely not function as a result.
 
 http://open-web-community.com/bf4stats/player-stats/index.php
 
 
-## Additional Info
-
-
-Valid!
-
-http://validator.w3.org/check?uri=http%3A%2F%2Fopen-web-community.com%2Fbf4stats%2Fplayer-stats%2Findex.php&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.3+http%3A%2F%2Fvalidator.w3.org%2Fservices
-
-
 ## Installation Steps
 
-
-Download the following file:
-
+1) Download the following file:
 https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
-Extract the files.
+2) Extract the files. (maintain the original folder structure)
 
 You may change the appearance of the page by modifying the stats.css file in the common folder.
 
-Fill in the required parameters before using this code.  You must place the necessary data between the single quotation marks (''). 
+3) Fill in the required parameters in config.php.
 
-Note:  You may not include single quotation marks (') in the following fields.  For instance, you may not call your clan 'Ty_ger07's Clan' as it will create a PHP compilation error.
+Note:  You may not include single quotation marks (') in the following fields without also using an appropriate php delimiter.
+For instance, you may not call your clan 'Ty_ger07's Clan' as it would cause a php compilation error.
+
 For example, this would not work:
 
+$clan_name = 'Ty_ger07's Clan';
 
-$clan_name = 'Ty_ger07's Clan'; // your gaming clan or organization name
+Using a delimiter would cause it to work:
 
+$clan_name = 'Ty_ger07\'s Clan';
 
-You must use a PHP delimiter if you wish to use single quotes within the following fields.
-For example, this would work:
-
-
-$clan_name = 'Ty_ger07\'s Clan'; // your gaming clan or organization name
+4) Upload to your php-enabled web server and enjoy!
 
 
-**You must fill in the following information in the config.php file found in the config folder**
-
+## You must fill in the following information in config.php which is in the config folder.
 
 **1)** Input your stats database host, stats database user name, stats database password, and stats database name.
-
 
 // DATABASE INFORMATION
 
@@ -75,7 +67,6 @@ DEFINE('PASS', '');													// database password
 
 
 For example:
-
 
 // DATABASE INFORMATION
 
@@ -95,24 +86,20 @@ DEFINE('PASS', 'pass');												// database password
 
 **2)** Input your clan name as you would like it to appear in the stats pages.
 
-
 $clan_name = ''; // your gaming clan or organization name
 
 
 For example:
-
 
 $clan_name = 'Junglewraiths'; // your gaming clan or organization name
 
 
 **3)** Input your desired banner image URL if you want one other than the default to be displayed.
 
-
 $banner_image = './images/bf4-logo.png'; // your desired page banner
 
 
 **4)** Enter the URL which you would like users to redirect to if they click your banner image.
-
 
 $banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
 
@@ -121,6 +108,12 @@ Enjoy!
 
 
 ## Changelog:
+
+10-12-2014:
+- Battlelog inspired theme
+- Page load time optimizations using asynchronous queries and background data refresh
+- Improved search, navigation, and tabs
+- Chat log can be searched through based on player name, message text, or date/time
 
 2-19-2014:
 - Added missing Second Assault banner images
