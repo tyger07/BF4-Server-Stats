@@ -2,10 +2,10 @@
 
 // first connect to the database
 // and include necessary files
-include_once('../config/config.php');
-include_once('../common/connect.php');
-include_once('../common/case.php');
-include_once('../common/constants.php');
+require_once('../config/config.php');
+require_once('../common/connect.php');
+require_once('../common/case.php');
+require_once('../common/constants.php');
 
 // we will need a server ID from the URL query string!
 if(!empty($sid))

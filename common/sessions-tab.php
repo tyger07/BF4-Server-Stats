@@ -5,9 +5,9 @@
 
 // first connect to the database
 // and include necessary files
-include_once('../config/config.php');
-include_once('../common/connect.php');
-include_once('../common/case.php');
+require_once('../config/config.php');
+require_once('../common/connect.php');
+require_once('../common/case.php');
 
 // default variable to null
 $ServerID = null;
