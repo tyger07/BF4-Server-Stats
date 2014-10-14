@@ -13,7 +13,7 @@ if(!empty($ServerName))
 // if there is no server id, but there is a page id, then this must be a global stats page
 elseif(empty($ServerID) && !empty($page))
 {
-	$default = 'Combined Stats From All Servers';
+	$default = 'Combined Stats';
 }
 // there is no page or server id specified
 else
