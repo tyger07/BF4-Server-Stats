@@ -19,8 +19,8 @@ $mode_array = array(
 	// second assault
 	'Capture The Flag'			=>	'CaptureTheFlag0',
 	// naval strike
-	'Carrier Assault'			=>	'CarrierAssaultLarge0',
-	'Carrier Assault'			=>	'CarrierAssaultSmall0',
+	'Carrier Assault Large'			=>	'CarrierAssaultLarge0',
+	'Carrier Assault Small'			=>	'CarrierAssaultSmall0',
 	// dragons teeth
 	'Chain Link'				=>	'Chainlink0'
 	// note comma at the end of each line except for the last line

@@ -109,6 +109,12 @@ Enjoy!
 
 ## Changelog:
 
+10-24-2014:
+- Most DLC now included (weapons and vehicles still missing)
+- Bugs fixed
+- More accurate stats
+- May be a little slower (due to increased accuracy)
+
 10-12-2014:
 - Battlelog inspired theme
 - Page load time optimizations using asynchronous queries and background data refresh
