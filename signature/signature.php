@@ -26,7 +26,7 @@ if(!empty($pid) && !empty($gid))
 	
 	// query for this player's info
 	$q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tpd.`GlobalRank`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Rounds`) AS Rounds, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+		SELECT tpd.`SoldierName`, tpd.`GlobalRank`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
 		FROM `tbl_playerstats` tps
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -38,15 +38,22 @@ if(!empty($pid) && !empty($gid))
 		$found = 1;
 		$r = @mysqli_fetch_assoc($q);
 		$rank = $r['GlobalRank'];
-		$rank_img = '../images/ranks/r' . $r['GlobalRank'] . '.png';
 		$soldier = $r['SoldierName'];
 		$score = $r['Score'];
 		$kills = $r['Kills'];
 		$deaths = $r['Deaths'];
 		$kdr = round($r['KDR'],2);
-		$rounds = $r['Rounds'];
 		$headshots = $r['Headshots'];
 		$hsr = round(($r['HSR']*100),2);
+		// filter out the available ranks
+		if($rank >= $rank_min && $rank <= $rank_max)
+		{
+			$rank_img = '../images/ranks/r' . $r['GlobalRank'] . '.png';
+		}
+		else
+		{
+			$rank_img = '../images/ranks/missing.png';
+		}
 		// query for this player's weapon stats
 		$wq = @mysqli_query($BF4stats,"
 			SELECT tw.`Friendlyname`, SUM(tws.`Kills`) AS weaponKills
@@ -94,6 +101,59 @@ if(!empty($pid) && !empty($gid))
 			$weapon = 'Unknown';
 			$weapon_kills = 'Unknown';
 		}
+		// rank players by score
+		// initialize score rank values
+		$srank = 0;
+		$smatch = 0;
+		$srank_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`PlayerID`, SUM(tps.`Score`) AS Score
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tpd.`GameID` = {$GameID}
+				GROUP BY tpd.`PlayerID`
+				ORDER BY Score DESC, tpd.`SoldierName` ASC
+		");
+		// loop through the list until this player's ID is found
+		if(@mysqli_num_rows($srank_q) != 0)
+		{
+			while($srank_r = @mysqli_fetch_assoc($srank_q))
+			{
+				$srank++;
+				$ThisID = strtolower($srank_r['PlayerID']);
+				// if player name in rank row matches player of interest
+				if($PlayerID == $ThisID)
+				{
+						$smatch = 1;
+						break;
+				}
+			}
+		}
+		if($smatch == 0)
+		{
+			$srank = 'error';
+		}
+		
+		// find out how many rows are in the table
+		$TotalRows_q = @mysqli_query($BF4stats,"
+			SELECT SUM( tpd.`PlayerID` ) AS IDs
+			FROM `tbl_playerdata` tpd
+			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+			WHERE tpd.`GameID` = {$GameID}
+			GROUP BY tpd.`PlayerID`
+		");
+		if(@mysqli_num_rows($TotalRows_q) != 0)
+		{
+			$total_players = @mysqli_num_rows($TotalRows_q);
+		}
+		else
+		{
+			$total_players = 'error';
+		}
+		
+		// free up total rows query memory
+		@mysqli_free_result($TotalRows_q);
 	}
 	else
 	{
@@ -106,6 +166,12 @@ if(!empty($pid) && !empty($gid))
 	
 	// free up weapon query memory
 	@mysqli_free_result($wq);
+	
+	// free up score rank query memory
+	@mysqli_free_result($srank_q);
+	
+	// free up total player query memory
+	@mysqli_free_result($PlayerCount_q);
 	
 	// start outputting the image
 	header("Content-type: image/png");
@@ -161,13 +227,13 @@ if(!empty($pid) && !empty($gid))
 		imagestring($base, 2, 165, 60, $deaths, $yellow);
 		imagestring($base, 2, 120, 70, 'KDR:', $yellow);
 		imagestring($base, 2, 165, 70, $kdr, $yellow);
-		imagestring($base, 2, 230, 40, 'Favorite:', $yellow);
-		imagestring($base, 2, 295, 40, $weapon, $yellow);
-		imagestring($base, 2, 230, 50, 'Rounds:', $yellow);
-		imagestring($base, 2, 295, 50, $rounds, $yellow);
+		imagestring($base, 2, 230, 40, 'Rank #:', $yellow);
+		imagestring($base, 2, 295, 40, $srank . ' of ' . $total_players, $yellow);
+		imagestring($base, 2, 230, 50, 'Favorite:', $yellow);
+		imagestring($base, 2, 295, 50, $weapon, $yellow);
 		imagestring($base, 2, 230, 60, 'Headshots:', $yellow);
 		imagestring($base, 2, 295, 60, $headshots, $yellow);
-		imagestring($base, 2, 230, 70, 'HSR:', $yellow);
+		imagestring($base, 2, 230, 70, 'HS %:', $yellow);
 		imagestring($base, 2, 295, 70, $hsr . ' %', $yellow);
 	}
 	// this soldier was not found

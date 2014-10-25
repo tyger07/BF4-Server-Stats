@@ -481,13 +481,4 @@ function textcleaner($content)
 	return $content;
 }
 
-// function to reverse cleaning operation
-function textuncleaner($content)
-{
-	$content = preg_replace("/&#39;/","'",$content);
-	$content = preg_replace("/&lt;/","<",$content);
-	$content = preg_replace("/&gt;/",">",$content);
-	$content = preg_replace("/&amp;/","&",$content);
-	return $content;
-}
 ?>

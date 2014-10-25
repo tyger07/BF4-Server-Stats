@@ -19,7 +19,10 @@ $mode_array = array(
 	// second assault
 	'Capture The Flag'			=>	'CaptureTheFlag0',
 	// naval strike
-	'Carrier Assault'			=>	'CarrierAssaultLarge0'
+	'Carrier Assault'			=>	'CarrierAssaultLarge0',
+	'Carrier Assault'			=>	'CarrierAssaultSmall0',
+	// dragons teeth
+	'Chain Link'				=>	'Chainlink0'
 	// note comma at the end of each line except for the last line
 );
 
@@ -49,7 +52,13 @@ $map_array = array(
 	'Lost Islands'				=>	'XP2_001',
 	'Nansha Strike'				=>	'XP2_002',
 	'Wave Breaker'				=>	'XP2_003',
-	'Operation Mortar'			=>	'XP2_004'
+	'Operation Mortar'			=>	'XP2_004',
+	// dragons teeth
+	'Pearl Market'				=>	'XP3_MarketPl',
+	'Propaganda'				=>	'XP3_Prpganda',
+	'Lumphini Garden'			=>	'XP3_UrbanGdn',
+	'Sunken Dragon'				=>	'XP3_WtrFront'
+	// final stand
 	// note comma at the end of each line except for the last line
 );
 
@@ -309,6 +318,8 @@ $weapon_array = array(
 	'SR338'						=>	'SR338',
 	'Steyr AUG M320 3GL'		=>	'SteyrAug_M320_3GL',
 	'SW40'						=>	'SW40'
+	//	dragons teeth
+	// final stand
 	// note comma at the end of each line except for the last line
 );
 
@@ -326,7 +337,13 @@ $cat_array = array(
 	'Explosive'		=>	'explosive',
 	'Impact'		=>	'impact',
 	'Melee'			=>	'melee',
-	'Vehicle'		=>	'none'
+	'Machinery'		=>	'none',
+	'HVY Vehicle'	=>	'vehicleheavy',
+	'LT Vehicle'	=>	'vehiclelight',
+	'Aircraft'		=>	'vehicleair',
+	'Personal'		=>	'vehiclepersonal',
+	'Transport'		=>	'vehicletransport',
+	'Watercraft'	=>	'vehiclewater'
 	// note comma at the end of each line except for the last line
 );
 
@@ -362,6 +379,10 @@ $squad_array = array(
 	'Zulu'						=>	'26'
 	// note comma at the end of each line except for the last line
 );
+
+// set min and max ranks available
+$rank_min = 1;
+$rank_max =	130;
 
 // make an array of country names
 // I am not going to separate these into separate lines since these shouldn't change and don't need to be legible

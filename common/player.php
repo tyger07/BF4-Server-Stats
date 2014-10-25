@@ -408,7 +408,15 @@ elseif($SoldierName != null)
 		$LastSeen = date("M d Y", strtotime($PlayerData_r['LastSeenOnServer']));
 		$PlayerID = $PlayerData_r['PlayerID'];
 		$rank = $PlayerData_r['GlobalRank'];
-		$rank_img = './images/ranks/r' . $rank . '.png';
+		// filter out the available ranks
+		if($rank >= $rank_min && $rank <= $rank_max)
+		{
+			$rank_img = './images/ranks/r' . $rank . '.png';
+		}
+		else
+		{
+			$rank_img = './images/ranks/missing.png';
+		}
 		echo '
 		<br/>
 		<br/>

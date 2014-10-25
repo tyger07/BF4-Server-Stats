@@ -28,10 +28,13 @@ if(!empty($sid))
 // this must be a global stats page
 else
 {
+	// merge server IDs array into a variable
+	$ids = join(',',$ServerIDs);
+	
 	$query  = "
 		SELECT `PlayersJoinedServer`, `PlayersLeftServer`
 		FROM `tbl_mapstats`
-		WHERE 1
+		WHERE `ServerID` in ({$ids})
 		ORDER BY `TimeRoundStarted` DESC
 		LIMIT {$limit}
 	";

@@ -184,6 +184,8 @@ if(!empty($ServerID))
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 			");
 		}
@@ -194,6 +196,8 @@ if(!empty($ServerID))
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 			");
@@ -206,12 +210,17 @@ if(!empty($ServerID))
 			FROM `tbl_chatlog`
 			WHERE `ServerID` = {$ServerID}
 			AND `logMessage` != ''
+			AND `logMessage` NOT LIKE '%ID_CHAT_%'
+			AND `logSoldierName` != 'Server'
 		");
 	}
 }
 // or else this is a global stats page
 else
 {
+	// merge server IDs array into a variable
+	$ids = join(',',$ServerIDs);
+	
 	if(!empty($query))
 	{
 		if(!empty($date_query))
@@ -219,7 +228,10 @@ else
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
-				WHERE `logMessage` != ''
+				WHERE `ServerID` in ({$ids})
+				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 			");
 		}
@@ -228,7 +240,10 @@ else
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
-				WHERE `logMessage` != ''
+				WHERE `ServerID` in ({$ids})
+				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 			");
@@ -239,7 +254,10 @@ else
 		$TotalRows_q = @mysqli_query($BF4stats,"
 			SELECT count(`logDate`) AS count
 			FROM `tbl_chatlog`
-			WHERE `logMessage` != ''
+			WHERE `ServerID` in ({$ids})
+			AND `logMessage` != ''
+			AND `logMessage` NOT LIKE '%ID_CHAT_%'
+			AND `logSoldierName` != 'Server'
 		");
 	}
 }
@@ -334,6 +352,8 @@ if(!empty($ServerID))
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 				ORDER BY {$rank} {$order}, `logDate` ASC
 				LIMIT {$offset}, {$rowsperpage}
@@ -346,6 +366,8 @@ if(!empty($ServerID))
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 				ORDER BY {$rank} {$order}, `logDate` ASC
@@ -360,6 +382,8 @@ if(!empty($ServerID))
 			FROM `tbl_chatlog`
 			WHERE `ServerID` = {$ServerID}
 			AND `logMessage` != ''
+			AND `logMessage` NOT LIKE '%ID_CHAT_%'
+			AND `logSoldierName` != 'Server'
 			ORDER BY {$rank} {$order}, `logDate` ASC
 			LIMIT {$offset}, {$rowsperpage}
 		");
@@ -368,6 +392,9 @@ if(!empty($ServerID))
 // or else this is a global stats page
 else
 {
+	// merge server IDs array into a variable
+	$ids = join(',',$ServerIDs);
+	
 	if(!empty($query))
 	{
 		if(!empty($date_query))
@@ -375,7 +402,10 @@ else
 			$Messages_q = @mysqli_query($BF4stats,"
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
-				WHERE `logMessage` != ''
+				WHERE `ServerID` in ({$ids})
+				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 				ORDER BY {$rank} {$order}, `logDate` ASC
 				LIMIT {$offset}, {$rowsperpage}
@@ -386,7 +416,10 @@ else
 			$Messages_q = @mysqli_query($BF4stats,"
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
-				WHERE `logMessage` != ''
+				WHERE `ServerID` in ({$ids})
+				AND `logMessage` != ''
+				AND `logMessage` NOT LIKE '%ID_CHAT_%'
+				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 				ORDER BY {$rank} {$order}, `logDate` ASC
@@ -399,7 +432,10 @@ else
 		$Messages_q = @mysqli_query($BF4stats,"
 			SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 			FROM `tbl_chatlog`
-			WHERE `logMessage` != ''
+			WHERE `ServerID` in ({$ids})
+			AND `logMessage` != ''
+			AND `logMessage` NOT LIKE '%ID_CHAT_%'
+			AND `logSoldierName` != 'Server'
 			ORDER BY {$rank} {$order}, `logDate` ASC
 			LIMIT {$offset}, {$rowsperpage}
 		");

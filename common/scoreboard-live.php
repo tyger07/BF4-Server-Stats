@@ -365,7 +365,7 @@ else
 						{
 							$team_name = 'RU Army';
 						}
-						elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
+						elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
 						{
 							$team_name = 'US Army';
 						}
@@ -380,11 +380,11 @@ else
 						{
 							$team_name = 'US Army';
 						}
-						elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004'))
+						elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront'))
 						{
 							$team_name = 'CN Army';
 						}
-						elseif(($map == 'MP_Prison') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
+						elseif(($map == 'MP_Prison') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
 						{
 							$team_name = 'RU Army';
 						}
@@ -404,7 +404,7 @@ else
 				{
 					if($this_team == 1)
 					{
-						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
+						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
 						{
 							$team_name = 'US Attackers';
 						}
@@ -415,11 +415,11 @@ else
 					}
 					elseif($this_team == 2)
 					{
-						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004'))
+						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront'))
 						{
 							$team_name = 'CN Defenders';
 						}
-						elseif(($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman'))
+						elseif(($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
 						{
 							$team_name = 'RU Defenders';
 						}
@@ -455,6 +455,36 @@ else
 					}
 					// something unexpected occurred and a correct team name was not found
 					// just name the team based on team number instead
+					else
+					{
+						$team_name = 'Team ' . $this_team;
+					}
+				}
+				elseif(($mode == 'CarrierAssaultLarge0') OR ($mode == 'CarrierAssaultSmall0'))
+				{
+					if($this_team == 1)
+					{
+						$team_name = 'US Attackers';
+					}
+					elseif($this_team == 2)
+					{
+						$team_name = 'CN Defenders';
+					}
+					else
+					{
+						$team_name = 'Team ' . $this_team;
+					}
+				}
+				elseif($mode == 'Chainlink0')
+				{
+					if($this_team == 1)
+					{
+						$team_name = 'US Attackers';
+					}
+					elseif($this_team == 2)
+					{
+						$team_name = 'CN Defenders';
+					}
 					else
 					{
 						$team_name = 'Team ' . $this_team;

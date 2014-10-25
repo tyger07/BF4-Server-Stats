@@ -31,10 +31,14 @@ if(!empty($sid))
 // this must be a global stats page
 else
 {
+	// merge server IDs array into a variable
+	$ids = join(',',$ServerIDs);
+	
 	$query  = "
 		SELECT SUBSTRING(`TimeMapLoad`, 1, length(`TimeMapLoad`) - 9) AS Date, AVG(`MaxPlayers`) AS Average
 		FROM `tbl_mapstats`
-		WHERE `Gamemode` != ''
+		WHERE `ServerID` in ({$ids})
+		AND `Gamemode` != ''
 		AND `MapName` != ''
 		GROUP BY `Date`
 		ORDER BY `Date` DESC

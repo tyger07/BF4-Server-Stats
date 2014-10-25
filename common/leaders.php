@@ -25,22 +25,36 @@ if(!empty($ServerID))
 		WHERE tsp.`ServerID` = {$ServerID}
 		AND tpd.`GameID` = {$GameID}
 	");
-	$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
-	$numrows = $TotalRows_r[0];
+	if(@mysqli_num_rows($TotalRows_q) != 0)
+	{
+		$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
+		$numrows = $TotalRows_r[0];
+	}
+	else
+	{
+		$numrows = 1;
+	}
 }
 // or else this is a global stats page
 else
 {
 	// find out how many rows are in the table
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT SUM(tps.`Score`) AS Score
+		SELECT SUM( tpd.`PlayerID` ) AS IDs
 		FROM `tbl_playerdata` tpd
 		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
 		WHERE tpd.`GameID` = {$GameID}
 		GROUP BY tpd.`PlayerID`
 	");
-	$numrows = @mysqli_num_rows($TotalRows_q);
+	if(@mysqli_num_rows($TotalRows_q) != 0)
+	{
+		$numrows = @mysqli_num_rows($TotalRows_q);
+	}
+	else
+	{
+		$numrows = 1;
+	}
 }
 // number of rows to show per page
 $rowsperpage = 20;
@@ -338,7 +352,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 	</table>
 	';
 	// build the pagination links
-	pagination_links($ServerID,$_SERVER['PHP_SELF'],$page,$currentpage,$totalpages,$rank,$order,$query);
+	pagination_links($ServerID,$_SERVER['PHP_SELF'],$page,$currentpage,$totalpages,$rank,$order,'');
 }
 else
 {

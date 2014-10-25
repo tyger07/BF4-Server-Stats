@@ -120,15 +120,18 @@ foreach($ServerIDs as $this_ServerID)
 	@mysqli_free_result($Basic_q);
 }
 
-$PlayerCount_q = @mysqli_query($BF4stats,"
-	SELECT SUM(`CountPlayers`) AS total_players
-	FROM `tbl_server_stats`
-	WHERE 1
+// find out how many rows are in the table
+$TotalRows_q = @mysqli_query($BF4stats,"
+	SELECT SUM( tpd.`PlayerID` ) AS IDs
+	FROM `tbl_playerdata` tpd
+	INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+	INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+	WHERE tpd.`GameID` = {$GameID}
+	GROUP BY tpd.`PlayerID`
 ");
-if(@mysqli_num_rows($PlayerCount_q) != 0)
+if(@mysqli_num_rows($TotalRows_q) != 0)
 {
-	$PlayerCount_r = @mysqli_fetch_assoc($PlayerCount_q);
-	$total_players = $PlayerCount_r['total_players'];
+	$total_players = @mysqli_num_rows($TotalRows_q);
 	// show global server stats link
 	echo '
 	<div style="margin-bottom: 4px; position: relative;">
@@ -173,6 +176,6 @@ else
 	';
 }
 // free up basic query memory
-@mysqli_free_result($PlayerCount_q);
+@mysqli_free_result($TotalRows_q);
 echo '</div>';
 ?>

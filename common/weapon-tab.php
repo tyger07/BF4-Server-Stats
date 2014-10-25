@@ -3,9 +3,9 @@
 // first connect to the database
 // include config.php contents
 require_once('../config/config.php');
+require_once('../common/connect.php');
 require_once('../common/functions.php');
 require_once('../common/constants.php');
-$BF4stats = mysqli_connect(HOST, USER, PASS, NAME, PORT);
 
 // default variable to null
 $ServerID = null;
