@@ -53,6 +53,79 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 		<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
 		</tr>
 		';
+		// vehicle stats
+		if($damagetype == 'none')
+		{
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				// see if this player has used this category's weapons
+				$Vehicle_q = @mysqli_query($BF4stats,"
+					SELECT tws.`Friendlyname`, wa.`Kills`, wa.`Deaths`, wa.`Headshots`, wa.`WeaponID`, (wa.`Headshots`/wa.`Kills`) AS HSR
+					FROM `tbl_weapons_stats` wa
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
+					WHERE tsp.`ServerID` = {$ServerID}
+					AND tpd.`PlayerID` = {$PlayerID}
+					AND tws.`Damagetype` LIKE '%vehicle%'
+					AND (tws.`Friendlyname` = 'Z-10w' OR tws.`Friendlyname` = 'XP1' OR tws.`Friendlyname` = 'T90' OR tws.`Friendlyname` = 'Kornet' OR tws.`Friendlyname` = 'Ka-60' OR tws.`Friendlyname` = 'DPV' OR tws.`Friendlyname` = 'RHIB') 
+					AND wa.`Kills` > 0
+					ORDER BY Kills DESC
+				");
+			}
+			// or else this is a global stats page
+			else
+			{
+				// see if this player has used this category's weapons
+				$Vehicle_q = @mysqli_query($BF4stats,"
+					SELECT tws.`Friendlyname`, SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, wa.`WeaponID`, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
+					FROM `tbl_weapons_stats` wa
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tws.`Damagetype` LIKE '%vehicle%'
+					AND (tws.`Friendlyname` = 'Z-10w' OR tws.`Friendlyname` = 'XP1' OR tws.`Friendlyname` = 'T90' OR tws.`Friendlyname` = 'Kornet' OR tws.`Friendlyname` = 'Ka-60' OR tws.`Friendlyname` = 'DPV' OR tws.`Friendlyname` = 'RHIB') 
+					AND wa.`Kills` > 0
+					GROUP BY tws.`Friendlyname`
+					ORDER BY Kills DESC
+				");
+			}
+			// see if we have any records for this player for this category
+			if(@mysqli_num_rows($Vehicle_q) != 0)
+			{
+				while($Vehicle_r = @mysqli_fetch_assoc($Vehicle_q))
+				{
+					$weapon = $Vehicle_r['Friendlyname'];
+					if(in_array($weapon,$weapon_array))
+					{
+						$weapon_name = array_search($weapon,$weapon_array);
+						$weapon_img = './images/weapons/' . $weapon . '.png';
+					}
+					// this weapon is missing!
+					else
+					{
+						$weapon_name = preg_replace("/_/"," ",$weapon);
+						$weapon_img = './images/weapons/missing.png';
+					}
+					$kills = $Vehicle_r['Kills'];
+					$deaths = $Vehicle_r['Deaths'];
+					$headshots = $Vehicle_r['Headshots'];
+					$ratio = round(($Vehicle_r['HSR']*100),2);
+					$weaponID = $Vehicle_r['WeaponID'];
+					echo '
+					<tr>
+					<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
+					<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
+					</tr>
+					';
+				}
+			}
+		}
 		while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 		{
 			$weapon = $Weapon_r['Friendlyname'];
@@ -88,6 +161,8 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 			</tr>
 			';
 		}
+		// free up vehicle query memory
+		@mysqli_free_result($Vehicle_q);
 		// free up weapon query memory
 		@mysqli_free_result($Weapon_q);
 		echo '

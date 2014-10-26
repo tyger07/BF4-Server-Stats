@@ -19,8 +19,8 @@ $mode_array = array(
 	// second assault
 	'Capture The Flag'			=>	'CaptureTheFlag0',
 	// naval strike
-	'Carrier Assault Large'			=>	'CarrierAssaultLarge0',
-	'Carrier Assault Small'			=>	'CarrierAssaultSmall0',
+	'Carrier Assault Large'		=>	'CarrierAssaultLarge0',
+	'Carrier Assault Small'		=>	'CarrierAssaultSmall0',
 	// dragons teeth
 	'Chain Link'				=>	'Chainlink0'
 	// note comma at the end of each line except for the last line
@@ -145,6 +145,7 @@ $weapon_array = array(
 	'M16A4 M320 Smoke'			=>	'M16A4_M320_SMK',
 	'M1911'						=>	'M1911',
 	'M200'						=>	'M200',
+	'M224'						=>	'M224',
 	'M240'						=>	'M240',
 	'M249'						=>	'M249',
 	'M26 MASS'					=>	'M26Mass',
@@ -279,11 +280,17 @@ $weapon_array = array(
 	'L85A2 M26 Flechette'		=>	'L85A2_M26_Flechette',
 	'L85A2 M26 Frag'			=>	'L85A2_M26_Frag',
 	'L85A2 M26 Slug'			=>	'L85A2_M26_Slug',
+	'L85A2 M320 Grenade V2'		=>	'L85A2_M320_3GL_V2',
 	'L85A2 M320 Flash'			=>	'L85A2_M320_FLASH',
+	'L85A2 M320 Flash V2'		=>	'L85A2_M320_FLASH_V2',
 	'L85A2 M320 HE'				=>	'L85A2_M320_HE',
+	'L85A2 M320 HE V2'			=>	'L85A2_M320_HE_V2',
 	'L85A2 M320 LVG'			=>	'L85A2_M320_LVG',
+	'L85A2 M320 LVG V2'			=>	'L85A2_M320_LVG_V2',
 	'L85A2 M320 SHG'			=>	'L85A2_M320_SHG',
+	'L85A2 M320 SHG V2'			=>	'L85A2_M320_SHG_V2',
 	'L85A2 M320 Smoke'			=>	'L85A2_M320_SMK',
+	'L85A2 M320 Smoke V2'		=>	'L85A2_M320_SMK_V2',
 	'L96A1'						=>	'L96A1',
 	'MTAR-21'					=>	'MTAR21',
 	'MP7'						=>	'MP7',
@@ -306,6 +313,7 @@ $weapon_array = array(
 	'AR-160 M320 SHG'			=>	'AR160_M320_SHG',
 	'AR-160 M320 Smoke'			=>	'AR160_M320_SMK',
 	'AWS'						=>	'AWS',
+	'Ballistic Shield'			=>	'BallisticShield',
 	'CZ 805 M320 3GL'			=>	'CZ805_M320_3GL',
 	'L85A2 M320 3GL'			=>	'L85A2_M320_3GL',
 	'M16A4 M320 3GL'			=>	'M16A4_M320_3GL',
@@ -317,9 +325,27 @@ $weapon_array = array(
 	'SR-2'						=>	'SR2',
 	'SR338'						=>	'SR338',
 	'Steyr AUG M320 3GL'		=>	'SteyrAug_M320_3GL',
-	'SW40'						=>	'SW40'
+	'SW40'						=>	'SW40',
+	'UCAV'						=>	'UCAV',
 	//	dragons teeth
+	'Desert Eagle'				=>	'DesertEagle',
+	'Unica 6'					=>	'Unica6',
+	'CS5'						=>	'CS5',
+	'MPX'						=>	'MPX',
+	'Bulldog'					=>	'Bulldog',
 	// final stand
+	// vehicle
+	'DPV'						=>	'DPV',
+	'EOD Bot'					=>	'EODBot',
+	'Level Item'				=>	'Gameplay',
+	'Ka-60'						=>	'Ka-60',
+	'Kornet'					=>	'Kornet',
+	'RHIB'						=>	'RHIB',
+	'T90'						=>	'T90',
+	'VDV Buggy'					=>	'VDV_Buggy',
+	'UCAV Launcher'				=>	'XP1',
+	'RAWR'						=>	'XP3',
+	'Z-10w'						=>	'Z-10w'
 	// note comma at the end of each line except for the last line
 );
 
@@ -337,7 +363,7 @@ $cat_array = array(
 	'Explosive'		=>	'explosive',
 	'Impact'		=>	'impact',
 	'Melee'			=>	'melee',
-	'Machinery'		=>	'none',
+	'Vehicle'		=>	'none',
 	'HVY Vehicle'	=>	'vehicleheavy',
 	'LT Vehicle'	=>	'vehiclelight',
 	'Aircraft'		=>	'vehicleair',

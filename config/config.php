@@ -10,7 +10,7 @@ DEFINE('USER', '');													// database user name - sometimes the same as th
 DEFINE('PASS', '');													// database password
 
 // CLAN NAME
-$clan_name		= '';												// your gaming clan or organization name
+$clan_name		= 'clan';											// your gaming clan or organization name
 
 // PAGE BANNER
 $banner_image	= './images/bf4-logo.png';							// your desired page banner

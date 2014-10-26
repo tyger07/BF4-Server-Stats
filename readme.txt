@@ -109,6 +109,10 @@ Enjoy!
 
 ## Changelog:
 
+10-25-2014:
+- DLC Weapons added
+- Vehicle images and stats added (where possible)
+
 10-24-2014:
 - Most DLC now included (weapons and vehicles still missing)
 - Bugs fixed
