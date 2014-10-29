@@ -109,9 +109,15 @@ Enjoy!
 
 ## Changelog:
 
+10-29-2014:
+- Block common bots
+- Faster combined player counts on a few pages
+- Added filter to not display servers if there `ConnectionState` is NOT NULL in the `tbl_server` table.
+
 10-25-2014:
 - DLC Weapons added
 - Vehicle images and stats added (where possible)
+- Brighter weapon images
 
 10-24-2014:
 - Most DLC now included (weapons and vehicles still missing)

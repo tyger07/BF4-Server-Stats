@@ -18,7 +18,7 @@ if(!empty($ServerID))
 {
 	// find out how many rows are in the table 
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT COUNT(tpd.`SoldierName`)
+		SELECT COUNT(tpd.`PlayerID`)
 		FROM `tbl_playerstats` tps
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -40,16 +40,16 @@ else
 {
 	// find out how many rows are in the table
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT SUM( tpd.`PlayerID` ) AS IDs
-		FROM `tbl_playerdata` tpd
+		SELECT COUNT(DISTINCT tpd.`PlayerID`)
+		FROM  `tbl_playerdata` tpd
 		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
 		WHERE tpd.`GameID` = {$GameID}
-		GROUP BY tpd.`PlayerID`
 	");
 	if(@mysqli_num_rows($TotalRows_q) != 0)
 	{
-		$numrows = @mysqli_num_rows($TotalRows_q);
+		$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
+		$numrows = $TotalRows_r[0];
 	}
 	else
 	{

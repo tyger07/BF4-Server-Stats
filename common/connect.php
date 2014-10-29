@@ -45,6 +45,7 @@ $ServerID_q = @mysqli_query($BF4stats,"
 	SELECT `ServerID`
 	FROM `tbl_server`
 	WHERE `GameID` = {$GameID}
+	AND `ConnectionState` IS NULL 
 ");
 
 // initialize an empty array for storing server ids in

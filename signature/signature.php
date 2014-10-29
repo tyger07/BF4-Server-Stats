@@ -136,16 +136,16 @@ if(!empty($pid) && !empty($gid))
 		
 		// find out how many rows are in the table
 		$TotalRows_q = @mysqli_query($BF4stats,"
-			SELECT SUM( tpd.`PlayerID` ) AS IDs
-			FROM `tbl_playerdata` tpd
+			SELECT COUNT(DISTINCT tpd.`PlayerID`)
+			FROM  `tbl_playerdata` tpd
 			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
 			WHERE tpd.`GameID` = {$GameID}
-			GROUP BY tpd.`PlayerID`
 		");
 		if(@mysqli_num_rows($TotalRows_q) != 0)
 		{
-			$total_players = @mysqli_num_rows($TotalRows_q);
+			$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
+			$total_players = $TotalRows_r[0];
 		}
 		else
 		{
