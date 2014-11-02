@@ -44,5 +44,5 @@ else
 	$code_Displayed = $Code;
 }
 						
-Statsout($code_Displayed . " Stats", $Code, $weapon_array, $PlayerID, $ServerID, $BF4stats);
+Statsout($code_Displayed . " Stats", $Code, $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats);
 ?>

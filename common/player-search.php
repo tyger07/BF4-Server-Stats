@@ -61,6 +61,7 @@ if(!empty($SoldierName) && !empty($GameID))
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 			WHERE tpd.`SoldierName` LIKE '%{$SoldierName}%'
 			AND tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
 			GROUP BY tpd.`SoldierName`
 			ORDER BY Score DESC, tpd.`SoldierName` ASC
 			LIMIT 0, 20

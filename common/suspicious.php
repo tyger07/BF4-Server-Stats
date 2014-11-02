@@ -88,6 +88,7 @@ else
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
 		AND tpd.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		GROUP BY tpd.`SoldierName`
 		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 	");

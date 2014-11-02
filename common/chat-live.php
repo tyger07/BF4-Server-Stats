@@ -100,6 +100,7 @@ if(!empty($query) && !(($timestamp = strtotime($query)) === false))
 }
 
 // updating text...
+// hidden by default until time is reached
 echo '
 <div id="fadein" style="position: absolute; top: -31px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
@@ -108,6 +109,7 @@ echo '
 </div>
 ';
 // last updated text...
+// shown by default until faded away
 echo '
 <div id="fadeaway" style="position: absolute; top: -31px; left: -150px;">
 <div class="subsection" style="width: 100px;">
@@ -116,22 +118,24 @@ echo '
 </div>
 ';
 // find out client's current time with javascript
+// and fadeaway javascript
+// and fadein javascript
 echo '
 <script type="text/javascript">
 var date = new Date();
 var hours = date.getHours();
 var minutes = date.getMinutes();
-if (hours.toString() == "0")
+if (hours.toString().length == 1)
 {
-hours = "12";
+	hours = "0" + hours;
 }
 if (minutes.toString().length == 1)
 {
-minutes = "0" + minutes;
+	minutes = "0" + minutes;
 }
 document.getElementById("timestamp").innerHTML = hours + \':\' + minutes;
 $("#fadeaway").finish().show().delay(1000).fadeOut("slow");
-$("#fadein").delay(19000).fadeIn("slow");
+$("#fadein").delay(59000).fadeIn("slow");
 </script>
 ';
 
@@ -170,6 +174,8 @@ if(!empty($query))
 	';
 }
 
+echo '<br/>';
+
 // pagination code thanks to: http://www.phpfreaks.com/tutorial/basic-pagination
 // find out how many rows are in the table
 // if there is a ServerID, this is a server stats page
@@ -188,6 +194,8 @@ if(!empty($ServerID))
 				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 			");
+			$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
+			$numrows = $TotalRows_r['count'];
 		}
 		else
 		{
@@ -201,26 +209,20 @@ if(!empty($ServerID))
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 			");
+			$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
+			$numrows = $TotalRows_r['count'];
 		}
 	}
 	else
 	{
-		$TotalRows_q = @mysqli_query($BF4stats,"
-			SELECT count(`logDate`) AS count
-			FROM `tbl_chatlog`
-			WHERE `ServerID` = {$ServerID}
-			AND `logMessage` != ''
-			AND `logMessage` NOT LIKE '%ID_CHAT_%'
-			AND `logSoldierName` != 'Server'
-		");
+		echo '<div style="position: relative;">';
+		$numrows = cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats);
+		echo '</div>';
 	}
 }
 // or else this is a global stats page
 else
-{
-	// merge server IDs array into a variable
-	$ids = join(',',$ServerIDs);
-	
+{	
 	if(!empty($query))
 	{
 		if(!empty($date_query))
@@ -228,41 +230,38 @@ else
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
-				WHERE `ServerID` in ({$ids})
+				WHERE `ServerID` IN ({$valid_ids})
 				AND `logMessage` != ''
 				AND `logMessage` NOT LIKE '%ID_CHAT_%'
 				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 			");
+			$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
+			$numrows = $TotalRows_r['count'];
 		}
 		else
 		{
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
-				WHERE `ServerID` in ({$ids})
+				WHERE `ServerID` IN ({$valid_ids})
 				AND `logMessage` != ''
 				AND `logMessage` NOT LIKE '%ID_CHAT_%'
 				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 			");
+			$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
+			$numrows = $TotalRows_r['count'];
 		}
 	}
 	else
 	{
-		$TotalRows_q = @mysqli_query($BF4stats,"
-			SELECT count(`logDate`) AS count
-			FROM `tbl_chatlog`
-			WHERE `ServerID` in ({$ids})
-			AND `logMessage` != ''
-			AND `logMessage` NOT LIKE '%ID_CHAT_%'
-			AND `logSoldierName` != 'Server'
-		");
+		echo '<div style="position: relative;">';
+		$numrows = cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats);
+		echo '</div>';
 	}
 }
-$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
-$numrows = $TotalRows_r[0];
 // number of pagination rows to show per page
 $rowsperpage = 20;
 // find out total pagination pages
@@ -271,14 +270,7 @@ $totalpages = ceil($numrows / $rowsperpage);
 if(empty($currentpage))
 {
 	// default page num
-	if(empty($date_query))
-	{
-		$currentpage = $totalpages;
-	}
-	else
-	{
-		$currentpage = 1;
-	}
+	$currentpage = 1;
 }
 // if current pagination page is greater than total pages...
 if($currentpage > $totalpages)
@@ -316,8 +308,8 @@ if(!empty($order))
 	{
 		// unexpected input detected
 		// use default instead
-		$order = 'ASC';
-		$nextorder = 'DESC';
+		$order = 'DESC';
+		$nextorder = 'ASC';
 	}
 	else
 	{
@@ -334,8 +326,8 @@ if(!empty($order))
 // set default if no order provided in URL
 else
 {
-	$order = 'ASC';
-	$nextorder = 'DESC';
+	$order = 'DESC';
+	$nextorder = 'ASC';
 }
 // the pagination offset of the list, based on current page 
 $offset = ($currentpage - 1) * $rowsperpage;
@@ -392,9 +384,6 @@ if(!empty($ServerID))
 // or else this is a global stats page
 else
 {
-	// merge server IDs array into a variable
-	$ids = join(',',$ServerIDs);
-	
 	if(!empty($query))
 	{
 		if(!empty($date_query))
@@ -402,7 +391,7 @@ else
 			$Messages_q = @mysqli_query($BF4stats,"
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
-				WHERE `ServerID` in ({$ids})
+				WHERE `ServerID` IN ({$valid_ids})
 				AND `logMessage` != ''
 				AND `logMessage` NOT LIKE '%ID_CHAT_%'
 				AND `logSoldierName` != 'Server'
@@ -416,7 +405,7 @@ else
 			$Messages_q = @mysqli_query($BF4stats,"
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
-				WHERE `ServerID` in ({$ids})
+				WHERE `ServerID` IN ({$valid_ids})
 				AND `logMessage` != ''
 				AND `logMessage` NOT LIKE '%ID_CHAT_%'
 				AND `logSoldierName` != 'Server'
@@ -432,7 +421,7 @@ else
 		$Messages_q = @mysqli_query($BF4stats,"
 			SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 			FROM `tbl_chatlog`
-			WHERE `ServerID` in ({$ids})
+			WHERE `ServerID` IN ({$valid_ids})
 			AND `logMessage` != ''
 			AND `logMessage` NOT LIKE '%ID_CHAT_%'
 			AND `logSoldierName` != 'Server'
@@ -447,7 +436,6 @@ $count = ($currentpage * 20) - 20;
 if(@mysqli_num_rows($Messages_q) != 0)
 {
 	echo '
-	<br/>
 	<table class="prettytable">
 	<tr>
 	<th width="3%" class="countheader">#</th>
@@ -466,11 +454,11 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	{
 		if(!empty($query))
 		{
-			echo 'ASC&amp;q=' . $query . '"><span class="orderheader">Date</span></a></th>';
+			echo 'DESC&amp;q=' . $query . '"><span class="orderheader">Date</span></a></th>';
 		}
 		else
 		{
-			echo 'ASC"><span class="orderheader">Date</span></a></th>';
+			echo 'DESC"><span class="orderheader">Date</span></a></th>';
 		}
 	}
 	else
@@ -599,24 +587,25 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		{
 			$PlayerID_q = @mysqli_query($BF4stats,"
 				SELECT tpd.`PlayerID`
-				FROM `tbl_playerstats` tps
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tsp.`ServerID` = {$ServerID}
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				WHERE tpd.`GameID` = {$GameID}
 				AND tpd.`SoldierName` = '{$logSoldierName}'
-				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` = {$ServerID}
 			");
 		}
 		// or else this is a global stats page
 		else
-		{
+		{	
 			$PlayerID_q = @mysqli_query($BF4stats,"
 				SELECT tpd.`PlayerID`
-				FROM `tbl_playerstats` tps
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tpd.`SoldierName` = '{$logSoldierName}'
-				AND tpd.`GameID` = {$GameID}
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				WHERE tpd.`GameID` = {$GameID}
+				AND tpd.`SoldierName` = '{$logSoldierName}'
+				AND tsp.`ServerID` IN ({$valid_ids})
 				GROUP BY tpd.`PlayerID`
 			");
 		}
@@ -670,7 +659,6 @@ if(@mysqli_num_rows($Messages_q) != 0)
 else
 {
 	echo '
-	<br/>
 	<div class="subsection">
 	<div class="headline">
 	';

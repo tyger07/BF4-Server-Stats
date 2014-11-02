@@ -28,6 +28,7 @@ echo '
 <div class="sectionheader" style="position: relative;">
 ';
 // updating text...
+// hidden by default until time is reached
 echo '
 <div id="fadein" style="position: absolute; top: 4px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
@@ -36,6 +37,7 @@ echo '
 </div>
 ';
 // last updated text...
+// shown by default until faded away
 echo '
 <div id="fadeaway" style="position: absolute; top: 4px; left: -150px;">
 <div class="subsection" style="width: 100px;">
@@ -48,22 +50,24 @@ Live Scoreboard
 </div>
 ';
 // find out client's current time with javascript
+// and fadeaway javascript
+// and fadein javascript
 echo '
 <script type="text/javascript">
 var date = new Date();
 var hours = date.getHours();
 var minutes = date.getMinutes();
-if (hours.toString() == "0")
+if (hours.toString().length == 1)
 {
-hours = "12";
+	hours = "0" + hours;
 }
 if (minutes.toString().length == 1)
 {
-minutes = "0" + minutes;
+	minutes = "0" + minutes;
 }
 document.getElementById("timestamp").innerHTML = hours + \':\' + minutes;
 $("#fadeaway").finish().show().delay(1000).fadeOut("slow");
-$("#fadein").delay(19000).fadeIn("slow");
+$("#fadein").delay(29000).fadeIn("slow");
 </script>
 ';
 // query for player in server and order them by team
@@ -645,12 +649,12 @@ else
 					// see if this player has server stats in this server yet
 					$PlayerID_q = @mysqli_query($BF4stats,"
 						SELECT tpd.`PlayerID`
-						FROM `tbl_playerstats` tps
-						INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-						INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-						WHERE tsp.`ServerID` = {$ServerID}
+						FROM `tbl_playerdata` tpd
+						INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+						INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+						WHERE tpd.`GameID` = {$GameID}
 						AND tpd.`SoldierName` = '{$player}'
-						AND tpd.`GameID` = {$GameID}
+						AND tsp.`ServerID` = {$ServerID}
 					");
 					// server stats found for this player in this server
 					if(@mysqli_num_rows($PlayerID_q) == 1)

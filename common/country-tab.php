@@ -74,6 +74,7 @@ else
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE tpd.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		AND tpd.`CountryCode` = '{$CountryCodeL}'
 		LIMIT 0, 1
 	");
@@ -128,6 +129,7 @@ else
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE tpd.`CountryCode` = '{$CountryCodeL}'
 		AND tpd.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		GROUP BY tpd.`SoldierName`
 		ORDER BY Score DESC, Rounds DESC, tpd.`SoldierName` ASC
 		LIMIT 0, 20

@@ -19,7 +19,7 @@ if(!empty($ServerID))
 		AND tpd.`CountryCode` != ''
 		GROUP BY tpd.`CountryCode`
 		ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
-		LIMIT 0, 50
+		LIMIT 0, 20
 	");
 }
 // or else this is a global stats page
@@ -32,11 +32,12 @@ else
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE tpd.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		AND tpd.`CountryCode` != '--'
 		AND tpd.`CountryCode` != ''
 		GROUP BY tpd.`CountryCode`
 		ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
-		LIMIT 0, 50
+		LIMIT 0, 20
 	");
 }
 // no country stats found
@@ -64,6 +65,8 @@ if(@mysqli_num_rows($CountryMap_q) == 0)
 // found country stats
 else
 {
+	// initialize empty array
+	$CountryCodes = array();
 	echo '
 	<table class="prettytable">
 	<tr>
@@ -91,7 +94,8 @@ else
 				data.setValue(' . $mapcount . ', 0, \'' . $CountryCodeMap . '\');
 				data.setValue(' . $mapcount . ', 1, ' . $PlayerCountMap . ');
 				';
-				$mapcount++;	
+				$mapcount++;
+				$CountryCodes[] = strtoupper($CountryMap_r['CountryCode']);
 			}
 			echo '
 			var options = {
@@ -99,7 +103,7 @@ else
 				backgroundColor: {fill: \'transparent\'},
 				datalessRegionColor: \'transparent\',
 				tooltip:  {textStyle: {color: \'#AA0000\'}},
-				legend: {textStyle: {color: \'#000\', fontSize: 12}}
+				legend: {textStyle: {color: \'#888\', bold: \'false\', fontSize: 12, auraColor: \'none\'}}
 			};
 			var geomap = new google.visualization.GeoChart(
 			document.getElementById(\'visualization\'));
@@ -116,43 +120,6 @@ else
 	</tr>
 	</table>
 	<br/>
-	';
-	// query for top 20 countries
-	if(!empty($ServerID))
-	{
-		$CountryCode_q = mysqli_query($BF4stats,"
-			SELECT tpd.`CountryCode`, COUNT(tpd.`CountryCode`) AS PlayerCount
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			WHERE tsp.`ServerID` = {$ServerID}
-			AND tpd.`GameID` = {$GameID}
-			GROUP BY tpd.`CountryCode`
-			ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
-			LIMIT 0, 20
-		");
-	}
-	else
-	{
-		$CountryCode_q = mysqli_query($BF4stats,"
-			SELECT tpd.`CountryCode`, COUNT(tpd.`CountryCode`) AS PlayerCount
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			WHERE tpd.`GameID` = {$GameID}
-			GROUP BY tpd.`CountryCode`
-			ORDER BY PlayerCount DESC, tps.`Score` DESC, tpd.`CountryCode` ASC
-			LIMIT 0, 20
-		");
-	}
-	// initialize empty array
-	$CountryCodes = array();
-	// add the countries to an array which we will step through
-	while($CountryCode_r = @mysqli_fetch_array($CountryCode_q))
-	{
-		$CountryCodes[] = strtoupper($CountryCode_r['CountryCode']);
-	}
-	echo '
 	<div id="tabs" style="min-height: 785px;">
 	<ul>
 	<li><div class="subscript">1</div><a href="#tabs-1">' . $CountryCodes['0'] . '</a></li>
@@ -232,6 +199,7 @@ else
 			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 			WHERE tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
 			AND tpd.`CountryCode` = '{$CountryCodeL}'
 			LIMIT 0, 1
 		");
@@ -271,7 +239,7 @@ else
 			WHERE tsp.`ServerID` = {$ServerID}
 			AND tpd.`CountryCode` = '{$CountryCodeL}'
 			AND tpd.`GameID` = {$GameID}
-			ORDER BY Score DESC, Rounds DESC, tpd.`SoldierName` ASC
+			ORDER BY Score DESC, tpd.`SoldierName` ASC
 			LIMIT 0, 20
 		");
 	}
@@ -286,8 +254,9 @@ else
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 			WHERE tpd.`CountryCode` = '{$CountryCodeL}'
 			AND tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
 			GROUP BY tpd.`SoldierName`
-			ORDER BY Score DESC, Rounds DESC, tpd.`SoldierName` ASC
+			ORDER BY Score DESC, tpd.`SoldierName` ASC
 			LIMIT 0, 20
 		");
 	}

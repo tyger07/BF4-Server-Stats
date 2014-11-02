@@ -41,29 +41,23 @@ elseif($SoldierName != null)
 	// or else this is a global stats page
 	else
 	{
-		// find if this soldiername is in server stats
-		$Find_q = @mysqli_query($BF4stats,"
-			SELECT `SoldierName`
-			FROM `tbl_playerdata`
-			WHERE `PlayerID` = {$PlayerID}
-			AND `GameID` = {$GameID}
+		// get player stats
+		$PlayerData_q = @mysqli_query($BF4stats,"
+			SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
+			FROM `tbl_playerstats` tps
+			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE tpd.`PlayerID` = {$PlayerID}
+			AND tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
+			GROUP BY tpd.`PlayerID`
 		");
 		// was a soldier found?
-		if(@mysqli_num_rows($Find_q) != 0)
+		if(@mysqli_num_rows($PlayerData_q) == 1)
 		{
 			$soldier_found = 1;
-			// get player stats
-			$PlayerData_q = @mysqli_query($BF4stats,"
-				SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
-				FROM `tbl_playerstats` tps
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-			");
+			
 		}
-		// free up soldier find query memory
-		@mysqli_free_result($Find_q);
 	}
 	// if no stats were found for player name, display this
 	if($soldier_found == 0)
@@ -159,6 +153,7 @@ elseif($SoldierName != null)
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 				WHERE tpd.`SoldierName` LIKE '%{$SoldierName}%'
 				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
 				GROUP BY tpd.`SoldierName`
 				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 				LIMIT 0, 20
@@ -481,7 +476,7 @@ elseif($SoldierName != null)
 		if(!empty($ServerID))
 		{
 			$Weapon_q = @mysqli_query($BF4stats,"
-				SELECT tws.`Friendlyname`, wa.`Kills`, wa.`Deaths`, wa.`Headshots`, (wa.`Headshots`/wa.`Kills`) AS HSR
+				SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
 				FROM `tbl_weapons_stats` wa
 				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -489,28 +484,89 @@ elseif($SoldierName != null)
 				WHERE tsp.`ServerID` = {$ServerID}
 				AND tpd.`PlayerID` = {$PlayerID}
 				AND tpd.`GameID` = {$GameID}
-				AND wa.`Kills` > 0
-				AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'none' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
+				AND (wa.`Kills` > 0 OR wa.`Deaths` > 0)
+				AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
+				GROUP BY tws.`Damagetype`
+				ORDER BY Kills DESC
 			");
+			
+			// do a separate query for vehicles
+			$Vehicle_q = @mysqli_query($BF4stats,"
+				SELECT SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
+				FROM `tbl_weapons_stats` wa
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				AND (wa.`Kills` > 0 OR wa.`Deaths` > 0)
+				AND (tws.`Damagetype` LIKE '%vehicle%' OR tws.`DamageType` = 'none')
+				GROUP BY tpd.`PlayerID`
+			");
+			// initialize values
+			$VehicleFound = 0;
+			$VehicleAdded = 0;
+			if(@mysqli_num_rows($Vehicle_q) == 1)
+			{
+				$Vehicle_r = @mysqli_fetch_assoc($Vehicle_q);
+				$VehicleKills = $Vehicle_r['Kills'];
+				$VehicleDeaths = $Vehicle_r['Deaths'];
+				$VehicleHS = $Vehicle_r['Headshots'];
+				$VehicleHSR = $Vehicle_r['HSR'];
+				$VehicleFound = 1;
+			}
 		}
 		// or else this is a global stats page
 		else
 		{
+			
 			$Weapon_q = @mysqli_query($BF4stats,"
-				SELECT tws.`Friendlyname`, SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, wa.`WeaponID`, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
+				SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
 				FROM `tbl_weapons_stats` wa
 				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 				INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
 				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tsp.`ServerID` IN ({$valid_ids})
 				AND tpd.`GameID` = {$GameID}
-				AND wa.`Kills` > 0
-				AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'none' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
-				GROUP BY tws.`Friendlyname`
+				AND (wa.`Kills` > 0 OR wa.`Deaths` > 0)
+				AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
+				GROUP BY tws.`Damagetype`
+				ORDER BY Kills DESC
 			");
+			
+			// do a separate query for vehicles
+			$Vehicle_q = @mysqli_query($BF4stats,"
+				SELECT SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
+				FROM `tbl_weapons_stats` wa
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
+				WHERE tsp.`ServerID` IN ({$valid_ids})
+				AND tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				AND (wa.`Kills` > 0 OR wa.`Deaths` > 0)
+				AND (tws.`Damagetype` LIKE '%vehicle%' OR tws.`DamageType` = 'none')
+				GROUP BY tpd.`PlayerID`
+			");
+			// initialize values
+			$VehicleFound = 0;
+			$VehicleAdded = 0;
+			if(@mysqli_num_rows($Vehicle_q) == 1)
+			{
+				$Vehicle_r = @mysqli_fetch_assoc($Vehicle_q);
+				$VehicleKills = $Vehicle_r['Kills'];
+				$VehicleDeaths = $Vehicle_r['Deaths'];
+				$VehicleHS = $Vehicle_r['Headshots'];
+				$VehicleHSR = $Vehicle_r['HSR'];
+				$VehicleFound = 1;
+			}
 		}
 		if(@mysqli_num_rows($Weapon_q) != 0)
 		{
+			// initialize empty array for storing weapons
+			$WeaponCodes = array();
 			echo '
 			<br/>
 			<table class="prettytable">
@@ -530,24 +586,15 @@ elseif($SoldierName != null)
 						$hmax = 0;
 						while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 						{
-							$weapon = $Weapon_r['Friendlyname'];
-							// rename 'Death'
-							if($weapon == 'Death')
+							$weapon = $Weapon_r['Damagetype'];
+							
+							// convert to nice version
+							if(in_array($weapon,$cat_array))
 							{
-								$weapon = 'Machinery';
-							}
-							// convert weapon to friendly name
-							if(in_array($weapon,$weapon_array))
-							{
-								$weapon = array_search($weapon,$weapon_array);
-							}
-							// this weapon is missing!
-							else
-							{
-								$weapon = preg_replace("/_/"," ",$weapon);
+								$weapon = array_search($weapon,$cat_array);
 							}
 							$deaths = $Weapon_r['Deaths'];
-							$kills = $Weapon_r['Kills'];
+							$kills = $Weapon_r['Kills'];						
 							$headshots = $Weapon_r['Headshots'];
 							$hsr = $Weapon_r['HSR'];
 							// set max values higher than max for cropping reasons
@@ -561,6 +608,38 @@ elseif($SoldierName != null)
 							{
 								$hmax = $kills + 50;
 							}
+							
+							// are there vehicle stats?
+							if($VehicleFound == 1)
+							{
+								// we want to inject the vehicle stats into the correct place
+								if($kills > $VehicleKills)
+								{
+									// add to tabbed display array
+									$WeaponCodes[] = $Weapon_r['Damagetype'];
+								}
+								elseif($kills < $VehicleKills && $VehicleAdded == 0)
+								{
+									// add vehicle to tabbed display array
+									$WeaponCodes[] = 'VehicleCustom';
+									echo ',
+									[\'Vehicle\', ' . $VehicleKills . ', ' . $VehicleDeaths . ', ' . $VehicleHS . ',  ' . $VehicleHSR * 100 . ']
+									';
+									// add regular to tabbed display array
+									$WeaponCodes[] = $Weapon_r['Damagetype'];
+									$VehicleAdded = 1;
+								}
+								else
+								{
+									// proceed like normal
+									$WeaponCodes[] = $Weapon_r['Damagetype'];
+								}
+							}
+							else
+							{
+								// add to tabbed display array
+								$WeaponCodes[] = $Weapon_r['Damagetype'];
+							}
 							echo ',
 							[\'' . $weapon . '\', ' . $kills . ', ' . $deaths . ', ' . $headshots . ',  ' . $hsr * 100 . ']
 							';
@@ -569,16 +648,17 @@ elseif($SoldierName != null)
 					]);
 					var options = {
 						title: \'Headshots\',
-						titleTextStyle: {color: \'#666\', bold: \'false\'},
-						legend: {textStyle: {color: \'#666\'}},
-						hAxis: {title: \'Kills\', titleTextStyle: {color: \'#666\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $hmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#333\'},
-						vAxis: {title: \'Deaths\', titleTextStyle: {color: \'#666\'}, textStyle:  {color: \'transparent\'}, minValue: -1, maxValue: ' . $vmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#333\'},
-						bubble: {textStyle: {color: \'#888\', fontSize: 12}, stroke: \'transparent\'},
+						titleTextStyle: {color: \'#888\', bold: \'false\', fontSize: 12, auraColor: \'none\'},
+						legend: {textStyle: {color: \'#888\', bold: \'false\', fontSize: 12, auraColor: \'none\'}},
+						hAxis: {title: \'Kills\', titleTextStyle: {color: \'#888\', bold: \'false\', fontSize: 12, auraColor: \'none\'}, textStyle:  {color: \'#888\', auraColor: \'none\', fontSize: 8}, minValue: -1, maxValue: ' . $hmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#666\'},
+						vAxis: {title: \'Deaths\', titleTextStyle: {color: \'#888\', bold: \'false\', fontSize: 12, auraColor: \'none\'}, textStyle:  {color: \'#888\', auraColor: \'none\', fontSize: 8}, minValue: -1, maxValue: ' . $vmax . ', gridlines: {color: \'transparent\'}, baselineColor:  \'#666\'},
+						bubble: {textStyle: {color: \'#888\', fontSize: 10, bold: \'false\', auraColor: \'none\'}, stroke: \'transparent\'},
 						backgroundColor: \'transparent\',
 						chartArea: {left: 20, top: 50, width: "90%", height: "70%"},
-						colorAxis: {minValue: 0, colors: [\'#333333\', \'#640000\'], legend: {textStyle: {color: \'#666\'}, position: \'top\'}},
-						sizeAxis: {minValue: 0, maxValue: 1, minSize: 30, maxSize: 50},
-						tooltip: {textStyle: {color: \'#AA0000\'}}
+						colorAxis: {minValue: 0, colors: [\'#333333\', \'#640000\'], legend: {textStyle: {color: \'#888\'}, position: \'top\'}},
+						sizeAxis: {minValue: 0, maxValue: 1, minSize: 15, maxSize: 20},
+						tooltip: {textStyle: {color: \'#AA0000\', auraColor: \'none\'}},
+						enableInteractivity: \'true\'
 					};
 					// Create and draw the visualization.
 					var chart = new google.visualization.BubbleChart(
@@ -600,27 +680,6 @@ elseif($SoldierName != null)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// find out which weapons this player has stats for
-				$Weapon_q2 = @mysqli_query($BF4stats,"
-					SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills
-					FROM `tbl_weapons_stats` wa
-					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
-					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-					INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
-					WHERE tsp.`ServerID` = {$ServerID}
-					AND tpd.`PlayerID` = {$PlayerID}
-					AND wa.`Kills` > 0
-					AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'none' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
-					GROUP BY tws.`Damagetype`
-					ORDER BY Kills DESC
-				");
-				// initialize empty array
-				$WeaponCodes = array();
-				// add the damage type to an array which we will step through
-				while($Weapon_r2 = @mysqli_fetch_array($Weapon_q2))
-				{
-					$WeaponCodes[] = $Weapon_r2['Damagetype'];
-				}
 				// display weapon category tabs
 				// clean up first tab's name
 				// find clean name in array
@@ -666,7 +725,7 @@ elseif($SoldierName != null)
 				';
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
-				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, $ServerID, $BF4stats);
+				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats);
 				echo '</div>';
 			}
 			// or else this is a global stats page
@@ -674,26 +733,6 @@ elseif($SoldierName != null)
 			// but I am paranoid
 			else
 			{
-				// find out which weapons this player has stats for
-				$Weapon_q2 = @mysqli_query($BF4stats,"
-					SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills
-					FROM `tbl_weapons_stats` wa
-					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = wa.`StatsID`
-					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-					INNER JOIN `tbl_weapons` tws ON tws.`WeaponID` = wa.`WeaponID`
-					WHERE tpd.`PlayerID` = {$PlayerID}
-					AND wa.`Kills` > 0
-					AND (tws.`Damagetype` = 'assaultrifle' OR tws.`Damagetype` = 'lmg' OR tws.`Damagetype` = 'shotgun' OR tws.`Damagetype` = 'smg' OR tws.`Damagetype` = 'sniperrifle' OR tws.`Damagetype` = 'handgun' OR tws.`Damagetype` = 'projectileexplosive' OR tws.`Damagetype` = 'explosive' OR tws.`Damagetype` = 'melee' OR tws.`Damagetype` = 'none' OR tws.`Damagetype` = 'carbine' OR tws.`Damagetype` = 'dmr' OR tws.`Damagetype` = 'impact')
-					GROUP BY tws.`Damagetype`
-					ORDER BY Kills DESC
-				");
-				// initialize empty array
-				$WeaponCodes = array();
-				// add the damage type to an array which we will step through
-				while($Weapon_r2 = @mysqli_fetch_array($Weapon_q2))
-				{
-					$WeaponCodes[] = $Weapon_r2['Damagetype'];
-				}
 				// display weapon category tabs
 				// clean up first tab's name
 				// find clean name in array
@@ -739,18 +778,19 @@ elseif($SoldierName != null)
 				';
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
-				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, null, $BF4stats);
+				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, null, $valid_ids, $GameID, $BF4stats);
 				echo '</div>';
 			}
 			echo '
 			</div>
 			<br/>
 			';
-			// free up weapon category query memory
-			@mysqli_free_result($Weapon_q2);
+			// free up vehicle query memory
+			@mysqli_free_result($Vehicle_q);
 		}
-		// free up weapon chart query memory
+		// free up weapon query memory
 		@mysqli_free_result($Weapon_q);
+		
 		// begin dog tag stats
 		// check to see if the player has gotten anyone's tags
 		// if there is a ServerID, this is a server stats page
@@ -779,6 +819,7 @@ elseif($SoldierName != null)
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 				WHERE tpd.`PlayerID` = {$PlayerID}
 				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
 				LIMIT 1
 			");
 		}
@@ -809,6 +850,7 @@ elseif($SoldierName != null)
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 				WHERE tpd.`PlayerID` = {$PlayerID}
 				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
 				LIMIT 1
 			");
 		}
@@ -869,6 +911,7 @@ elseif($SoldierName != null)
 					INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
 					WHERE tpd.`PlayerID` = {$PlayerID}
 					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` IN ({$valid_ids})
 					GROUP BY Victim
 					ORDER BY Count DESC, Victim ASC
 				");
@@ -936,14 +979,107 @@ elseif($SoldierName != null)
 		// make sure the GD extension is available
 		if(extension_loaded('gd') AND function_exists('gd_info'))
 		{
+			echo '
+			<br/>
+			<div class="subsection" style="position: relative;"><center><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></center>
+			';
+			// check if this player's rank is cached in the database
+			// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
+			// (in other words, insert dummy data now quickly, so later the parallel slow execution updates the one dummy data row instead of inserting multiple new data rows in parallel)
+			// rank players by score
+			
+			// check to see if this rank cache table exists
+			@mysqli_query($BF4stats,"
+				CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
+				(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`))
+				ENGINE=MyISAM
+				DEFAULT CHARSET=utf8
+				COLLATE=utf8_bin
+			");
+			// initialize timestamp values
+			$now_timestamp = time();
+			$old = $now_timestamp - 43200;
+			// rank players by score
+			// check if score rank is already cached
+			$ScoreC_q = @mysqli_query($BF4stats,"
+				SELECT `rank`, `timestamp`
+				FROM `tyger_stats_rank_cache`
+				WHERE `PlayerID` = {$PlayerID}
+				AND `category` = 'Score'
+				AND `GID` = '{$GameID}'
+				AND `SID` = '{$valid_ids}'
+				GROUP BY `PlayerID`
+			");
+			if(@mysqli_num_rows($ScoreC_q) != 0)
+			{
+				$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
+				$srank = $ScoreC_r['rank'];
+				$timestamp = $ScoreC_r['timestamp'];
+				
+				// data older than 12 hours? or incorrect data? show recalculate message
+				if(($timestamp <= $old) OR ($srank == 0))
+				{
+					// we aren't actually doing this now
+					// we are just showing the message that it will be done
+					echo '
+					<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+					<div class="subsection" style="width: 100px; font-size: 12px;">
+					<center>Cache Recreated:<br/>Ranks</center>
+					</div>
+					</div>
+					<script type="text/javascript">
+					$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+					</script>
+					';
+				}
+				// show reuse message
+				else
+				{
+					// we aren't actually doing this now
+					// we are just showing the message that it will be done
+					echo '
+					<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+					<div class="subsection" style="width: 100px; font-size: 12px;">
+					<center>Cache Used:<br/>Ranks</center>
+					</div>
+					</div>
+					<script type="text/javascript">
+					$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+					</script>
+					';
+				}
+			}
+			else
+			{
+				// show insert message
+				echo '
+				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Created:<br/>Ranks</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+				</script>
+				';
+				// insert useless dummy data for now
+				@mysqli_query($BF4stats,"
+					INSERT INTO `tyger_stats_rank_cache`
+					(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
+					VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '0', '0')
+				");
+			}
+			// free up score rank cache query memory
+			@mysqli_free_result($ScoreC_q);
+			// done with the dummy cache stuff...
+			
 			// find current URL info
 			$host = 'http://' . $_SERVER['HTTP_HOST'];
 			$dir = dirname($_SERVER['PHP_SELF']);
 			$file = $_SERVER['PHP_SELF'];
 			// show signature images
 			echo '
-			<br/>
-			<div class="subsection"><center><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></center></div>
+			</div>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">

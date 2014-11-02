@@ -18,43 +18,22 @@ if(!empty($ServerID))
 {
 	// find out how many rows are in the table 
 	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT COUNT(tpd.`PlayerID`)
-		FROM `tbl_playerstats` tps
-		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE tsp.`ServerID` = {$ServerID}
-		AND tpd.`GameID` = {$GameID}
+		SELECT `CountPlayers`
+		FROM `tbl_server_stats`
+		WHERE `ServerID` = {$ServerID}
 	");
-	if(@mysqli_num_rows($TotalRows_q) != 0)
-	{
-		$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
-		$numrows = $TotalRows_r[0];
-	}
-	else
-	{
-		$numrows = 1;
-	}
+	$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
+	$numrows = $TotalRows_r['CountPlayers'];
+	
+	// free up total rows query memory
+	@mysqli_free_result($TotalRows_q);
 }
 // or else this is a global stats page
 else
 {
-	// find out how many rows are in the table
-	$TotalRows_q = @mysqli_query($BF4stats,"
-		SELECT COUNT(DISTINCT tpd.`PlayerID`)
-		FROM  `tbl_playerdata` tpd
-		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-		WHERE tpd.`GameID` = {$GameID}
-	");
-	if(@mysqli_num_rows($TotalRows_q) != 0)
-	{
-		$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
-		$numrows = $TotalRows_r[0];
-	}
-	else
-	{
-		$numrows = 1;
-	}
+	echo '<div style="position: relative;">';
+	$numrows = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats);
+	echo '</div>';
 }
 // number of rows to show per page
 $rowsperpage = 20;
@@ -131,9 +110,9 @@ if(!empty($ServerID))
 	// get the info from the db 
 	$Players_q  = @mysqli_query($BF4stats,"
 		SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, tps.`Rounds`, tps.`Headshots`, (tps.`Headshots`/tps.`Kills`) AS HSR
-		FROM `tbl_playerstats` tps
-		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+		FROM `tbl_playerdata` tpd
+		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
 		WHERE tsp.`ServerID` = {$ServerID}
 		AND tpd.`GameID` = {$GameID}
 		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
@@ -150,6 +129,7 @@ else
 		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
 		WHERE tpd.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		GROUP BY tpd.`PlayerID`
 		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
 		LIMIT {$offset}, {$rowsperpage}
@@ -379,8 +359,6 @@ else
 	</table>
 	';
 }
-// free up total rows query memory
-@mysqli_free_result($TotalRows_q);
 // free up players query memory
 @mysqli_free_result($Players_q);
 

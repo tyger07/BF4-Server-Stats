@@ -8,6 +8,7 @@ echo'
 <div id="servers" style="position: relative;">
 ';
 // updating text...
+// hidden by default until time is reached
 echo '
 <div id="fadein" style="position: absolute; top: 11px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
@@ -18,17 +19,18 @@ echo '
 // fadein javascript
 echo '
 <script type="text/javascript">
-$("#fadein").delay(19000).fadeIn("slow");
+$("#fadein").delay(29000).fadeIn("slow");
 </script>
 ';
 // go through each detected server ID
 foreach($ServerIDs as $this_ServerID)
 {
 	$Basic_q = @mysqli_query($BF4stats,"
-		SELECT `mapName`, `Gamemode`, `maxSlots`, `usedSlots`, `ServerName`
-		FROM `tbl_server`
-		WHERE `ServerID` = {$this_ServerID}
-		AND `GameID` = {$GameID}
+		SELECT ts.`mapName`, ts.`Gamemode`, ts.`maxSlots`, ts.`usedSlots`, ts.`ServerName`, tss.`CountPlayers`
+		FROM `tbl_server` ts
+		INNER JOIN `tbl_server_stats` tss ON tss.`ServerID` = ts.`ServerID`
+		WHERE ts.`ServerID` = {$this_ServerID}
+		AND ts.`GameID` = {$GameID}
 	");
 	// information was found
 	if(@mysqli_num_rows($Basic_q) != 0)
@@ -36,6 +38,7 @@ foreach($ServerIDs as $this_ServerID)
 		$Basic_r = @mysqli_fetch_assoc($Basic_q);
 		$used_slots = $Basic_r['usedSlots'];
 		$available_slots = $Basic_r['maxSlots'];
+		$players = $Basic_r['CountPlayers'];
 		$name = $Basic_r['ServerName'];
 		$mode = $Basic_r['Gamemode'];
 		// convert mode to friendly name
@@ -71,8 +74,12 @@ foreach($ServerIDs as $this_ServerID)
 		<img style="height: 32px;" src="' . $map_img . '" alt="map image" />
 		</td>
 		<td class="subsection" style="width: 57px;">
-		<div class="headline" style="text-align: center; font-size: 12px;">Players</div>
+		<div class="headline" style="text-align: center; font-size: 12px;">Online</div>
 		<div style="text-align: center; font-size: 12px;">' . $used_slots . ' / ' . $available_slots . '</div>
+		</td>
+		<td class="subsection" style="width: 70px;">
+		<div class="headline" style="text-align: center; font-size: 12px;">Players</div>
+		<div style="text-align: center; font-size: 12px;">' . $players . '</div>
 		</td>
 		<td class="subsection">
 		<div class="headline" style="text-align: left; padding: 0px; padding-left: 3px;">
@@ -103,6 +110,10 @@ foreach($ServerIDs as $this_ServerID)
 		<div class="headline" style="text-align: center; font-size: 12px;">Players</div>
 		<div style="text-align: center; font-size: 12px;">error</div>
 		</td>
+		<td class="subsection" style="width: 70px;">
+		<div class="headline" style="text-align: center; font-size: 12px;">Players</div>
+		<div style="text-align: center; font-size: 12px;">error</div>
+		</td>
 		<td class="subsection">
 		<div class="headline" style="text-align: left; padding: 0px; padding-left: 3px;">
 		Unknown Name
@@ -120,62 +131,33 @@ foreach($ServerIDs as $this_ServerID)
 	@mysqli_free_result($Basic_q);
 }
 
-// find out how many rows are in the table
-$TotalRows_q = @mysqli_query($BF4stats,"
-	SELECT COUNT(DISTINCT tpd.`PlayerID`)
-	FROM  `tbl_playerdata` tpd
-	INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-	INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-	WHERE tpd.`GameID` = {$GameID}
-");
-if(@mysqli_num_rows($TotalRows_q) != 0)
-{
-	$TotalRows_r = @mysqli_fetch_row($TotalRows_q);
-	$total_players = $TotalRows_r[0];
-	// show global server stats link
-	echo '
-	<div style="margin-bottom: 4px; position: relative;">
-	<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;"><a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $_SERVER['PHP_SELF'] . '?p=home&amp;sid=null"></a></div>
-	<table>
-	<tr>
-	<td class="subsection" style="width: 126px;">
-	<div class="headline" style="text-align: center; font-size: 12px;">Players Logged</div>
-	<div style="text-align: center; font-size: 12px;">' . $total_players . '</div>
-	</td>
-	<td class="subsection">
-	<div class="headline" style="text-align: left; padding: 0px; padding-left: 3px;">
-	Combined Stats From Servers Above
-	</div>
-	<div style="font-size: 12px; padding-left: 4px;">
-	' . $clan_name . '
-	</div>
-	</td>
-	</tr>
-	</table>
-	</div>
-	';
-}
-else
-{
-	echo '
-	<div style="margin-bottom: 4px; margin-left: 138px; position: relative;">
-	<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;"><a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $_SERVER['PHP_SELF'] . '?p=home&amp;sid=null"></a></div>
-	<table>
-	<tr>
-	<td class="subsection">
-	<div class="headline" style="text-align: left; padding: 0px; padding-left: 3px;">
-	Combined Stats From Servers Above
-	</div>
-	<div style="font-size: 12px; padding-left: 4px;">
-	' . $clan_name . '
-	</div>
-	</td>
-	</tr>
-	</table>
-	</div>
-	';
-}
-// free up basic query memory
-@mysqli_free_result($TotalRows_q);
-echo '</div>';
+// show global server stats link
+echo '
+<div style="margin-bottom: 4px; position: relative;">
+';
+
+// cache total players
+$total_players = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats);
+
+echo '
+<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;"><a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $_SERVER['PHP_SELF'] . '?p=home&amp;sid=null"></a></div>
+<table>
+<tr>
+<td class="subsection" style="width: 208px;">
+<div class="headline" style="text-align: center; font-size: 12px;">Players Logged</div>
+<div style="text-align: center; font-size: 12px;">' . $total_players . '</div>
+</td>
+<td class="subsection">
+<div class="headline" style="text-align: left; padding: 0px; padding-left: 3px;">
+Combined Stats From Servers Above
+</div>
+<div style="font-size: 12px; padding-left: 4px;">
+' . $clan_name . '
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+';
 ?>

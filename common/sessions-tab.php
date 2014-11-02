@@ -51,6 +51,7 @@ else
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 		WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
 		AND tpd.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		GROUP BY tpd.`PlayerID`
 		ORDER BY Score DESC, tpd.`SoldierName` ASC
 		LIMIT 0, 20

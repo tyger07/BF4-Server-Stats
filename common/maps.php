@@ -63,15 +63,12 @@ if(!empty($ServerID))
 }
 // or else this is a global stats page
 else
-{
-	// merge server IDs array into a variable
-	$ids = join(',',$ServerIDs);
-	
+{	
 	// query for maps in this server
 	$Mode_q = @mysqli_query($BF4stats,"
 		SELECT `Gamemode`
 		FROM `tbl_mapstats`
-		WHERE `ServerID` in ({$ids})
+		WHERE `ServerID` IN ({$valid_ids})
 		AND `Gamemode` != ''
 		GROUP BY `Gamemode`
 		ORDER BY {$rank} {$order}
@@ -188,14 +185,11 @@ else
 		// or else this is a global stats page
 		else
 		{
-			// merge server IDs array into a variable
-			$ids = join(',',$ServerIDs);
-			
 			// query for game modes for each map
 			$Map_q = @mysqli_query($BF4stats,"
 				SELECT `MapName`, SUM(`NumberofRounds`) AS NumberofRounds, AVG(`AvgPlayers`) AS AveragePlayers, (AVG(`AvgPlayers`)/AVG(`PlayersLeftServer`)) AS AVGPop
 				FROM `tbl_mapstats`
-				WHERE `ServerID` in ({$ids})
+				WHERE `ServerID` IN ({$valid_ids})
 				AND `Gamemode` = '{$Mode}'
 				AND `MapName` != ''
 				GROUP BY `MapName`

@@ -65,6 +65,7 @@ else
 		INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
 		WHERE tpd2.`PlayerID` = {$PlayerID}
 		AND tpd2.`GameID` = {$GameID}
+		AND tsp.`ServerID` IN ({$valid_ids})
 		GROUP BY Killer
 		ORDER BY Count DESC, Killer ASC
 	");

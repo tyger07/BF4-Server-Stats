@@ -16,14 +16,11 @@ if(!empty($ServerID))
 // or else this is a global stats page
 else
 {
-	// merge server IDs array into a variable
-	$ids = join(',',$ServerIDs);
-
 	// query server stats
 	$Server_q = @mysqli_query($BF4stats,"
 		SELECT SUM(`SumKills`) AS SumKills, (SUM(`SumHeadshots`)/SUM(`SumKills`)) AS AvgHSR, (SUM(`SumKills`)/SUM(`SumDeaths`)) AS AvgKDR, SUM(`SumRounds`) AS SumRounds, SUM(`SumDeaths`) AS SumDeaths, AVG(`AvgScore`) AS AvgScore, AVG(`AvgKills`) AS AvgKills, AVG(`AvgHeadshots`) AS AvgHeadshots, AVG(`AvgDeaths`) AS AvgDeaths, AVG(`AvgSuicide`) AS AvgSuicide, AVG(`AvgTKs`) AS AvgTKs
 		FROM `tbl_server_stats`
-		WHERE `ServerID` in ({$ids})
+		WHERE `ServerID` IN ({$valid_ids})
 	");
 }
 if(@mysqli_num_rows($Server_q) != 0)
@@ -52,29 +49,13 @@ if(@mysqli_num_rows($Server_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		$players = round($Server_r['CountPlayers'],2);
+		$players = $Server_r['CountPlayers'];
 	}
 	else
 	{
-		// find out how many rows are in the table
-		$TotalRows_q = @mysqli_query($BF4stats,"
-			SELECT SUM( tpd.`PlayerID` ) AS IDs
-			FROM `tbl_playerdata` tpd
-			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-			WHERE tpd.`GameID` = {$GameID}
-			GROUP BY tpd.`PlayerID`
-		");
-		if(@mysqli_num_rows($TotalRows_q) != 0)
-		{
-			$players = @mysqli_num_rows($TotalRows_q);
-		}
-		else
-		{
-			$players = 'error';
-		}
-		// free up total rows query memory
-		@mysqli_free_result($TotalRows_q);
+		echo '<div style="position: relative;">';
+		$players = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats);
+		echo '</div>';
 	}
 	$kills = round($Server_r['SumKills'],2);
 	$deaths = round($Server_r['SumDeaths'],2);
