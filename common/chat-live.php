@@ -189,9 +189,6 @@ if(!empty($ServerID))
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 			");
 			$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
@@ -203,9 +200,6 @@ if(!empty($ServerID))
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 			");
@@ -231,9 +225,6 @@ else
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
 			");
 			$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
@@ -245,9 +236,6 @@ else
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
 			");
@@ -288,7 +276,7 @@ if($currentpage < 1)
 if(!empty($rank))
 {
 	// filter out invalid options
-	if($rank != 'logDate' AND $rank != 'logSoldierName' AND $rank != 'logSubset' AND $rank != 'Message')
+	if($rank != 'logDate' AND $rank != 'logSoldierName' AND $rank != 'Message')
 	{
 		// unexpected input detected
 		// use default instead
@@ -343,11 +331,8 @@ if(!empty($ServerID))
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
-				ORDER BY {$rank} {$order}, `logDate` ASC
+				ORDER BY {$rank} {$order}, `logDate` DESC
 				LIMIT {$offset}, {$rowsperpage}
 			");
 		}
@@ -357,12 +342,9 @@ if(!empty($ServerID))
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
-				ORDER BY {$rank} {$order}, `logDate` ASC
+				ORDER BY {$rank} {$order}, `logDate` DESC
 				LIMIT {$offset}, {$rowsperpage}
 			");
 		}
@@ -373,10 +355,7 @@ if(!empty($ServerID))
 			SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 			FROM `tbl_chatlog`
 			WHERE `ServerID` = {$ServerID}
-			AND `logMessage` != ''
-			AND `logMessage` NOT LIKE '%ID_CHAT_%'
-			AND `logSoldierName` != 'Server'
-			ORDER BY {$rank} {$order}, `logDate` ASC
+			ORDER BY {$rank} {$order}, `logDate` DESC
 			LIMIT {$offset}, {$rowsperpage}
 		");
 	}
@@ -392,11 +371,8 @@ else
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
-				ORDER BY {$rank} {$order}, `logDate` ASC
+				ORDER BY {$rank} {$order}, `logDate` DESC
 				LIMIT {$offset}, {$rowsperpage}
 			");
 		}
@@ -406,12 +382,9 @@ else
 				SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 				AND (`logMessage` LIKE '%{$query}%'
 				OR `logSoldierName` LIKE '%{$query}%')
-				ORDER BY {$rank} {$order}, `logDate` ASC
+				ORDER BY {$rank} {$order}, `logDate` DESC
 				LIMIT {$offset}, {$rowsperpage}
 			");
 		}
@@ -422,10 +395,7 @@ else
 			SELECT `logDate`, `logSoldierName`, TRIM(`logMessage`) AS Message, `logSubset`
 			FROM `tbl_chatlog`
 			WHERE `ServerID` IN ({$valid_ids})
-			AND `logMessage` != ''
-			AND `logMessage` NOT LIKE '%ID_CHAT_%'
-			AND `logSoldierName` != 'Server'
-			ORDER BY {$rank} {$order}, `logDate` ASC
+			ORDER BY {$rank} {$order}, `logDate` DESC
 			LIMIT {$offset}, {$rowsperpage}
 		");
 	}
@@ -438,7 +408,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	echo '
 	<table class="prettytable">
 	<tr>
-	<th width="3%" class="countheader">#</th>
+	<th width="5%" class="countheader">#</th>
 	<th width="15%">';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -472,7 +442,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 			echo $nextorder . '&amp;cp=1"><span class="ordered' . $order . 'header">Date</span></a></th>';
 		}
 	}
-	echo '<th width="13%">';
+	echo '<th width="15%">';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
@@ -505,40 +475,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 			echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></th>';
 		}
 	}
-	echo '<th width="9%">';
-	// if there is a ServerID, this is a server stats page
-	if(!empty($ServerID))
-	{
-		echo '<a href="./index.php?p=chat&amp;cp=1&amp;sid=' . $ServerID . '&amp;r=logSubset&amp;o=';
-	}
-	// or else this is a global stats page
-	else
-	{
-		echo '<a href="./index.php?p=chat&amp;cp=1&amp;r=logSubset&amp;o=';
-	}
-	if($rank != 'logSubset')
-	{
-		if(!empty($query))
-		{
-			echo 'ASC&amp;q=' . $query . '"><span class="orderheader">Audience</span></a></th>';
-		}
-		else
-		{
-			echo 'ASC"><span class="orderheader">Audience</span></a></th>';
-		}
-	}
-	else
-	{
-		if(!empty($query))
-		{
-			echo $nextorder . '&amp;q=' . $query . '"><span class="ordered' . $order . 'header">Audience</span></a></th>';
-		}
-		else
-		{
-			echo $nextorder . '"><span class="ordered' . $order . 'header">Audience</span></a></th>';
-		}
-	}
-	echo '<th width="60%">';
+	echo '<th width="65%">';
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
@@ -579,7 +516,6 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		$logDate = date("H:i M j, Y", strtotime($Messages_r['logDate']));
 		$logSoldierName = textcleaner($Messages_r['logSoldierName']);
 		$logMessage = textcleaner($Messages_r['Message']);
-		$logSubset = $Messages_r['logSubset'];
 		$count++;
 		// see if this player has server stats in this server yet
 		// if there is a ServerID, this is a server stats page
@@ -622,7 +558,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		}
 		echo '
 		<tr>
-		<td width="3%" class="count"><span class="information">' . $count . '</span></td>
+		<td width="5%" class="count"><span class="information">' . $count . '</span></td>
 		<td width="15%" class="tablecontents">' . $logDate . '</td>
 		';
 		// if this player has stats in this server, provide a link to their stats page
@@ -631,22 +567,21 @@ if(@mysqli_num_rows($Messages_q) != 0)
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<td width="13%" class="tablecontents"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
+				echo '<td width="15%" class="tablecontents"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<td width="13%" class="tablecontents"><a href="./index.php?p=player&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
+				echo '<td width="15%" class="tablecontents"><a href="./index.php?p=player&amp;pid=' . $PlayerID . '">' . $logSoldierName . '</a></td>';
 			}
 		}
 		// otherwise just display their name without a link
 		else
 		{
-			echo '<td width="13%" class="tablecontents">' . $logSoldierName . '</td>';
+			echo '<td width="15%" class="tablecontents">' . $logSoldierName . '</td>';
 		}
 		echo '
-		<td width="9%" class="tablecontents">' . $logSubset . '</td>
-		<td width="60%" class="tablecontents">' . $logMessage . '</td>
+		<td width="65%" class="tablecontents">' . $logMessage . '</td>
 		</tr>
 		';
 		// free up player ID query memory

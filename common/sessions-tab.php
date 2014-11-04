@@ -28,7 +28,7 @@ if(!empty($ServerID))
 {
 	// get the info from the db 
 	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, SUM(tss.`Deaths`) AS Deaths, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, SUM(tss.`Headshots`) AS Headshots, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
+		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
 		FROM `tbl_sessions` tss
 		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -45,7 +45,7 @@ else
 {
 	// get the info from the db 
 	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, SUM(tss.`Deaths`) AS Deaths, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, SUM(tss.`Headshots`) AS Headshots, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
+		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
 		FROM `tbl_sessions` tss
 		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -64,13 +64,11 @@ if(@mysqli_num_rows($Players_q) != 0)
 	<table class="prettytable">
 	<tr>
 	<th width="5%" class="countheader">#</th>
-	<th width="17%">Player</th>
-	<th width="13%"><span class="orderedDESCheader">Score</span></th>
-	<th width="13%">Kills</th>
-	<th width="13%">Deaths</th>
-	<th width="13%">Kill/Death</th>
-	<th width="13%">Headshots</th>
-	<th width="13%">Headshot/Kill</th>
+	<th width="19%">Player</th>
+	<th width="19%"><span class="orderedDESCheader">Score</span></th>
+	<th width="19%">Kills</th>
+	<th width="19%">Kill / Death</th>
+	<th width="19%">Headshot / Kill</th>
 	</tr>
 	';
 	// while there are rows to be fetched...
@@ -81,9 +79,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 		$Player_ID = $Player_r['PlayerID'];
 		$Score = $Player_r['Score'];
 		$Kills = $Player_r['Kills'];
-		$Deaths = $Player_r['Deaths'];
 		$KDR = round($Player_r['KDR'],2);
-		$Headshots = $Player_r['Headshots'];
 		$HSR = round(($Player_r['HSR']*100),2);
 		echo '
 		<tr>
@@ -92,20 +88,18 @@ if(@mysqli_num_rows($Players_q) != 0)
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			echo '<td width="17%" class="tablecontents" style="text-align: left;"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
+			echo '<td width="19%" class="tablecontents" style="text-align: left;"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
 		}
 		// or else this is a global stats page
 		else
 		{
-			echo '<td width="17%" class="tablecontents" style="text-align: left;"><a href="./index.php?p=player&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
+			echo '<td width="19%" class="tablecontents" style="text-align: left;"><a href="./index.php?p=player&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
 		}
 		echo '
-		<td width="13%" class="tablecontents">' . $Score . '</td>
-		<td width="13%" class="tablecontents">' . $Kills . '</td>
-		<td width="13%" class="tablecontents">' . $Deaths . '</td>
-		<td width="13%" class="tablecontents">' . $KDR . '</td>
-		<td width="13%" class="tablecontents">' . $Headshots . '</td>
-		<td width="13%" class="tablecontents">' . $HSR . '<span class="information"> %</span></td>
+		<td width="19%" class="tablecontents">' . $Score . '</td>
+		<td width="19%" class="tablecontents">' . $Kills . '</td>
+		<td width="19%" class="tablecontents">' . $KDR . '</td>
+		<td width="19%" class="tablecontents">' . $HSR . '<span class="information"> %</span></td>
 		</tr>
 		';
 	}

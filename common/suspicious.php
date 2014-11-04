@@ -67,7 +67,7 @@ if(!empty($ServerID))
 {
 	// check for suspicious players
 	$Suspicious_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tps.`Kills`, tps.`Deaths`, tps.`Headshots`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
+		SELECT tpd.`SoldierName`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
 		FROM `tbl_playerstats` tps
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -82,7 +82,7 @@ else
 {
 	// check for suspicious players
 	$Suspicious_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
+		SELECT tpd.`SoldierName`, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
 		FROM `tbl_playerstats` tps
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -126,12 +126,12 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=SoldierName&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=SoldierName&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=SoldierName&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=SoldierName&amp;o=';
 	}
 	if($rank != 'SoldierName')
 	{
@@ -144,48 +144,48 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=KDR&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=KDR&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=KDR&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=KDR&amp;o=';
 	}
 	if($rank != 'KDR')
 	{
-		echo 'DESC"><span class="orderheader">Kill/Death Raio</span></a></th>';
+		echo 'DESC"><span class="orderheader">Kill / Death</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder . '"><span class="ordered' . $order . 'header">Kill/Death Raio</span></a></th>';
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Kill / Death</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=HSR&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=HSR&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=HSR&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=HSR&amp;o=';
 	}
 	if($rank != 'HSR')
 	{
-		echo 'DESC"><span class="orderheader">Headshot Ratio</span></a></th>';
+		echo 'DESC"><span class="orderheader">Headshot / Kill</span></a></th>';
 	}
 	else
 	{
-		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshot Ratio</span></a></th>';
+		echo $nextorder . '"><span class="ordered' . $order . 'header">Headshot / Kill</span></a></th>';
 	}
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=Rounds&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;p=suspicious&amp;r=Rounds&amp;o=';
 	}
 	// or else this is a global stats page
 	else
 	{
-		echo '<th width="18%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=Rounds&amp;o=';
+		echo '<th width="20%"><a href="' . $_SERVER['PHP_SELF'] . '?p=suspicious&amp;r=Rounds&amp;o=';
 	}
 	if($rank != 'Rounds')
 	{
@@ -202,10 +202,7 @@ else
 	{
 		$SoldierName = $Suspicious_r['SoldierName'];
 		$PlayerID = $Suspicious_r['PlayerID'];
-		$Kills = $Suspicious_r['Kills'];
-		$Deaths = $Suspicious_r['Deaths'];
 		$KDR = round($Suspicious_r['KDR'], 2);
-		$Headshots = $Suspicious_r['Headshots'];
 		$HSpercent = round(($Suspicious_r['HSR']*100), 2);
 		$Rounds = $Suspicious_r['Rounds'];
 		$count++;
@@ -216,17 +213,17 @@ else
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			echo '<td width="25%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
+			echo '<td width="20%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 		}
 		// or else this is a global stats page
 		else
 		{
-			echo '<td width="25%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
+			echo '<td width="20%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 		}
 		echo '
 		<td width="20%" class="tablecontents">' . $KDR . '</td>
-		<td width="25%" class="tablecontents">' . $HSpercent . ' <span class="information">%</span></td>
-		<td width="25%" class="tablecontents">' . $Rounds . '</td>
+		<td width="20%" class="tablecontents">' . $HSpercent . ' <span class="information">%</span></td>
+		<td width="20%" class="tablecontents">' . $Rounds . '</td>
 		</tr>
 		';
 	}

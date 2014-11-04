@@ -92,13 +92,11 @@ echo '
 </table>
 <table class="prettytable">
 <tr>
-<th width="3%" class="countheader">#</th>
-<th width="22%">Player</th>
-<th width="15%"><span class="orderedDESCheader">Score</span></th>
-<th width="15%">Rounds</th>
-<th width="15%">Kills</th>
-<th width="15%">Deaths</th>
-<th width="15%">KDR</th>
+<th width="5%" class="countheader">#</th>
+<th width="24%">Player</th>
+<th width="24%"><span class="orderedDESCheader">Score</span></th>
+<th width="24%">Kills</th>
+<th width="24%">Kill / Death</th>
 </tr>
 ';
 // show top playes from this country
@@ -107,7 +105,7 @@ if(!empty($ServerID))
 {
 	//query top 20 players in this country
 	$CountryRank_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, tps.`Deaths`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR
+		SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR
 		FROM `tbl_playerstats` tps
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -123,7 +121,7 @@ else
 {
 	//query top 20 players in this country
 	$CountryRank_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR
+		SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR
 		FROM `tbl_playerstats` tps
 		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -142,8 +140,8 @@ if(@mysqli_num_rows($CountryRank_q) == 0)
 {
 	echo '
 	<tr>
-	<td width="3%" class="tablecontents">&nbsp;</td>
-	<td width="97%" class="tablecontents" colspan="6">No players found!</td>
+	<td width="5%" class="tablecontents">&nbsp;</td>
+	<td width="95%" class="tablecontents" colspan="4">No players found!</td>
 	</tr>
 	';
 }
@@ -156,30 +154,26 @@ else
 		$SoldierName = $CountryRank_r['SoldierName'];
 		$PlayerID = $CountryRank_r['PlayerID'];
 		$Score = $CountryRank_r['Score'];
-		$Rounds = $CountryRank_r['Rounds'];
 		$Kills = $CountryRank_r['Kills'];
-		$Deaths = $CountryRank_r['Deaths'];
 		$KDR = round($CountryRank_r['KDR'],2);
 		echo '
 		<tr>
-		<td width="3%" class="count"><span class="information">' . $country_count . '</span></td>
+		<td width="5%" class="count"><span class="information">' . $country_count . '</span></td>
 		';
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			echo '<td width="22%" class="tablecontents"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
+			echo '<td width="24%" class="tablecontents"><a href="./index.php?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 		}
 		// or else this is a global stats page
 		else
 		{
-			echo '<td width="22%" class="tablecontents"><a href="./index.php?p=player&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
+			echo '<td width="24%" class="tablecontents"><a href="./index.php?p=player&amp;pid=' . $PlayerID . '">' . $SoldierName . '</a></td>';
 		}
 		echo '
-		<td width="15%" class="tablecontents">' . $Score . '</td>
-		<td width="15%" class="tablecontents">' . $Rounds . '</td>
-		<td width="15%" class="tablecontents">' . $Kills . '</td>
-		<td width="15%" class="tablecontents">' . $Deaths . '</td>
-		<td width="15%" class="tablecontents">' . $KDR . '</td>
+		<td width="24%" class="tablecontents">' . $Score . '</td>
+		<td width="24%" class="tablecontents">' . $Kills . '</td>
+		<td width="24%" class="tablecontents">' . $KDR . '</td>
 		</tr>
 		';
 	}

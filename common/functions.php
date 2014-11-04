@@ -1301,9 +1301,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 					SELECT count(`logDate`) AS count
 					FROM `tbl_chatlog`
 					WHERE `ServerID` = {$ServerID}
-					AND `logMessage` != ''
-					AND `logMessage` NOT LIKE '%ID_CHAT_%'
-					AND `logSoldierName` != 'Server'
 				");
 			}
 			else
@@ -1313,9 +1310,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 					SELECT count(`logDate`) AS count
 					FROM `tbl_chatlog`
 					WHERE `ServerID` IN ({$valid_ids})
-					AND `logMessage` != ''
-					AND `logMessage` NOT LIKE '%ID_CHAT_%'
-					AND `logSoldierName` != 'Server'
 				");
 			}
 			if(@mysqli_num_rows($TotalRows_q) != 0)
@@ -1388,9 +1382,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 			");
 		}
 		else
@@ -1400,9 +1391,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 				SELECT count(`logDate`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
-				AND `logMessage` != ''
-				AND `logMessage` NOT LIKE '%ID_CHAT_%'
-				AND `logSoldierName` != 'Server'
 			");
 		}
 		if(@mysqli_num_rows($TotalRows_q) != 0)

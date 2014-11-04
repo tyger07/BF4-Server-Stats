@@ -109,9 +109,13 @@ Enjoy!
 
 ## Changelog:
 
+11-4-2014:
+- Optimizations in load time
+- Missing weapon images corrected
+
 11-1-2014:
 - Optimizations
-- Caching
+- Cacheing
 - Bug fixes
 - Full vehicle stats
 
