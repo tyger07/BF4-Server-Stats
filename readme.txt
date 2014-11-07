@@ -109,6 +109,9 @@ Enjoy!
 
 ## Changelog:
 
+11-6-2014:
+- Top 20 players are cached for performance reasons
+
 11-4-2014:
 - Optimizations in load time
 - Missing weapon images corrected

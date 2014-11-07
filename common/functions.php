@@ -7,7 +7,8 @@
 function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats)
 {
 	// if there is a ServerID, this is a server stats page
-	if(!empty($ServerID))
+	// also filter out 'VehicleCustom' since there is no need to waste time querying for that custom array
+	if(!empty($ServerID) && ($damagetype != 'VehicleCustom'))
 	{
 		// see if this player has used this category's weapons
 		$Weapon_q = @mysqli_query($BF4stats,"
@@ -25,7 +26,8 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 		");
 	}
 	// or else this is a global stats page
-	else
+	// also filter out 'VehicleCustom' since there is no need to waste time querying for that custom array
+	elseif($damagetype != 'VehicleCustom')
 	{
 		// see if this player has used this category's weapons
 		$Weapon_q = @mysqli_query($BF4stats,"
@@ -1442,6 +1444,230 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 	return $numrows;
 }
 
+// function to cache top 20 players
+function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
+{
+	// check to see if this top twenty cache table exists
+	@mysqli_query($BF4stats,"
+		CREATE TABLE IF NOT EXISTS `tyger_stats_top_twenty_cache`
+		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `SoldierName` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `Score` INT(11) NOT NULL DEFAULT '0', `Kills` INT(11) NOT NULL DEFAULT '0', `KDR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `HSR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`))
+		ENGINE=MyISAM
+		DEFAULT CHARSET=utf8
+		COLLATE=utf8_bin
+	");
+
+	// initialize timestamp values
+	$now_timestamp = time();
+	$old = $now_timestamp - 43200;
+
+	// check to see if top 20 is already cached
+	// if there is a ServerID, this is a server stats page
+	if(!empty($ServerID))
+	{
+		$TopC_q = @mysqli_query($BF4stats,"
+			SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
+			FROM `tyger_stats_top_twenty_cache`
+			WHERE `SID` = '{$ServerID}'
+			AND `GID` = '{$GameID}'
+			AND `timestamp` >= '{$old}'
+			ORDER BY `Score` DESC, `SoldierName` ASC
+		");
+	}
+	else
+	{
+		$TopC_q = @mysqli_query($BF4stats,"
+			SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
+			FROM `tyger_stats_top_twenty_cache`
+			WHERE `SID` = '{$valid_ids}'
+			AND `GID` = '{$GameID}'
+			AND `timestamp` >= '{$old}'
+			ORDER BY `Score` DESC, `SoldierName` ASC
+		");
+	}
+	// if cached and data is newer than 12 hours old...
+	if(@mysqli_num_rows($TopC_q) != 0)
+	{
+		if(!empty($ServerID))
+		{
+			echo '
+			<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+			<div class="subsection" style="width: 100px; font-size: 12px;">
+			<center>Cache Used:<br/>Top Twenty</center>
+			</div>
+			</div>
+			<script type="text/javascript">
+			$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			</script>
+			';
+		}
+		else
+		{
+			echo '
+			<div id="cache_fade2" style="position: absolute; top: 50px; left: -150px; display: none;">
+			<div class="subsection" style="width: 100px; font-size: 12px;">
+			<center>Cache Used:<br/>Top Twenty</center>
+			</div>
+			</div>
+			<script type="text/javascript">
+			$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			</script>
+			';
+		}
+		return $TopC_q;
+	}
+	// otherwise, cache or re-cache
+	else
+	{
+		// delete old rows
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			@mysqli_query($BF4stats,"
+				DELETE
+				FROM `tyger_stats_top_twenty_cache`
+				WHERE `timestamp` <= '{$old}'
+				AND `SID` = '{$ServerID}'
+				AND `GID` = '{$GameID}'
+			");
+			@mysqli_query($BF4stats,"
+				OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
+			");
+		}
+		else
+		{
+			@mysqli_query($BF4stats,"
+				DELETE
+				FROM `tyger_stats_top_twenty_cache`
+				WHERE `timestamp` <= '{$old}'
+				AND `SID` = '{$valid_ids}'
+				AND `GID` = '{$GameID}'
+			");
+			@mysqli_query($BF4stats,"
+				OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
+			");
+		}
+		// inset new rows
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			// get the info from the db 
+			$Players_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND tpd.`GameID` = {$GameID}
+				ORDER BY Score DESC, tpd.`SoldierName` ASC
+				LIMIT 0, 20
+			");
+		}
+		// or else this is a global stats page
+		else
+		{
+			// get the info from the db 
+			$Players_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				WHERE tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`PlayerID`
+				ORDER BY Score DESC, tpd.`SoldierName` ASC
+				LIMIT 0, 20
+			");
+		}
+		while($Players_r = @mysqli_fetch_assoc($Players_q))
+		{
+			$Score = $Players_r['Score'];
+			$SoldierName = $Players_r['SoldierName'];
+			$PlayerID = $Players_r['PlayerID'];
+			$Kills = $Players_r['Kills'];
+			$KDR = round($Players_r['KDR'],2);
+			$HSR = round($Players_r['HSR'],4);
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				// insert into db
+				@mysqli_query($BF4stats,"
+					INSERT INTO `tyger_stats_top_twenty_cache`
+					(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
+					VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
+				");
+			}
+			// or else this is a global stats page
+			else
+			{
+				// insert into db
+				@mysqli_query($BF4stats,"
+					INSERT INTO `tyger_stats_top_twenty_cache`
+					(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
+					VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
+				");
+			}
+		}
+		// free up player query memory
+		@mysqli_free_result($Players_q);
+		// query the cache again
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			$TopC_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
+				FROM `tyger_stats_top_twenty_cache`
+				WHERE `SID` = '{$ServerID}'
+				AND `GID` = '{$GameID}'
+				AND `timestamp` >= '{$old}'
+				ORDER BY `Score` DESC, `SoldierName` ASC
+			");
+		}
+		else
+		{
+			$TopC_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
+				FROM `tyger_stats_top_twenty_cache`
+				WHERE `SID` = '{$valid_ids}'
+				AND `GID` = '{$GameID}'
+				AND `timestamp` >= '{$old}'
+				ORDER BY `Score` DESC, `SoldierName` ASC
+			");
+		}
+		// if cached and data is newer than 12 hours old...
+		if(@mysqli_num_rows($TopC_q) != 0)
+		{
+			if(!empty($ServerID))
+			{
+				echo '
+				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Created:<br/>Top Twenty</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+				</script>
+				';
+			}
+			else
+			{
+				echo '
+				<div id="cache_fade2" style="position: absolute; top: 50px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Created:<br/>Top Twenty</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+				</script>
+				';
+			}
+			return $TopC_q;
+		}
+	}
+	// free up top 20 query memory
+	@mysqli_free_result($TopC_q);
+}
 // function to replace dangerous characters in content
 function textcleaner($content)
 {

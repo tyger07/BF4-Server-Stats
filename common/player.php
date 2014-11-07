@@ -6,13 +6,27 @@
 // no soldiername input from GET
 if($SoldierName == null)
 {
-	echo '
-	<div class="subsection">
-	<div class="headline">
-	Please enter a player name.
-	</div>
-	</div>
-	';
+	// if there was a $playerid input but it was nulled out, let user know it was nulled out because index.php did not find that as a valid player id
+	if(!empty($_GET['pid']) && is_numeric($_GET['pid']))
+	{
+		echo '
+		<div class="subsection">
+		<div class="headline">
+		This player ID does not exist.
+		</div>
+		</div>
+		';
+	}
+	else
+	{
+		echo '
+		<div class="subsection">
+		<div class="headline">
+		Please enter a player name.
+		</div>
+		</div>
+		';
+	}
 }
 // SoldierName from GET has been determined
 elseif($SoldierName != null)

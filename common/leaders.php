@@ -104,36 +104,47 @@ else
 }
 // the offset of the list, based on current page 
 $offset = ($currentpage - 1) * $rowsperpage;
-// if there is a ServerID, this is a server stats page
-if(!empty($ServerID))
+
+// if this is the default page, use cache
+if($rank == 'Score' && $order == 'DESC' && $offset == '0')
 {
-	// get the info from the db 
-	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
-		FROM `tbl_playerdata` tpd
-		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-		WHERE tsp.`ServerID` = {$ServerID}
-		AND tpd.`GameID` = {$GameID}
-		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-		LIMIT {$offset}, {$rowsperpage}
-	");
+	echo '<div style="position: relative;">';
+	$Players_q = cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats);
+	echo '</div>';
 }
-// or else this is a global stats page
 else
 {
-	// get the info from the db 
-	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
-		FROM `tbl_playerdata` tpd
-		INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-		INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-		WHERE tpd.`GameID` = {$GameID}
-		AND tsp.`ServerID` IN ({$valid_ids})
-		GROUP BY tpd.`PlayerID`
-		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-		LIMIT {$offset}, {$rowsperpage}
-	");
+	// if there is a ServerID, this is a server stats page
+	if(!empty($ServerID))
+	{
+		// get the info from the db 
+		$Players_q  = @mysqli_query($BF4stats,"
+			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+			FROM `tbl_playerdata` tpd
+			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+			WHERE tsp.`ServerID` = {$ServerID}
+			AND tpd.`GameID` = {$GameID}
+			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+			LIMIT {$offset}, {$rowsperpage}
+		");
+	}
+	// or else this is a global stats page
+	else
+	{
+		// get the info from the db 
+		$Players_q  = @mysqli_query($BF4stats,"
+			SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+			FROM `tbl_playerdata` tpd
+			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+			WHERE tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
+			GROUP BY tpd.`PlayerID`
+			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+			LIMIT {$offset}, {$rowsperpage}
+		");
+	}
 }
 // offset of player rank count to show on scoreboard
 $count = ($currentpage * 20) - 20;
