@@ -25,7 +25,7 @@ if(!empty($gid))
 
 // start creating scoreboard
 echo '
-<div class="sectionheader" style="position: relative;">
+<div class="subsection" style="position: relative;">
 ';
 // updating text...
 // hidden by default until time is reached
@@ -532,9 +532,9 @@ else
 							echo '
 							<table class="prettytable" style="margin-top: 4px;">
 							<tr>
-							<th style="padding-right: 3px;">
+							<td class="tablecontents" style="padding-right: 3px;">
 							<span class="teamname">' . $team_name . '</span> &nbsp; <span style="float: right;"><span class="information">Tickets Remaining:</span> ' . $Score . '</span>
-							</th>
+							</td>
 							</tr>
 							</table>
 							';
@@ -544,9 +544,9 @@ else
 							echo '
 							<table class="prettytable" style="margin-top: 4px;">
 							<tr>
-							<th style="padding-right: 3px;">
+							<td class="tablecontents" style="padding-right: 3px;">
 							<span class="teamname">' . $team_name . '</span> &nbsp; <span style="float: right;"><span class="information">Tickets:</span> ' . $Score . '<span class="information">/</span>' . $WinningScore . '</span>
-							</th>
+							</td>
 							</tr>
 							</table>
 							';
@@ -560,9 +560,9 @@ else
 					echo '
 					<table class="prettytable" style="margin-top: 4px;">
 					<tr>
-					<th style="padding-right: 3px;">
+					<td class="tablecontents" style="padding-right: 3px;">
 					<span class="teamname">' . $team_name . '</span>
-					</th>
+					</td>
 					</tr>
 					</table>
 					';
@@ -579,7 +579,7 @@ else
 			if($this_team == 0)
 			{
 				echo '
-				<th width="100%" colspan="3" style="text-align:left"><span class="teamname">' . $team_name . '</span></th>
+				<td class="tablecontents" width="100%" colspan="3" style="text-align:left"><span class="teamname">' . $team_name . '</span></td>
 				';
 			}
 			// this is a real team

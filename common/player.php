@@ -324,7 +324,7 @@ elseif($SoldierName != null)
 			<br/>
 			<table class="prettytable">
 			<tr>
-			<th colspan="4"><center>Ranks in ' . $ServerName . '</center></th>
+			<td class="tablecontents" colspan="8"><center>Ranks in ' . $ServerName . '</center></td>
 			</tr>
 			<tr>
 			';
@@ -396,8 +396,8 @@ elseif($SoldierName != null)
 		<br/>
 		<table class="prettytable">
 		<tr>
-		<th width="15%" style="text-align: center;"><img src="' . $rank_img . '" alt="' . $rank . '"/></th>
-		<th width="85%" colspan="5"><div class="headline">Overview</div></th>
+		<td width="15%" class="tablecontents" style="text-align: center;"><img src="' . $rank_img . '" alt="' . $rank . '"/></td>
+		<td width="85%" class="tablecontents" colspan="5"><div class="headline">Overview</div></td>
 		</tr>
 		<tr>
 		<th width="15%" style="padding-left: 10px;">Country</th>
@@ -960,7 +960,7 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<br/>
-			<div class="subsection" style="position: relative;"><center><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></center>
+			<div class="subsection" style="position: relative;"><div class="headline"><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></div>
 			';
 			// check if this player's rank is cached in the database
 			// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
@@ -1117,7 +1117,7 @@ if($SoldierName != null AND $SoldierName != 'Not Found')
 {
 	echo '
 	<br/><br/>
-	<div class="subsection"><center><span class="information">External Links for "' . $SoldierName . '"</span></center></div>
+	<div class="subsection"><div class="headline"><span class="information">External Links for "' . $SoldierName . '"</span></div></div>
 	<table class="prettytable">
 	<tr>
 	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">Battlelog Stats: </span><a href="http://battlelog.battlefield.com/bf4/user/' . $SoldierName . '" target="_blank">www.Battlelog.Battlefield.com</a></td>

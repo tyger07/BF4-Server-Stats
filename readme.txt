@@ -109,6 +109,11 @@ Enjoy!
 
 ## Changelog:
 
+11-11-2014:
+- Fixed error which sometimes caused duplicates in Top 20 players cache
+- Performance enhancement of rank function
+- Added missing country Montenegro
+
 11-6-2014:
 - Top 20 players are cached for performance reasons
 
@@ -250,4 +255,4 @@ Enjoy!
 - More ranks in more places
 
 11-20-2013:
-- Initial release modified and transferred over from BF3 stats page version
+- Initial release modified and transferred over from my BF3 stats page version

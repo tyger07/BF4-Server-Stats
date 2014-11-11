@@ -92,7 +92,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			{
 				$Server_r = @mysqli_fetch_assoc($Server_q);
 				$ServerName = $Server_r['ServerName'];
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=0&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 			}
 			// error?  what?  This will probably never happen.
 			else
@@ -185,7 +185,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			{
 				$Server_r = @mysqli_fetch_assoc($Server_q);
 				$ServerName = $Server_r['ServerName'];
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=0&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 			}
 			// error?  what?  This will probably never happen.
 			else
@@ -1114,7 +1114,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		<br/>
 		<br/>
 		<div class="subsection">
-		<center>[ <span class="information">Stats provided by <a href="https://forum.myrcon.com/showthread.php?6698-_BF4-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s PRoCon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</center>
+		<div class="headline">[ <span class="information">Statistics data provided by <a href="https://forum.myrcon.com/showthread.php?6698-_BF4-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s Procon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</div>
 		</div>
 		';
 		

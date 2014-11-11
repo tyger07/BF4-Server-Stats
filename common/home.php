@@ -4,7 +4,7 @@
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
 echo '
-<div class="sectionheader">
+<div class="subsection">
 <div class="headline">
 ';
 // if there is a ServerID, this is a server stats page
@@ -31,7 +31,7 @@ if(!empty($ServerID))
 	// this will auto refresh every 20 seconds to ./common/scoreboard.php
 	echo'
 	<div id="scoreboard">
-	<div class="sectionheader" style="position: relative;">
+	<div class="subsection" style="position: relative;">
 	';
 	// updating text...
 	// hidden by default until time is reached
@@ -509,9 +509,9 @@ if(!empty($ServerID))
 								echo '
 								<table class="prettytable" style="margin-top: 4px;">
 								<tr>
-								<th style="padding-right: 3px;">
+								<td class="tablecontents" style="padding-right: 3px;">
 								<span class="teamname">' . $team_name . '</span> &nbsp; <span style="float: right;"><span class="information">Tickets Remaining:</span> ' . $Score . '</span>
-								</th>
+								</td>
 								</tr>
 								</table>
 								';
@@ -521,9 +521,9 @@ if(!empty($ServerID))
 								echo '
 								<table class="prettytable" style="margin-top: 4px;">
 								<tr>
-								<th style="padding-right: 3px;">
+								<td class="tablecontents" style="padding-right: 3px;">
 								<span class="teamname">' . $team_name . '</span> &nbsp; <span style="float: right;"><span class="information">Tickets:</span> ' . $Score . '<span class="information">/</span>' . $WinningScore . '</span>
-								</th>
+								</td>
 								</tr>
 								</table>
 								';
@@ -537,9 +537,9 @@ if(!empty($ServerID))
 						echo '
 						<table class="prettytable" style="margin-top: 4px;">
 						<tr>
-						<th style="padding-right: 3px;">
+						<td class="tablecontents" style="padding-right: 3px;">
 						<span class="teamname">' . $team_name . '</span>
-						</th>
+						</td>
 						</tr>
 						</table>
 						';
@@ -556,7 +556,7 @@ if(!empty($ServerID))
 				if($this_team == 0)
 				{
 					echo '
-					<th width="100%" colspan="3" style="text-align:left"><span class="teamname">' . $team_name . '</span></th>
+					<td class="tablecontents" width="100%" colspan="3" style="text-align:left"><span class="teamname">' . $team_name . '</span></td>
 					';
 				}
 				// this is a real team
@@ -796,7 +796,7 @@ if(!empty($ServerID))
 // end of scoreboard
 
 echo '
-<div class="sectionheader">
+<div class="subsection">
 <div class="headline">Top Players</div>
 </div>
 ';

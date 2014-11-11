@@ -142,14 +142,15 @@ if(!empty($sid))
 		SELECT `mapName`, `ServerName`, `maxSlots`, `usedSlots`, `Gamemode`
 		FROM `tbl_server`
 		WHERE `ServerID` = {$ServerID}
+		AND `GameID` = {$GameID}
 	");
 	if(@mysqli_num_rows($CurrentMap_q) != 0)
 	{
 		$CurrentMap_r = @mysqli_fetch_assoc($CurrentMap_q);
 		$map = $CurrentMap_r['mapName'];
 		$server = $CurrentMap_r['ServerName'];
-		$servername = substr($CurrentMap_r['ServerName'],0,30);
-		if(strlen($CurrentMap_r['ServerName']) > 30)
+		$servername = substr($CurrentMap_r['ServerName'],0,28);
+		if(strlen($CurrentMap_r['ServerName']) > 28)
 		{
 			$servername .= '..';
 		}
@@ -210,7 +211,7 @@ if(!empty($sid))
 	// free up map query memory
 	@mysqli_free_result($CurrentMap_q);
 	// display server information
-	echo '<center><a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($server) . '" target="_blank"><b>' . $servername . '</b></a></center></div>';
+	echo '<center><a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=0&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($server) . '" target="_blank"><b>' . $servername . '</b></a></center></div>';
 	echo '
 	<center>
 	<table border="0" align="center" width="198px" style="padding: 1px;">
@@ -403,14 +404,35 @@ if(!empty($sid))
 	// initialize value
 	$count = 0;
 	// query for player scores
+	// use faster query if top 20 cache is available
+	
+	// initialize timestamp values
+	$now_timestamp = time();
+	$old = $now_timestamp - 43200;
+	
+	// check if this is a top 20 player
+	// if so, we can get their score rank much faster
 	$Score_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tps.`Score`
-		FROM `tbl_playerstats` tps
-		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE tsp.`ServerID` = {$ServerID}
+		SELECT `Score`, `SoldierName`
+		FROM `tyger_stats_top_twenty_cache`
+		WHERE `SID` = '{$ServerID}'
+		AND `GID` = '{$GameID}'
+		AND `timestamp` >= '{$old}'
+		GROUP BY `PlayerID`
 		ORDER BY tps.`Score` DESC, tpd.`SoldierName` ASC LIMIT 10
 	");
+	if(@mysqli_num_rows($Score_q) == 0)
+	{
+		$Score_q = @mysqli_query($BF4stats,"
+			SELECT tpd.`SoldierName`, tps.`Score`
+			FROM `tbl_playerstats` tps
+			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE tsp.`ServerID` = {$ServerID}
+			AND tpd.`GameID` = {$GameID}
+			ORDER BY tps.`Score` DESC, tpd.`SoldierName` ASC LIMIT 10
+		");
+	}
 	if(@mysqli_num_rows($Score_q) != 0)
 	{
 		echo '
