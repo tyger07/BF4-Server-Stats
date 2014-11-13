@@ -109,6 +109,12 @@ Enjoy!
 
 ## Changelog:
 
+11-12-2014:
+- Fixed error caused while caching combined server stats of databases with many servers
+- Added a couple database indexes to speed up certain queries
+- Fixed issue with server join button link
+- Updated to new Battlelog background image
+
 11-11-2014:
 - Fixed error which sometimes caused duplicates in Top 20 players cache
 - Performance enhancement of rank function

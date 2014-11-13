@@ -18,7 +18,7 @@ else
 	$useragent = 'unknown';
 }
 // detect robot
-if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === false && stripos($useragent, 'fetch') === false && stripos($useragent, 'archiv') === false && stripos($useragent, 'spide') === false && stripos($useragent, 'validat') === false && stripos($useragent, 'analyze') === false && stripos($useragent, 'crawl') === false && stripos($useragent, 'robot') === false && stripos($useragent, 'track') === false && stripos($useragent, 'generat') === false && stripos($useragent, 'google') === false && stripos($useragent, 'bing') === false && stripos($useragent, 'msnbot') === false && stripos($useragent, 'yahoo') === false && stripos($useragent, 'facebook') === false && stripos($useragent, 'yandex') === false)
+if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === false && stripos($useragent, 'fetch') === false && stripos($useragent, 'archiv') === false && stripos($useragent, 'spide') === false && stripos($useragent, 'validat') === false && stripos($useragent, 'analyze') === false && stripos($useragent, 'crawl') === false && stripos($useragent, 'robot') === false && stripos($useragent, 'track') === false && stripos($useragent, 'generat') === false && stripos($useragent, 'google') === false && stripos($useragent, 'bing') === false && stripos($useragent, 'msnbot') === false && stripos($useragent, 'yahoo') === false && stripos($useragent, 'facebook') === false && stripos($useragent, 'yandex') === false && stripos($useragent, 'alexa') === false)
 {
 	// not a bot
 	
@@ -92,7 +92,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			{
 				$Server_r = @mysqli_fetch_assoc($Server_q);
 				$ServerName = $Server_r['ServerName'];
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=0&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 			}
 			// error?  what?  This will probably never happen.
 			else
@@ -185,7 +185,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			{
 				$Server_r = @mysqli_fetch_assoc($Server_q);
 				$ServerName = $Server_r['ServerName'];
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=0&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 			}
 			// error?  what?  This will probably never happen.
 			else

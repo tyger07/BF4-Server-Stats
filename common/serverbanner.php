@@ -211,7 +211,7 @@ if(!empty($sid))
 	// free up map query memory
 	@mysqli_free_result($CurrentMap_q);
 	// display server information
-	echo '<center><a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=0&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($server) . '" target="_blank"><b>' . $servername . '</b></a></center></div>';
+	echo '<center><a href="http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($server) . '" target="_blank"><b>' . $servername . '</b></a></center></div>';
 	echo '
 	<center>
 	<table border="0" align="center" width="198px" style="padding: 1px;">

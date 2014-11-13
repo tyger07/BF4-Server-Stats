@@ -43,8 +43,8 @@ body{
 	text-align: left;
 	height: 100%;
 	width: 100%;
-	background: #230d0d;
-	background-image: url("../images/BF4back.jpg");
+	background: #230e0d;
+	background-image: url("../images/BF4backXP4.jpg");
 	background-position: center 142px;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
@@ -326,7 +326,7 @@ option:hover, option:active {
 	text-align: center;
 	width: 100%;
 	background: rgba(8, 13, 16, 0.9);
-	box-shadow: 0px 0px 20px 5px rgba(8, 13, 16, 0.9);
+	box-shadow: 0px 0px 20px 5px rgba(0, 5, 8, 0.9);
 	border: 0px solid;
 	border-top: 1px solid #555555;
 }

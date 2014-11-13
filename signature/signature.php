@@ -109,7 +109,7 @@ if(!empty($pid) && !empty($gid))
 		// check to see if this rank cache table exists
 		@mysqli_query($BF4stats,"
 			CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-			(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`))
+			(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `GID`, `SID`, `category`))
 			ENGINE=MyISAM
 			DEFAULT CHARSET=utf8
 			COLLATE=utf8_bin
@@ -227,7 +227,7 @@ if(!empty($pid) && !empty($gid))
 		// check to see if this count cache table exists
 		@mysqli_query($BF4stats,"
 			CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-			(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
+			(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
 			ENGINE=MyISAM
 			DEFAULT CHARSET=utf8
 			COLLATE=utf8_bin

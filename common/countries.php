@@ -3,7 +3,7 @@
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
-// query for countries for map image
+// query for countries
 // if there is a ServerID, this is a server stats page
 if(!empty($ServerID))
 {

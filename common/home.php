@@ -38,7 +38,7 @@ if(!empty($ServerID))
 	echo '
 	<div id="fadein" style="position: absolute; top: 4px; left: -150px; display: none;">
 	<div class="subsection" style="width: 100px;">
-	<center>Updating ...</center>
+	<center>Updating ...<span style="float:right;"><img src="./images/loading.gif" alt="loading" width="16px" height="16px" /></span></center>
 	</div>
 	</div>
 	<div class="headline">Live Scoreboard</div>

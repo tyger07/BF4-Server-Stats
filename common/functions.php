@@ -205,7 +205,7 @@ function rank($ServerID, $PlayerID, $BF4stats, $GameID)
 	// check to see if this rank cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`))
+		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `GID`, `SID`, `category`))
 		ENGINE=MyISAM
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
@@ -1023,7 +1023,7 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this count cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
+		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
 		ENGINE=MyISAM
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
@@ -1231,11 +1231,40 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this count cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
+		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
 		ENGINE=MyISAM
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
+	
+	// check to see if old table was made with too small of a SID
+	$size_q = @mysqli_query($BF4stats,"
+		SELECT `CHARACTER_MAXIMUM_LENGTH`
+		FROM `INFORMATION_SCHEMA`.`COLUMNS`
+		WHERE `table_name` = 'tyger_stats_count_cache'
+		AND `COLUMN_NAME` = 'SID'
+	");
+	if(@mysqli_num_rows($size_q) != 0)
+	{
+		$size_r = @mysqli_fetch_assoc($size_q);
+		$size = $size_r['CHARACTER_MAXIMUM_LENGTH'];
+		// too small!  fix it
+		if($size < 100)
+		{
+			// empty the table
+			@mysqli_query($BF4stats,"
+				TRUNCATE TABLE `tyger_stats_count_cache`
+			");
+			// optimize the table
+			@mysqli_query($BF4stats,"
+				OPTIMIZE TABLE `tyger_stats_count_cache`
+			");
+			// alter the table
+			@mysqli_query($BF4stats,"
+				ALTER TABLE `tyger_stats_count_cache` CHANGE `SID` `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+			");
+		}
+	}
 
 	// initialize timestamp values
 	$now_timestamp = time();
@@ -1427,12 +1456,12 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this top twenty cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_top_twenty_cache`
-		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `SoldierName` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `Score` INT(11) NOT NULL DEFAULT '0', `Kills` INT(11) NOT NULL DEFAULT '0', `KDR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `HSR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`))
+		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `SoldierName` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `Score` INT(11) NOT NULL DEFAULT '0', `Kills` INT(11) NOT NULL DEFAULT '0', `KDR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `HSR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `GID`, `SID`, `SoldierName`))
 		ENGINE=MyISAM
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-
+	
 	// initialize timestamp values
 	$now_timestamp = time();
 	$old = $now_timestamp - 43200;

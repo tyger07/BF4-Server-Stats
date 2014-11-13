@@ -12,7 +12,7 @@ echo'
 echo '
 <div id="fadein" style="position: absolute; top: 11px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
-<center>Updating ...</center>
+<center>Updating ...<span style="float:right;"><img src="./images/loading.gif" alt="loading" width="16px" height="16px" /></span></center>
 </div>
 </div>
 ';
@@ -26,11 +26,10 @@ $("#fadein").delay(29000).fadeIn("slow");
 foreach($ServerIDs as $this_ServerID)
 {
 	$Basic_q = @mysqli_query($BF4stats,"
-		SELECT ts.`mapName`, ts.`Gamemode`, ts.`maxSlots`, ts.`usedSlots`, ts.`ServerName`, tss.`CountPlayers`
-		FROM `tbl_server` ts
-		INNER JOIN `tbl_server_stats` tss ON tss.`ServerID` = ts.`ServerID`
-		WHERE ts.`ServerID` = {$this_ServerID}
-		AND ts.`GameID` = {$GameID}
+		SELECT `mapName`, `Gamemode`, `maxSlots`, `usedSlots`, `ServerName`
+		FROM `tbl_server`
+		WHERE `ServerID` = {$this_ServerID}
+		AND `GameID` = {$GameID}
 	");
 	// information was found
 	if(@mysqli_num_rows($Basic_q) != 0)
@@ -38,7 +37,22 @@ foreach($ServerIDs as $this_ServerID)
 		$Basic_r = @mysqli_fetch_assoc($Basic_q);
 		$used_slots = $Basic_r['usedSlots'];
 		$available_slots = $Basic_r['maxSlots'];
-		$players = $Basic_r['CountPlayers'];
+		$Basic_q2 = @mysqli_query($BF4stats,"
+			SELECT tss.`CountPlayers`
+			FROM `tbl_server` ts
+			INNER JOIN `tbl_server_stats` tss ON tss.`ServerID` = ts.`ServerID`
+			WHERE ts.`ServerID` = {$this_ServerID}
+			AND ts.`GameID` = {$GameID}
+		");
+		if(@mysqli_num_rows($Basic_q2) != 0)
+		{
+			$Basic_r2 = @mysqli_fetch_assoc($Basic_q2);
+			$players = $Basic_r2['CountPlayers'];
+		}
+		else
+		{
+			$players = 'error';
+		}
 		$name = $Basic_r['ServerName'];
 		$mode = $Basic_r['Gamemode'];
 		// convert mode to friendly name
@@ -129,6 +143,7 @@ foreach($ServerIDs as $this_ServerID)
 	}
 	// free up basic query memory
 	@mysqli_free_result($Basic_q);
+	@mysqli_free_result($Basic_q2);
 }
 
 // show global server stats link
