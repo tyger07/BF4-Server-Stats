@@ -109,36 +109,7 @@ if(@mysqli_num_rows($current_version_q) != 0)
 	// if the version is old, do update
 	if($version < 1)
 	{
-		// check if logdate index has been created in chat log
-		$opt_q = @mysqli_query($BF4stats,"
-			SELECT `INDEX_NAME`
-			FROM `INFORMATION_SCHEMA`.`STATISTICS`
-			WHERE `TABLE_NAME` = 'tbl_chatlog'
-			AND `INDEX_NAME` = 'logDate'
-		");
-		// add it if not already created
-		if(@mysqli_num_rows($opt_q) == 0)
-		{
-			@mysqli_query($BF4stats,"
-				ALTER TABLE `tbl_chatlog` ADD INDEX `logDate` (`logDate`, `ServerID`)
-			");
-		}
-		
-		// check if countrycode index has been created playerdata
-		$opt_q = @mysqli_query($BF4stats,"
-			SELECT `INDEX_NAME`
-			FROM `INFORMATION_SCHEMA`.`STATISTICS`
-			WHERE `TABLE_NAME` = 'tbl_playerdata'
-			AND `INDEX_NAME` = 'CountryCode'
-		");
-		// add it if not already created
-		if(@mysqli_num_rows($opt_q) == 0)
-		{
-			@mysqli_query($BF4stats,"
-				ALTER TABLE `tbl_playerdata` ADD INDEX `CountryCode` (`CountryCode`, `GameID`)
-			");
-		}
-		
+
 		// check to see if old stats rank cache table was made with too small of a SID
 		$size_q = @mysqli_query($BF4stats,"
 			SELECT `CHARACTER_MAXIMUM_LENGTH`
@@ -240,6 +211,29 @@ if(@mysqli_num_rows($current_version_q) != 0)
 		@mysqli_query($BF4stats,"
 			UPDATE `tyger_stats_database_update`
 			SET `version` = '1'
+		");
+	}
+	// if the version is old, do update
+	if($version < 2)
+	{
+		// add additional indexes
+		@mysqli_query($BF4stats,"
+			ALTER TABLE `tyger_stats_rank_cache` DROP INDEX `PlayerID`,
+			ADD INDEX `PlayerID` (`PlayerID`, `SID`),
+			ADD INDEX `category` (`category`, `PlayerID`)
+		");
+		
+		// add additional indexes
+		@mysqli_query($BF4stats,"
+			ALTER TABLE `tyger_stats_top_twenty_cache` DROP INDEX `PlayerID`,
+			ADD INDEX `PlayerID` (`PlayerID`, `SID`),
+			ADD INDEX `SoldierName` (`SoldierName`, `PlayerID`)
+		");
+		
+		// update version number to 2
+		@mysqli_query($BF4stats,"
+			UPDATE `tyger_stats_database_update`
+			SET `version` = '2'
 		");
 	}
 }

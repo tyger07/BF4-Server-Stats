@@ -186,7 +186,7 @@ if(!empty($ServerID))
 		if(!empty($date_query))
 		{
 			$TotalRows_q = @mysqli_query($BF4stats,"
-				SELECT count(`logDate`) AS count
+				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
@@ -197,7 +197,7 @@ if(!empty($ServerID))
 		else
 		{
 			$TotalRows_q = @mysqli_query($BF4stats,"
-				SELECT count(`logDate`) AS count
+				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 				AND (`logMessage` LIKE '%{$query}%'
@@ -222,7 +222,7 @@ else
 		if(!empty($date_query))
 		{
 			$TotalRows_q = @mysqli_query($BF4stats,"
-				SELECT count(`logDate`) AS count
+				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
 				AND `logDate` BETWEEN '{$low}' AND '{$high}'
@@ -233,7 +233,7 @@ else
 		else
 		{
 			$TotalRows_q = @mysqli_query($BF4stats,"
-				SELECT count(`logDate`) AS count
+				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
 				AND (`logMessage` LIKE '%{$query}%'

@@ -1277,7 +1277,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 			{
 				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
-					SELECT count(`logDate`) AS count
+					SELECT count(`ID`) AS count
 					FROM `tbl_chatlog`
 					WHERE `ServerID` = {$ServerID}
 				");
@@ -1286,7 +1286,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 			{
 				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
-					SELECT count(`logDate`) AS count
+					SELECT count(`ID`) AS count
 					FROM `tbl_chatlog`
 					WHERE `ServerID` IN ({$valid_ids})
 				");
@@ -1358,7 +1358,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		{
 			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
-				SELECT count(`logDate`) AS count
+				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 			");
@@ -1367,7 +1367,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		{
 			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
-				SELECT count(`logDate`) AS count
+				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` IN ({$valid_ids})
 			");
