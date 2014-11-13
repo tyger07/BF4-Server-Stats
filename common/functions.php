@@ -1236,35 +1236,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-	
-	// check to see if old table was made with too small of a SID
-	$size_q = @mysqli_query($BF4stats,"
-		SELECT `CHARACTER_MAXIMUM_LENGTH`
-		FROM `INFORMATION_SCHEMA`.`COLUMNS`
-		WHERE `table_name` = 'tyger_stats_count_cache'
-		AND `COLUMN_NAME` = 'SID'
-	");
-	if(@mysqli_num_rows($size_q) != 0)
-	{
-		$size_r = @mysqli_fetch_assoc($size_q);
-		$size = $size_r['CHARACTER_MAXIMUM_LENGTH'];
-		// too small!  fix it
-		if($size < 100)
-		{
-			// empty the table
-			@mysqli_query($BF4stats,"
-				TRUNCATE TABLE `tyger_stats_count_cache`
-			");
-			// optimize the table
-			@mysqli_query($BF4stats,"
-				OPTIMIZE TABLE `tyger_stats_count_cache`
-			");
-			// alter the table
-			@mysqli_query($BF4stats,"
-				ALTER TABLE `tyger_stats_count_cache` CHANGE `SID` `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
-			");
-		}
-	}
 
 	// initialize timestamp values
 	$now_timestamp = time();
