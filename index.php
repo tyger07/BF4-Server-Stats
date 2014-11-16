@@ -645,6 +645,33 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				</script>
 				';
 			}
+			// javascript expand/collapse
+			if($page == 'player')
+			{
+				// expand / contract javascript
+				echo '
+				<script type="text/javascript">
+				$(document).ready(function()
+				{
+					$(".expanded").hide();
+					$(".collapsed, .expanded").click(function()
+					{
+						$(this).parent().children(".expanded, .collapsed").toggle();
+					});
+				});
+				</script>
+				<script type="text/javascript">
+				$(document).ready(function()
+				{
+					$(".expanded3").hide();
+					$(".collapsed3, .expanded3").click(function()
+					{
+						$(this).parent().children(".expanded3, .collapsed3").toggle();
+					});
+				});
+				</script>
+				';
+			}
 		}
 		// jquery auto refresh index page server list every 30 seconds
 		else

@@ -73,6 +73,16 @@ else
 // initialize value
 $count = 0;
 echo '
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$(".expanded2").hide();
+	$(".collapsed2, .expanded2").click(function()
+	{
+		$(this).parent().children(".expanded2, .collapsed2").toggle();
+	});
+});
+</script>
 <table class="prettytable">
 ';
 // check to see if anyone has got the player's tags
@@ -90,6 +100,16 @@ if(@mysqli_num_rows($DogTag_q) != 0)
 		$Killer = $DogTag_r['Killer'];
 		$KillerID = $DogTag_r['KillerID'];
 		$KillCount = $DogTag_r['Count'];
+		// show expand/contract if very long
+		if($count == 10)
+		{
+			echo '
+			</table>
+			<div>
+			<span class="expanded2">
+			<table class="prettytable" style="margin-top: -2px;">
+			';
+		}
 		$count++;
 		echo '
 		<tr>
@@ -107,6 +127,22 @@ if(@mysqli_num_rows($DogTag_q) != 0)
 		}
 		echo '
 		<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+		</tr>
+		';
+	}
+	// finish expand/contract if very long
+	if($count > 10)
+	{
+		$remaining = $count - 10;
+		echo '
+		</table>
+		</span>
+		<a href="javascript:void(0)" class="collapsed2"><table class="prettytable" style="margin-top: -2px;"><tr><td class="tablecontents" style="text-align: left;padding-left: 15px;"><span class="orderedDESCheader">Show ' . $remaining . ' More</span></td></tr></table></a>
+		</div>
+		<table>
+		<tr>
+		<td>
+		</td>
 		</tr>
 		';
 	}

@@ -43,6 +43,18 @@ else
 {
 	$code_Displayed = $Code;
 }
-						
-Statsout($code_Displayed . " Stats", $Code, $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats);
+
+echo '
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$(".expanded4").hide();
+	$(".collapsed4, .expanded4").click(function()
+	{
+		$(this).parent().children(".expanded4, .collapsed4").toggle();
+	});
+});
+</script>
+';				
+Statsout($code_Displayed . " Stats", $Code, $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats, '4');
 ?>

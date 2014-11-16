@@ -17,6 +17,44 @@ The search algorithm uses an appropriate sample size before marking the player a
 </div>
 <br/><br/>
 ';
+// pagination code thanks to: http://www.phpfreaks.com/tutorial/basic-pagination
+// count the total number of results
+// if there is a ServerID, this is a server stats page
+if(!empty($ServerID))
+{
+	echo '<div style="position: relative;">';
+	$numrows = cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats);
+	echo '</div>';
+}
+// or else this is a global stats page
+else
+{
+	echo '<div style="position: relative;">';
+	$numrows = cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats);
+	echo '</div>';
+}
+// number of rows to show per page
+$rowsperpage = 20;
+// find out total pages
+$totalpages = ceil($numrows / $rowsperpage);
+// set current pagination page to default if none provided
+if(empty($currentpage))
+{
+	// default page num
+	$currentpage = 1;
+}
+// if current page is greater than total pages...
+if($currentpage > $totalpages)
+{
+	// set current page to last page
+	$currentpage = $totalpages;
+}
+// if current page is less than first page...
+if($currentpage < 1)
+{
+	// set current page to first page
+	$currentpage = 1;
+}
 // get current rank query details
 if(!empty($rank))
 {
@@ -62,39 +100,10 @@ else
 	$order = 'DESC';
 	$nextorder = 'ASC';
 }
-// if there is a ServerID, this is a server stats page
-if(!empty($ServerID))
-{
-	// check for suspicious players
-	$Suspicious_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
-		FROM `tbl_playerstats` tps
-		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE tsp.`ServerID` = {$ServerID}
-		AND (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
-		AND tpd.`GameID` = {$GameID}
-		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-	");
-}
-// or else this is a global stats page
-else
-{
-	// check for suspicious players
-	$Suspicious_q = @mysqli_query($BF4stats,"
-		SELECT tpd.`SoldierName`, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
-		FROM `tbl_playerstats` tps
-		INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
-		AND tpd.`GameID` = {$GameID}
-		AND tsp.`ServerID` IN ({$valid_ids})
-		GROUP BY tpd.`SoldierName`
-		ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-	");
-}
+// the pagination offset of the list, based on current page 
+$offset = ($currentpage - 1) * $rowsperpage;
 // no suspicious players found
-if(@mysqli_num_rows($Suspicious_q) == 0)
+if($numrows == 0)
 {
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -118,6 +127,39 @@ if(@mysqli_num_rows($Suspicious_q) == 0)
 // found suspicious players
 else
 {
+	// if there is a ServerID, this is a server stats page
+	if(!empty($ServerID))
+	{
+		// check for suspicious players
+		$Suspicious_q = @mysqli_query($BF4stats,"
+			SELECT tpd.`SoldierName`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
+			FROM `tbl_playerstats` tps
+			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE tsp.`ServerID` = {$ServerID}
+			AND (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+			AND tpd.`GameID` = {$GameID}
+			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+			LIMIT {$offset}, {$rowsperpage}
+		");
+	}
+	// or else this is a global stats page
+	else
+	{
+		// check for suspicious players
+		$Suspicious_q = @mysqli_query($BF4stats,"
+			SELECT tpd.`SoldierName`, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
+			FROM `tbl_playerstats` tps
+			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+			AND tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
+			GROUP BY tpd.`SoldierName`
+			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+			LIMIT {$offset}, {$rowsperpage}
+		");
+	}
 	echo '
 	<table class="prettytable">
 	<tr>
@@ -196,8 +238,8 @@ else
 		echo $nextorder . '"><span class="ordered' . $order . 'header">Rounds Played</span></a></th>';
 	}
 	echo '</tr>';
-	//initialize value
-	$count = 0;
+	// offset pagination count
+	$count = ($currentpage * 20) - 20;
 	while($Suspicious_r = @mysqli_fetch_assoc($Suspicious_q))
 	{
 		$SoldierName = $Suspicious_r['SoldierName'];
@@ -230,7 +272,11 @@ else
 	echo '
 	</table>
 	';
+	// build the pagination links
+	pagination_links($ServerID,$_SERVER['PHP_SELF'],$page,$currentpage,$totalpages,$rank,$order,'');
 }
+// free up total rows query memory
+@mysqli_free_result($TotalRows_q);
 // free up suspicious query memory
 @mysqli_free_result($Suspicious_q);
 

@@ -109,6 +109,12 @@ Enjoy!
 
 ## Changelog:
 
+11-16-14:
+- Added pagination to Suspicious Players page
+- Added expand/contract functionality to player page to reduce page height
+- Player ranks are now calculated on player stats page after the player page is loaded
+- Combined server ranks now available on player stats page
+
 11-12-2014:
 - Fixed error caused while caching combined server stats of databases with many servers
 - Added a couple database indexes to speed up certain queries

@@ -6,8 +6,8 @@
 echo '
 <div id="tabs">
 <ul>
-<li><div class="subscript">1</div><a href="#tabs-1">Top Players</a></li>
-<li><div class="subscript">2</div><a href="./common/sessions-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '">Top 20 Players This Week</a></li>
+<li><a href="#tabs-1">Top Players</a></li>
+<li><a href="./common/sessions-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '">Top 20 Players This Week</a></li>
 </ul>
 <div id="tabs-1">
 ';

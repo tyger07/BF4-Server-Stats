@@ -109,7 +109,7 @@ if(!empty($pid) && !empty($gid))
 		// check to see if this rank cache table exists
 		@mysqli_query($BF4stats,"
 			CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-			(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `GID`, `SID`, `category`))
+			(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
 			ENGINE=MyISAM
 			DEFAULT CHARSET=utf8
 			COLLATE=utf8_bin
@@ -343,15 +343,22 @@ if(!empty($pid) && !empty($gid))
 	
 	// text color
 	$light = imagecolorallocate($base, 255, 255, 255);
-	$yellow = imagecolorallocate($base, 252, 199, 66);
+	$yellow = imagecolorallocate($base, 255, 250, 200);
 	$dark = imagecolorallocate($base, 200, 200, 190);
 	
 	// add clan name text
 	imagestring($base, 2, 220, 17, $clan_name . '\'s Servers', $dark);
 	
+	// add rank or weapon image
 	// default is rank
 	if($fav == 0)
 	{
+		// bf4 logo
+		$logo = imagecreatefrompng('./images/bf4.png');
+		
+		// copy the rank image onto the background image
+		imagecopy($base, $logo, 378, 26, 0, 0, 11, 51);
+		
 		// rank image
 		$rank = imagecreatefrompng($rank_img);
 		
@@ -365,12 +372,18 @@ if(!empty($pid) && !empty($gid))
 	// otherwise use weapon
 	else
 	{
-		// weapon image
-		$rank = imagecreatefrompng($weapon_img);
+		// bf4 logo
+		$logo = imagecreatefrompng('./images/bf4.png');
 		
 		// copy the rank image onto the background image
-		imagecopy($base, $rank, 0, 20, 0, 0, 94, 56);
-		$white = imagecolorallocate($rank, 255, 255, 255);
+		imagecopy($base, $logo, 378, 26, 0, 0, 11, 51);
+		
+		// weapon image
+		$weapon = imagecreatefrompng($weapon_img);
+		
+		// copy the weapon image onto the background image
+		imagecopy($base, $weapon, 0, 20, 0, 0, 94, 56);
+		$white = imagecolorallocate($weapon, 255, 255, 255);
 		imagecolortransparent($base, $white);
 		imagealphablending($base, false);
 		imagesavealpha($base, true);
@@ -381,22 +394,22 @@ if(!empty($pid) && !empty($gid))
 	{
 		// add text to image
 		imagestring($base, 2, 110, 17, $soldier, $light);
-		imagestring($base, 2, 120, 40, 'Score:', $yellow);
-		imagestring($base, 2, 165, 40, $score, $yellow);
-		imagestring($base, 2, 120, 50, 'Kills:', $yellow);
-		imagestring($base, 2, 165, 50, $kills, $yellow);
-		imagestring($base, 2, 120, 60, 'Deaths:', $yellow);
-		imagestring($base, 2, 165, 60, $deaths, $yellow);
-		imagestring($base, 2, 120, 70, 'KDR:', $yellow);
-		imagestring($base, 2, 165, 70, $kdr, $yellow);
-		imagestring($base, 2, 230, 40, 'Rank #:', $yellow);
-		imagestring($base, 2, 295, 40, $srank . ' of ' . $total_players, $yellow);
-		imagestring($base, 2, 230, 50, 'Favorite:', $yellow);
-		imagestring($base, 2, 295, 50, $weapon_name, $yellow);
-		imagestring($base, 2, 230, 60, 'Headshots:', $yellow);
-		imagestring($base, 2, 295, 60, $headshots, $yellow);
-		imagestring($base, 2, 230, 70, 'HS %:', $yellow);
-		imagestring($base, 2, 295, 70, $hsr . ' %', $yellow);
+		imagestring($base, 2, 120, 35, 'Score:', $yellow);
+		imagestring($base, 2, 165, 35, $score, $yellow);
+		imagestring($base, 2, 120, 46, 'Kills:', $yellow);
+		imagestring($base, 2, 165, 46, $kills, $yellow);
+		imagestring($base, 2, 120, 57, 'Deaths:', $yellow);
+		imagestring($base, 2, 165, 57, $deaths, $yellow);
+		imagestring($base, 2, 120, 68, 'KDR:', $yellow);
+		imagestring($base, 2, 165, 68, $kdr, $yellow);
+		imagestring($base, 2, 230, 35, 'Rank #:', $yellow);
+		imagestring($base, 2, 295, 35, $srank . ' of ' . $total_players, $yellow);
+		imagestring($base, 2, 230, 46, 'Favorite:', $yellow);
+		imagestring($base, 2, 295, 46, $weapon_name, $yellow);
+		imagestring($base, 2, 230, 57, 'Headshots:', $yellow);
+		imagestring($base, 2, 295, 57, $headshots, $yellow);
+		imagestring($base, 2, 230, 68, 'HS %:', $yellow);
+		imagestring($base, 2, 295, 68, $hsr . ' %', $yellow);
 	}
 	// this soldier was not found
 	else

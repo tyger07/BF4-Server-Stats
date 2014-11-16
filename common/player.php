@@ -309,31 +309,78 @@ elseif($SoldierName != null)
 		echo '
 		<div class="subsection">
 		<div class="headline">
-		' . $SoldierName . '
+		' . ucfirst($SoldierName) . '
 		</div>
 		</div>
 		';
-		// only show ranks if this is not a global stats page
-		// there is no such thing as global rank in database
-		// and computing it is too slow with lots of players in global
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
 			echo '
 			<br/>
 			<br/>
-			<table class="prettytable">
+			<table id="ranks" class="prettytable">
 			<tr>
-			<td class="tablecontents" colspan="8"><center>Ranks in ' . $ServerName . '</center></td>
+			<td class="tablecontents"><center>Ranks in ' . $ServerName . '</center></td>
 			</tr>
 			<tr>
-			';
-			// get this player's ranks
-			// input as: server id, soldier, db, game id
-			rank($ServerID, $PlayerID, $BF4stats, $GameID);
-			echo '
+			<td class="tablecontents">
+			<center>Loading ... <img src="./images/loading.gif" alt="loading" width="16px" height="16px" /></center>
+			</td>
 			</tr>
 			</table>
+			';
+			// ajax load ranks
+			echo '
+			<script type="text/javascript">
+			$(\'#ranks\').load("./common/ranks.php?gid=' . $GameID;
+			if(!empty($ServerID))
+			{
+				echo '&sid=' . $ServerID;
+			}
+			if(!empty($PlayerID))
+			{
+				echo '&pid=' . $PlayerID;
+			}
+			if(!empty($ServerName))
+			{
+				echo '&server=' . urlencode($ServerName);
+			}
+			echo '");
+			</script>
+			';
+		}
+		// or else this is a global stats page
+		else
+		{
+			echo '
+			<br/>
+			<br/>
+			<table id="ranks" class="prettytable">
+			<tr>
+			<td class="tablecontents"><center>Ranks in ' . $clan_name . '\'s Servers</center></td>
+			</tr>
+			<tr>
+			<td class="tablecontents">
+			<center>Loading ... <img src="./images/loading.gif" alt="loading" width="16px" height="16px" /></center>
+			</td>
+			</tr>
+			</table>
+			';
+			// ajax load ranks
+			echo '
+			<script type="text/javascript">
+			$(\'#ranks\').load("./common/ranks.php?gid=' . $GameID;
+			if(!empty($PlayerID))
+			{
+				echo '&pid=' . $PlayerID;
+			}
+			if(!empty($ServerName))
+			{
+				echo '&server=' . urlencode($ServerName);
+			}
+			echo '");
+			</script>
 			';
 		}
 		// get information from the query
@@ -704,7 +751,7 @@ elseif($SoldierName != null)
 				';
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
-				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats);
+				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats, '3');
 				echo '</div>';
 			}
 			// or else this is a global stats page
@@ -757,7 +804,7 @@ elseif($SoldierName != null)
 				';
 				// get weapon stats for weapon stats list
 				// input as: title, damage, soldier, player id, server, db
-				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, null, $valid_ids, $GameID, $BF4stats);
+				Statsout($code_Displayed . " Stats",$WeaponCodes['0'], $weapon_array, $PlayerID, null, $valid_ids, $GameID, $BF4stats, '3');
 				echo '</div>';
 			}
 			echo '
@@ -842,17 +889,17 @@ elseif($SoldierName != null)
 			echo '
 			<div id="tabs2">
 			<ul>
-			<li><div class="subscript">1</div><a href="#tabs2-1">Dog Tags Collected</a></li>
+			<li><a href="#tabs2-1">Dog Tags Collected</a></li>
 			';
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				echo '<li><div class="subscript">2</div><a href="./common/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
+				echo '<li><a href="./common/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
 			}
 			// or else this is a global stats page
 			else
 			{
-				echo '<li><div class="subscript">2</div><a href="./common/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
+				echo '<li><a href="./common/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
 			}
 			echo '
 			</ul>
@@ -909,6 +956,16 @@ elseif($SoldierName != null)
 					$Victim = $DogTag_r['Victim'];
 					$VictimID = $DogTag_r['VictimID'];
 					$KillCount = $DogTag_r['Count'];
+					// show expand/contract if very long
+					if($count == 10)
+					{
+						echo '
+						</table>
+						<div>
+						<span class="expanded">
+						<table class="prettytable" style="margin-top: -2px;">
+						';
+					}
 					$count++;
 					echo '
 					<tr>
@@ -926,6 +983,22 @@ elseif($SoldierName != null)
 					}
 					echo '
 					<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+					</tr>
+					';
+				}
+				// finish expand/contract if very long
+				if($count > 10)
+				{
+					$remaining = $count - 10;
+					echo '
+					</table>
+					</span>
+					<a href="javascript:void(0)" class="collapsed"><table class="prettytable" style="margin-top: -2px;"><tr><td class="tablecontents" style="text-align: left;padding-left: 15px;"><span class="orderedDESCheader">Show ' . $remaining . ' More</span></td></tr></table></a>
+					</div>
+					<table>
+					<tr>
+					<td>
+					</td>
 					</tr>
 					';
 				}
@@ -970,7 +1043,7 @@ elseif($SoldierName != null)
 			// check to see if this rank cache table exists
 			@mysqli_query($BF4stats,"
 				CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-				(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `GID`, `SID`, `category`))
+				(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
 				ENGINE=MyISAM
 				DEFAULT CHARSET=utf8
 				COLLATE=utf8_bin
@@ -1071,7 +1144,13 @@ elseif($SoldierName != null)
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=0[/IMG][/URL]</span><br/>
+			<table class="prettytable">
+			<tr>
+			<td class="tablecontents">
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=0[/IMG][/URL]</span>
+			</td>
+			</tr>
+			</table>
 			</td>
 			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
 			Stats image with player\'s favorite weapon:<br/><br/>
@@ -1082,7 +1161,13 @@ elseif($SoldierName != null)
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=1[/IMG][/URL]</span><br/>
+			<table class="prettytable">
+			<tr>
+			<td class="tablecontents">
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=1[/IMG][/URL]</span>
+			</td>
+			</tr>
+			</table>
 			</td>
 			</tr>
 			</table>
