@@ -586,6 +586,29 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				});
 			});
 			</script>
+			<script type="text/javascript">
+			$(function()
+			{
+				$( "#soldiers2" ).autocomplete(
+				{
+					source: "./common/player-search.php?';
+					if(!empty($ServerID))
+					{
+						echo 'sid=' . $ServerID . '&';
+					}
+					echo 'gid=' . $GameID . '",
+					minLength: 3,
+					select: function( event, ui )
+					{
+						if(ui.item)
+						{
+							$(\'#soldiers2\').val(ui.item.value);
+						}
+						$(\'#ajaxsearch2\').submit();
+					}
+				});
+			});
+			</script>
 			';
 			// jquery auto refresh scoreboard every 30 seconds
 			if(($page == 'home' && !empty($ServerID)) OR (empty($page) && !empty($ServerID)))

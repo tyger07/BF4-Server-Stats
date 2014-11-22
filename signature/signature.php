@@ -9,7 +9,7 @@ require_once('../common/constants.php');
 
 // we will need a server ID from the URL query string!
 // if no data query string is provided, this is an image
-if(!empty($pid) && !empty($gid))
+if(!empty($pid))
 {
 	// initialize defaults
 	$PlayerID = 0;
@@ -18,7 +18,6 @@ if(!empty($pid) && !empty($gid))
 	
 	// assign variable to input
 	$PlayerID = $pid;
-	$GameID = $gid;
 	if(!empty($_GET['fav']) AND is_numeric($_GET['fav']))
 	{
 		$fav = mysqli_real_escape_string($BF4stats, $_GET['fav']);
@@ -356,7 +355,7 @@ if(!empty($pid) && !empty($gid))
 		// bf4 logo
 		$logo = imagecreatefrompng('./images/bf4.png');
 		
-		// copy the rank image onto the background image
+		// copy the logo image onto the background image
 		imagecopy($base, $logo, 378, 26, 0, 0, 11, 51);
 		
 		// rank image
@@ -375,7 +374,7 @@ if(!empty($pid) && !empty($gid))
 		// bf4 logo
 		$logo = imagecreatefrompng('./images/bf4.png');
 		
-		// copy the rank image onto the background image
+		// copy the logo image onto the background image
 		imagecopy($base, $logo, 378, 26, 0, 0, 11, 51);
 		
 		// weapon image
@@ -436,7 +435,7 @@ else
 	$light = imagecolorallocate($base, 255, 255, 255);
 	
 	// add text to image
-	imagestring($base, 4, 120, 40, 'Player ID and Game ID required.', $light);
+	imagestring($base, 4, 120, 40, 'Player ID required.', $light);
 	
 	// compile image
 	imagepng($base);

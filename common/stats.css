@@ -53,6 +53,7 @@ body{
 	font-weight: normal;
 	color: #BBBBBB;
 }
+/* latest background image already has the grid
 .body-grid{
 	position: fixed;
 	z-index: -1;
@@ -63,7 +64,7 @@ body{
 	padding: 0px;
 	margin: 0px;
 	background: url("../images/grid.png") left top repeat;
-}
+} */
 /* links */
 a, a:visited{
 	color: #D5DDE5;

@@ -109,7 +109,12 @@ Enjoy!
 
 ## Changelog:
 
-11-16-14:
+11-21-2014:
+- Added Final Stand maps and ranks
+- Added GameTracker style server banner signature images to the Server Info page Banners tab
+- Added Soldier Name search on Leaderboard
+
+11-16-2014:
 - Added pagination to Suspicious Players page
 - Added expand/contract functionality to player page to reduce page height
 - Player ranks are now calculated on player stats page after the player page is loaded

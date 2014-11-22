@@ -34,7 +34,7 @@ if(@mysqli_num_rows($Server_q) != 0)
 		echo '
 		<ul>
 		<li><a href="#tabs-1">Graphs / Info</a></li>
-		<li><a href="./common/server-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '">Banner</a></li>
+		<li><a href="./common/server-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '">Banners</a></li>
 		</ul>
 		';
 	}
@@ -72,21 +72,21 @@ if(@mysqli_num_rows($Server_q) != 0)
 	if(!empty($ServerID))
 	{
 		// include playersbydate.php contents
-		echo '<br/><center><img class="embed" src="pchart/playersbydate.php?sid=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
+		echo '<br/><center><img class="embed" src="pchart/playersbydate.png?sid=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
 		// include players.php contents
-		echo '<center><img class="embed" src="pchart/players.php?sid=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
+		echo '<center><img class="embed" src="pchart/players.png?sid=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
 		// include joinsleaves.php contents
-		echo '<center><img class="embed" src="pchart/joinsleaves.php?sid=' . $ServerID . '" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
+		echo '<center><img class="embed" src="pchart/joinsleaves.png?sid=' . $ServerID . '" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
 		// include playersbydate.php contents
-		echo '<br/><center><img class="embed" src="pchart/playersbydate.php" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
+		echo '<br/><center><img class="embed" src="pchart/playersbydate.png" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
 		// include players.php contents
-		echo '<center><img class="embed" src="pchart/players.php" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
+		echo '<center><img class="embed" src="pchart/players.png" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
 		// include joinsleaves.php contents
-		echo '<center><img class="embed" src="pchart/joinsleaves.php" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
+		echo '<center><img class="embed" src="pchart/joinsleaves.png" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
 	}
 	echo '
 	</td>

@@ -1140,14 +1140,14 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<img src="./signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=0" alt="signature" />
+			<img src="./signature/signature.png?pid=' . $PlayerID . '" alt="signature" />
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=0[/IMG][/URL]</span>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.png?pid=' . $PlayerID . '[/IMG][/URL]</span>
 			</td>
 			</tr>
 			</table>
@@ -1157,14 +1157,14 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<img src="./signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=1" alt="signature" />
+			<img src="./signature/signature.png?pid=' . $PlayerID . '&amp;fav=1" alt="signature" />
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.php?pid=' . $PlayerID . '&amp;gid=' . $GameID . '&amp;fav=1[/IMG][/URL]</span>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1[/IMG][/URL]</span>
 			</td>
 			</tr>
 			</table>

@@ -23,7 +23,31 @@ if(!empty($sid))
 	$ServerID = $sid;
 }
 
+// find current URL info
+$host = 'http://' . $_SERVER['HTTP_HOST'];
+$dir = dirname($_SERVER['PHP_SELF']);
+$dir = preg_replace('/common/', 'banner', $dir);
+$home = preg_replace('/banner/', '', $dir);
+
 echo '
+<table class="prettytable">
+<tr>
+<td class="tablecontents" width="240px">
+<br/>
+<center><a href="' . $host . $home . 'index.php?sid=' . $ServerID . '" target="_blank"><img src="./banner/banner.png?sid=' . $ServerID . '" alt="banner"/></a></center>
+<br/>
+<div class="headline" style="width: 550px; text-align: left;">BBcode</div>
+<table class="prettytable" style="width: 550px;">
+<tr>
+<td class="tablecontents">
+<span style="font-size: 10px;">[URL=' . $host . $home . 'index.php?sid=' . $ServerID . '][IMG]' . $host . $dir . '/banner.png?sid=' . $ServerID . '[/IMG][/URL]</span>
+</td>
+</tr>
+</table>
+<br/>
+</td>
+</tr>
+</table>
 <table class="prettytable">
 <tr>
 <td class="tablecontents" width="240px">
