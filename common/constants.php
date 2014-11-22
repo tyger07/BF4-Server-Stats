@@ -57,8 +57,12 @@ $map_array = array(
 	'Pearl Market'				=>	'XP3_MarketPl',
 	'Propaganda'				=>	'XP3_Prpganda',
 	'Lumphini Garden'			=>	'XP3_UrbanGdn',
-	'Sunken Dragon'				=>	'XP3_WtrFront'
+	'Sunken Dragon'				=>	'XP3_WtrFront',
 	// final stand
+	'Giants of Karelia'			=>	'XP4_WlkrFtry',
+	'Hammerhead'				=>	'XP4_SubBase',
+	'Hangar 21'					=>	'XP4_Titan',
+	'Operation Whiteout'		=>	'XP4_Arctic'
 	// note comma at the end of each line except for the last line
 );
 
@@ -334,6 +338,8 @@ $weapon_array = array(
 	'MPX'						=>	'MPX',
 	'Bulldog'					=>	'Bulldog',
 	// final stand
+	// 'Rorsch Mk-1'			=>	'',
+	// 'Phantom'				=>	'',
 	// vehicle
 	'DPV'						=>	'DPV',
 	'Class Missing'				=>	'Death',
@@ -393,6 +399,12 @@ $weapon_array = array(
 	'UCAV Launcher'				=>	'XP1',
 	'RAWR'						=>	'XP3',
 	'Z-10w'						=>	'Z-10w'
+	// Final Stand Vehicles
+	// 'Snowmobile'				=>	'',
+	// 'HT-95 Levkov'			=>	'',
+	// 'Shipunov 42'			=>	'',
+	// 'Pod Launcher'			=>	'',
+	// 'XD-1 Accipiter'			=>	''
 	// note comma at the end of each line except for the last line
 );
 
@@ -451,7 +463,7 @@ $squad_array = array(
 
 // set min and max ranks available
 $rank_min = 1;
-$rank_max =	130;
+$rank_max =	140;
 
 // make an array of country names
 // I am not going to separate these into separate lines since these shouldn't change and don't need to be legible
