@@ -39,8 +39,18 @@ echo '
 <div class="headline" style="width: 550px; text-align: left;">BBcode</div>
 <table class="prettytable" style="width: 550px;">
 <tr>
-<td class="tablecontents">
-<span style="font-size: 10px;">[URL=' . $host . $home . 'index.php?sid=' . $ServerID . '][IMG]' . $host . $dir . '/banner.png?sid=' . $ServerID . '[/IMG][/URL]</span>
+<td class="tablecontents" style="padding-left: 10px;">
+<span style="font-size: 12px;">[URL=' . $host . $home . 'index.php?sid=' . $ServerID . '][IMG]' . $host . $dir . '/banner.png?sid=' . $ServerID . '[/IMG][/URL]</span>
+</td>
+</tr>
+</table>
+<br/>
+<div class="headline" style="width: 550px; text-align: left;">Advanced URL Query String Help</div>
+<table class="prettytable" style="width: 550px;">
+<tr>
+<td class="tablecontents" style="padding-left: 10px;">
+<span style="font-size: 12px;"><b>&amp;cc=</b> : (optional) two letter country code designator of server location flag (default: null)</span>
+</span>
 </td>
 </tr>
 </table>

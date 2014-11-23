@@ -92,19 +92,24 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$GradientSettings = array("StartR"=>050,"StartG"=>100,"StartB"=>150,"Alpha"=>50,"Levels"=>-100);
 		$myPicture->drawGradientArea(0,0,160,80,DIRECTION_VERTICAL,$GradientSettings);
 		$myPicture->setShadow(FALSE);
-		$myPicture->setGraphArea(12,20,153,60);
+		$myPicture->setGraphArea(12,5,153,60);
 		$myPicture->setFontProperties(array("R"=>250,"G"=>250,"B"=>250,"FontName"=>"fonts/Forgotte.ttf","FontSize"=>6));
-		$max = max($average);
-		if($max == 0)
+		$max = max($average) + 5;
+		if($max <= 0)
 		{
 			$max = 1;
 		}
-		if($max > 40)
+		if($max > 64)
 		{
-			$max = 40;
+			$max = 64;
+		}
+		$min = min($average) - 5;
+		if($min < 0)
+		{
+			$min = 0;
 		}
 		$Settings = array("Pos"=>SCALE_POS_LEFTRIGHT
-		, "Mode"=>SCALE_MODE_MANUAL, "ManualScale"=>array(0=>array("Min"=>0,"Max"=>$max))
+		, "Mode"=>SCALE_MODE_MANUAL, "ManualScale"=>array(0=>array("Min"=>$min,"Max"=>$max))
 		, "LabelingMethod"=>LABELING_ALL
 		, "GridR"=>200, "GridG"=>200, "GridB"=>200, "GridAlpha"=>75
 		, "TickR"=>240, "TickG"=>240, "TickB"=>240, "TickAlpha"=>75
@@ -146,9 +151,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($mode,$mode_array))
 			{
 				$mode_name = array_search($mode,$mode_array);
-				if(strlen($mode_name) > 14)
+				if(strlen($mode_name) > 19)
 				{
-					$mode_name = substr($mode_name,0,13);
+					$mode_name = substr($mode_name,0,18);
 					$mode_name .= '..';
 				}
 			}
@@ -156,9 +161,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$mode_name = $mode;
-				if(strlen($mode_name) > 14)
+				if(strlen($mode_name) > 19)
 				{
-					$mode_name = substr($mode_name,0,13);
+					$mode_name = substr($mode_name,0,18);
 					$mode_name .= '..';
 				}
 			}
@@ -186,9 +191,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($map,$map_array))
 			{
 				$map_name = array_search($map,$map_array);
-				if(strlen($map_name) > 14)
+				if(strlen($map_name) > 19)
 				{
-					$map_name = substr($map_name,0,13);
+					$map_name = substr($map_name,0,18);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/' . $map . '.png'); 
@@ -199,9 +204,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$map_name = $map;
-				if(strlen($map_name) > 14)
+				if(strlen($map_name) > 19)
 				{
-					$map_name = substr($map_name,0,13);
+					$map_name = substr($map_name,0,18);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/missing.png');
@@ -234,29 +239,38 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// remove port from IP address
 			$s_explode = explode(":",$ip);
 			$server_ip = $s_explode[0];
-			// try API
-			$json = @file_get_contents('http://ip-api.com/json/' . $server_ip);
-			$data = @json_decode($json,true);
-			$location = $data['countryCode'];
-			// if above API failed ...
-			if($location == '')
+			// check if user provided a manual country code over-ride
+			if(!empty($_GET['cc']) && strlen($_GET['cc']) == 2)
 			{
-				// use less accurate method by querying database for players with similar IP address as Server's IP address
-				// loop through the query removing last character one at a time until a match is found
-				while(@mysqli_num_rows($Location_q) == 0 && strlen($server_ip) > 1)
+				// remove accidental spaces from name input
+				$location = strtoupper(mysqli_real_escape_string($BF4stats, $_GET['cc']));
+			}
+			else
+			{
+				// try API
+				$json = @file_get_contents('http://ip-api.com/json/' . $server_ip);
+				$data = @json_decode($json,true);
+				$location = $data['countryCode'];
+				// if above API failed ...
+				if($location == '')
 				{
-					// query for server info
-					$Location_q = @mysqli_query($BF4stats,"
-						SELECT `CountryCode`
-						FROM `tbl_playerdata`
-						WHERE `IP_Address` LIKE '{$server_ip}%'
-						LIMIT 1
-					");
-					// drop the last character for the next loop
-					$server_ip = substr($server_ip, 0, -1);
-					// store the value to a variable if a match was found
-					$Location_r = @mysqli_fetch_assoc($Location_q);
-					$location = strtoupper($Location_r['CountryCode']);
+					// use less accurate method by querying database for players with similar IP address as Server's IP address
+					// loop through the query removing last character one at a time until a match is found
+					while(@mysqli_num_rows($Location_q) == 0 && strlen($server_ip) > 1)
+					{
+						// query for server info
+						$Location_q = @mysqli_query($BF4stats,"
+							SELECT `CountryCode`
+							FROM `tbl_playerdata`
+							WHERE `IP_Address` LIKE '{$server_ip}%'
+							LIMIT 1
+						");
+						// drop the last character for the next loop
+						$server_ip = substr($server_ip, 0, -1);
+						// store the value to a variable if a match was found
+						$Location_r = @mysqli_fetch_assoc($Location_q);
+						$location = strtoupper($Location_r['CountryCode']);
+					}
 				}
 			}
 			// compile flag image
@@ -289,12 +303,12 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagestring($base, 3, 140, 18, $servername, $light);
 			imagestring($base, 2, 120, 32, 'IP Address', $yellow);
 			imagestring($base, 3, 120, 47, $s_explode[0], $light);
-			imagestring($base, 2, 277, 32, 'Current Mode', $yellow);
-			imagestring($base, 3, 277, 47, $mode_name, $light);
+			imagestring($base, 2, 240, 32, 'Current Mode', $yellow);
+			imagestring($base, 3, 240, 47, $mode_name, $light);
 			imagestring($base, 2, 120, 62, 'Players', $yellow);
 			imagestring($base, 3, 120, 76, $used_slots . ' / ' . $available_slots, $light);
-			imagestring($base, 2, 277, 62, 'Current Map', $yellow);
-			imagestring($base, 3, 277, 76, $map_name, $light);
+			imagestring($base, 2, 240, 62, 'Current Map', $yellow);
+			imagestring($base, 3, 240, 76, $map_name, $light);
 			
 			$white = imagecolorallocate($base, 255, 255, 255);
 			imagecolortransparent($base, $white);

@@ -109,6 +109,10 @@ Enjoy!
 
 ## Changelog:
 
+11-22-2014:
+- Made alignment changes to banner image and fixed graph going off the chart in some cases in banner image
+- Added optional "&cc=.." query URL query string item to change the country flag displayed in the banner image
+
 11-21-2014:
 - Added Final Stand maps and ranks
 - Added GameTracker style server banner signature images to the Server Info page Banners tab
