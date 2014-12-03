@@ -109,9 +109,14 @@ Enjoy!
 
 ## Changelog:
 
+12-3-2014:
+- Increased font size in banner graph for better visibility for those with wonky php GD extension
+- Fixed serverbanner.php directory location in server info tab
+- Removed combined rank calculation from combined player stats pages due to large database load for those with many combined players
+
 11-22-2014:
 - Made alignment changes to banner image and fixed graph going off the chart in some cases in banner image
-- Added optional "&cc=.." query URL query string item to change the country flag displayed in the banner image
+- Added optional "&cc=.." URL query string variable to change the country flag displayed in the banner image
 
 11-21-2014:
 - Added Final Stand maps and ranks

@@ -3,58 +3,60 @@
 
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
+// start HTML output
+echo '
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="en-gb" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="imagetoolbar" content="no" />
+<meta name="resource-type" content="document" />
+<meta name="distribution" content="global" />
+<meta name="copyright" content="2014 Open-Web-Community http://open-web-community.com/" />
+<link rel="stylesheet" href="./common/stats.css" type="text/css" />
+';
+
 // hide php notices
 error_reporting(E_ALL ^ E_NOTICE);
 
-
-// detect common bots
-// find user agent
+// get client's user agent
 if(isset($_SERVER["HTTP_USER_AGENT"]))
 {
 	$useragent = $_SERVER["HTTP_USER_AGENT"];
 }
 else
 {
+	// 'unknown' is useless for these purposes, but better than unset
 	$useragent = 'unknown';
 }
-// detect robot
+
+// detect (and block) bots
 if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === false && stripos($useragent, 'fetch') === false && stripos($useragent, 'archiv') === false && stripos($useragent, 'spide') === false && stripos($useragent, 'validat') === false && stripos($useragent, 'analyze') === false && stripos($useragent, 'crawl') === false && stripos($useragent, 'robot') === false && stripos($useragent, 'track') === false && stripos($useragent, 'generat') === false && stripos($useragent, 'google') === false && stripos($useragent, 'bing') === false && stripos($useragent, 'msnbot') === false && stripos($useragent, 'yahoo') === false && stripos($useragent, 'facebook') === false && stripos($useragent, 'yandex') === false && stripos($useragent, 'alexa') === false)
 {
-	// not a bot
-	
-	// block IE 7 and lower due to compatibility issues
+	// NOT a bot
+	// proceed
+
+	// block IE 7 and lower due to compatibility issues with javascript and HTML5
+	// these will mostly be bots in disguise anyway
 	if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	{
-		// not IE 7 and lower
-		
-		// include necessary files
-		require_once('./config/config.php');
-		require_once('./common/functions.php');
-		require_once('./common/constants.php');
+		// NOT IE 7 and lower
+		// proceed
 
-		// start counting page load time
+		// start counting page compilation time
 		$mtime = microtime();
 		$mtime = explode(" ",$mtime);
 		$mtime = $mtime[1] + $mtime[0];
 		$starttime = $mtime;
 
-		// start buffering HTML output
-		echo '
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
-		<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="content-language" content="en-gb" />
-		<meta http-equiv="content-style-type" content="text/css" />
-		<meta http-equiv="imagetoolbar" content="no" />
-		<meta name="resource-type" content="document" />
-		<meta name="distribution" content="global" />
-		<meta name="copyright" content="2014 Open-Web-Community http://open-web-community.com/" />
-		<link rel="stylesheet" href="./common/stats.css" type="text/css" />
-		';
-
-		// connect to the stats database
+		// include necessary files
+		require_once('./config/config.php');
 		require_once('./common/connect.php');
+		require_once('./common/functions.php');
+		require_once('./common/constants.php');
+		require_once('./common/case.php');
 
 		// initialize values as null
 		$ServerID = null;
@@ -62,18 +64,110 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		$SoldierName = null;
 		$PlayerID = null;
 
-		// if there is only one server, no need for index
-		// assign the $ServerID variable
+		// if there is only one server, no need for index page
+		// assign the only server to the $ServerID variable
+		// and get this server's basic information
 		if(count($ServerIDs) == 1)
 		{
+			// assign the only server to the $ServerID variable
 			$ServerID = $ServerIDs[0];
+
+			// find this server info
+			$Server_q = @mysqli_query($BF4stats,"
+				SELECT `ServerName`
+				FROM `tbl_server`
+				WHERE `ServerID` = {$ServerID}
+				AND `GameID` = {$GameID}
+			");
+
+			// the server info was found
+			if(@mysqli_num_rows($Server_q) == 1)
+			{
+				$Server_r = @mysqli_fetch_assoc($Server_q);
+				$ServerName = $Server_r['ServerName'];
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+			}
+			// error?  what?  This will probably never happen.
+			else
+			{
+				$ServerName = 'Error';
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
+			}
+
+			// free up server info query memory
+			@mysqli_free_result($Server_q);
+
+			// lets see if a SoldierName or PlayerID was provided to us in the URL
+			// we will try to find this player in this server and convert everything to PlayerID
+			// first look for a SoldierName in URL and try to convert it to PlayerID
+			if(!empty($player))
+			{
+				$SoldierName = $player;
+
+				$PlayerID_q = @mysqli_query($BF4stats,"
+					SELECT tpd.`PlayerID`
+					FROM `tbl_playerdata` tpd
+					INNER JOIN `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
+					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+					WHERE tpd.`SoldierName` = '{$SoldierName}'
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` = {$ServerID}
+				");
+
+				// was there a result?
+				if(@mysqli_num_rows($PlayerID_q) == 1)
+				{
+					$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
+					$PlayerID = $PlayerID_r['PlayerID'];
+				}
+				// otherwise null variables
+				else
+				{
+					$PlayerID = null;
+				}
+				
+				// free up player id query memory
+				@mysqli_free_result($PlayerID_q);
+			}
+			
+			// then look for PlayerID in URL and make sure it is valid
+			if(!empty($pid) && empty($PlayerID))
+			{
+				$PlayerID = $pid;
+				
+				// search for soldier name using provided player ID
+				$SoldierName_q = @mysqli_query($BF4stats,"
+					SELECT tpd.`SoldierName`
+					FROM `tbl_playerdata` tpd
+					INNER JOIN `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
+					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` = {$ServerID}
+				");
+				
+				// was there a result?
+				if(@mysqli_num_rows($SoldierName_q) == 1)
+				{
+					$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
+					$SoldierName = $SoldierName_r['SoldierName'];
+				}
+				// otherwise null variables
+				else
+				{
+					$SoldierName = null;
+					$PlayerID = null;
+				}
+				
+				// free up soldier name query memory
+				@mysqli_free_result($SoldierName_q);
+			}
 		}
 
-		// include case file for $_GET variables
-		require_once('./common/case.php');
-
+		// otherwise, we need to find this $ServerID manually
+		// $sid in URL is given by case.php
 		// was a server ID given in the URL?  Is it a valid server ID?
-		// if so, we must not be looking at global stats
+		// if so, we must NOT be looking at combined stats
 		if(!empty($sid) && in_array($sid,$ServerIDs) && empty($ServerID))
 		{
 			// assign $ServerID variable
@@ -169,103 +263,9 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				@mysqli_free_result($SoldierName_q);
 			}
 		}
-		// server id was inherited since this is the only server
-		elseif(!empty($ServerID))
-		{	
-			// find this server info
-			$Server_q = @mysqli_query($BF4stats,"
-				SELECT `ServerName`
-				FROM `tbl_server`
-				WHERE `ServerID` = {$ServerID}
-				AND `GameID` = {$GameID}
-			");
-			
-			// the server info was found
-			if(@mysqli_num_rows($Server_q) == 1)
-			{
-				$Server_r = @mysqli_fetch_assoc($Server_q);
-				$ServerName = $Server_r['ServerName'];
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
-			}
-			// error?  what?  This will probably never happen.
-			else
-			{
-				$ServerName = 'Error';
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
-			}
-			
-			// free up server info query memory
-			@mysqli_free_result($Server_q);
-			
-			// lets see if a SoldierName or PlayerID was provided to us in the URL
-			// we will try to find this player in this server and convert everything to PlayerID
-			// first look for a SoldierName in URL and try to convert it to PlayerID
-			if(!empty($player))
-			{
-				$SoldierName = $player;
-			
-				$PlayerID_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`PlayerID`
-					FROM `tbl_playerdata` tpd
-					INNER JOIN `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
-					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-					WHERE tpd.`SoldierName` = '{$SoldierName}'
-					AND tpd.`GameID` = {$GameID}
-					AND tsp.`ServerID` = {$ServerID}
-				");
-				
-				// was there a result?
-				if(@mysqli_num_rows($PlayerID_q) == 1)
-				{
-					$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
-					$PlayerID = $PlayerID_r['PlayerID'];
-				}
-				// otherwise null variables
-				else
-				{
-					$PlayerID = null;
-				}
-				
-				// free up player id query memory
-				@mysqli_free_result($PlayerID_q);
-			}
-			
-			// then look for PlayerID in URL and make sure it is valid
-			if(!empty($pid) && empty($PlayerID))
-			{
-				$PlayerID = $pid;
-				
-				// search for soldier name using provided player ID
-				$SoldierName_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`
-					FROM `tbl_playerdata` tpd
-					INNER JOIN `tbl_server_player` tsp ON tpd.`PlayerID` = tsp.`PlayerID`
-					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-					WHERE tpd.`PlayerID` = {$PlayerID}
-					AND tpd.`GameID` = {$GameID}
-					AND tsp.`ServerID` = {$ServerID}
-				");
-				
-				// was there a result?
-				if(@mysqli_num_rows($SoldierName_q) == 1)
-				{
-					$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
-					$SoldierName = $SoldierName_r['SoldierName'];
-				}
-				// otherwise null variables
-				else
-				{
-					$SoldierName = null;
-					$PlayerID = null;
-				}
-				
-				// free up soldier name query memory
-				@mysqli_free_result($SoldierName_q);
-			}
-		}
 		// no server id in URL
 		// and there is more than one valid server id available
-		// this must be a global stats page
+		// this must be a combined stats page
 		else
 		{
 			// lets see if a SoldierName or PlayerID was provided to us in the URL
@@ -1249,32 +1249,22 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		</html>
 		';
 	}
+	// IS IE 7 or lower
 	else
 	{
-		// is IE 7 or lower
-		
+		// blocked
+
 		// include necessary files
 		require_once('./config/config.php');
-		
-		echo '
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-		<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
-		<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-		<meta http-equiv="content-language" content="en-gb" />
-		<meta http-equiv="content-style-type" content="text/css" />
-		<meta http-equiv="imagetoolbar" content="no" />
-		<meta name="resource-type" content="document" />
-		<meta name="distribution" content="global" />
-		<meta name="copyright" content="2014 Open-Web-Community http://open-web-community.com/" />
-		<meta name="keywords" content="Restricted" />
-		<meta name="description" content="BF4 Stats Page - Restricted" />
-		<link rel="stylesheet" href="./common/stats.css" type="text/css" />
-		';
-	
-		// connect to the stats database
 		require_once('./common/connect.php');
 		
+		echo '
+		<meta name="keywords" content="Restricted" />
+		<meta name="description" content="BF4 Stats Page - Restricted" />
+		<title>BF4 Stats Page - Restricted</title>
+		</head>
+		';
+
 		// check to see if denied table exists
 		@mysqli_query($BF4stats,"
 			CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
@@ -1316,8 +1306,6 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		}
 		
 		echo '
-		<title>BF4 Stats Page - Restricted</title>
-		</head>
 		<body>
 		<br/><br/>
 		<center><b>Sorry, Internet Explorer version 7 and lower is not supported.</b><br/><br/>Update your browser version or disable compatibility mode in your browser.<br/>Please contact this website\'s administrator if you need further assistance.<br/><br/>Your user agent: ' . $useragent . '</center>
@@ -1326,32 +1314,22 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		';
 	}
 }
+// IS a bot
 else
 {
-	// is a bot
-	
+	// blocked
+
 	// include necessary files
 	require_once('./config/config.php');
-	
-	echo '
-	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-gb" xml:lang="en-gb">
-	<head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<meta http-equiv="content-language" content="en-gb" />
-	<meta http-equiv="content-style-type" content="text/css" />
-	<meta http-equiv="imagetoolbar" content="no" />
-	<meta name="resource-type" content="document" />
-	<meta name="distribution" content="global" />
-	<meta name="copyright" content="2014 Open-Web-Community http://open-web-community.com/" />
-	<meta name="keywords" content="Restricted,BF4,Stats,' . $clan_name . '" />
-	<meta name="description" content="BF4 Stats Page - ' . $clan_name . ' - Restricted" />
-	<link rel="stylesheet" href="./common/stats.css" type="text/css" />
-	';
-	
-	// connect to the stats database
 	require_once('./common/connect.php');
 	
+	echo '
+	<meta name="keywords" content="Restricted,BF4,Stats,' . $clan_name . '" />
+	<meta name="description" content="BF4 Stats Page - ' . $clan_name . ' - Restricted" />
+	<title>BF4 Stats Page - ' . $clan_name . ' - Restricted</title>
+	</head>
+	';
+
 	// check to see if bot stats table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
@@ -1393,8 +1371,6 @@ else
 	}
 	
 	echo '
-	<title>BF4 Stats Page - ' . $clan_name . ' - Restricted</title>
-	</head>
 	<body>
 	<br/><br/>
 	<center><b>Sorry, bot access has been disabled.</b><br/><br/>Please contact this website\'s administrator if you need further assistance.<br/><br/>Your user agent: ' . $useragent . '</center>

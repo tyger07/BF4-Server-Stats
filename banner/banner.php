@@ -92,8 +92,8 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$GradientSettings = array("StartR"=>050,"StartG"=>100,"StartB"=>150,"Alpha"=>50,"Levels"=>-100);
 		$myPicture->drawGradientArea(0,0,160,80,DIRECTION_VERTICAL,$GradientSettings);
 		$myPicture->setShadow(FALSE);
-		$myPicture->setGraphArea(12,5,153,60);
-		$myPicture->setFontProperties(array("R"=>250,"G"=>250,"B"=>250,"FontName"=>"fonts/Forgotte.ttf","FontSize"=>6));
+		$myPicture->setGraphArea(14,7,153,60);
+		$myPicture->setFontProperties(array("R"=>250,"G"=>250,"B"=>250,"FontName"=>"fonts/Forgotte.ttf","FontSize"=>8));
 		$max = max($average) + 5;
 		if($max <= 0)
 		{
@@ -239,11 +239,11 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// remove port from IP address
 			$s_explode = explode(":",$ip);
 			$server_ip = $s_explode[0];
-			// check if user provided a manual country code over-ride
-			if(!empty($_GET['cc']) && strlen($_GET['cc']) == 2)
+			// check if user provided a manual country code override
+			if(!empty($cc))
 			{
-				// remove accidental spaces from name input
-				$location = strtoupper(mysqli_real_escape_string($BF4stats, $_GET['cc']));
+				// set the location to the input override provided
+				$location = $cc;
 			}
 			else
 			{
@@ -252,10 +252,11 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				$data = @json_decode($json,true);
 				$location = $data['countryCode'];
 				// if above API failed ...
+				// use less accurate method by querying database for players with similar IP address as Server's IP address
 				if($location == '')
 				{
-					// use less accurate method by querying database for players with similar IP address as Server's IP address
 					// loop through the query removing last character one at a time until a match is found
+					// set server location to most similar player's location
 					while(@mysqli_num_rows($Location_q) == 0 && strlen($server_ip) > 1)
 					{
 						// query for server info
@@ -265,12 +266,15 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 							WHERE `IP_Address` LIKE '{$server_ip}%'
 							LIMIT 1
 						");
-						// drop the last character for the next loop
+						// drop the last character from the server ip for another loop
 						$server_ip = substr($server_ip, 0, -1);
-						// store the value to a variable if a match was found
-						$Location_r = @mysqli_fetch_assoc($Location_q);
-						$location = strtoupper($Location_r['CountryCode']);
+						// continuing to do broader and broader search with each pass...
 					}
+					// set the variable based on results of above query loop
+					$Location_r = @mysqli_fetch_assoc($Location_q);
+					$location = strtoupper($Location_r['CountryCode']);
+					// add those characters back to $server_ip
+					$server_ip = $s_explode[0];
 				}
 			}
 			// compile flag image
@@ -302,7 +306,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagestring($base, 2, 120, 4, 'Server Name', $yellow);
 			imagestring($base, 3, 140, 18, $servername, $light);
 			imagestring($base, 2, 120, 32, 'IP Address', $yellow);
-			imagestring($base, 3, 120, 47, $s_explode[0], $light);
+			imagestring($base, 3, 120, 47, $server_ip, $light);
 			imagestring($base, 2, 240, 32, 'Current Mode', $yellow);
 			imagestring($base, 3, 240, 47, $mode_name, $light);
 			imagestring($base, 2, 120, 62, 'Players', $yellow);
@@ -362,7 +366,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$light = imagecolorallocate($base, 255, 255, 255);
 		
 		// add text to image
-		imagestring($base, 4, 130, 40, 'The entered Server ID doesn\'t exist.', $light);
+		imagestring($base, 4, 130, 40, 'The provided Server ID doesn\'t exist.', $light);
 		
 		// compile image
 		imagepng($base);
@@ -392,7 +396,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		imagepng($base);
 		imagedestroy($base);
 	}
-// extension doesn't exist. show error image
+// php GD extension doesn't exist. show error image
 }
 else
 {

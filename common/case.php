@@ -4,6 +4,7 @@
 // DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // page case
+// $page = ?p
 if(!empty($_GET['p']))
 {
 	switch($_GET['p'])
@@ -42,6 +43,7 @@ else
 }
 
 // player name case
+// $player = ?player
 if(!empty($_GET['player']))
 {
 	// remove accidental spaces from name input
@@ -53,6 +55,7 @@ else
 }
 
 // player id case
+// $pid = ?pid
 if(!empty($_GET['pid']) && is_numeric($_GET['pid']))
 {
 	$pid = mysqli_real_escape_string($BF4stats, $_GET['pid']);
@@ -62,7 +65,8 @@ else
 	$pid = null;
 }
 
-// player query case
+// player query (jquery input) case
+// $term = ?term
 if(!empty($_GET['term']))
 {
 	$term = mysqli_real_escape_string($BF4stats, $_GET['term']);
@@ -73,6 +77,7 @@ else
 }
 
 // server id case
+// $sid = ?sid
 if(!empty($_GET['sid']) && is_numeric($_GET['sid']))
 {
 	$sid = mysqli_real_escape_string($BF4stats, $_GET['sid']);
@@ -83,6 +88,7 @@ else
 }
 
 // game id case
+// $gid = ?gid
 if(!empty($_GET['gid']) && is_numeric($_GET['gid']))
 {
 	$gid = mysqli_real_escape_string($BF4stats, $_GET['gid']);
@@ -92,7 +98,8 @@ else
 	$gid = null;
 }
 
-// query input case
+// query input (chat search) case
+// $query = ?q
 if(!empty($_GET['q']))
 {
 	$query = mysqli_real_escape_string($BF4stats, $_GET['q']);
@@ -102,7 +109,8 @@ else
 	$query = null;
 }
 
-// current page pagination case
+// current page in pagination case
+// $currentpage = ?cp
 if(!empty($_GET['cp']) && is_numeric($_GET['cp']))
 {
 	$currentpage = mysqli_real_escape_string($BF4stats, $_GET['cp']);
@@ -112,7 +120,8 @@ else
 	$currentpage = null;
 }
 
-// page rank case
+// page rank in pagination case
+// $rank = ?r
 if(!empty($_GET['r']))
 {
 	$rank = mysqli_real_escape_string($BF4stats, $_GET['r']);
@@ -122,7 +131,8 @@ else
 	$rank = null;
 }
 
-// page order case
+// page order in pagination case
+// $order = ?o
 if(!empty($_GET['o']))
 {
 	$order = mysqli_real_escape_string($BF4stats, $_GET['o']);
@@ -132,4 +142,15 @@ else
 	$order = null;
 }
 
+// country code (flag image in banner override) case
+// $cc = ?cc
+if(!empty($_GET['cc']) && strlen($_GET['cc']) == 2 && !(is_numeric($_GET['cc'])))
+{
+	// remove accidental spaces from name input
+	$cc = strtoupper(mysqli_real_escape_string($BF4stats, $_GET['cc']));
+}
+else
+{
+	$cc = null;
+}
 ?>

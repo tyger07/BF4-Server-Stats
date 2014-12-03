@@ -350,39 +350,40 @@ elseif($SoldierName != null)
 			</script>
 			';
 		}
-		// or else this is a global stats page
-		else
-		{
-			echo '
-			<br/>
-			<br/>
-			<table id="ranks" class="prettytable">
-			<tr>
-			<td class="tablecontents"><center>Ranks in ' . $clan_name . '\'s Servers</center></td>
-			</tr>
-			<tr>
-			<td class="tablecontents">
-			<center>Loading ... <img src="./images/loading.gif" alt="loading" width="16px" height="16px" /></center>
-			</td>
-			</tr>
-			</table>
-			';
-			// ajax load ranks
-			echo '
-			<script type="text/javascript">
-			$(\'#ranks\').load("./common/ranks.php?gid=' . $GameID;
-			if(!empty($PlayerID))
-			{
-				echo '&pid=' . $PlayerID;
-			}
-			if(!empty($ServerName))
-			{
-				echo '&server=' . urlencode($ServerName);
-			}
-			echo '");
-			</script>
-			';
-		}
+		// commented out combined stats due to heavy database load if there are a large number of combined players
+		//// or else this is a global stats page
+		//else
+		//{
+		//	echo '
+		//	<br/>
+		//	<br/>
+		//	<table id="ranks" class="prettytable">
+		//	<tr>
+		//	<td class="tablecontents"><center>Ranks in ' . $clan_name . '\'s Servers</center></td>
+		//	</tr>
+		//	<tr>
+		//	<td class="tablecontents">
+		//	<center>Loading ... <img src="./images/loading.gif" alt="loading" width="16px" height="16px" /></center>
+		//	</td>
+		//	</tr>
+		//	</table>
+		//	';
+		//	// ajax load ranks
+		//	echo '
+		//	<script type="text/javascript">
+		//	$(\'#ranks\').load("./common/ranks.php?gid=' . $GameID;
+		//	if(!empty($PlayerID))
+		//	{
+		//		echo '&pid=' . $PlayerID;
+		//	}
+		//	if(!empty($ServerName))
+		//	{
+		//		echo '&server=' . urlencode($ServerName);
+		//	}
+		//	echo '");
+		//	</script>
+		//	';
+		//}
 		// get information from the query
 		$PlayerData_r = @mysqli_fetch_assoc($PlayerData_q);
 		$CountryCode = strtoupper($PlayerData_r['CountryCode']);
@@ -1140,7 +1141,7 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<img src="./signature/signature.png?pid=' . $PlayerID . '" alt="signature" />
+			<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./signature/signature.png?pid=' . $PlayerID . '" alt="signature" /></a>
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
@@ -1157,7 +1158,7 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<img src="./signature/signature.png?pid=' . $PlayerID . '&amp;fav=1" alt="signature" />
+			<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./signature/signature.png?pid=' . $PlayerID . '&amp;fav=1" alt="signature" /></a>
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>

@@ -26,6 +26,7 @@ if(!empty($sid))
 // find current URL info
 $host = 'http://' . $_SERVER['HTTP_HOST'];
 $dir = dirname($_SERVER['PHP_SELF']);
+// break banner location
 $dir = preg_replace('/common/', 'banner', $dir);
 $home = preg_replace('/banner/', '', $dir);
 
@@ -57,7 +58,10 @@ echo '
 <br/>
 </td>
 </tr>
-</table>
+</table>';
+// fix banner location
+$dir = dirname($_SERVER['PHP_SELF']);
+echo '
 <table class="prettytable">
 <tr>
 <td class="tablecontents" width="240px">
