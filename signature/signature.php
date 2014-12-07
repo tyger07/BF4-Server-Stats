@@ -98,7 +98,6 @@ if(!empty($pid))
 		// or else default
 		else
 		{
-			$rank_img = '../images/ranks/missing.png';
 			$weapon_img = '../images/weapons/missing.png';
 			$weapon_name = 'Unknown';
 			$weapon_kills = 'Unknown';
@@ -138,6 +137,141 @@ if(!empty($pid))
 			// data older than 12 hours? or incorrect data? recalculate
 			if(($timestamp <= $old) OR ($srank == 0))
 			{
+				// check if this is a top 20 player
+				// if so, we can get their score rank much faster
+				$Top_q = @mysqli_query($BF4stats,"
+					SELECT `PlayerID`
+					FROM `tyger_stats_top_twenty_cache`
+					WHERE `SID` = '{$valid_ids}'
+					AND `GID` = '{$GameID}'
+					AND `timestamp` >= '{$old}'
+					AND `PlayerID` = {$PlayerID}
+				");
+				if(@mysqli_num_rows($Top_q) != 0)
+				{
+					// rank players by score
+					$Score_q = @mysqli_query($BF4stats,"
+						SELECT sub2.rank
+						FROM
+							(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
+							 FROM
+								(SELECT `PlayerID`
+								FROM `tyger_stats_top_twenty_cache`
+								INNER JOIN (SELECT @num := 0) x
+								WHERE `SID` = '{$valid_ids}'
+								AND `GID` = '{$GameID}'
+								AND `timestamp` >= '{$old}'
+								GROUP BY `PlayerID`
+								ORDER BY `Score` DESC, `SoldierName` ASC
+								) sub
+							) sub2
+						WHERE sub2.`PlayerID` = {$PlayerID}
+					");
+					if(@mysqli_num_rows($Score_q) == 1)
+					{
+						$Score_r = @mysqli_fetch_assoc($Score_q);
+						$srank = $Score_r['rank'];
+					}
+					else
+					{
+						$srank = 0;
+					}
+				}
+				// not in top 20
+				// have to do slow query
+				else
+				{
+					// rank players by score
+					$Score_q = @mysqli_query($BF4stats,"
+						SELECT sub2.rank
+						FROM
+							(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
+							 FROM
+								(SELECT tpd.`PlayerID`
+								FROM `tbl_playerdata` tpd
+								INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+								INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+								INNER JOIN (SELECT @num := 0) x
+								WHERE tpd.`GameID` = {$GameID}
+								AND tsp.`ServerID` IN ({$valid_ids})
+								GROUP BY tpd.`PlayerID`
+								ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
+								) sub
+							) sub2
+						WHERE sub2.`PlayerID` = {$PlayerID}
+					");
+					if(@mysqli_num_rows($Score_q) == 1)
+					{
+						$Score_r = @mysqli_fetch_assoc($Score_q);
+						$srank = $Score_r['rank'];
+					}
+					else
+					{
+						$srank = 0;
+					}
+					
+					// update old data in database
+					@mysqli_query($BF4stats,"
+						UPDATE `tyger_stats_rank_cache`
+						SET `rank` = '{$srank}', `timestamp` = '{$now_timestamp}'
+						WHERE `category` = 'Score'
+						AND `SID` = '{$valid_ids}'
+						AND `GID` = '{$GameID}'
+						AND `PlayerID` = {$PlayerID}
+					");
+					// free up rank query memory
+					@mysqli_free_result($Score_q);
+				}
+				// free up rank query memory
+				@mysqli_free_result($Top_q);
+			}
+		}
+		else
+		{
+			// check if this is a top 20 player
+			// if so, we can get their score rank much faster
+			$Top_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`
+				FROM `tyger_stats_top_twenty_cache`
+				WHERE `SID` = '{$valid_ids}'
+				AND `GID` = '{$GameID}'
+				AND `timestamp` >= '{$old}'
+				AND `PlayerID` = {$PlayerID}
+			");
+			if(@mysqli_num_rows($Top_q) != 0)
+			{
+				// rank players by score
+				$Score_q = @mysqli_query($BF4stats,"
+					SELECT sub2.rank
+					FROM
+						(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
+						 FROM
+							(SELECT `PlayerID`
+							FROM `tyger_stats_top_twenty_cache`
+							INNER JOIN (SELECT @num := 0) x
+							WHERE `SID` = '{$valid_ids}'
+							AND `GID` = '{$GameID}'
+							AND `timestamp` >= '{$old}'
+							GROUP BY `PlayerID`
+							ORDER BY `Score` DESC, `SoldierName` ASC
+							) sub
+						) sub2
+					WHERE sub2.`PlayerID` = {$PlayerID}
+				");
+				if(@mysqli_num_rows($Score_q) == 1)
+				{
+					$Score_r = @mysqli_fetch_assoc($Score_q);
+					$srank = $Score_r['rank'];
+				}
+				else
+				{
+					$srank = 0;
+				}
+			}
+			// not in top 20
+			// have to do slow query
+			else
+			{
 				// rank players by score
 				$Score_q = @mysqli_query($BF4stats,"
 					SELECT sub2.rank
@@ -166,49 +300,6 @@ if(!empty($pid))
 				{
 					$srank = 0;
 				}
-				
-				// update old data in database
-				@mysqli_query($BF4stats,"
-					UPDATE `tyger_stats_rank_cache`
-					SET `rank` = '{$srank}', `timestamp` = '{$now_timestamp}'
-					WHERE `category` = 'Score'
-					AND `SID` = '{$valid_ids}'
-					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
-				");
-				// free up rank query memory
-				@mysqli_free_result($Score_q);
-			}
-		}
-		else
-		{
-			// rank players by score
-			$Score_q = @mysqli_query($BF4stats,"
-				SELECT sub2.rank
-				FROM
-					(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
-					 FROM
-						(SELECT tpd.`PlayerID`
-						FROM `tbl_playerdata` tpd
-						INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-						INNER JOIN (SELECT @num := 0) x
-						WHERE tpd.`GameID` = {$GameID}
-						AND tsp.`ServerID` IN ({$valid_ids})
-						GROUP BY tpd.`PlayerID`
-						ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
-						) sub
-					) sub2
-				WHERE sub2.`PlayerID` = {$PlayerID}
-			");
-			if(@mysqli_num_rows($Score_q) == 1)
-			{
-				$Score_r = @mysqli_fetch_assoc($Score_q);
-				$srank = $Score_r['rank'];
-			}
-			else
-			{
-				$srank = 0;
 			}
 			// add this data to the cache
 			@mysqli_query($BF4stats,"
@@ -335,6 +426,9 @@ if(!empty($pid))
 	@mysqli_free_result($PlayerCount_q);
 	
 	// start outputting the image
+	header('Pragma: public');
+	header('Cache-Control: max-age=0');
+	header('Expires: 0');
 	header("Content-type: image/png");
 	
 	// base image

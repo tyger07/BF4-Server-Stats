@@ -109,6 +109,9 @@ Enjoy!
 
 ## Changelog:
 
+12-7-2014:
+- Fixed missing banner_cache folder causing banner graphs not to appear
+
 12-3-2014:
 - Increased font size in banner graph for better visibility for those with wonky php GD extension
 - Fixed serverbanner.php directory location in server info tab

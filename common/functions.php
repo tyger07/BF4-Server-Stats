@@ -1796,7 +1796,7 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 	return $total_players;
 }
 
-// function to cache total chat rows
+// function to cache total suspects
 function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 {
 	// check to see if this count cache table exists
