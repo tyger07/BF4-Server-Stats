@@ -1,5 +1,7 @@
 <?php
-// server stats config page by Ty_ger07 at http://open-web-community.com/
+// BF4 Stats Page by Ty_ger07
+// http://open-web-community.com/
+
 // THE FOLLOWING INFORMATION NEEDS TO BE FILLED IN
 // Read readme.txt for help.
 
@@ -14,8 +16,8 @@ DEFINE('PASS', '');													// database password
 $clan_name		= 'clan';											// your gaming clan or organization name
 
 // PAGE BANNER
-$banner_image	= './images/bf4-logo.png';							// your desired page banner image
+$banner_image	= './common/images/bf4-logo.png';					// your desired page banner image
 
 // BANNER LINK
-$banner_url		= 'http://tyger07.github.io/BF4-Server-Stats/';		// where clicking on banner will take you
+$banner_url		= 'http://tyger07.github.io/BF4-Server-Stats/';		// where clicking on page banner will take you
 ?>

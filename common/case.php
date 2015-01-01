@@ -1,7 +1,6 @@
 <?php
-// case variables for server stats page by Ty_ger07 at http://open-web-community.com/
-
-// DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
+// BF4 Stats Page by Ty_ger07
+// http://open-web-community.com/
 
 // page case
 // $page = ?p
@@ -65,7 +64,7 @@ else
 	$pid = null;
 }
 
-// player query (jquery input) case
+// player search (jquery input) case
 // $term = ?term
 if(!empty($_GET['term']))
 {
@@ -98,7 +97,7 @@ else
 	$gid = null;
 }
 
-// query input (chat search) case
+// chat search input case
 // $query = ?q
 if(!empty($_GET['q']))
 {
@@ -142,11 +141,32 @@ else
 	$order = null;
 }
 
+// scoreboard rank
+// $scoreboard_rank = ?rank
+if(!empty($_GET['rank']))
+{
+	$scoreboard_rank = mysqli_real_escape_string($BF4stats, $_GET['rank']);
+}
+else
+{
+	$scoreboard_rank = null;
+}
+
+// scoreboard order
+// $scoreboard_order = ?order
+if(!empty($_GET['order']))
+{
+	$scoreboard_order = mysqli_real_escape_string($BF4stats, $_GET['order']);
+}
+else
+{
+	$scoreboard_order = null;
+}
+
 // country code (flag image in banner override) case
 // $cc = ?cc
 if(!empty($_GET['cc']) && strlen($_GET['cc']) == 2 && !(is_numeric($_GET['cc'])))
 {
-	// remove accidental spaces from name input
 	$cc = strtoupper(mysqli_real_escape_string($BF4stats, $_GET['cc']));
 }
 else

@@ -109,6 +109,13 @@ Enjoy!
 
 ## Changelog:
 
+12-31-2014:
+- Cleaned up a lot of spaghetti code
+- New directory structure to make editing/upkeep easier
+- More asynchronous loading of page contents for a smoother/faster experience
+- Bug fixes and performance improvements
+- Added missing Final Stand weapons
+
 12-7-2014:
 - Fixed missing banner_cache folder causing banner graphs not to appear
 

@@ -1,9 +1,9 @@
 <?php
-// constants for server stats page by Ty_ger07 at http://open-web-community.com/
-
-// DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
+// BF4 Stats Page by Ty_ger07
+// http://open-web-community.com/
 
 // make an array of game modes
+// left value is name as it will appear on stats page
 $mode_array = array(
 	'Team Deathmatch'			=>	'TeamDeathMatch0',
 	'Domination'				=>	'Domination0',
@@ -27,6 +27,7 @@ $mode_array = array(
 );
 
 // make an array of map names
+// left value is name as it will appear on stats page
 $map_array = array(
 	'Zavod 311'					=>	'MP_Abandoned',
 	'Lancang Dam'				=>	'MP_Damage',
@@ -67,6 +68,8 @@ $map_array = array(
 );
 
 // make an array of weapon names
+// the left value is the name which will be displayed on the stats page
+// the image filename in /images/weapons/ must match the right value for each weapon (otherwise the image will appear broken)
 $weapon_array = array(
 	'870'						=>	'870',
 	'A-91'						=>	'A91',
@@ -179,6 +182,7 @@ $weapon_array = array(
 	'M82A3'						=>	'M82A3',
 	'M82A3 CQB'					=>	'M82A3_CQB',
 	'M82A3 MED'					=>	'M82A3_MED',
+	'M82A3 SP'					=>	'M82A3_SP',
 	'M9'						=>	'M9',
 	'M93R'						=>	'M93R',
 	'M98B'						=>	'M98B',
@@ -298,6 +302,7 @@ $weapon_array = array(
 	'L96A1'						=>	'L96A1',
 	'MTAR-21'					=>	'MTAR21',
 	'MP7'						=>	'MP7',
+	'SUAV'						=>	'SUAV',
 	'RPK-74'					=>	'RPK-74',
 	// second assault
 	'AS Val'					=>	'ASVAL',
@@ -338,11 +343,12 @@ $weapon_array = array(
 	'MPX'						=>	'MPX',
 	'Bulldog'					=>	'Bulldog',
 	// final stand
-	// 'Rorsch Mk-1'			=>	'',
-	// 'Phantom'				=>	'',
+	'Phantom Bow'				=>	'dlSHTR',
+	'Rorsch Mk-1'				=>	'Railgun',
+	'XD-1 Accipiter'			=>	'XP4',
 	// vehicle
 	'DPV'						=>	'DPV',
-	'Class Missing'				=>	'Death',
+	'Not Specified'				=>	'Death',
 	'EOD Bot'					=>	'EODBot',
 	'Levolution'				=>	'Gameplay',
 	'Z-11w CH'					=>	'Gameplay/Vehicles/Z11W/spec/Z-11w_CH',
@@ -366,6 +372,7 @@ $weapon_array = array(
 	'HIMARS'					=>	'Gameplay/Vehicles/HIMARS/HIMARS',
 	'IFV ZBD-09'				=>	'Gameplay/Vehicles/CH_IFV_ZBD09/CH_IFV_ZBD09',
 	'LAV-25'					=>	'Gameplay/Vehicles/LAV25/LAV25',
+	'Old Cannon'				=>	'XP2/Gameplay/Vehicles/OldCannon/OldCannon',
 	'Pantsir S1'				=>	'Gameplay/Vehicles/Pantsir/Pantsir-S1',
 	'9K22 Tunguska'				=>	'Gameplay/Vehicles/9K22_Tunguska_M/9K22_Tunguska_M',
 	'PGZ-95 AA'					=>	'Gameplay/Vehicles/CH_AA_PGZ-95/CH_AA_PGZ-95',
@@ -382,7 +389,9 @@ $weapon_array = array(
 	'LYT2021'					=>	'Gameplay/Vehicles/CH_FAV_LYT2021/CH_FAV_LYT2021',
 	'Harbin Z-9'				=>	'Gameplay/Vehicles/CH_LTHE_Z-9/CH_LTHE_Z-9',
 	'Growler ITV'				=>	'Gameplay/Vehicles/GrowlerITV/GrowlerITV',
+	'Hovercraft'				=>	'XP2/Gameplay/Vehicles/PatrolHovercraft/PatrolHovercraft',
 	'SPM-3 MRAP'				=>	'Gameplay/Vehicles/RU_MRAP_SPM3/RU_MRAP_SPM3',
+	'Skid Loader'				=>	'XP0/Gameplay/Vehicles/SkidLoader/SkidLoader',
 	'COUGAR MRAP'				=>	'Gameplay/Vehicles/US_MRAP-COUGAR/US_MRAP-COUGAR',
 	'Train'						=>	'Gameplay/Vehicles/Train_01/Train_01',
 	'Venom'						=>	'Gameplay/Vehicles/Venom/Venom',
@@ -398,17 +407,17 @@ $weapon_array = array(
 	'VDV Buggy'					=>	'VDV_Buggy',
 	'UCAV Launcher'				=>	'XP1',
 	'RAWR'						=>	'XP3',
-	'Z-10w'						=>	'Z-10w'
+	'Z-10w'						=>	'Z-10w',
 	// Final Stand Vehicles
-	// 'Snowmobile'				=>	'',
-	// 'HT-95 Levkov'			=>	'',
-	// 'Shipunov 42'			=>	'',
-	// 'Pod Launcher'			=>	'',
-	// 'XD-1 Accipiter'			=>	''
+	'Snowmobile'				=>	'XP4/Gameplay/Vehicles/Snowmobile/Snowmobile',
+	'HT-95 Levkov'				=>	'XP4/Gameplay/Vehicles/HoverTank/XP4_HoverTank',
+	'Shipunov 42'				=>	'XP4/Gameplay/Vehicles/MetalStorm/XP4_MetalStorm',
+	'Pod Launcher'				=>	'XP4/Gameplay/Vehicles/PodLauncher/Launcher_Pod_Platform'
 	// note comma at the end of each line except for the last line
 );
 
 // make an array of weapon categories
+// left value is the name as it will appear on the stats page
 $cat_array = array(
 	'Assault'		=>	'assaultrifle',
 	'Carbine'		=>	'carbine',
@@ -423,10 +432,15 @@ $cat_array = array(
 	'Impact'		=>	'impact',
 	'Melee'			=>	'melee',
 	'No Class'		=>	'none',
-	// VehicleCustom is my own array of vehicles filtered out separate
+	// VehicleCustom is my own array of vehicles which is filtered out separately in 'StatsOut' function
 	'Vehicle'		=> 	'VehicleCustom'
 	// note comma at the end of each line except for the last line
 );
+
+// set min and max ranks available
+// this will determine whether the image is available in /images/ranks (so if a player's rank is higher than an available image, it doesn't try to load an unavailable image)
+$rank_min = 1;
+$rank_max =	140;
 
 // make an array of squad names
 // this is just the phonetic alphabet
@@ -461,10 +475,6 @@ $squad_array = array(
 	// note comma at the end of each line except for the last line
 );
 
-// set min and max ranks available
-$rank_min = 1;
-$rank_max =	140;
-
 // make an array of country names
 // I am not going to separate these into separate lines since these shouldn't change and don't need to be legible
 // this is just a (long!) list of country codes
@@ -491,5 +501,4 @@ $country_array = array(
 	'Ukraine'=>'UA','United Arab Emirates'=>'AE','United Kingdom'=>'GB','United States'=>'US','US Minor Outlying Islands'=>'UM','Uruguay'=>'UY','Uzbekistan'=>'UZ','Vanuatu'=>'VU','Venezuela'=>'VE','Vietnam'=>'VN',
 	'Virgin Islands (British)'=>'VG','Virgin Islands (US)'=>'VI','Wallis and Futuna'=>'WF','Western Sahara'=>'EH','Yemen'=>'YE','Yugoslavia'=>'YU','Zambia'=>'ZM','Zimbabwe'=>'ZW'
 );
-
 ?>

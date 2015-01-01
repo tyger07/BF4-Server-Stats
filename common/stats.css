@@ -1,4 +1,4 @@
-/* Player Stats Stylesheet
+/* Stats Webpage Stylesheet
    ---------------------------------------------------
    Author: Ty_ger07 ( http://open-web-community.com/ )
    ---------------------------------------------------
@@ -21,6 +21,8 @@
 	box-shadow: 0px 0px 1px 0px rgba(7, 7, 7, 0.3);
 }
 .headline{
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-weight: normal;
 	font-size: 16px;
 	color: #CCCCCC;
 	padding: 3px;
@@ -36,15 +38,15 @@
 .footertext{
 	color: #888888;
 }
-/* body */
+/* body and background */
 body{
 	margin: 0px 0px 0px 0px;
 	padding: 0;
 	text-align: left;
 	height: 100%;
 	width: 100%;
-	background: #230e0d;
-	background-image: url("../images/BF4backXP4.jpg");
+	background: #4d5d5d;
+	background-image: url("./images/BF4back.jpg");
 	background-position: center 142px;
 	background-repeat: no-repeat;
 	background-attachment: fixed;
@@ -53,18 +55,31 @@ body{
 	font-weight: normal;
 	color: #BBBBBB;
 }
-/* latest background image already has the grid
 .body-grid{
 	position: fixed;
-	z-index: -1;
+	z-index: -4;
 	width: 100%;
 	height: 100%;
 	top: 0;
 	left: 0;
 	padding: 0px;
 	margin: 0px;
-	background: url("../images/grid.png") left top repeat;
-} */
+	background: url("./images/grid.png") left top repeat;
+}
+.content-gradient{
+	position: fixed;
+	z-index: -3;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	padding: 0px;
+	margin: 0px;
+	background-image: url("./images/content-gradient.png");
+	background-position: center 142px;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
 /* links */
 a, a:visited{
 	color: #D5DDE5;
@@ -83,6 +98,10 @@ a.fill-div {
     text-decoration: none;
 	padding-top: 5px;
 	padding-bottom: 5px;
+	box-shadow: none;
+}
+a.fill-div:hover{
+	background-color: rgba(10, 10, 10, 0.1);
 }
 /* tables */
 table{
@@ -93,41 +112,57 @@ table{
 	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 }
 .prettytable{
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 }
 th{
 	display: table-cell;
 	text-align: left;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
 	font-weight: normal;
 	border: 2px solid transparent;
 	padding-top: 6px;
 	padding-bottom: 6px;
 	padding-left: 3px;
 	padding-right: 0px;
-	background-color: rgba(10, 10, 10, 0.8);
-	box-shadow: 0px 0px 2px 0px rgba(10, 10, 10, 0.8);
+	background-color: rgba(10, 10, 10, 0.7);
+	box-shadow: 0px 0px 2px 0px rgba(10, 10, 10, 0.7);
 }
 .countheader{
 	text-align: center;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
 	font-weight: normal;
 	border: 2px solid transparent;
 	padding-top: 6px;
 	padding-bottom: 6px;
 	padding-left: 0px;
 	padding-right: 0px;
-	background-color: rgba(10, 10, 10, 0.8);
-	box-shadow: 0px 0px 2px 0px rgba(10, 10, 10, 0.8);
+	background-color: rgba(10, 10, 10, 0.7);
+	box-shadow: 0px 0px 2px 0px rgba(10, 10, 10, 0.7);
 }
 td{
 	display: table-cell;
 	text-align: left;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 }
 .tablecontents{
 	text-align: left;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 	border: 2px solid transparent;
 	padding-top: 6px;
 	padding-bottom: 6px;
@@ -138,6 +173,8 @@ td{
 }
 .count{
 	text-align: center;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
 	font-weight: bold;
 	border: 2px solid transparent;
 	padding-top: 6px;
@@ -148,12 +185,18 @@ td{
 .prettyheader{
 	color: #DDDDDD;
 	padding: 2px;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 }
 .orderheader{
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 	color: #DDDDDD;
 	padding-left: 9px;
 	text-align: left;
-	background-image: url("../images/order.gif");
+	background-image: url("./images/order.gif");
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: -7px 50%;
@@ -165,9 +208,12 @@ td{
 	color: #DDDDDD;
 }
 .orderedASCheader{
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 	color: #DDDDDD;
 	padding-left: 9px;
-	background-image: url("../images/ordereda.gif");
+	background-image: url("./images/ordereda.gif");
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: -7px 90%;
@@ -179,9 +225,12 @@ td{
 	color: #DDDDDD;
 }
 .orderedDESCheader{
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 	color: #DDDDDD;
 	padding-left: 9px;
-	background-image: url("../images/orderedd.gif");
+	background-image: url("./images/orderedd.gif");
 	background-repeat: no-repeat;
 	background-attachment: scroll;
 	background-position: -7px 30%;
@@ -214,7 +263,9 @@ td{
 	border: 1px solid #555555;
 	box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
 	outline-color: transparent;
-	background: url("../images/down-arrow.png") no-repeat right;
+	background: url("./images/down-arrow.png") no-repeat right;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-weight: normal;
 	font-size: 16px;
 	height: 30px;
 }
@@ -368,6 +419,8 @@ option:hover, option:active {
 	padding-left: 10px;
 	padding-right: 10px;
 	text-align: center;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-weight: normal;
 	font-size: 30px;
 	color: #EEEEEE;
 	margin-bottom: 30px;
@@ -379,6 +432,9 @@ option:hover, option:active {
 	box-shadow: 0px 0px 2px 0px rgba(7, 7, 7, 0.8);
 	padding: 5px;
 	margin-bottom: 4px;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 }
 .subsection{
 	margin-left: 2px;
@@ -386,6 +442,9 @@ option:hover, option:active {
 	background-color: rgba(7, 7, 7, 0.6);
 	box-shadow: 0px 0px 2px 0px rgba(7, 7, 7, 0.6);
 	padding: 5px;
+	font-family: Arial, Arial, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: normal;
 }
 /* pagination links */
 .pagination{

@@ -1,10 +1,9 @@
 <?php
-// functions for server stats page by Ty_ger07 at http://open-web-community.com/
-
-// DON'T EDIT ANYTHING BELOW UNLESS YOU KNOW WHAT YOU ARE DOING
+// BF4 Stats Page by Ty_ger07
+// http://open-web-community.com/
 
 // function to find player's weapon stats
-function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerID, $valid_ids, $GameID, $BF4stats, $ID)
+function Statsout($damagetype,$weapon_array,$PlayerID,$ServerID,$valid_ids,$GameID,$BF4stats,$ID)
 {
 	// if there is a ServerID, this is a server stats page
 	// also filter out 'VehicleCustom' since there is no need to waste time querying for that custom array
@@ -25,7 +24,7 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 			ORDER BY Kills DESC, Deaths DESC
 		");
 	}
-	// or else this is a global stats page
+	// or else this is a combined stats page
 	// also filter out 'VehicleCustom' since there is no need to waste time querying for that custom array
 	elseif($damagetype != 'VehicleCustom')
 	{
@@ -50,14 +49,15 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 	{
 		echo '
 		<table class="prettytable">
-		<tr>
-		<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
-		<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
-		<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
-		<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
-		<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
-		</tr>
+			<tr>
+				<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
+				<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
+				<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
+				<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
+				<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
+			</tr>
 		';
+		// set default count value
 		$count = 0;
 		while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 		{
@@ -82,13 +82,13 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 			if(in_array($weapon,$weapon_array))
 			{
 				$weapon_name = array_search($weapon,$weapon_array);
-				$weapon_img = './images/weapons/' . $weapon . '.png';
+				$weapon_img = './common/images/weapons/' . $weapon . '.png';
 			}
 			// this weapon is missing!
 			else
 			{
 				$weapon_name = preg_replace("/_/"," ",$weapon);
-				$weapon_img = './images/weapons/missing.png';
+				$weapon_img = './common/images/weapons/missing.png';
 			}
 			$kills = $Weapon_r['Kills'];
 			$deaths = $Weapon_r['Deaths'];
@@ -96,11 +96,11 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 			$ratio = round(($Weapon_r['HSR']*100),2);
 			echo '
 			<tr>
-			<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
-			<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
-			<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
-			<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
-			<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
+				<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" style="height: 57px; width: 95px;" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
+				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
+				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
+				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
+				<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
 			</tr>
 			';
 		}
@@ -120,13 +120,11 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 			</tr>
 			';
 		}
-		// free up weapon query memory
-		@mysqli_free_result($Weapon_q);
 		echo '
 		</table>
 		';
 	}
-	// vehicle stats
+	// vehicle stats for 'VehicleCustom' array
 	elseif($damagetype == 'VehicleCustom')
 	{
 		// if there is a ServerID, this is a server stats page
@@ -147,7 +145,7 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 				ORDER BY Kills DESC, Deaths DESC
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			// see if this player has used this category's weapons
@@ -171,14 +169,15 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 		{
 			echo '
 			<table class="prettytable">
-			<tr>
-			<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
-			<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
-			<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
-			<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
-			<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
-			</tr>
+				<tr>
+					<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
+					<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
+					<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
+					<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
+					<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
+				</tr>
 			';
+			// set default count value
 			$count = 0;
 			while($Vehicle_r = @mysqli_fetch_assoc($Vehicle_q))
 			{
@@ -194,10 +193,11 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 				}
 				$count++;
 				$weapon = $Vehicle_r['Fullname'];
+				// try the full name version
 				if(in_array($weapon,$weapon_array))
 				{
 					$weapon_name = array_search($weapon,$weapon_array);
-					$weapon_img = './images/weapons/' . $weapon_name . '.png';
+					$weapon_img = './common/images/weapons/' . $weapon_name . '.png';
 				}
 				// this weapon is missing!
 				// try the friendly name version
@@ -207,13 +207,13 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 					if(in_array($weapon,$weapon_array))
 					{
 						$weapon_name = array_search($weapon,$weapon_array);
-						$weapon_img = './images/weapons/' . $weapon . '.png';
+						$weapon_img = './common/images/weapons/' . $weapon . '.png';
 					}
 					// this weapon is still missing!
 					else
 					{
 						$weapon_name = preg_replace("/_/"," ",$weapon);
-						$weapon_img = './images/weapons/missing.png';
+						$weapon_img = './common/images/weapons/missing.png';
 					}
 				}
 				$kills = $Vehicle_r['Kills'];
@@ -222,11 +222,11 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 				$ratio = round(($Vehicle_r['HSR']*100),2);
 				echo '
 				<tr>
-				<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
-				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
-				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
-				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
-				<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
+					<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" style="height: 57px; width: 95px;" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
+					<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
 				</tr>
 				';
 			}
@@ -246,17 +246,14 @@ function Statsout($headingprint, $damagetype, $weapon_array, $PlayerID, $ServerI
 				</tr>
 				';
 			}
-			// free up vehicle query memory
-			@mysqli_free_result($Vehicle_q);
 			echo '
 			</table>
 			';
 		}
 	}
 }
-
 // rank queries function for player stats page
-function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
+function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 {
 	// check to see if this rank cache table exists
 	@mysqli_query($BF4stats,"
@@ -266,19 +263,15 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-	
 	// initialize timestamp values
 	$now_timestamp = time();
 	$old = $now_timestamp - 43200;
-
-	// this is a global stats page
+	// this is a combined stats page
+	// check if this player's rank is cached in the database
+	// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
+	// (in other words, insert dummy data now quickly, so later the parallel slow execution updates the one dummy data row instead of inserting multiple new data rows in parallel)
 	if(empty($ServerID))
 	{
-		// check if this player's rank is cached in the database
-		// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
-		// (in other words, insert dummy data now quickly, so later the parallel slow execution updates the one dummy data row instead of inserting multiple new data rows in parallel)
-		// rank players by score
-
 		// check if score rank is already cached
 		$ScoreC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
@@ -298,12 +291,9 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '0', '0')
 			");
 		}
-		// free up score rank cache query memory
-		@mysqli_free_result($ScoreC_q);
-		// done with the dummy cache stuff...
 	}
-	
-	// rank players by score
+	// done with the dummy cache stuff...
+	// rank players by score (for real!)
 	// check if score rank is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -318,7 +308,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			GROUP BY `PlayerID`
 		");
 	}
-	// or else this is a global stats page
+	// or else this is a combined stats page
 	else
 	{
 		$ScoreC_q = @mysqli_query($BF4stats,"
@@ -336,7 +326,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 		$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
 		$srank = $ScoreC_r['rank'];
 		$timestamp = $ScoreC_r['timestamp'];
-		
 		// data older than 12 hours? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($srank == 0))
 		{
@@ -354,7 +343,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				$Top_q = @mysqli_query($BF4stats,"
@@ -448,7 +437,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 						WHERE sub2.`PlayerID` = {$PlayerID}
 					");
 				}
-				// or else this is a global stats page
+				// or else this is a combined stats page
 				else
 				{
 					$Score_q = @mysqli_query($BF4stats,"
@@ -480,7 +469,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					$srank = 0;
 				}
 			}
-			
 			// update old data in database
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
@@ -493,10 +481,8 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `GID` = '{$GameID}'
 					AND `PlayerID` = {$PlayerID}
 				");
-				// free up rank query memory
-				@mysqli_free_result($Score_q);
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				@mysqli_query($BF4stats,"
@@ -507,11 +493,10 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `GID` = '{$GameID}'
 					AND `PlayerID` = {$PlayerID}
 				");
-				// free up rank query memory
-				@mysqli_free_result($Score_q);
 			}
 		}
 	}
+	// no score cached for this player
 	else
 	{
 		// check if this is a top 20 player
@@ -528,7 +513,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				AND `PlayerID` = {$PlayerID}
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			$Top_q = @mysqli_query($BF4stats,"
@@ -564,7 +549,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					WHERE sub2.`PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				$Score_q = @mysqli_query($BF4stats,"
@@ -622,7 +607,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					WHERE sub2.`PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				$Score_q = @mysqli_query($BF4stats,"
@@ -654,7 +639,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				$srank = 0;
 			}
 		}
-		
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
@@ -665,7 +649,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', 'Score', '{$srank}', '{$now_timestamp}')
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			// add this data to the cache
@@ -675,12 +659,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '{$srank}', '{$now_timestamp}')
 			");
 		}
-		// free up rank query memory
-		@mysqli_free_result($Score_q);
 	}
-	// free up score rank cache query memory
-	@mysqli_free_result($ScoreC_q);
-	
 	// rank players by KDR
 	// check if KDR rank is already cached
 	// if there is a ServerID, this is a server stats page
@@ -696,7 +675,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			GROUP BY `PlayerID`
 		");
 	}
-	// or else this is a global stats page
+	// or else this is a combined stats page
 	else
 	{
 		$KDRC_q = @mysqli_query($BF4stats,"
@@ -714,7 +693,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 		$KDRC_r = @mysqli_fetch_assoc($KDRC_q);
 		$kdrrank = $KDRC_r['rank'];
 		$timestamp = $KDRC_r['timestamp'];
-		
 		// data older than 12 hours? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($kdrrank == 0))
 		{
@@ -741,7 +719,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					WHERE sub2.`PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				$KDR_q = @mysqli_query($BF4stats,"
@@ -772,7 +750,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			{
 				$kdrrank = 0;
 			}
-			
 			// update old data in database
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
@@ -786,7 +763,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				@mysqli_query($BF4stats,"
@@ -798,10 +775,9 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `PlayerID` = {$PlayerID}
 				");
 			}
-			// free up rank query memory
-			@mysqli_free_result($KDR_q);
 		}
 	}
+	// no kdr cached for this player
 	else
 	{
 		// rank players by kdr
@@ -827,7 +803,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				WHERE sub2.`PlayerID` = {$PlayerID}
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			$KDR_q = @mysqli_query($BF4stats,"
@@ -868,7 +844,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', 'KDR', '{$kdrrank}', '{$now_timestamp}')
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			@mysqli_query($BF4stats,"
@@ -877,13 +853,10 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'KDR', '{$kdrrank}', '{$now_timestamp}')
 			");
 		}
-		// free up rank query memory
-		@mysqli_free_result($KDR_q);
 	}
-	// free up kdr rank cache query memory
-	@mysqli_free_result($KDRC_q);
-	
-	echo '<div style="position: relative;">';
+	echo '
+	<div style="position: relative;">
+	';
 	// rank players by kills
 	// check if kills rank is already cached
 	// if there is a ServerID, this is a server stats page
@@ -899,7 +872,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			GROUP BY `PlayerID`
 		");
 	}
-	// or else this is a global stats page
+	// or else this is a combined stats page
 	else
 	{
 		$KillsC_q = @mysqli_query($BF4stats,"
@@ -917,7 +890,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 		$KillsC_r = @mysqli_fetch_assoc($KillsC_q);
 		$killsrank = $KillsC_r['rank'];
 		$timestamp = $KillsC_r['timestamp'];
-		
 		// data older than 12 hours? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($killsrank == 0))
 		{
@@ -944,7 +916,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					WHERE sub2.`PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				$Kills_q = @mysqli_query($BF4stats,"
@@ -975,7 +947,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			{
 				$killsrank = 0;
 			}
-			
 			// update old data in database
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
@@ -989,7 +960,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `PlayerID` = {$PlayerID}
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
 				@mysqli_query($BF4stats,"
@@ -1001,9 +972,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `PlayerID` = {$PlayerID}
 				");
 			}
-			// free up rank query memory
-			@mysqli_free_result($Kills_q);
-			
 			echo '
 			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 			<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -1011,7 +979,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -1024,11 +992,12 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
 	}
+	// no kills cached for this player
 	else
 	{
 		// rank players by kills
@@ -1054,7 +1023,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				WHERE sub2.`PlayerID` = {$PlayerID}
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			$Kills_q = @mysqli_query($BF4stats,"
@@ -1095,7 +1064,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', 'Kills', '{$killsrank}', '{$now_timestamp}')
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
 			@mysqli_query($BF4stats,"
@@ -1104,9 +1073,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Kills', '{$killsrank}', '{$now_timestamp}')
 			");
 		}
-		// free up rank query memory
-		@mysqli_free_result($Kills_q);
-		
 		echo '
 		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 		<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -1114,14 +1080,14 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 		</div>
 		</div>
 		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 		</script>
 		';
 	}
-	// free up score rank cache query memory
-	@mysqli_free_result($KillsC_q);
-	echo '</div>';
-	
+	echo '
+	</div>
+	';
+	// count the total number of players
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
@@ -1143,7 +1109,7 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			$Players = 'Unknown';
 		}
 	}
-	// or else this is a global stats page
+	// or else this is a combined stats page
 	else
 	{
 		// check to see if this count cache table exists
@@ -1154,7 +1120,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			DEFAULT CHARSET=utf8
 			COLLATE=utf8_bin
 		");
-
 		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
@@ -1169,7 +1134,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 			$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 			$Players = $TotalRowsC_r['value'];
 			$timestamp = $TotalRowsC_r['timestamp'];
-			
 			// data older than 12 hours? or incorrect data? recalculate
 			if(($timestamp <= $old) OR ($Players == 0))
 			{
@@ -1199,9 +1163,6 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 					AND `SID` = '{$valid_ids}'
 					AND `GID` = '{$GameID}'
 				");
-				
-				// free up count query memory
-				@mysqli_free_result($TotalRows_q);
 			}
 		}
 		// not cached.  add it
@@ -1231,15 +1192,8 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 				(`category`, `GID`, `SID`, `value`, `timestamp`)
 				VALUES ('total_players', '{$GameID}', '{$valid_ids}', '{$Players}', '{$now_timestamp}')
 			");
-			
-			// free up count query memory
-			@mysqli_free_result($TotalRows_q);
-			
 		}
-		// free up count cache query memory
-		@mysqli_free_result($TotalRowsC_q);
 	}
-	
 	echo '
 	<th width="15%" style="padding-left: 10px;">Score</th>
 	<td width="18%" class="tablecontents" style="padding-left: 10px;"><span class="information">#</span> ' . $srank . ' <span class="information">of</span> ' . $Players . '</td>
@@ -1248,29 +1202,35 @@ function rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID)
 	<th width="15%" style="padding-left: 10px;">Kill / Death</th>
 	<td width="18%" class="tablecontents" style="padding-left: 10px;"><span class="information">#</span> ' . $kdrrank . ' <span class="information">of</span> ' . $Players . '</td>
 	';
-	
-	// free up server query memory
-	@mysqli_free_result($Server_q);
 }
-
 // function to create pagination links
 function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$order,$query)
 {
-	echo '<div class="pagination">';
+	echo '
+	<div class="pagination">
+	';
 	// reduce pagination width if few page results were found
 	if($totalpages == 1)
 	{
-		echo '<table class="prettytable" style="width: 10%">';
+		echo '
+		<table class="prettytable" style="width: 10%">
+		';
 	}
 	elseif($totalpages <= 3 && $totalpages >= 2)
 	{
-		echo '<table class="prettytable" style="width: 30%">';
+		echo '
+		<table class="prettytable" style="width: 30%">
+		';
 	}
 	else
 	{
-		echo '<table class="prettytable" style="width: 60%">';
+		echo '
+		<table class="prettytable" style="width: 60%">
+		';
 	}
-	echo '<tr>';
+	echo '
+	<tr>
+	';
 	// range of number of links to show
 	// the range changes at the lowest and highest numbers to make the number of link outputs the same
 	// low end
@@ -1316,64 +1276,42 @@ function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$
 	if ($currentpage > 1)
 	{
 		// show first page link to go back to first page
-		// if there is a ServerID, this is a server stats page
+		echo '
+		<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order;
 		if(!empty($ServerID))
 		{
-			if(!empty($query))
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">1</a></td>';
-			}
-			else
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '">1</a></td>';
-			}
+			echo '&amp;sid=' . $ServerID;
 		}
-		// or else this is a global stats page
-		else
+		if(!empty($query))
 		{
-			if(!empty($query))
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">1</a></td>';
-			}
-			else
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=1&amp;r=' . $rank . '&amp;o=' . $order . '">1</a></td>';
-			}
+			echo '&amp;q=' . $query;
 		}
+		echo '">1</a></td>
+		';
 		// get previous page number
 		$prevpage = $currentpage - 1;
 		// show ... as spacer if beyond the first pages
 		if (($currentpage - $range) > 3)
 		{
-			echo ' <td width="9%" class="pagspace">...</td> ';
+			echo '
+			<td width="9%" class="pagspace">...</td>
+			';
 		}
 		// show page 2 instead of ... if the ... would have represented page 2 anyways
 		elseif (($currentpage - $range) == 3)
 		{
-			// if there is a ServerID, this is a server stats page
+			echo '
+			<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order;
 			if(!empty($ServerID))
 			{
-				if(!empty($query))
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">2</a></td>';
-				}
-				else
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '">2</a></td>';
-				}
+				echo '&amp;sid=' . $ServerID;
 			}
-			// or else this is a global stats page
-			else
+			if(!empty($query))
 			{
-				if(!empty($query))
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">2</a></td>';
-				}
-				else
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=2&amp;r=' . $rank . '&amp;o=' . $order . '">2</a></td>';
-				}
+				echo '&amp;q=' . $query;
 			}
+			echo '">2</a></td>
+			';
 		}
 	}
 	// loop to show links to pages in a range of pages around current page
@@ -1383,7 +1321,9 @@ function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$
 		if ((($x == 1) || ($x == $totalpages)) && ($x == $currentpage))
 		{
 			// 'highlight' the current page but don't make it a link
-			echo ' <td width="9%" class="pagcountselected"><font class="information">' . $x . '</font></td> ';
+			echo '
+			<td width="9%" class="pagcountselected"><font class="information">' . $x . '</font></td>
+			';
 		}
 		// if it's a valid page number... and isn't the first or last page
 		if (($x > 1) && ($x < $totalpages))
@@ -1392,35 +1332,25 @@ function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$
 			if ($x == $currentpage)
 			{
 				// 'highlight' the current page but don't make it a link
-				echo ' <td width="9%" class="pagcountselected"><font class="information">' . $x . '</font></td> ';
+				echo '
+				<td width="9%" class="pagcountselected"><font class="information">' . $x . '</font></td>
+				';
 			}
 			else
 			{
 				// make it a link
-				// if there is a ServerID, this is a server stats page
+				echo '
+				<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order;
 				if(!empty($ServerID))
 				{
-					if(!empty($query))
-					{
-						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $x . '</a></td> ';
-					}
-					else
-					{
-						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $x . '</a></td> ';
-					}
+					echo '&amp;sid=' . $ServerID;
 				}
-				// or else this is a global stats page
-				else
+				if(!empty($query))
 				{
-					if(!empty($query))
-					{
-						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $x . '</a></td> ';
-					}
-					else
-					{
-						echo ' <td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $x . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $x . '</a></td> ';
-					}
+					echo '&amp;q=' . $query;
 				}
+				echo '">' . $x . '</a></td>
+				';
 			}
 		}
 	}
@@ -1432,62 +1362,38 @@ function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$
 		// show ... as spacer if before the last pages
 		if (($currentpage + $range) < ($totalpages - 2))
 		{
-			echo ' <td width="9%" class="pagspace">...</td> ';
+			echo '<td width="9%" class="pagspace">...</td>';
 		}
 		// show 2nd-to-last page instead of ... if the ... would have represented 2nd-to-last page anyways
 		elseif(($currentpage + $range) == ($totalpages - 2))
 		{
 			$onelesstotalpages = $totalpages - 1;
-			// if there is a ServerID, this is a server stats page
+			echo '
+			<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order;
 			if(!empty($ServerID))
 			{
-				if(!empty($query))
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $onelesstotalpages . '</a></td>';
-				}
-				else
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $onelesstotalpages . '</a></td>';
-				}
+				echo '&amp;sid=' . $ServerID;
 			}
-			// or else this is a global stats page
-			else
+			if(!empty($query))
 			{
-				if(!empty($query))
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $onelesstotalpages . '</a></td>';
-				}
-				else
-				{
-					echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $onelesstotalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $onelesstotalpages . '</a></td>';
-				}
+				echo '&amp;q=' . $query;
 			}
+			echo '">' . $onelesstotalpages . '</a></td>
+			';
 		}
 		// show last page link
-		// if there is a ServerID, this is a server stats page
+		echo '
+		<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order;
 		if(!empty($ServerID))
 		{
-			if(!empty($query))
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $totalpages . '</a></td>';
-			}
-			else
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;sid=' . $ServerID . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $totalpages . '</a></td>';
-			}
+			echo '&amp;sid=' . $ServerID;
 		}
-		// or else this is a global stats page
-		else
+		if(!empty($query))
 		{
-			if(!empty($query))
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '&amp;q=' . $query . '">' . $totalpages . '</a></td>';
-			}
-			else
-			{
-				echo '<td width="9%" class="pagcount"><a class="fill-div" href="' . $root . '?p=' . $page . '&amp;cp=' . $totalpages . '&amp;r=' . $rank . '&amp;o=' . $order . '">' . $totalpages . '</a></td>';
-			}
+			echo '&amp;q=' . $query;
 		}
+		echo '">' . $totalpages . '</a></td>
+		';
 	}
 	echo '
 	</tr>
@@ -1495,7 +1401,51 @@ function pagination_links($ServerID,$root,$page,$currentpage,$totalpages,$rank,$
 	</div>
 	';
 }
-
+// function to create pagination table headers
+function pagination_headers($columnname,$ServerID,$targetpage,$width,$ranktext,$rank,$targetrank,$ordertext,$order,$targetorder,$nextorder,$currentpage,$colspan,$player,$query)
+{
+	if(empty($colspan))
+	{
+		$colspan = 1;
+	}
+	// build this column's link
+	$link = './index.php?';
+	if(!empty($ServerID))
+	{
+		$link .= 'sid=' . $ServerID . '&amp;';
+	}
+	if(!empty($player))
+	{
+		$link .= 'player=' . $player . '&amp;';
+	}
+	if(!empty($query))
+	{
+		$link .= 'q=' . $query . '&amp;';
+	}
+	$link .= 'p=' . $targetpage . '&amp;' . $ranktext . '=' . $targetrank . '&amp;' . $ordertext . '=';
+	if($rank != $targetrank)
+	{
+		$link .= $targetorder;
+	}
+	else
+	{
+		$link .= $nextorder . '&amp;cp=' . $currentpage;
+	}
+	// then echo out html table header
+	echo '
+	<th width="' . $width . '%" colspan="' . $colspan . '" style="text-align:left; position: relative;">
+		<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
+			<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
+		</div>
+		<a href="' . $link . '"><span class="order';
+		if($rank == $targetrank)
+		{
+			echo 'ed' . $order;
+		}
+		echo 'header">' . $columnname . '</span></a>
+	</th>
+	';
+}
 // function to count sessions
 function session_count($userip, $ServerID, $GameID, $BF4stats)
 {
@@ -1507,11 +1457,9 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-	
 	// initialize values
 	$now_timestamp = time();
 	$old = $now_timestamp - 1800;
-	
 	// check if this user already has a session stored
 	$exist_query = @mysqli_query($BF4stats,"
 		SELECT DISTINCT(`IP`) AS IP
@@ -1540,9 +1488,6 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 			VALUES ('{$userip}', '{$GameID}', '{$ServerID}', '{$now_timestamp}')
 		");
 	}
-	// free up exist query memory
-	@mysqli_free_result($exist_query);
-	
 	// find if there are sessions older than 30 minutes
 	// check this to avoid optimizing the table (slow) when it isn't necessary
 	$old_query = @mysqli_query($BF4stats,"
@@ -1550,7 +1495,6 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 		FROM `tyger_stats_sessions`
 		WHERE `timestamp` <= '{$old}'
 	");
-	
 	// remove sessions older than 30 minutes
 	if(@mysqli_num_rows($old_query) != 0)
 	{
@@ -1563,9 +1507,6 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 			OPTIMIZE TABLE `tyger_stats_sessions`
 		");
 	}
-	// free up old query memory
-	@mysqli_free_result($old_query);
-	
 	// count all sessions
 	$ses_count = @mysqli_query($BF4stats,"
 		SELECT COUNT(DISTINCT(`IP`)) AS ses
@@ -1582,12 +1523,9 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 	{
 		$ses = 0;
 	}
-	// free up session count query memory
-	@mysqli_free_result($ses_count);
-	
+	// return the value out of the function
 	return $ses;
 }
-
 // function to cache total players
 function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 {
@@ -1599,14 +1537,13 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-
 	// initialize timestamp values
 	$now_timestamp = time();
 	$old = $now_timestamp - 43200;
-
+	// check to see if player count is already cached
+	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
 			FROM `tyger_stats_count_cache`
@@ -1615,9 +1552,9 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 			AND `GID` = '{$GameID}'
 		");
 	}
+	// or else this is a combined stats page
 	else
 	{
-		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
 			FROM `tyger_stats_count_cache`
@@ -1632,13 +1569,13 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 		$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 		$total_players = $TotalRowsC_r['value'];
 		$timestamp = $TotalRowsC_r['timestamp'];
-		
 		// data older than 12 hours? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($total_players == 0))
 		{
+			// find out how many rows are in the table
+			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
 					SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count
 					FROM  `tbl_playerdata` tpd
@@ -1648,9 +1585,9 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 					AND tsp.`ServerID` = {$ServerID}
 				");
 			}
+			// or else this is a combined stats page
 			else
 			{
-				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
 					SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count
 					FROM  `tbl_playerdata` tpd
@@ -1691,10 +1628,6 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 					AND `GID` = '{$GameID}'
 				");
 			}
-			
-			// free up count query memory
-			@mysqli_free_result($TotalRows_q);
-			
 			echo '
 			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 			<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -1702,7 +1635,7 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -1715,7 +1648,7 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -1723,9 +1656,10 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 	// not cached.  add it
 	else
 	{
+		// find out how many rows are in the table
+		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count
 				FROM  `tbl_playerdata` tpd
@@ -1735,9 +1669,9 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 				AND tsp.`ServerID` = {$ServerID}
 			");
 		}
+		// or else this is a combined stats page
 		else
 		{
-			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count
 				FROM  `tbl_playerdata` tpd
@@ -1774,10 +1708,6 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 				VALUES ('total_players', '{$GameID}', '{$valid_ids}', '{$total_players}', '{$now_timestamp}')
 			");
 		}
-		
-		// free up count query memory
-		@mysqli_free_result($TotalRows_q);
-		
 		echo '
 		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 		<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -1785,14 +1715,11 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 		</div>
 		</div>
 		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 		</script>
 		';
-		
 	}
-	// free up count cache query memory
-	@mysqli_free_result($TotalRowsC_q);
-	
+	// return the value out of the function
 	return $total_players;
 }
 
@@ -1807,14 +1734,13 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-
 	// initialize timestamp values
 	$now_timestamp = time();
 	$old = $now_timestamp - 43200;
-
+	// check to see if player count is already cached
+	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
 			FROM `tyger_stats_count_cache`
@@ -1823,9 +1749,9 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 			AND `GID` = '{$GameID}'
 		");
 	}
+	// or else this is a combined stats page
 	else
 	{
-		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
 			FROM `tyger_stats_count_cache`
@@ -1840,13 +1766,13 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 		$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 		$numrows = $TotalRowsC_r['value'];
 		$timestamp = $TotalRowsC_r['timestamp'];
-		
 		// data older than 12 hours? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($numrows == 0))
 		{
+			// find out how many rows are in the table
+			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
 					SELECT COUNT(DISTINCT(tpd.`PlayerID`)) AS count
 					FROM `tbl_playerstats` tps
@@ -1857,9 +1783,9 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 					AND tpd.`GameID` = {$GameID}
 				");
 			}
+			// or else this is a combined stats page
 			else
 			{
-				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
 					SELECT COUNT(DISTINCT(tpd.`PlayerID`)) AS count
 					FROM `tbl_playerstats` tps
@@ -1901,10 +1827,6 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 					AND `GID` = '{$GameID}'
 				");
 			}
-			
-			// free up count query memory
-			@mysqli_free_result($TotalRows_q);
-			
 			echo '
 			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 			<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -1912,7 +1834,7 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -1925,7 +1847,7 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -1933,9 +1855,10 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 	// not cached.  add it
 	else
 	{
+		// find out how many rows are in the table
+		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT COUNT(DISTINCT(tpd.`PlayerID`)) AS count
 				FROM `tbl_playerstats` tps
@@ -1946,9 +1869,9 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 				AND tpd.`GameID` = {$GameID}
 			");
 		}
+		// or else this is a combined stats page
 		else
 		{
-			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT COUNT(DISTINCT(tpd.`PlayerID`)) AS count
 				FROM `tbl_playerstats` tps
@@ -1986,10 +1909,6 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 				VALUES ('total_suspects', '{$GameID}', '{$valid_ids}', '{$numrows}', '{$now_timestamp}')
 			");
 		}
-		
-		// free up count query memory
-		@mysqli_free_result($TotalRows_q);
-		
 		echo '
 		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 		<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -1997,14 +1916,11 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 		</div>
 		</div>
 		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 		</script>
 		';
-		
 	}
-	// free up count cache query memory
-	@mysqli_free_result($TotalRowsC_q);
-
+	// return the value out of the function
 	return $numrows;
 }
 
@@ -2019,14 +1935,13 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-
 	// initialize timestamp values
 	$now_timestamp = time();
 	$old = $now_timestamp - 3600;
-
+	// check to see if chat count is already cached
+	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
 			FROM `tyger_stats_count_cache`
@@ -2035,9 +1950,9 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 			AND `GID` = '{$GameID}'
 		");
 	}
+	// otherwise this is a combined stats page
 	else
 	{
-		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
 			SELECT DISTINCT(`value`) AS value, `timestamp`
 			FROM `tyger_stats_count_cache`
@@ -2052,22 +1967,22 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 		$numrows = $TotalRowsC_r['value'];
 		$timestamp = $TotalRowsC_r['timestamp'];
-		
 		// data older than 1 hour? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($numrows == 0))
 		{
+			// find out how many rows are in the table
+			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
 					SELECT count(`ID`) AS count
 					FROM `tbl_chatlog`
 					WHERE `ServerID` = {$ServerID}
 				");
 			}
+			// otherwise this is a combined stats page
 			else
 			{
-				// find out how many rows are in the table
 				$TotalRows_q = @mysqli_query($BF4stats,"
 					SELECT count(`ID`) AS count
 					FROM `tbl_chatlog`
@@ -2105,10 +2020,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 					AND `GID` = '{$GameID}'
 				");
 			}
-			
-			// free up count query memory
-			@mysqli_free_result($TotalRows_q);
-			
 			echo '
 			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 			<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -2116,7 +2027,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -2129,7 +2040,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 			</div>
 			</div>
 			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
 		}
@@ -2137,18 +2048,19 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 	// not cached.  add it
 	else
 	{
+		// find out how many rows are in the table
+		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
 				WHERE `ServerID` = {$ServerID}
 			");
 		}
+		// or else this is a combined stats page
 		else
 		{
-			// find out how many rows are in the table
 			$TotalRows_q = @mysqli_query($BF4stats,"
 				SELECT count(`ID`) AS count
 				FROM `tbl_chatlog`
@@ -2182,10 +2094,6 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 				VALUES ('total_chat', '{$GameID}', '{$valid_ids}', '{$numrows}', '{$now_timestamp}')
 			");
 		}
-		
-		// free up count query memory
-		@mysqli_free_result($TotalRows_q);
-		
 		echo '
 		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 		<div class="subsection" style="width: 100px; font-size: 12px;">
@@ -2193,14 +2101,12 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		</div>
 		</div>
 		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
+		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 		</script>
 		';
 		
 	}
-	// free up count cache query memory
-	@mysqli_free_result($TotalRowsC_q);
-	
+	// return the value out of the function
 	return $numrows;
 }
 
@@ -2215,11 +2121,9 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
 	");
-	
 	// initialize timestamp values
 	$now_timestamp = time();
 	$old = $now_timestamp - 43200;
-
 	// check to see if top 20 is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -2234,6 +2138,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 			ORDER BY `Score` DESC, `SoldierName` ASC
 		");
 	}
+	// or else this is a combined stats page
 	else
 	{
 		$TopC_q = @mysqli_query($BF4stats,"
@@ -2249,32 +2154,26 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 	// if cached and data is newer than 12 hours old...
 	if(@mysqli_num_rows($TopC_q) != 0)
 	{
+		echo '
+		<div id="cache_fade2" style="position: absolute; top: ';
 		if(!empty($ServerID))
 		{
-			echo '
-			<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Used:<br/>Top Twenty</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
-			</script>
-			';
+			echo '3px;';
 		}
 		else
 		{
-			echo '
-			<div id="cache_fade2" style="position: absolute; top: 50px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Used:<br/>Top Twenty</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
-			</script>
-			';
+			echo '50px;';
 		}
+		echo ' left: -150px; display: none;">
+		<div class="subsection" style="width: 100px; font-size: 12px;">
+		<center>Cache Used:<br/>Top Twenty</center>
+		</div>
+		</div>
+		<script type="text/javascript">
+		$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+		</script>
+		';
+		// return the value out of the function
 		return $TopC_q;
 	}
 	// otherwise, cache or re-cache
@@ -2308,11 +2207,11 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 				OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
 			");
 		}
-		// inset new rows
+		// insert new rows
+		// get the info from the db
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// get the info from the db 
 			$Players_q  = @mysqli_query($BF4stats,"
 				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
 				FROM `tbl_playerdata` tpd
@@ -2327,7 +2226,6 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 		// or else this is a global stats page
 		else
 		{
-			// get the info from the db 
 			$Players_q  = @mysqli_query($BF4stats,"
 				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
 				FROM `tbl_playerdata` tpd
@@ -2348,10 +2246,10 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 			$Kills = $Players_r['Kills'];
 			$KDR = round($Players_r['KDR'],2);
 			$HSR = round($Players_r['HSR'],4);
+			// insert into db
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// insert into db
 				@mysqli_query($BF4stats,"
 					INSERT INTO `tyger_stats_top_twenty_cache`
 					(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
@@ -2361,7 +2259,6 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 			// or else this is a global stats page
 			else
 			{
-				// insert into db
 				@mysqli_query($BF4stats,"
 					INSERT INTO `tyger_stats_top_twenty_cache`
 					(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
@@ -2369,9 +2266,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 				");
 			}
 		}
-		// free up player query memory
-		@mysqli_free_result($Players_q);
-		// query the cache again
+		// query the cache again for the new info
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
@@ -2400,37 +2295,29 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 		// if cached and data is newer than 12 hours old...
 		if(@mysqli_num_rows($TopC_q) != 0)
 		{
+			echo '
+			<div id="cache_fade2" style="position: absolute; top: ';
 			if(!empty($ServerID))
 			{
-				echo '
-				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
-				<div class="subsection" style="width: 100px; font-size: 12px;">
-				<center>Cache Created:<br/>Top Twenty</center>
-				</div>
-				</div>
-				<script type="text/javascript">
-				$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
-				</script>
-				';
+				echo '3px;';
 			}
 			else
 			{
-				echo '
-				<div id="cache_fade2" style="position: absolute; top: 50px; left: -150px; display: none;">
-				<div class="subsection" style="width: 100px; font-size: 12px;">
-				<center>Cache Created:<br/>Top Twenty</center>
-				</div>
-				</div>
-				<script type="text/javascript">
-				$("#cache_fade2").finish().fadeIn("slow").show().delay(1000).fadeOut("slow");
-				</script>
-				';
+				echo '50px;';
 			}
+			echo ' left: -150px; display: none;">
+			<div class="subsection" style="width: 100px; font-size: 12px;">
+			<center>Cache Used:<br/>Top Twenty</center>
+			</div>
+			</div>
+			<script type="text/javascript">
+			$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+			</script>
+			';
+			// return the value out of the function
 			return $TopC_q;
 		}
 	}
-	// free up top 20 query memory
-	@mysqli_free_result($TopC_q);
 }
 // function to replace dangerous characters in content
 function textcleaner($content)
@@ -2439,7 +2326,7 @@ function textcleaner($content)
 	$content = preg_replace("/'/","&#39;",$content);
 	$content = preg_replace("/</","&lt;",$content);
 	$content = preg_replace("/>/","&gt;",$content);
+	// return the value out of the function
 	return $content;
 }
-
 ?>
