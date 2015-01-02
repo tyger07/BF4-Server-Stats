@@ -12,27 +12,23 @@ $(\'#loaded\').fadeIn("slow");
 // no soldiername input from GET
 if($SoldierName == null)
 {
+	echo '
+	<div class="subsection">
+	<div class="headline">
+	';
 	// if there was a $playerid input but it was nulled out, let user know it was nulled out because index.php did not find that as a valid player id
 	if(!empty($_GET['pid']) && is_numeric($_GET['pid']))
 	{
-		echo '
-		<div class="subsection">
-		<div class="headline">
-		This player ID does not exist.
-		</div>
-		</div>
-		';
+		echo 'This player ID does not exist.';
 	}
 	else
 	{
-		echo '
-		<div class="subsection">
-		<div class="headline">
-		Please enter a player name.
-		</div>
-		</div>
-		';
+		echo 'Please enter a player name.';
 	}
+	echo '
+	</div>
+	</div>
+	';
 }
 // SoldierName from GET has been determined
 elseif($SoldierName != null)
@@ -43,10 +39,10 @@ elseif($SoldierName != null)
 	// if there is no $playerid, no need to do $playerid specific soldier info searches
 	if(!empty($PlayerID))
 	{
+		// get player stats
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// get player stats
 			$PlayerData_q = @mysqli_query($BF4stats,"
 				SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`
 				FROM `tbl_playerstats` tps
@@ -56,16 +52,10 @@ elseif($SoldierName != null)
 				AND tpd.`PlayerID` = {$PlayerID}
 				AND tpd.`GameID` = {$GameID}
 			");
-			// was a soldier found?
-			if(@mysqli_num_rows($PlayerData_q) == 1)
-			{
-				$soldier_found = 1;
-			}
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
-			// get player stats
 			$PlayerData_q = @mysqli_query($BF4stats,"
 				SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
 				FROM `tbl_playerstats` tps
@@ -76,12 +66,11 @@ elseif($SoldierName != null)
 				AND tsp.`ServerID` IN ({$valid_ids})
 				GROUP BY tpd.`PlayerID`
 			");
-			// was a soldier found?
-			if(@mysqli_num_rows($PlayerData_q) == 1)
-			{
-				$soldier_found = 1;
-				
-			}
+		}
+		// was a soldier found?
+		if(@mysqli_num_rows($PlayerData_q) == 1)
+		{
+			$soldier_found = 1;
 		}
 	}
 	// if no stats were found for player name, display this
@@ -90,18 +79,17 @@ elseif($SoldierName != null)
 		echo '
 		<div class="subsection">
 		<div class="headline">
-		';
-		// if there is a ServerID, this is a server stats page
+		<span class="information">No unique player data found for "' . $SoldierName . '" in ';
 		if(!empty($ServerID))
 		{
-			echo '<span class="information">No unique player data found for "' . $SoldierName . '" in this server.</span>';
+			echo 'this server.';
 		}
-		// or else this is a global stats page
 		else
 		{
-			echo '<span class="information">No unique player data found for "' . $SoldierName . '" in these servers.</span>';
+			echo 'these servers.';
 		}
 		echo '
+		</span>
 		</div>
 		</div>
 		';
@@ -150,10 +138,10 @@ elseif($SoldierName != null)
 			$order = 'DESC';
 			$nextorder = 'ASC';
 		}
+		// check to see if there are any players who match a similar name
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// check to see if there are any players who match a similar name
 			$PlayerMatch_q = @mysqli_query($BF4stats,"
 				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR
 				FROM `tbl_playerstats` tps
@@ -166,10 +154,9 @@ elseif($SoldierName != null)
 				LIMIT 0, 20
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
-			// check to see if there are any players who match a similar name
 			$PlayerMatch_q = @mysqli_query($BF4stats,"
 				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR
 				FROM `tbl_playerstats` tps
@@ -197,79 +184,18 @@ elseif($SoldierName != null)
 			<tr>
 			<th width="5%" class="countheader">#</th>
 			';
-			// if there is a ServerID, this is a server stats page
-			if(!empty($ServerID))
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=SoldierName&amp;o=';
-			}
-			// or else this is a global stats page
-			else
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=SoldierName&amp;o=';
-			}
-			if($rank != 'SoldierName')
-			{
-				echo 'ASC"><span class="orderheader">Player</span></a></th>';
-			}
-			else
-			{
-				echo $nextorder . '"><span class="ordered' . $order . 'header">Player</span></a></th>';
-			}
-			// if there is a ServerID, this is a server stats page
-			if(!empty($ServerID))
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=Score&amp;o=';
-			}
-			// or else this is a global stats page
-			else
-			{
-				echo '<th width="24%" style="text-align:left;"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=Score&amp;o=';
-			}
-			if($rank != 'Score')
-			{
-				echo 'DESC"><span class="orderheader">Score</span></a></th>';
-			}
-			else
-			{
-				echo $nextorder . '"><span class="ordered' . $order . 'header">Score</span></a></th>';
-			}
-			// if there is a ServerID, this is a server stats page
-			if(!empty($ServerID))
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=Kills&amp;o=';
-			}
-			// or else this is a global stats page
-			else
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=Kills&amp;o=';
-			}
-			if($rank != 'Kills')
-			{
-				echo 'DESC"><span class="orderheader">Kills</span></a></th>';
-			}
-			else
-			{
-				echo $nextorder . '"><span class="ordered' . $order . 'header">Kills</span></a></th>';
-			}
-			// if there is a ServerID, this is a server stats page
-			if(!empty($ServerID))
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '&amp;r=KDR&amp;o=';
-			}
-			// or else this is a global stats page
-			else
-			{
-				echo '<th width="24%"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;player=' . $SoldierName . '&amp;r=KDR&amp;o=';
-			}
-			if($rank != 'KDR')
-			{
-				echo 'DESC"><span class="orderheader">Kill / Death</span></a></th>';
-			}
-			else
-			{
-				echo $nextorder . '"><span class="ordered' . $order . 'header">Kill / Death</span></a></th>';
-			}
-			echo '</tr>';
+			// player column
+			pagination_headers('Player',$ServerID,'player','24','r',$rank,'SoldierName','o',$order,'ASC',$nextorder,$currentpage,'',$SoldierName,'');
+			// score column
+			pagination_headers('Score',$ServerID,'player','24','r',$rank,'Score','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			// kills column
+			pagination_headers('Kills',$ServerID,'player','24','r',$rank,'Kills','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			// kill / death column
+			pagination_headers('Kill / Death',$ServerID,'player','24','r',$rank,'KDR','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			echo '
+			</tr>
+			</table>
+			';
 			// initialize value
 			$count = 0;
 			while($PlayerMatch_r = @mysqli_fetch_assoc($PlayerMatch_q))
@@ -280,30 +206,29 @@ elseif($SoldierName != null)
 				$Score = $PlayerMatch_r['Score'];
 				$Kills = $PlayerMatch_r['Kills'];
 				$KDR = round($PlayerMatch_r['KDR'],2);
-				echo '
-				<tr>
-				<td width="5%" class="count"><span class="information">' . $count . '</span></td>
-				';
-				// if there is a ServerID, this is a server stats page
+				$link = './index.php?';
 				if(!empty($ServerID))
 				{
-					echo '<td width="24%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;sid=' . $ServerID . '&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
+					$link .= 'sid=' . $ServerID . '&amp;';
 				}
-				// or else this is a global stats page
-				else
-				{
-					echo '<td width="24%" class="tablecontents"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $Player_ID . '">' . $Soldier_Name . '</a></td>';
-				}
-				echo'
-				<td width="24%" class="tablecontents">' . $Score . '</td>
-				<td width="24%" class="tablecontents">' . $Kills . '</td>
-				<td width="24%" class="tablecontents">' . $KDR . '</td>
-				</tr>
+				$link .= 'pid=' . $Player_ID . '&amp;p=player';
+				echo '
+				<table class="prettytable" style="margin-top: -2px; position: relative;">
+					<tr>
+						<td width="5%" class="count">
+							<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
+								<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
+							</div>
+							<span class="information">' . $count . '</span>
+						</td>
+						<td width="24%" class="tablecontents"><a href="' . $link . '">' . $Soldier_Name . '</a></td>
+						<td width="24%" class="tablecontents">' . $Score . '</td>
+						<td width="24%" class="tablecontents">' . $Kills . '</td>
+						<td width="24%" class="tablecontents">' . $KDR . '</td>
+					</tr>
+				</table>
 				';
 			}
-			echo '
-			</table>
-			';
 		}
 	}
 	// this unique player was found
@@ -316,7 +241,8 @@ elseif($SoldierName != null)
 		</div>
 		</div>
 		';
-		// if there is a ServerID, this is a server stats page
+		// show ranks for player in this server
+		// don't show ranks in combined server stats page due to server load concerns
 		if(!empty($ServerID))
 		{
 			echo '
@@ -348,40 +274,6 @@ elseif($SoldierName != null)
 			</script>
 			';
 		}
-		// commented out combined stats due to heavy database load if there are a large number of combined players
-		//// or else this is a global stats page
-		//else
-		//{
-		//	echo '
-		//	<br/>
-		//	<br/>
-		//	<table id="ranks" class="prettytable">
-		//	<tr>
-		//	<td class="tablecontents"><center>Ranks in ' . $clan_name . '\'s Servers</center></td>
-		//	</tr>
-		//	<tr>
-		//	<td class="tablecontents">
-		//	<center>Loading ... <img src="./common/images/loading.gif" alt="loading" width="16px" height="16px" /></center>
-		//	</td>
-		//	</tr>
-		//	</table>
-		//	';
-		//	// ajax load ranks
-		//	echo '
-		//	<script type="text/javascript">
-		//	$(\'#ranks\').load("./common/player/ranks.php?gid=' . $GameID;
-		//	if(!empty($PlayerID))
-		//	{
-		//		echo '&pid=' . $PlayerID;
-		//	}
-		//	if(!empty($ServerName))
-		//	{
-		//		echo '&server=' . urlencode($ServerName);
-		//	}
-		//	echo '");
-		//	</script>
-		//	';
-		//}
 		// get information from the query
 		$PlayerData_r = @mysqli_fetch_assoc($PlayerData_q);
 		$CountryCode = strtoupper($PlayerData_r['CountryCode']);
@@ -428,7 +320,7 @@ elseif($SoldierName != null)
 		$LastSeen = date("M d Y", strtotime($PlayerData_r['LastSeenOnServer']));
 		$PlayerID = $PlayerData_r['PlayerID'];
 		$rank = $PlayerData_r['GlobalRank'];
-		// filter out the available ranks
+		// filter out the available ranks so we don't try to load a rank image which doesn't exist
 		if($rank >= $rank_min && $rank <= $rank_max)
 		{
 			$rank_img = './common/images/ranks/r' . $rank . '.png';
@@ -542,10 +434,9 @@ elseif($SoldierName != null)
 				$VehicleFound = 1;
 			}
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
-			
 			$Weapon_q = @mysqli_query($BF4stats,"
 				SELECT tws.`Damagetype`, SUM(wa.`Kills`) AS Kills, SUM(wa.`Deaths`) AS Deaths, SUM(wa.`Headshots`) AS Headshots, (SUM(wa.`Headshots`)/SUM(wa.`Kills`)) AS HSR
 				FROM `tbl_weapons_stats` wa
@@ -588,7 +479,7 @@ elseif($SoldierName != null)
 				$VehicleFound = 1;
 			}
 		}
-		// do normal weapon query and insert vehicles in where necessary
+		// show weapon graph if there are weapons or vehicles found for this player
 		if(@mysqli_num_rows($Weapon_q) != 0 || $VehicleFound == 1)
 		{
 			// initialize empty array for storing weapons
@@ -769,10 +660,10 @@ elseif($SoldierName != null)
 		}
 		// begin dog tag stats
 		// check to see if the player has gotten anyone's tags
+		// query for dog tags this user has collected
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// query for dog tags this user has collected
 			$DogTag_q1 = @mysqli_query($BF4stats,"
 				SELECT tpd.`PlayerID`
 				FROM `tbl_dogtags` dt
@@ -784,10 +675,9 @@ elseif($SoldierName != null)
 				LIMIT 1
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
-			// query for dog tags this user has collected
 			$DogTag_q1 = @mysqli_query($BF4stats,"
 				SELECT tpd.`PlayerID`
 				FROM `tbl_dogtags` dt
@@ -800,10 +690,10 @@ elseif($SoldierName != null)
 			");
 		}
 		// or if anyone has gotten his
+		// find who has killed this player
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			// find who has killed this player
 			$DogTag_q2 = @mysqli_query($BF4stats,"
 				SELECT tpd.`PlayerID`
 				FROM `tbl_dogtags` dt
@@ -815,10 +705,9 @@ elseif($SoldierName != null)
 				LIMIT 1
 			");
 		}
-		// or else this is a global stats page
+		// or else this is a combined stats page
 		else
 		{
-			// find who has killed this player
 			$DogTag_q2 = @mysqli_query($BF4stats,"
 				SELECT tpd.`PlayerID`
 				FROM `tbl_dogtags` dt
@@ -833,10 +722,10 @@ elseif($SoldierName != null)
 		// only display dogtag block if this player has dogtags or someone has this player's dogtags
 		if(@mysqli_num_rows($DogTag_q1) != 0 || @mysqli_num_rows($DogTag_q2) != 0)
 		{
-			echo '<br/>';
 			// initialize value
 			$count = 0;
 			echo '
+			<br/>
 			<div id="dogtag_tab">
 			<ul>
 			<li><a href="#dogtag_tab-1">Dog Tags Collected</a></li>
@@ -857,10 +746,10 @@ elseif($SoldierName != null)
 			<table class="prettytable">
 			';
 			// check to see if the player has gotten anyone's tags
+			// query for dog tags this user has collected
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// query for dog tags this user has collected
 				$DogTag_q = @mysqli_query($BF4stats,"
 					SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
 					FROM `tbl_dogtags` dt
@@ -874,10 +763,9 @@ elseif($SoldierName != null)
 					ORDER BY Count DESC, Victim ASC
 				");
 			}
-			// or else this is a global stats page
+			// or else this is a combined stats page
 			else
 			{
-				// query for dog tags this user has collected
 				$DogTag_q = @mysqli_query($BF4stats,"
 					SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
 					FROM `tbl_dogtags` dt
@@ -906,6 +794,12 @@ elseif($SoldierName != null)
 					$Victim = $DogTag_r['Victim'];
 					$VictimID = $DogTag_r['VictimID'];
 					$KillCount = $DogTag_r['Count'];
+					$link = './index.php?';
+					if(!empty($ServerID))
+					{
+						$link .= 'sid=' . $ServerID . '&amp;';
+					}
+					$link .= 'pid=' . $VictimID . '&amp;p=player';
 					// show expand/contract if very long
 					if($count == 10)
 					{
@@ -919,20 +813,14 @@ elseif($SoldierName != null)
 					$count++;
 					echo '
 					<tr>
-					<td width="5%" class="count"><span class="information">' . $count . '</span></td>
-					';
-					// if there is a ServerID, this is a server stats page
-					if(!empty($ServerID))
-					{
-						echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px;"><a href="' . $_SERVER['PHP_SELF'] . '?sid=' . $ServerID . '&amp;pid=' . $VictimID . '&amp;p=player">' . $Victim . '</a></td>';
-					}
-					// or else this is a global stats page
-					else
-					{
-						echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px;"><a href="' . $_SERVER['PHP_SELF'] . '?p=player&amp;pid=' . $VictimID . '">' . $Victim . '</a></td>';
-					}
-					echo '
-					<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+						<td width="5%" class="count"><span class="information">' . $count . '</span></td>
+						<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px; position: relative;">
+							<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
+								<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
+							</div>
+							<a href="' . $link . '">' . $Victim . '</a>
+						</td>
+						<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
 					</tr>
 					';
 				}

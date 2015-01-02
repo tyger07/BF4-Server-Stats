@@ -109,6 +109,10 @@ Enjoy!
 
 ## Changelog:
 
+1-1-2015:
+- Fixed a reported display bug in Firefox
+- Did a little code conformity of the player page
+
 12-31-2014:
 - Cleaned up a lot of spaghetti code
 - New directory structure to make editing/upkeep easier

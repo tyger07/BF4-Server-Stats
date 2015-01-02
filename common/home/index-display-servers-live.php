@@ -67,6 +67,12 @@ $("#fadeaway").finish().show().delay(2000).fadeOut("slow");
 $("#fadein").delay(29000).fadeIn("slow");
 </script>
 ';
+// put in table to fix error in firefox
+echo '
+<table>
+<tr>
+<td>
+';
 // go through each detected server ID
 foreach($ServerIDs as $this_ServerID)
 {
@@ -213,5 +219,11 @@ Combined Stats From Servers Above
 </table>
 </div>
 </div>
+';
+// end it
+echo '
+</td>
+</tr>
+</table>
 ';
 ?>

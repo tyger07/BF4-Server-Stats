@@ -24,10 +24,10 @@ if(!empty($player))
 {
 	$SoldierName = $player;
 }
+// find who has killed this player
 // if there is a ServerID, this is a server stats page
 if(!empty($ServerID))
 {
-	// find who has killed this player
 	$DogTag_q = @mysqli_query($BF4stats,"
 		SELECT tpd.`SoldierName` AS Killer, tpd.`PlayerID` AS KillerID, dt.`Count`
 		FROM `tbl_dogtags` dt
@@ -41,10 +41,9 @@ if(!empty($ServerID))
 		ORDER BY Count DESC, Killer ASC
 	");
 }
-// or else this is a global stats page
+// or else this is a combined stats page
 else
 {
-	// find who has killed this player
 	$DogTag_q = @mysqli_query($BF4stats,"
 		SELECT tpd.`SoldierName` AS Killer, tpd.`PlayerID` AS KillerID, SUM(dt.`Count`) AS Count
 		FROM `tbl_dogtags` dt
@@ -89,6 +88,12 @@ if(@mysqli_num_rows($DogTag_q) != 0)
 		$Killer = $DogTag_r['Killer'];
 		$KillerID = $DogTag_r['KillerID'];
 		$KillCount = $DogTag_r['Count'];
+		$link = './index.php?';
+		if(!empty($ServerID))
+		{
+			$link .= 'sid=' . $ServerID . '&amp;';
+		}
+		$link .= 'pid=' . $KillerID . '&amp;p=player';
 		// show expand/contract if very long
 		if($count == 10)
 		{
@@ -102,20 +107,14 @@ if(@mysqli_num_rows($DogTag_q) != 0)
 		$count++;
 		echo '
 		<tr>
-		<td width="5%" class="count"><span class="information">' . $count . '</span></td>
-		';
-		// if there is a ServerID, this is a server stats page
-		if(!empty($ServerID))
-		{
-			echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px;"><a href="./index.php?sid=' . $ServerID . '&amp;pid=' . $KillerID . '&amp;p=player">' . $Killer . '</a></td>';
-		}
-		// or else this is a global stats page
-		else
-		{
-			echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px;"><a href="./index.php?p=player&amp;pid=' . $KillerID . '">' . $Killer . '</a></td>';
-		}
-		echo '
-		<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+			<td width="5%" class="count"><span class="information">' . $count . '</span></td>
+			<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px; position: relative;">
+				<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
+					<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
+				</div>
+				<a href="' . $link . '">' . $Killer . '</a>
+			</td>
+			<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
 		</tr>
 		';
 	}
