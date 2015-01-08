@@ -15,12 +15,6 @@ if(!empty($sid))
 {
 	$ServerID = $sid;
 }
-// load javascript files
-echo '
-<link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
-<script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
-<script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
-';
 // javascript transition wrapper between loading and loaded
 echo '
 <script type="text/javascript">
@@ -33,7 +27,7 @@ $(\'#loaded\').fadeIn("slow");
 echo '
 <div id="fadein" style="position: absolute; top: 11px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
-<center>Updating ...<span style="float:right;"><img src="./common/images/loading.gif" alt="loading" style="width: 16px; height: 16px;" /></span></center>
+<center>Updating ...<span style="float:right;"><img class="update" src="./common/images/loading.gif" alt="loading" /></span></center>
 </div>
 </div>
 ';

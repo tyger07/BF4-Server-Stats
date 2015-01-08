@@ -15,12 +15,6 @@ if(!empty($sid))
 {
 	$ServerID = $sid;
 }
-// load javascript files
-echo '
-<link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
-<script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
-<script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
-';
 // javascript transition wrapper between loading and loaded
 echo '
 <script type="text/javascript">

@@ -6,7 +6,7 @@
 echo '
 <div id="loading">
 <br/><br/>
-<center><img src="./common/images/loading.gif" alt="loading" style="width: 24px; height: 24px;" /></center>
+<center><img class="load" src="./common/images/loading.gif" alt="loading" /></center>
 <br/><br/>
 </div>
 ';

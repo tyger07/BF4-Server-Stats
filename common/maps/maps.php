@@ -15,12 +15,6 @@ if(!empty($sid))
 {
 	$ServerID = $sid;
 }
-// load javascript files
-echo '
-<link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
-<script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
-<script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
-';
 // jquery tabs
 echo '
 <script type="text/javascript">
@@ -31,7 +25,7 @@ $(function()
 		beforeLoad: function( event, ui )
 		{
 			ui.panel.html(
-			"<br/><br/><center><img src=\"./common/images/loading.gif\" alt=\"loading\" style=\"width: 24px; height: 24px;\" /></center><br/><br/>"
+			"<br/><br/><center><img class=\"load\" src=\"./common/images/loading.gif\" alt=\"loading\" /></center><br/><br/>"
 			);
 			ui.jqXHR.error(function()
 			{

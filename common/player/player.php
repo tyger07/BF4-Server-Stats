@@ -2,6 +2,51 @@
 // BF4 Stats Page by Ty_ger07
 // http://open-web-community.com/
 
+// expand / contract javascript
+echo '
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$(".expanded").hide();
+	$(".collapsed, .expanded").click(function()
+	{
+		$(this).parent().children(".expanded, .collapsed").toggle();
+	});
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function()
+{
+	$(".expanded3").hide();
+	$(".collapsed3, .expanded3").click(function()
+	{
+		$(this).parent().children(".expanded3, .collapsed3").toggle();
+	});
+});
+</script>
+';
+// jquery tabs
+echo '
+<script type="text/javascript">
+$(function()
+{
+	$("#tabs, #dogtag_tab").tabs(
+	{
+		beforeLoad: function( event, ui )
+		{
+			ui.panel.html(
+			"<br/><br/><center><img class=\"load\" src=\"./common/images/loading.gif\" alt=\"loading\" /></center><br/><br/>"
+			);
+			ui.jqXHR.error(function()
+			{
+				ui.panel.html(
+				"<div class=\"subsection\" style=\"margin-top: 2px;\"><div class=\"headline\"><span class=\"information\" style=\"font-size: 14px;\">Error: This page is not available.</span></div></div>" );
+			});
+		}
+	});
+});
+</script>
+';
 // fade in
 echo '
 <div id="loaded" style="display: none;">
@@ -250,7 +295,7 @@ elseif($SoldierName != null)
 			<br/>
 			<div id="ranks">
 			<br/>
-			<center><img src="./common/images/loading.gif" alt="loading" style="width: 24px; height: 24px;" /></center>
+			<center><img class="load" src="./common/images/loading.gif" alt="loading" /></center>
 			<br/><br/>
 			</div>
 			';

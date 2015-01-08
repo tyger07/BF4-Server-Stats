@@ -2,6 +2,17 @@
 // BF4 Stats Page by Ty_ger07
 // http://open-web-community.com/
 
+// jquery auto refresh server list every 30 seconds
+echo '
+<script type="text/javascript">
+$(function() {
+	function callAjax(){
+		$(\'#servers\').load("./common/home/index-display-servers-live.php");
+	}
+	setInterval(callAjax, 30000 );
+});
+</script>
+';
 // this will auto refresh every 30 seconds to ./common/home/index-display-servers-live.php
 echo'
 <div id="servers" style="position: relative;">
@@ -11,7 +22,7 @@ echo'
 echo '
 <div id="fadein" style="position: absolute; top: 11px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
-<center>Updating ...<span style="float:right;"><img src="./common/images/loading.gif" alt="loading" style="width: 16px; height: 16px;" /></span></center>
+<center>Updating ...<span style="float:right;"><img class="update" src="./common/images/loading.gif" alt="loading" /></span></center>
 </div>
 </div>
 ';
@@ -25,7 +36,7 @@ $("#fadein").delay(29000).fadeIn("slow");
 echo '
 <div id="loading">
 <br/><br/>
-<center><img src="./common/images/loading.gif" alt="loading" style="width: 24px; height: 24px;" /></center>
+<center><img class="load" src="./common/images/loading.gif" alt="loading" /></center>
 <br/><br/>
 </div>
 ';

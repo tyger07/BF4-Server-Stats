@@ -14,6 +14,38 @@ if(!empty($sid))
 {
 	$ServerID = $sid;
 }
+// jquery auto refresh chat every 60 seconds
+echo '
+<script type="text/javascript">
+$(function() {
+	function callAjax(){
+		$(\'#chat\').load("./common/chat/chat-live.php?p=chat&gid=' . $GameID;
+		if(!empty($ServerID))
+		{
+			echo '&sid=' . $ServerID;
+		}
+		if(!empty($currentpage))
+		{
+			echo '&cp=' . $currentpage;
+		}
+		if(!empty($rank))
+		{
+			echo '&r=' . $rank;
+		}
+		if(!empty($order))
+		{
+			echo '&o=' . $order;
+		}
+		if(!empty($query))
+		{
+			echo '&q=' . urlencode($query);
+		}
+		echo '");
+	}
+	setInterval(callAjax, 60000 );
+});
+</script>
+';
 // javascript transition wrapper between loading and loaded
 echo '
 <script type="text/javascript">
@@ -45,7 +77,7 @@ echo '
 </div>
 <div id="chat" style="position: relative;">
 <br/><br/>
-<center><img src="./common/images/loading.gif" alt="loading" style="width: 24px; height: 24px;" /></center>
+<center><img class="load" src="./common/images/loading.gif" alt="loading" /></center>
 <br/>
 <script type="text/javascript">
 $(\'#chat\').load("./common/chat/chat-live.php?gid=' . $GameID;

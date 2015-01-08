@@ -2,11 +2,34 @@
 // BF4 Stats Page by Ty_ger07
 // http://open-web-community.com/
 
+// jquery auto refresh scoreboard every 30 seconds
+if(!empty($ServerID))
+{
+	echo '
+	<script type="text/javascript">
+	$(function() {
+		function callAjax(){
+			$(\'#scoreboard\').load("./common/home/scoreboard-live.php?p=home&sid=' . $ServerID . '&gid=' . $GameID;
+			if(!empty($scoreboard_rank))
+			{
+				echo '&rank=' . $scoreboard_rank;
+			}
+			if(!empty($scoreboard_order))
+			{
+				echo '&order=' . $scoreboard_order;
+			}
+			echo '");
+		}
+		setInterval(callAjax, 30000 );
+	});
+	</script>
+	';
+}
 // show loading...
 echo '
 <div id="loading">
 <br/><br/>
-<center><img src="./common/images/loading.gif" alt="loading" style="width: 24px; height: 24px;" /></center>
+<center><img class="load" src="./common/images/loading.gif" alt="loading" /></center>
 <br/><br/>
 </div>
 ';

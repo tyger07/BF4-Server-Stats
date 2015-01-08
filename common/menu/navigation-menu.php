@@ -6,6 +6,33 @@
 // show menu
 if(!empty($ServerID) || !empty($page))
 {
+	// jquery auto-find players in input box
+	echo '
+	<script type="text/javascript">
+	$(function()
+	{
+		$("#soldiers").autocomplete(
+		{
+			source: "./common/player/player-search.php?gid=' . $GameID;
+			if(!empty($ServerID))
+			{
+				echo '&sid=' . $ServerID;
+			}
+			echo '",
+			minLength: 3,
+			select: function( event, ui )
+			{
+				if(ui.item)
+				{
+					$(\'#soldiers\').val(ui.item.value);
+				}
+				$(\'#ajaxsearch\').submit();
+			}
+		});
+	});
+	</script>
+	';
+	// continue HTML
 	echo '
 	<div id="menucontent">
 	';

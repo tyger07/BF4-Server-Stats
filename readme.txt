@@ -109,6 +109,10 @@ Enjoy!
 
 ## Changelog:
 
+1-8-2015:
+- Fixed duplicate loading of javascript resources causing reduced performance
+- Added a few elements into stats.css
+
 1-1-2015:
 - Fixed a reported display bug in Firefox
 - Did a little code conformity of the player page

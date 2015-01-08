@@ -118,7 +118,7 @@ echo '
 </tr>
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
-<span style="font-size: 12px;"><b>Hint</b>: At the bottom of the html output from serverbanner.php, it will give you the suggested iframe width and height values.</span>
+<span style="font-size: 12px;"><b>Hint</b>: At the bottom of the html output from html-banner.php, it will give you the suggested iframe width and height values.</span>
 </span>
 </td>
 </tr>

@@ -6,7 +6,7 @@
 echo'
 <div id="scoreboard">
 <br/><br/>
-<center><img src="./common/images/loading.gif" alt="loading" style="width: 24px; height: 24px;" /></center>
+<center><img class="load" src="./common/images/loading.gif" alt="loading" /></center>
 <br/><br/>
 <script type="text/javascript">
 $(\'#scoreboard\').load("./common/home/scoreboard-live.php?gid=' . $GameID;

@@ -13,8 +13,11 @@ echo '
 <meta http-equiv="imagetoolbar" content="no" />
 <meta name="resource-type" content="document" />
 <meta name="distribution" content="global" />
-<meta name="copyright" content="2014 Open-Web-Community http://open-web-community.com/" />
+<meta name="copyright" content="2015 Open-Web-Community http://open-web-community.com/" />
 <link rel="stylesheet" href="./common/stats.css" type="text/css" />
+<link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
+<script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
 ';
 // hide php notices
 error_reporting(E_ALL ^ E_NOTICE);
@@ -208,7 +211,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		<div class="content-gradient"></div>
 		<div id="topcontent">
 		<div id="topbanner">
-		<a href="' . $banner_url . '" target="_blank"><img alt="BF4 Stats Page Copyright 2014 Open-Web-Community" border="0" src="' . $banner_image . '" style="height: 96px;"/></a>
+		<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page Copyright 2015 Open-Web-Community" border="0" /></a>
 		</div>
 		</div>
 		<div id="topmenu">
@@ -229,85 +232,8 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		// the current page is determined by a valid ?p in the URL
 		if(!empty($page))
 		{
-			// load javascript files
-			echo '
-			<link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
-			<script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
-			<script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
-			';
-			// jquery tabs
-			echo '
-			<script type="text/javascript">
-			$(function()
-			{
-				$("#tabs, #dogtag_tab").tabs(
-				{
-					beforeLoad: function( event, ui )
-					{
-						ui.panel.html(
-						"<br/><br/><center><img src=\"./common/images/loading.gif\" alt=\"loading\" style=\"width: 24px; height: 24px;\" /></center><br/><br/>"
-						);
-						ui.jqXHR.error(function()
-						{
-							ui.panel.html(
-							"<div class=\"subsection\" style=\"margin-top: 2px;\"><div class=\"headline\"><span class=\"information\" style=\"font-size: 14px;\">Error: This page is not available.</span></div></div>" );
-						});
-					}
-				});
-			});
-			</script>
-			';
-			// jquery auto-find players in input box
-			echo '
-			<script type="text/javascript">
-			$(function()
-			{
-				$("#soldiers").autocomplete(
-				{
-					source: "./common/player/player-search.php?gid=' . $GameID;
-					if(!empty($ServerID))
-					{
-						echo '&sid=' . $ServerID;
-					}
-					echo '",
-					minLength: 3,
-					select: function( event, ui )
-					{
-						if(ui.item)
-						{
-							$(\'#soldiers\').val(ui.item.value);
-						}
-						$(\'#ajaxsearch\').submit();
-					}
-				});
-			});
-			</script>
-			';
 			if($page == 'player')
 			{
-				// expand / contract javascript
-				echo '
-				<script type="text/javascript">
-				$(document).ready(function()
-				{
-					$(".expanded").hide();
-					$(".collapsed, .expanded").click(function()
-					{
-						$(this).parent().children(".expanded, .collapsed").toggle();
-					});
-				});
-				</script>
-				<script type="text/javascript">
-				$(document).ready(function()
-				{
-					$(".expanded3").hide();
-					$(".collapsed3, .expanded3").click(function()
-					{
-						$(this).parent().children(".expanded3, .collapsed3").toggle();
-					});
-				});
-				</script>
-				';
 				// include player.php contents
 				require_once('./common/player/player.php');
 			}
@@ -333,38 +259,6 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			}
 			elseif($page == 'chat')
 			{
-				// jquery auto refresh chat every 60 seconds
-				echo '
-				<script type="text/javascript">
-				$(function() {
-					function callAjax(){
-						$(\'#chat\').load("./common/chat/chat-live.php?p=chat&gid=' . $GameID;
-						if(!empty($ServerID))
-						{
-							echo '&sid=' . $ServerID;
-						}
-						if(!empty($currentpage))
-						{
-							echo '&cp=' . $currentpage;
-						}
-						if(!empty($rank))
-						{
-							echo '&r=' . $rank;
-						}
-						if(!empty($order))
-						{
-							echo '&o=' . $order;
-						}
-						if(!empty($query))
-						{
-							echo '&q=' . urlencode($query);
-						}
-						echo '");
-					}
-					setInterval(callAjax, 60000 );
-				});
-				</script>
-				';
 				// include chat.php contents
 				require_once('./common/chat/wrapper.php');
 			}
@@ -375,29 +269,6 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			}
 			elseif($page == 'home')
 			{
-				// jquery auto refresh scoreboard every 30 seconds
-				if(!empty($ServerID))
-				{
-					echo '
-					<script type="text/javascript">
-					$(function() {
-						function callAjax(){
-							$(\'#scoreboard\').load("./common/home/scoreboard-live.php?p=home&sid=' . $ServerID . '&gid=' . $GameID;
-							if(!empty($scoreboard_rank))
-							{
-								echo '&rank=' . $scoreboard_rank;
-							}
-							if(!empty($scoreboard_order))
-							{
-								echo '&order=' . $scoreboard_order;
-							}
-							echo '");
-						}
-						setInterval(callAjax, 30000 );
-					});
-					</script>
-					';
-				}
 				// include home.php contents
 				require_once('./common/home/home-wrapper.php');
 			}
@@ -405,49 +276,14 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		// there was no valid ?p in the URL
 		else
 		{
-			// load javascript file
-			echo '
-			<script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
-			';
 			// inherited home page
 			if(!empty($ServerID))
 			{
-				// jquery auto refresh scoreboard every 30 seconds
-				echo '
-				<script type="text/javascript">
-				$(function() {
-					function callAjax(){
-						$(\'#scoreboard\').load("./common/home/scoreboard-live.php?p=home&sid=' . $ServerID . '&gid=' . $GameID;
-						if(!empty($scoreboard_rank))
-						{
-							echo '&rank=' . $scoreboard_rank;
-						}
-						if(!empty($scoreboard_order))
-						{
-							echo '&order=' . $scoreboard_order;
-						}
-						echo '");
-					}
-					setInterval(callAjax, 30000 );
-				});
-				</script>
-				';
 				// include home.php contents
 				require_once('./common/home/home-wrapper.php');
 			}
 			else
 			{
-				// jquery auto refresh server list every 30 seconds
-				echo '
-				<script type="text/javascript">
-				$(function() {
-					function callAjax(){
-						$(\'#servers\').load("./common/home/index-display-servers-live.php");
-					}
-					setInterval(callAjax, 30000 );
-				});
-				</script>
-				';
 				// display the index page
 				require_once('./common/home/index-display-servers-wrapper.php');
 			}

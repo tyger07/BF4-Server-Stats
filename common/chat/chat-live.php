@@ -85,7 +85,7 @@ if(!empty($query) && !(($timestamp = strtotime($query)) === false))
 echo '
 <div id="fadein" style="position: absolute; top: -31px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
-<center>Updating ...<span style="float:right;"><img src="./common/images/loading.gif" alt="loading" width="16px" height="16px" /></span></center>
+<center>Updating ...<span style="float:right;"><img class="update" src="./common/images/loading.gif" alt="loading" /></span></center>
 </div>
 </div>
 ';

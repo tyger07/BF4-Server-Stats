@@ -336,6 +336,9 @@ option:hover, option:active {
 	height: 96px;
 	overflow: hidden;
 }
+.banner{
+	height: 96px;
+}
 /* server select menu */
 #topmenu{
 	display: table;
@@ -445,6 +448,14 @@ option:hover, option:active {
 	font-family: Arial, Arial, Arial, sans-serif;
 	font-size: 14px;
 	font-weight: normal;
+}
+.load{
+	width: 24px;
+	height: 24px;
+}
+.update{
+	width: 16px;
+	height: 16px;
 }
 /* pagination links */
 .pagination{
