@@ -79,17 +79,6 @@ if(@mysqli_num_rows($Map_q) != 0)
 			$MapName = $MapCode;
 			$map_img = './common/images/maps/missing.png';
 		}
-		$Mode = $Map_r['Gamemode'];
-		// convert mode to friendly name
-		if(in_array($Mode,$mode_array))
-		{
-			$GameMode = array_search($Mode,$mode_array);
-		}
-		// this mode is missing!
-		else
-		{
-			$GameMode = $Mode;
-		}
 		$AveragePlayers = round($Map_r['AveragePlayers'],2);
 		$AveragePopularity = round($Map_r['AVGPop'],2) * 100;
 		$count++;

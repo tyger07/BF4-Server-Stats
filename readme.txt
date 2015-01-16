@@ -109,6 +109,9 @@ Enjoy!
 
 ## Changelog:
 
+1-16-2015:
+- Fixed Gamemode undefined error in maps page
+
 1-15-2015:
 - Added optional query string parameters to resize server banner image output as requested
 
