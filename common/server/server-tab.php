@@ -48,6 +48,18 @@ echo '
 </span>
 </td>
 </tr>
+<tr>
+<td class="tablecontents" style="padding-left: 10px;">
+<span style="font-size: 12px;"><b>&amp;h=</b> : (optional) height of image in pixels (default: 95)</span>
+</span>
+</td>
+</tr>
+<tr>
+<td class="tablecontents" style="padding-left: 10px;">
+<span style="font-size: 12px;"><b>&amp;w=</b> : (optional) width of image in pixels (default: 560)</span>
+</span>
+</td>
+</tr>
 </table>
 <br/>
 </td>

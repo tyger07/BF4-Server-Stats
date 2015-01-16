@@ -121,7 +121,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$myPicture->drawScale($Settings);
 		$Config = "";
 		$myPicture->drawSplineChart();
-		$myPicture->render("./graph_cache/banner_sid{$sid}.png");
+		$myPicture->render("./cache/graph_sid{$sid}.png");
 		// graph is done
 		// query for server info
 		$Basic_q = @mysqli_query($BF4stats,"
@@ -215,7 +215,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$back = imagecreatefrompng('./images/graph_back.png');
 			imagecopy($base, $back, 389, 20, 0, 0, 164, 69);
 			// add graph
-			$graph = imagecreatefrompng('./graph_cache/banner_sid' . $sid . '.png');
+			$graph = imagecreatefrompng('./cache/graph_sid' . $sid . '.png');
 			// copy the graph image onto the background image
 			imagecopy($base, $graph, 391, 22, 0, 0, 160, 65);
 			// figure out server's location
@@ -301,9 +301,40 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagecolortransparent($base, $white);
 			imagealphablending($base, true);
 			imagesavealpha($base, true);
+			// compile image and save it in the cache
+			$save = './cache/banner_sid' . $sid . '.png';
+			imagepng($base, $save);
+			// find out if user specified for the image to be resized
+			// $width = ?w
+			// $height = ?h
+			if(!empty($_GET['w']) && is_numeric($_GET['w']))
+			{
+				$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+			}
+			else
+			{
+				$width = 560;
+			}
+			if(!empty($_GET['h']) && is_numeric($_GET['h']))
+			{
+				$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+			}
+			else
+			{
+				$height = 95;
+			}
+			// load the cached image back in
+			$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+			$resize_img = imagecreatetruecolor($width, $height);
+			imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+			// start outputting the image
+			header('Pragma: public');
+			header('Cache-Control: max-age=0');
+			header('Expires: 0');
+			header("Content-type: image/png");
 			// compile image
-			imagepng($base);
-			imagedestroy($base);
+			imagepng($resize_img);
+			imagedestroy($resize_img);
 		}
 		// an error occurred while processing query
 		else
@@ -321,9 +352,40 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$light = imagecolorallocate($base, 255, 255, 255);
 			// add text to image
 			imagestring($base, 4, 100, 40, 'An error occurred while processing your query.', $light);
+			// compile image and save it in the cache
+			$save = './cache/banner_sid' . $sid . '.png';
+			imagepng($base, $save);
+			// find out if user specified for the image to be resized
+			// $width = ?w
+			// $height = ?h
+			if(!empty($_GET['w']) && is_numeric($_GET['w']))
+			{
+				$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+			}
+			else
+			{
+				$width = 560;
+			}
+			if(!empty($_GET['h']) && is_numeric($_GET['h']))
+			{
+				$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+			}
+			else
+			{
+				$height = 95;
+			}
+			// load the cached image back in
+			$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+			$resize_img = imagecreatetruecolor($width, $height);
+			imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+			// start outputting the image
+			header('Pragma: public');
+			header('Cache-Control: max-age=0');
+			header('Expires: 0');
+			header("Content-type: image/png");
 			// compile image
-			imagepng($base);
-			imagedestroy($base);
+			imagepng($resize_img);
+			imagedestroy($resize_img);
 		}
 	}
 	// this server id doesn't exist
@@ -342,9 +404,40 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$light = imagecolorallocate($base, 255, 255, 255);
 		// add text to image
 		imagestring($base, 4, 130, 40, 'The provided Server ID doesn\'t exist.', $light);
+		// compile image and save it in the cache
+		$save = './cache/banner_sid' . $sid . '.png';
+		imagepng($base, $save);
+		// find out if user specified for the image to be resized
+		// $width = ?w
+		// $height = ?h
+		if(!empty($_GET['w']) && is_numeric($_GET['w']))
+		{
+			$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+		}
+		else
+		{
+			$width = 560;
+		}
+		if(!empty($_GET['h']) && is_numeric($_GET['h']))
+		{
+			$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+		}
+		else
+		{
+			$height = 95;
+		}
+		// load the cached image back in
+		$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+		$resize_img = imagecreatetruecolor($width, $height);
+		imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+		// start outputting the image
+		header('Pragma: public');
+		header('Cache-Control: max-age=0');
+		header('Expires: 0');
+		header("Content-type: image/png");
 		// compile image
-		imagepng($base);
-		imagedestroy($base);
+		imagepng($resize_img);
+		imagedestroy($resize_img);
 	}
 	// there is no server id number in the url query string
 	else
@@ -362,9 +455,40 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$light = imagecolorallocate($base, 255, 255, 255);
 		// add text to image
 		imagestring($base, 4, 200, 40, 'Server ID required.', $light);
+		// compile image and save it in the cache
+		$save = './cache/banner_sid' . $sid . '.png';
+		imagepng($base, $save);
+		// find out if user specified for the image to be resized
+		// $width = ?w
+		// $height = ?h
+		if(!empty($_GET['w']) && is_numeric($_GET['w']))
+		{
+			$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+		}
+		else
+		{
+			$width = 560;
+		}
+		if(!empty($_GET['h']) && is_numeric($_GET['h']))
+		{
+			$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+		}
+		else
+		{
+			$height = 95;
+		}
+		// load the cached image back in
+		$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+		$resize_img = imagecreatetruecolor($width, $height);
+		imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+		// start outputting the image
+		header('Pragma: public');
+		header('Cache-Control: max-age=0');
+		header('Expires: 0');
+		header("Content-type: image/png");
 		// compile image
-		imagepng($base);
-		imagedestroy($base);
+		imagepng($resize_img);
+		imagedestroy($resize_img);
 	}
 // php GD extension doesn't exist. show error image
 }

@@ -109,6 +109,9 @@ Enjoy!
 
 ## Changelog:
 
+1-15-2015:
+- Added optional query string parameters to resize server banner image output as requested
+
 1-8-2015:
 - Fixed duplicate loading of javascript resources causing reduced performance
 - Added a few elements into stats.css
