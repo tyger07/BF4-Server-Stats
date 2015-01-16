@@ -304,6 +304,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// compile image and save it in the cache
 			$save = './cache/banner_sid' . $sid . '.png';
 			imagepng($base, $save);
+			imagedestroy($base);
 			// find out if user specified for the image to be resized
 			// $width = ?w
 			// $height = ?h
@@ -355,6 +356,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// compile image and save it in the cache
 			$save = './cache/banner_sid' . $sid . '.png';
 			imagepng($base, $save);
+			imagedestroy($base);
 			// find out if user specified for the image to be resized
 			// $width = ?w
 			// $height = ?h
@@ -407,6 +409,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		// compile image and save it in the cache
 		$save = './cache/banner_sid' . $sid . '.png';
 		imagepng($base, $save);
+		imagedestroy($base);
 		// find out if user specified for the image to be resized
 		// $width = ?w
 		// $height = ?h
@@ -458,6 +461,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		// compile image and save it in the cache
 		$save = './cache/banner_sid' . $sid . '.png';
 		imagepng($base, $save);
+		imagedestroy($base);
 		// find out if user specified for the image to be resized
 		// $width = ?w
 		// $height = ?h
