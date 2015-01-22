@@ -219,8 +219,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// copy the graph image onto the background image
 			imagecopy($base, $graph, 391, 22, 0, 0, 160, 65);
 			// figure out server's location
-			// set location default to null
+			// set location default values
 			$location = '';
+			$fallback = 0;
 			// remove port from IP address
 			$s_explode = explode(":",$ip);
 			$server_ip = $s_explode[0];
@@ -258,6 +259,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					// set the variable based on results of above query loop
 					$Location_r = @mysqli_fetch_assoc($Location_q);
 					$location = strtoupper($Location_r['CountryCode']);
+					$fallback = 1;
 					// add those characters back to $server_ip
 					$server_ip = $s_explode[0];
 				}
@@ -285,6 +287,12 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// copy country flag onto the base background image
 			$flag = imagecreatefrompng($country_img);
 			imagecopy($base, $flag, 120, 20, 0, 0, 16, 11);
+			// if the country is not certain, present uncertainty
+			if($fallback == 1)
+			{
+				$flag = imagecreatefrompng('./images/uncertain.png');
+				imagecopy($base, $flag, 120, 20, 0, 0, 16, 11);
+			}
 			// add text to image
 			imagestring($base, 2, 400, 4, 'Players: Previous 24 Hrs', $yellow);
 			imagestring($base, 2, 120, 4, 'Server Name', $yellow);

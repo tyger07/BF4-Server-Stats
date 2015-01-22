@@ -109,6 +109,9 @@ Enjoy!
 
 ## Changelog:
 
+1-21-2015:
+- Added visual indicator of server location uncertainty to server banner image in the case that the server's location is not known and is instead guessed
+
 1-16-2015:
 - Fixed Gamemode undefined error in maps page
 
