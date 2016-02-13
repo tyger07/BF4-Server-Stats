@@ -29,13 +29,13 @@ echo '
 <tr>
 <td class="tablecontents" width="240px">
 <br/>
-<center><a href="' . $host . $home . 'index.php?sid=' . $ServerID . '" target="_blank"><img src="./common/server-banner/image-banner.php?sid=' . $ServerID . '" style="width: 560px; height: 95px;" alt="banner"/></a></center>
+<center><a href="' . $host . $home . 'index.php?sid=' . $ServerID . '" target="_blank"><img src="./common/server-banner/image-banner.png?sid=' . $ServerID . '" style="width: 560px; height: 95px;" alt="banner"/></a></center>
 <br/>
 <div class="headline" style="width: 550px; text-align: left;">BBcode</div>
 <table class="prettytable" style="width: 550px;">
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
-<span style="font-size: 12px;">[URL=' . $host . $home . 'index.php?sid=' . $ServerID . '][IMG]' . $host . $dir . '/server-banner/image-banner.php?sid=' . $ServerID . '[/IMG][/URL]</span>
+<span style="font-size: 12px;">[URL=' . $host . $home . 'index.php?sid=' . $ServerID . '][IMG]' . $host . $dir . '/server-banner/image-banner.png?sid=' . $ServerID . '[/IMG][/URL]</span>
 </td>
 </tr>
 </table>
