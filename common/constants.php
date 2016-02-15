@@ -63,7 +63,12 @@ $map_array = array(
 	'Giants of Karelia'			=>	'XP4_WlkrFtry',
 	'Hammerhead'				=>	'XP4_SubBase',
 	'Hangar 21'					=>	'XP4_Titan',
-	'Operation Whiteout'		=>	'XP4_Arctic'
+	'Operation Whiteout'		=>	'XP4_Arctic',
+
+	// New Maps
+	'Zavod: Graveyard'			=>	'XP5_Night_01',
+	'Dragon Valley'				=>	'XP7_Valley',
+	'Operation Outbreak'		=>	'XP6_CMP'
 	// note comma at the end of each line except for the last line
 );
 
@@ -412,7 +417,13 @@ $weapon_array = array(
 	'Snowmobile'				=>	'XP4/Gameplay/Vehicles/Snowmobile/Snowmobile',
 	'HT-95 Levkov'				=>	'XP4/Gameplay/Vehicles/HoverTank/XP4_HoverTank',
 	'Shipunov 42'				=>	'XP4/Gameplay/Vehicles/MetalStorm/XP4_MetalStorm',
-	'Pod Launcher'				=>	'XP4/Gameplay/Vehicles/PodLauncher/Launcher_Pod_Platform'
+	'Pod Launcher'				=>	'XP4/Gameplay/Vehicles/PodLauncher/Launcher_Pod_Platform',
+	// New Weapons
+	'AN-94'						=>	'AN94',
+	'Ballistic Shield'			=>	'BallisticShield',
+	'Groza-1'					=>	'Groza1',
+	'L86A1'						=>	'L86A1',
+	'MARES LEG'					=>	'SaddlegunSnp'
 	// note comma at the end of each line except for the last line
 );
 
