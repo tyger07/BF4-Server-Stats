@@ -1,6 +1,6 @@
 <?php
 // BF4 Stats Page by Ty_ger07
-// http://open-web-community.com/
+// https://forum.myrcon.com/showthread.php?6854
 
 // if there is a server id or a page value, this is not the index page
 // show menu

@@ -17,11 +17,15 @@ For best compatibility with this webstats page, use the following settings in Xp
 This webpage code requires that you have access to a web server running a modern version of php and requires that you have permission to modify files on the web server.
 
 
-## Demo
+## Demo (domain expires 5-28-16)
 
 The following demo does not use a live database connected to a live server, so the stats data presented will be out of date and the Players of the Week portion in the demo will likely not function as a result.
 
 http://open-web-community.com/bf4stats/player-stats/index.php
+
+(Demo domain expires 5-28-16)
+If above demo is no longer online, visit:
+https://forum.myrcon.com/showthread.php?6854
 
 
 ## Installation Steps
@@ -91,7 +95,7 @@ $clan_name = ''; // your gaming clan or organization name
 
 For example:
 
-$clan_name = 'Junglewraiths'; // your gaming clan or organization name
+$clan_name = 'MyClan'; // your gaming clan or organization name
 
 
 **3)** Input your desired banner image URL if you want one other than the default to be displayed.
@@ -108,6 +112,10 @@ Enjoy!
 
 
 ## Changelog:
+
+2-12-2016:
+- Added new maps and weapons (thanks pwk)
+- Added git-ignore (thanks nikez)
 
 1-21-2015:
 - Added visual indicator of server location uncertainty to server banner image in the case that the server's location is not known and is instead guessed

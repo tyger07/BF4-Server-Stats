@@ -1,6 +1,6 @@
 <?php
 // BF4 Stats Page by Ty_ger07
-// http://open-web-community.com/
+// https://forum.myrcon.com/showthread.php?6854
 
 // include required files
 require_once('../../config/config.php');
@@ -89,7 +89,7 @@ if(!empty($sid))
 	<meta http-equiv="imagetoolbar" content="no" />
 	<meta name="resource-type" content="document" />
 	<meta name="distribution" content="global" />
-	<meta name="copyright" content="2013 Open-Web-Community http://open-web-community.com/" />
+	<meta name="copyright" content="2016 Ty_ger07 https://forum.myrcon.com/showthread.php?6854" />
 	<meta name="keywords" content="banner" />
 	<meta name="description" content="banner" />
 	<meta http-equiv="refresh" content="30" />
@@ -556,7 +556,7 @@ else
 	<meta http-equiv="imagetoolbar" content="no" />
 	<meta name="resource-type" content="document" />
 	<meta name="distribution" content="global" />
-	<meta name="copyright" content="2013 Open-Web-Community http://open-web-community.com/" />
+	<meta name="copyright" content="2016 Ty_ger07 https://forum.myrcon.com/showthread.php?6854" />
 	<meta name="keywords" content="banner" />
 	<meta name="description" content="banner" />
 	<title>banner</title>

@@ -1,6 +1,6 @@
 <?php
 // BF4 Stats Page by Ty_ger07
-// http://open-web-community.com/
+// https://forum.myrcon.com/showthread.php?6854
 
 // THE FOLLOWING INFORMATION NEEDS TO BE FILLED IN
 // Read readme.txt for help.

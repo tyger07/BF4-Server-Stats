@@ -1,6 +1,6 @@
 <?php
 // BF4 Stats Page by Ty_ger07
-// http://open-web-community.com/
+// https://forum.myrcon.com/showthread.php?6854
 
 // function to find player's weapon stats
 function Statsout($damagetype,$weapon_array,$PlayerID,$ServerID,$valid_ids,$GameID,$BF4stats,$ID)
