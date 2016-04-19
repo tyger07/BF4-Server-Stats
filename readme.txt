@@ -113,6 +113,9 @@ Enjoy!
 
 ## Changelog:
 
+4-18-2016:
+- Fixed PHP Notice caused by leftover no longer used variable in signature.php (thanks marshyonline)
+
 2-12-2016:
 - Added new maps and weapons (thanks pwk)
 - Added git-ignore (thanks nikez)

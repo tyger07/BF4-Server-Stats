@@ -123,14 +123,12 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 						$weapon_img = '../images/weapons/missing.png';
 					}
 				}
-				$weapon_kills = $wr['weaponkills'];
 			}
 			// or else default
 			else
 			{
 				$weapon_img = '../images/weapons/missing.png';
 				$weapon_name = 'Unknown';
-				$weapon_kills = 'Unknown';
 			}
 			// rank players by score
 			// check to see if this rank cache table exists
