@@ -1,56 +1,61 @@
-## BF4 Server Stats Overview
+## BF4 Server Stats Webpage Overview
+
+This page requires the use of a stats database which is created by XpKiller's Procon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.
+If you need help with his plugin, you must seek assistance in XpKiller's plugin thread:
+https://forum.myrcon.com/showthread.php?6698-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-2
+
+For best compatibility with this webstats page, use the following settings in XpKiller's Procon logging plugin:
+"Enable Statslogging?" : Yes
+"Enable Weaponstats?" : Yes
+"Enable Livescoreboard in DB?" : Yes
+"tableSuffix" : None
+"MapStats ON?" : Yes
+"Session ON?" : Yes
+"Save Sessiondata to DB?" : Yes
+"Log playerdata only (no playerstats)?" : No
+
+This webpage code requires that you have access to a web server running a modern version of php and requires that you have permission to modify files on the web server.
 
 
-This page requires the use of a stats database which is created by XpKiller's PRoCon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's plugin thread.
+## Demo (domain expires 5-28-16)
 
-
-
-## Demo
-
+The following demo does not use a live database connected to a live server, so the stats data presented will be out of date and the Players of the Week portion in the demo will likely not function as a result.
 
 http://open-web-community.com/bf4stats/player-stats/index.php
 
-
-## Additional Info
-
-
-Valid!
-
-http://validator.w3.org/check?uri=http%3A%2F%2Fopen-web-community.com%2Fbf4stats%2Fplayer-stats%2Findex.php&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.3+http%3A%2F%2Fvalidator.w3.org%2Fservices
+(Demo domain expires 5-28-16)
+If above demo is no longer online, visit:
+https://forum.myrcon.com/showthread.php?6854
 
 
 ## Installation Steps
 
+1) Download the following file:
+https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
-Download the following file:
-
-http://open-web-community.com/bf4stats/BF4Stats.zip
-
-Extract the files.
+2) Extract the files. (maintain the original folder structure)
 
 You may change the appearance of the page by modifying the stats.css file in the common folder.
 
-Fill in the required parameters before using this code.  You must place the necessary data between the single quotation marks (''). 
+3) Fill in the required parameters in config.php.
 
-Note:  You may not include single quotation marks (') in the following fields.  For instance, you may not call your clan 'Ty_ger07's Clan' as it will create a PHP compilation error.
+Note:  You may not include single quotation marks (') in the following fields without also using an appropriate php delimiter.
+For instance, you may not call your clan 'Ty_ger07's Clan' as it would cause a php compilation error.
+
 For example, this would not work:
 
+$clan_name = 'Ty_ger07's Clan';
 
-$clan_name = 'Ty_ger07's Clan'; // your gaming clan or organization name
+Using a delimiter would cause it to work:
 
+$clan_name = 'Ty_ger07\'s Clan';
 
-You must use a PHP delimiter if you wish to use single quotes within the following fields.
-For example, this would work:
-
-
-$clan_name = 'Ty_ger07\'s Clan'; // your gaming clan or organization name
+4) Upload to your php-enabled web server and enjoy!
 
 
-**You must fill in the following information in the config.php file found in the config folder**
-
+## You must fill in the following information in config.php which is in the config folder.
 
 **1)** Input your stats database host, stats database user name, stats database password, and stats database name.
-
 
 // DATABASE INFORMATION
 
@@ -66,7 +71,6 @@ DEFINE('PASS', '');													// database password
 
 
 For example:
-
 
 // DATABASE INFORMATION
 
@@ -86,24 +90,20 @@ DEFINE('PASS', 'pass');												// database password
 
 **2)** Input your clan name as you would like it to appear in the stats pages.
 
-
 $clan_name = ''; // your gaming clan or organization name
 
 
 For example:
 
-
-$clan_name = 'Junglewraiths'; // your gaming clan or organization name
+$clan_name = 'MyClan'; // your gaming clan or organization name
 
 
 **3)** Input your desired banner image URL if you want one other than the default to be displayed.
-
 
 $banner_image = './images/bf4-logo.png'; // your desired page banner
 
 
 **4)** Enter the URL which you would like users to redirect to if they click your banner image.
-
 
 $banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
 
@@ -113,7 +113,125 @@ Enjoy!
 
 ## Changelog:
 
-12-30-2013
+4-18-2016:
+- Fixed PHP Notice caused by leftover no longer used variable in signature.php (thanks marshyonline)
+
+2-12-2016:
+- Added new maps and weapons (thanks pwk)
+- Added git-ignore (thanks nikez)
+
+1-21-2015:
+- Added visual indicator of server location uncertainty to server banner image in the case that the server's location is not known and is instead guessed
+
+1-16-2015:
+- Fixed Gamemode undefined error in maps page
+
+1-15-2015:
+- Added optional query string parameters to resize server banner image output as requested
+
+1-8-2015:
+- Fixed duplicate loading of javascript resources causing reduced performance
+- Added a few elements into stats.css
+
+1-1-2015:
+- Fixed a reported display bug in Firefox
+- Did a little code conformity of the player page
+
+12-31-2014:
+- Cleaned up a lot of spaghetti code
+- New directory structure to make editing/upkeep easier
+- More asynchronous loading of page contents for a smoother/faster experience
+- Bug fixes and performance improvements
+- Added missing Final Stand weapons
+
+12-7-2014:
+- Fixed missing banner_cache folder causing banner graphs not to appear
+
+12-3-2014:
+- Increased font size in banner graph for better visibility for those with wonky php GD extension
+- Fixed serverbanner.php directory location in server info tab
+- Removed combined rank calculation from combined player stats pages due to large database load for those with many combined players
+
+11-22-2014:
+- Made alignment changes to banner image and fixed graph going off the chart in some cases in banner image
+- Added optional "&cc=.." URL query string variable to change the country flag displayed in the banner image
+
+11-21-2014:
+- Added Final Stand maps and ranks
+- Added GameTracker style server banner signature images to the Server Info page Banners tab
+- Added Soldier Name search on Leaderboard
+
+11-16-2014:
+- Added pagination to Suspicious Players page
+- Added expand/contract functionality to player page to reduce page height
+- Player ranks are now calculated on player stats page after the player page is loaded
+- Combined server ranks now available on player stats page
+
+11-12-2014:
+- Fixed error caused while caching combined server stats of databases with many servers
+- Added a couple database indexes to speed up certain queries
+- Fixed issue with server join button link
+- Updated to new Battlelog background image
+
+11-11-2014:
+- Fixed error which sometimes caused duplicates in Top 20 players cache
+- Performance enhancement of rank function
+- Added missing country Montenegro
+
+11-6-2014:
+- Top 20 players are cached for performance reasons
+
+11-4-2014:
+- Optimizations in load time
+- Missing weapon images corrected
+
+11-1-2014:
+- Optimizations
+- Cacheing
+- Bug fixes
+- Full vehicle stats
+
+10-29-2014:
+- Block common robots
+- Faster combined player counts on a few pages
+- Added filter to not display servers if their `ConnectionState` is NOT NULL or NOT 'ON' in the `tbl_server` table
+
+10-25-2014:
+- DLC Weapons added
+- Vehicle images and stats added (where possible)
+
+10-24-2014:
+- Most DLC now included (weapons and vehicles still missing)
+- Bugs fixed
+- More accurate stats
+- May be a little slower (due to increased accuracy)
+
+10-12-2014:
+- Battlelog inspired theme
+- Page load time optimizations using asynchronous queries and background data refresh
+- Improved search, navigation, and tabs
+- Chat log can be searched through based on player name, message text, or date/time
+
+2-19-2014:
+- Added missing Second Assault banner images
+- Added updated pChart API
+
+2-18-2014:
+- Added Second Assault Maps, Mode, and Weapons
+
+1-23-2014:
+- Bug fixes
+- Code size reduction
+- Style changes
+- Added map pie chart to maps page and moved daily player quantity data chart from maps page to server info page
+- Reverted back to on-demand signature images instead of caching signature images on the server (for server space usage reasons and to ensure up-to-date data is displayed)
+
+1-3-2014:
+- Fixed server info graphs showing old data instead of new data.
+- Use GameID associated specifically with 'BF4' instead of just the most common GameID in the database.
+- Better error explanations if database doesn't connect or BF4 servers aren't found in the database.
+
+12-30-2013:
 - Fixed players of the week page grouping by player id instead of stats id to remove duplicates
 
 12-26-2013:
@@ -201,4 +319,4 @@ Enjoy!
 - More ranks in more places
 
 11-20-2013:
-- Initial release modified and transferred over from BF3 stats page version
+- Initial release modified and transferred over from my BF3 stats page version
