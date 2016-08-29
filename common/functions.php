@@ -1447,12 +1447,12 @@ function pagination_headers($columnname,$ServerID,$targetpage,$width,$ranktext,$
 	';
 }
 // function to count sessions
-function session_count($userip, $ServerID, $GameID, $BF4stats)
+function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats)
 {
 	// check to see if the session table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_sessions`
-		(`IP` VARCHAR(45) NULL DEFAULT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` INT(11) NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`IP`))
+		(`IP` VARCHAR(45) NULL DEFAULT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`IP`))
 		ENGINE=MyISAM
 		DEFAULT CHARSET=utf8
 		COLLATE=utf8_bin
@@ -1461,32 +1461,69 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 	$now_timestamp = time();
 	$old = $now_timestamp - 1800;
 	// check if this user already has a session stored
-	$exist_query = @mysqli_query($BF4stats,"
-		SELECT DISTINCT(`IP`) AS IP
-		FROM `tyger_stats_sessions`
-		WHERE `IP` = '{$userip}'
-		AND `SID` = '{$ServerID}'
-		AND `GID` = '{$GameID}'
-	");
-	// user IP found, update timestamp
-	if(@mysqli_num_rows($exist_query) != 0)
+	if(!empty($ServerID))
 	{
-		@mysqli_query($BF4stats,"
-			UPDATE `tyger_stats_sessions`
-			SET `timestamp` = {$now_timestamp}
+		$exist_query = @mysqli_query($BF4stats,"
+			SELECT DISTINCT(`IP`) AS IP
+			FROM `tyger_stats_sessions`
 			WHERE `IP` = '{$userip}'
 			AND `SID` = '{$ServerID}'
 			AND `GID` = '{$GameID}'
 		");
 	}
+	else
+	{
+		$exist_query = @mysqli_query($BF4stats,"
+			SELECT DISTINCT(`IP`) AS IP
+			FROM `tyger_stats_sessions`
+			WHERE `IP` = '{$userip}'
+			AND `SID` = '{$valid_ids}'
+			AND `GID` = '{$GameID}'
+		");
+	}
+	// user IP found, update timestamp
+	if(@mysqli_num_rows($exist_query) != 0)
+	{
+		if(!empty($ServerID))
+		{
+			@mysqli_query($BF4stats,"
+				UPDATE `tyger_stats_sessions`
+				SET `timestamp` = {$now_timestamp}
+				WHERE `IP` = '{$userip}'
+				AND `SID` = '{$ServerID}'
+				AND `GID` = '{$GameID}'
+			");
+		}
+		else
+		{
+			@mysqli_query($BF4stats,"
+				UPDATE `tyger_stats_sessions`
+				SET `timestamp` = {$now_timestamp}
+				WHERE `IP` = '{$userip}'
+				AND `SID` = '{$valid_ids}'
+				AND `GID` = '{$GameID}'
+			");
+		}
+	}
 	// user IP not found, add it to session table
 	else
 	{
-		@mysqli_query($BF4stats,"
-			INSERT INTO `tyger_stats_sessions`
-			(`IP`, `GID`, `SID`, `timestamp`)
-			VALUES ('{$userip}', '{$GameID}', '{$ServerID}', '{$now_timestamp}')
-		");
+		if(!empty($ServerID))
+		{
+			@mysqli_query($BF4stats,"
+				INSERT INTO `tyger_stats_sessions`
+				(`IP`, `GID`, `SID`, `timestamp`)
+				VALUES ('{$userip}', '{$GameID}', '{$ServerID}', '{$now_timestamp}')
+			");
+		}
+		else
+		{
+			@mysqli_query($BF4stats,"
+				INSERT INTO `tyger_stats_sessions`
+				(`IP`, `GID`, `SID`, `timestamp`)
+				VALUES ('{$userip}', '{$GameID}', '{$valid_ids}', '{$now_timestamp}')
+			");
+		}
 	}
 	// find if there are sessions older than 30 minutes
 	// check this to avoid optimizing the table (slow) when it isn't necessary
@@ -1508,12 +1545,24 @@ function session_count($userip, $ServerID, $GameID, $BF4stats)
 		");
 	}
 	// count all sessions
-	$ses_count = @mysqli_query($BF4stats,"
-		SELECT COUNT(DISTINCT(`IP`)) AS ses
-		FROM `tyger_stats_sessions`
-		WHERE `SID` = '{$ServerID}'
-		AND `GID` = '{$GameID}'
-	");
+	if(!empty($ServerID))
+	{
+		$ses_count = @mysqli_query($BF4stats,"
+			SELECT COUNT(DISTINCT(`IP`)) AS ses
+			FROM `tyger_stats_sessions`
+			WHERE `SID` = '{$ServerID}'
+			AND `GID` = '{$GameID}'
+		");
+	}
+	else
+	{
+		$ses_count = @mysqli_query($BF4stats,"
+			SELECT COUNT(DISTINCT(`IP`)) AS ses
+			FROM `tyger_stats_sessions`
+			WHERE `SID` = '{$valid_ids}'
+			AND `GID` = '{$GameID}'
+		");
+	}
 	if(@mysqli_num_rows($ses_count) != 0)
 	{
 		$ses_row = @mysqli_fetch_assoc($ses_count);

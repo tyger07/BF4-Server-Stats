@@ -22,7 +22,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$PlayerID = $pid;
 		if(!empty($_GET['fav']) AND is_numeric($_GET['fav']))
 		{
-			$fav = mysqli_real_escape_string($BF4stats, $_GET['fav']);
+			$fav = mysqli_real_escape_string($BF4stats, strip_tags($_GET['fav']));
 		}
 		// query for this player's info
 		$q = @mysqli_query($BF4stats,"

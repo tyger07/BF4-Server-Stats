@@ -69,7 +69,7 @@ echo '
 <tr>
 <td class="tablecontents" width="240px">
 <br/>
-<center><iframe src="./common/server-banner/html-banner.php?sid=' . $ServerID . '" width="220px" height="712px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
+<center><iframe src="./common/server-banner/html-banner.php?sid=' . $ServerID . '" width="220px" height="692px" frameborder="0" scrolling="no"><p>iframes not supported</p></iframe></center>
 <br/>
 </td>
 <td class="tablecontents" valign="top" style="padding-right: 4px;">
@@ -79,7 +79,7 @@ echo '
 <table class="prettytable">
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
-<span style="font-size: 12px;">&lt;iframe src="' . $host . $dir . '/server-banner/html-banner.php?sid=' . $ServerID . '" width="220px" height="712px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;</span>
+<span style="font-size: 12px;">&lt;iframe src="' . $host . $dir . '/server-banner/html-banner.php?sid=' . $ServerID . '" width="220px" height="692px" frameborder="0" scrolling="no"&gt;&lt;p&gt;iframes not supported&lt;/p&gt;&lt;/iframe&gt;</span>
 </td>
 </tr>
 </table>

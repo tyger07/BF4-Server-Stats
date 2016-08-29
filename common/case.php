@@ -46,7 +46,7 @@ else
 if(!empty($_GET['player']))
 {
 	// remove accidental spaces from name input
-	$player = mysqli_real_escape_string($BF4stats, preg_replace('/\s/','',($_GET['player'])));
+	$player = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['player'])));
 }
 else
 {
@@ -68,7 +68,7 @@ else
 // $term = ?term
 if(!empty($_GET['term']))
 {
-	$term = mysqli_real_escape_string($BF4stats, $_GET['term']);
+	$term = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['term'])));
 }
 else
 {
@@ -101,7 +101,7 @@ else
 // $query = ?q
 if(!empty($_GET['q']))
 {
-	$query = mysqli_real_escape_string($BF4stats, $_GET['q']);
+	$query = mysqli_real_escape_string($BF4stats, strip_tags($_GET['q']));
 }
 else
 {
@@ -121,9 +121,9 @@ else
 
 // page rank in pagination case
 // $rank = ?r
-if(!empty($_GET['r']))
+if(!empty($_GET['r']) && !(is_numeric($_GET['r'])))
 {
-	$rank = mysqli_real_escape_string($BF4stats, $_GET['r']);
+	$rank = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['r'])));
 }
 else
 {
@@ -132,9 +132,9 @@ else
 
 // page order in pagination case
 // $order = ?o
-if(!empty($_GET['o']))
+if(!empty($_GET['o']) && !(is_numeric($_GET['o'])))
 {
-	$order = mysqli_real_escape_string($BF4stats, $_GET['o']);
+	$order = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['o'])));
 }
 else
 {
@@ -143,9 +143,9 @@ else
 
 // scoreboard rank
 // $scoreboard_rank = ?rank
-if(!empty($_GET['rank']))
+if(!empty($_GET['rank']) && !(is_numeric($_GET['rank'])))
 {
-	$scoreboard_rank = mysqli_real_escape_string($BF4stats, $_GET['rank']);
+	$scoreboard_rank = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['rank'])));
 }
 else
 {
@@ -154,9 +154,9 @@ else
 
 // scoreboard order
 // $scoreboard_order = ?order
-if(!empty($_GET['order']))
+if(!empty($_GET['order']) && !(is_numeric($_GET['order'])))
 {
-	$scoreboard_order = mysqli_real_escape_string($BF4stats, $_GET['order']);
+	$scoreboard_order = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['order'])));
 }
 else
 {

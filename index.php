@@ -304,7 +304,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		{
 			$userip = $_SERVER["REMOTE_ADDR"];
 		}
-		$ses = session_count($userip,$ServerID,$GameID,$BF4stats);
+		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats);
 		echo '
 		<br/>
 		<center>

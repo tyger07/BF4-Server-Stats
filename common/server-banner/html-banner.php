@@ -16,7 +16,7 @@ if(!empty($sid))
 	// background color?
 	if(!empty($_GET['bgcolor']))
 	{
-		$bgcolor = mysqli_real_escape_string($BF4stats, $_GET['bgcolor']);
+		$bgcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['bgcolor'])));
 	}
 	// use default
 	else
@@ -26,7 +26,7 @@ if(!empty($sid))
 	// font color?
 	if(!empty($_GET['fontcolor']))
 	{
-		$fontcolor = mysqli_real_escape_string($BF4stats, $_GET['fontcolor']);
+		$fontcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['fontcolor'])));
 	}
 	// use default
 	else
@@ -36,7 +36,7 @@ if(!empty($sid))
 	// link color?
 	if(!empty($_GET['linkcolor']))
 	{
-		$linkcolor = mysqli_real_escape_string($BF4stats, $_GET['linkcolor']);
+		$linkcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['linkcolor'])));
 	}
 	// use default
 	else
@@ -46,7 +46,7 @@ if(!empty($sid))
 	// section font color?
 	if(!empty($_GET['sectionfontcolor']))
 	{
-		$sectionfontcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionfontcolor']);
+		$sectionfontcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['sectionfontcolor'])));
 	}
 	// use default
 	else
@@ -56,7 +56,7 @@ if(!empty($sid))
 	// section background color?
 	if(!empty($_GET['sectionbgcolor']))
 	{
-		$sectionbgcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionbgcolor']);
+		$sectionbgcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['sectionbgcolor'])));
 	}
 	// use default
 	else
@@ -66,7 +66,7 @@ if(!empty($sid))
 	// online player count?
 	if(!empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
 	{
-		$onlinecount = mysqli_real_escape_string($BF4stats, $_GET['onlinecount']);
+		$onlinecount = mysqli_real_escape_string($BF4stats, strip_tags($_GET['onlinecount']));
 	}
 	// use default
 	else
@@ -75,9 +75,9 @@ if(!empty($sid))
 	}
 	// figure out this DIV's height based on number of players variable
 	// online count section height in pixels
-	$onlineheight = ($onlinecount * 19) + 6;
+	$onlineheight = ($onlinecount * 18) + 6;
 	// total page content height based on onlineheight
-	$contentheight = 510 + $onlineheight;
+	$contentheight = 500 + $onlineheight;
 	// echo out the header
 	echo '
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -105,8 +105,21 @@ if(!empty($sid))
 			font-size: 12px;
 			color: #' . $fontcolor . ';
 		}
+		table{
+			font-family: Arial, Arial, Arial, sans-serif;
+			font-size: 12px;
+		}
+		th{
+			font-family: Arial, Arial, Arial, sans-serif;
+			font-size: 12px;
+		}
+		td{
+			font-family: Arial, Arial, Arial, sans-serif;
+			font-size: 12px;
+		}
 		a, a:visited, a:hover, a:active{
 			color: #' . $linkcolor . ';
+			font-family: Arial, Arial, Arial, sans-serif;
 			font-size: 12px;
 			text-decoration: none;
 		}
@@ -117,18 +130,21 @@ if(!empty($sid))
 			width: 214px;
 			height: ' . $contentheight . 'px;
 			padding: 2px;
+			font-family: Arial, Arial, Arial, sans-serif;
 			font-size: 12px;
 		}
 		.section{
 			background-color: #' . $sectionbgcolor . ';
 			color: #' . $sectionfontcolor . ';
 			padding: 4px;
+			font-family: Arial, Arial, Arial, sans-serif;
 			font-size: 12px;
 		}
 		.online{
 			height: ' . $onlineheight . 'px;
 			overflow-y: auto;
 			overflow-x: hidden;
+			font-family: Arial, Arial, Arial, sans-serif;
 			font-size: 12px;
 		}
 	</style>
@@ -206,6 +222,7 @@ if(!empty($sid))
 		$slots = 'Unknown';
 		$players = 'Unknown';
 		$servername = 'Unknown';
+		$server = 'Unknown';
 		$map_img = '../images/maps/missing.png';
 	}
 	// display server information
@@ -483,7 +500,7 @@ else
 	// background color?
 	if(!empty($_GET['bgcolor']))
 	{
-		$bgcolor = mysqli_real_escape_string($BF4stats, $_GET['bgcolor']);
+		$bgcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['bgcolor'])));
 	}
 	// use default
 	else
@@ -493,7 +510,7 @@ else
 	// font color?
 	if(!empty($_GET['fontcolor']))
 	{
-		$fontcolor = mysqli_real_escape_string($BF4stats, $_GET['fontcolor']);
+		$fontcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['fontcolor'])));
 	}
 	// use default
 	else
@@ -503,7 +520,7 @@ else
 	// link color?
 	if(!empty($_GET['linkcolor']))
 	{
-		$linkcolor = mysqli_real_escape_string($BF4stats, $_GET['linkcolor']);
+		$linkcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['linkcolor'])));
 	}
 	// use default
 	else
@@ -513,7 +530,7 @@ else
 	// section font color?
 	if(!empty($_GET['sectionfontcolor']))
 	{
-		$sectionfontcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionfontcolor']);
+		$sectionfontcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['sectionfontcolor'])));
 	}
 	// use default
 	else
@@ -523,7 +540,7 @@ else
 	// section background color?
 	if(!empty($_GET['sectionbgcolor']))
 	{
-		$sectionbgcolor = mysqli_real_escape_string($BF4stats, $_GET['sectionbgcolor']);
+		$sectionbgcolor = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['sectionbgcolor'])));
 	}
 	// use default
 	else
@@ -533,7 +550,7 @@ else
 	// online player count?
 	if(!empty($_GET['onlinecount']) AND is_numeric($_GET['onlinecount']))
 	{
-		$onlinecount = mysqli_real_escape_string($BF4stats, $_GET['onlinecount']);
+		$onlinecount = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['onlinecount'])));
 	}
 	// use default
 	else
@@ -542,9 +559,9 @@ else
 	}
 	// figure out this DIV's height based on number of players variable
 	// online count section height in pixels
-	$onlineheight = ($onlinecount * 19) + 6;
+	$onlineheight = ($onlinecount * 18) + 6;
 	// total page content height based on onlineheight
-	$contentheight = 510 + $onlineheight;
+	$contentheight = 500 + $onlineheight;
 	// echo out the header
 	echo '
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

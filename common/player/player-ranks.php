@@ -21,8 +21,7 @@ if(!empty($pid))
 }
 if(!empty($_GET['server']))
 {
-	// remove accidental spaces from name input
-	$ServerName = mysqli_real_escape_string($BF4stats, $_GET['server']);
+	$ServerName = strip_tags(mysqli_real_escape_string($BF4stats, $_GET['server']));
 	echo '
 	<table class="prettytable">
 	<tr>

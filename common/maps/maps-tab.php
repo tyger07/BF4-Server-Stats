@@ -16,9 +16,9 @@ if(!empty($sid))
 {
 	$ServerID = $sid;
 }
-if(!empty($_GET['c']))
+if(!empty($_GET['c']) && !(is_numeric($_GET['c'])))
 {
-	$Code = mysqli_real_escape_string($BF4stats, $_GET['c']);
+	$Code = strip_tags(mysqli_real_escape_string($BF4stats, $_GET['c']));
 }
 echo '
 <table class="prettytable">

@@ -1,7 +1,7 @@
 ## BF4 Server Stats Webpage Overview
 
 This page requires the use of a stats database which is created by XpKiller's Procon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.
-If you need help with his plugin, you must seek assistance in XpKiller's plugin thread:
+If you need help with XpKiller's stats logger plugin, you must seek assistance in XpKiller's plugin thread:
 https://forum.myrcon.com/showthread.php?6698-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-2
 
 For best compatibility with this webstats page, use the following settings in XpKiller's Procon logging plugin:
@@ -17,14 +17,9 @@ For best compatibility with this webstats page, use the following settings in Xp
 This webpage code requires that you have access to a web server running a modern version of php and requires that you have permission to modify files on the web server.
 
 
-## Demo (domain expires 5-28-16)
+## Help and Support
 
-The following demo does not use a live database connected to a live server, so the stats data presented will be out of date and the Players of the Week portion in the demo will likely not function as a result.
-
-http://open-web-community.com/bf4stats/player-stats/index.php
-
-(Demo domain expires 5-28-16)
-If above demo is no longer online, visit:
+Visit the following forum topic:
 https://forum.myrcon.com/showthread.php?6854
 
 
@@ -112,6 +107,9 @@ Enjoy!
 
 
 ## Changelog:
+
+8-29-2016:
+- Removed some potential XSS exploits (thanks zer0sec)
 
 4-18-2016:
 - Fixed PHP Notice caused by leftover no longer used variable in signature.php (thanks marshyonline)

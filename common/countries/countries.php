@@ -10,14 +10,15 @@ require_once('../case.php');
 require_once('../constants.php');
 // default variable to null
 $ServerID = null;
+$CountryCodes = null;
 // get value
 if(!empty($sid))
 {
 	$ServerID = $sid;
 }
-if(!empty($_GET['c']))
+if(!empty($_GET['c']) && !(is_numeric($_GET['c'])))
 {
-	$CountryCodes = explode(',',mysqli_real_escape_string($BF4stats, $_GET['c']));
+	$CountryCodes = explode(',',strip_tags(mysqli_real_escape_string($BF4stats, $_GET['c'])));
 }
 // jquery tabs
 echo '

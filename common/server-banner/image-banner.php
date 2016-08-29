@@ -318,7 +318,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// $height = ?h
 			if(!empty($_GET['w']) && is_numeric($_GET['w']))
 			{
-				$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+				$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
 			}
 			else
 			{
@@ -326,7 +326,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			}
 			if(!empty($_GET['h']) && is_numeric($_GET['h']))
 			{
-				$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+				$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
 			}
 			else
 			{
@@ -370,7 +370,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// $height = ?h
 			if(!empty($_GET['w']) && is_numeric($_GET['w']))
 			{
-				$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+				$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
 			}
 			else
 			{
@@ -378,7 +378,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			}
 			if(!empty($_GET['h']) && is_numeric($_GET['h']))
 			{
-				$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+				$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
 			}
 			else
 			{
@@ -423,7 +423,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		// $height = ?h
 		if(!empty($_GET['w']) && is_numeric($_GET['w']))
 		{
-			$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+			$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
 		}
 		else
 		{
@@ -431,7 +431,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		}
 		if(!empty($_GET['h']) && is_numeric($_GET['h']))
 		{
-			$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+			$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
 		}
 		else
 		{
@@ -475,7 +475,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		// $height = ?h
 		if(!empty($_GET['w']) && is_numeric($_GET['w']))
 		{
-			$width = mysqli_real_escape_string($BF4stats, $_GET['w']);
+			$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
 		}
 		else
 		{
@@ -483,7 +483,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		}
 		if(!empty($_GET['h']) && is_numeric($_GET['h']))
 		{
-			$height = mysqli_real_escape_string($BF4stats, $_GET['h']);
+			$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
 		}
 		else
 		{

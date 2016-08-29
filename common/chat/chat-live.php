@@ -458,13 +458,14 @@ if(@mysqli_num_rows($Messages_q) != 0)
 		{
 			echo '
 			<td width="5%" class="count">
-			<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
-			<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
-			</div>
 			<span class="information">' . $count . '</span>
 			</td>
 			<td width="15%" class="tablecontents">' . $logDate . '</td>
-			<td width="15%" class="tablecontents"><a href="' . $link . '">' . $logSoldierName . '</a></td>
+			<td width="15%" class="tablecontents" style="position: relative;">
+			<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
+			<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
+			</div>
+			<a href="' . $link . '">' . $logSoldierName . '</a></td>
 			';
 		}
 		// otherwise just display their name without a link
