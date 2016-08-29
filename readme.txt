@@ -110,6 +110,13 @@ Enjoy!
 
 8-29-2016:
 - Removed some potential XSS exploits (thanks zer0sec)
+- Fixed an issue with the `tyger_stats_sessions` table where it was
+saving `SID` as INT(11) instead of VARCHAR(100) which caused combined
+stats page visitor sessions not to be counted correctly.  Drop your
+`tyger_stats_sessions` table and let it rebuild that table using the new
+code if you are affected.
+- Made it so you can select and copy text in the chat page instead of
+making all the content one giant link.
 
 4-18-2016:
 - Fixed PHP Notice caused by leftover no longer used variable in signature.php (thanks marshyonline)
