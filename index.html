@@ -34,15 +34,12 @@
           <h2>
 <a name="bf4-server-stats-overview" class="anchor" href="#bf4-server-stats-overview"><span class="octicon octicon-link"></span></a>BF4 Server Stats Overview</h2>
 
-<p>This page requires the use of a stats database which is created by XpKiller's PRoCon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.  If you need help with his plugin, you must seek assistance in XpKiller's plugin thread.</p>
+<p>This page requires the use of a stats database which is created by XpKiller's PRoCon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.  If you need help with XpKiller's stats logger plugin, you must seek assistance in XpKiller's plugin thread.</p>
 
 <h2>
-<a name="demo" class="anchor" href="#demo"><span class="octicon octicon-link"></span></a>Demo</h2>
+<a name="help-and-support" class="anchor" href="#help-and-support"><span class="octicon octicon-link"></span></a>Help and Support</h2>
 
-<p><a href="http://open-web-community.com/bf4stats/player-stats/index.php">http://open-web-community.com/bf4stats/player-stats/index.php</a></p>
-
-<p>(Demo domain expires 5-28-16)</p>
-<p>If above demo is no longer online, visit:<p>
+<p>Visit the following forum topic:</p>
 <p><a href="https://forum.myrcon.com/showthread.php?6854">https://forum.myrcon.com/showthread.php?6854</a></p>
 
 <h2>
@@ -120,6 +117,14 @@ For example, this would work:</p>
 
 <h2>
 <a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog:</h2>
+
+<p>8-29-2016:</p>
+
+<ul>
+<li>Removed some potential XSS exploits (thanks zer0sec)</li>
+<li>Fixed an issue with the `tyger_stats_sessions` table where it was saving `SID` as INT(11) instead of VARCHAR(100) which caused combined stats page visitor sessions not to be counted correctly. Drop your `tyger_stats_sessions` table and let it rebuild that table using the new code if you are affected.</li>
+<li>Made it so you can select and copy text in the chat page instead of making all the content one giant link.</li>
+</ul>
 
 <p>4-18-2016:</p>
 
