@@ -836,7 +836,7 @@ elseif($SoldierName != null)
 				';
 				while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
 				{
-					$Victim = $DogTag_r['Victim'];
+					$Victim = textcleaner($DogTag_r['Victim']);
 					$VictimID = $DogTag_r['VictimID'];
 					$KillCount = $DogTag_r['Count'];
 					$link = './index.php?';
