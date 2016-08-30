@@ -376,7 +376,7 @@ if(!empty($sid))
 		while($Score_r = @mysqli_fetch_assoc($Score_q))
 		{
 			$count++;
-			$soldier = $Score_r['Soldiername'];
+			$soldier = htmlspecialchars(strip_tags($Score_r['Soldiername']));
 			$score = $Score_r['Score'];
 			echo '
 			<tr>
@@ -451,7 +451,7 @@ if(!empty($sid))
 		while($Score_r = @mysqli_fetch_assoc($Score_q))
 		{
 			$count++;
-			$soldier = $Score_r['SoldierName'];
+			$soldier = htmlspecialchars(strip_tags($Score_r['SoldierName']));
 			$score = $Score_r['Score'];
 			echo '
 			<tr>

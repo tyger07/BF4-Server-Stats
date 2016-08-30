@@ -68,7 +68,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 	while($Player_r = @mysqli_fetch_assoc($Players_q))
 	{
 		$count++;
-		$Soldier_Name = $Player_r['SoldierName'];
+		$Soldier_Name = htmlspecialchars(strip_tags($Player_r['SoldierName']));
 		$Player_ID = $Player_r['PlayerID'];
 		$Score = $Player_r['Score'];
 		$Kills = $Player_r['Kills'];

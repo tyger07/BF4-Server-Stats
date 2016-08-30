@@ -22,7 +22,7 @@ if(!empty($pid))
 // get query search string
 if(!empty($player))
 {
-	$SoldierName = $player;
+	$SoldierName = htmlspecialchars(strip_tags($player));
 }
 // find who has killed this player
 // if there is a ServerID, this is a server stats page
@@ -85,7 +85,7 @@ if(@mysqli_num_rows($DogTag_q) != 0)
 	';
 	while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
 	{
-		$Killer = $DogTag_r['Killer'];
+		$Killer = htmlspecialchars(strip_tags($DogTag_r['Killer']));
 		$KillerID = $DogTag_r['KillerID'];
 		$KillCount = $DogTag_r['Count'];
 		$link = './index.php?';

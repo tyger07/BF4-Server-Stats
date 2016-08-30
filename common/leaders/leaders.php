@@ -292,7 +292,7 @@ if(@mysqli_num_rows($Players_q) != 0)
 	while($Players_r = @mysqli_fetch_assoc($Players_q))
 	{
 		$Score = $Players_r['Score'];
-		$SoldierName = $Players_r['SoldierName'];
+		$SoldierName = textcleaner($Players_r['SoldierName']);
 		$PlayerID = $Players_r['PlayerID'];
 		$Kills = $Players_r['Kills'];
 		$KDR = round($Players_r['KDR'], 2);

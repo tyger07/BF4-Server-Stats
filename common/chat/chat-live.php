@@ -401,7 +401,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 	{
 		// get data
 		$logDate = date("H:i M j, Y", strtotime($Messages_r['logDate']));
-		$logSoldierName = textcleaner($Messages_r['logSoldierName']);
+		$logSoldierName = mysqli_real_escape_string($BF4stats, $Messages_r['logSoldierName']);
 		$logMessage = textcleaner($Messages_r['Message']);
 		$count++;
 		// see if this player has server stats in this server yet
@@ -432,6 +432,7 @@ if(@mysqli_num_rows($Messages_q) != 0)
 				GROUP BY tpd.`PlayerID`
 			");
 		}
+		$logSoldierName = textcleaner($logSoldierName);
 		// server stats found for this player in this server
 		if(@mysqli_num_rows($PlayerID_q) == 1)
 		{

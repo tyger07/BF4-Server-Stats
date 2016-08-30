@@ -2290,7 +2290,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 		while($Players_r = @mysqli_fetch_assoc($Players_q))
 		{
 			$Score = $Players_r['Score'];
-			$SoldierName = $Players_r['SoldierName'];
+			$SoldierName = mysqli_real_escape_string($BF4stats, $Players_r['SoldierName']);
 			$PlayerID = $Players_r['PlayerID'];
 			$Kills = $Players_r['Kills'];
 			$KDR = round($Players_r['KDR'],2);
@@ -2371,10 +2371,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 // function to replace dangerous characters in content
 function textcleaner($content)
 {
-	$content = preg_replace("/&/","&amp;",$content);
-	$content = preg_replace("/'/","&#39;",$content);
-	$content = preg_replace("/</","&lt;",$content);
-	$content = preg_replace("/>/","&gt;",$content);
+	$content = htmlspecialchars(strip_tags($content));
 	// return the value out of the function
 	return $content;
 }

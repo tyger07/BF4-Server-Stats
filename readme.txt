@@ -110,6 +110,7 @@ Enjoy!
 
 8-29-2016:
 - Removed some potential XSS exploits (thanks zer0sec)
+- Removed "second-order" or "type 2" attack vectors for attackers who may try to craft specific server chat messages or user names to attempt an attack against the website or database
 - Fixed an issue with the `tyger_stats_sessions` table where it was
 saving `SID` as INT(11) instead of VARCHAR(100) which caused combined
 stats page visitor sessions not to be counted correctly.  Drop your

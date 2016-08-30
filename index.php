@@ -134,7 +134,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				if(@mysqli_num_rows($SoldierName_q) == 1)
 				{
 					$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
-					$SoldierName = $SoldierName_r['SoldierName'];
+					$SoldierName = textcleaner($SoldierName_r['SoldierName']);
 				}
 				// otherwise null variables
 				else
@@ -192,7 +192,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				if(@mysqli_num_rows($SoldierName_q) == 1)
 				{
 					$SoldierName_r = @mysqli_fetch_assoc($SoldierName_q);
-					$SoldierName = $SoldierName_r['SoldierName'];
+					$SoldierName = textcleaner($SoldierName_r['SoldierName']);
 				}
 				// otherwise null variables
 				else

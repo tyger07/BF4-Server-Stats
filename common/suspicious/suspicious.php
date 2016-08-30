@@ -181,7 +181,7 @@ else
 	// while there are suspicious players, display them
 	while($Suspicious_r = @mysqli_fetch_assoc($Suspicious_q))
 	{
-		$SoldierName = $Suspicious_r['SoldierName'];
+		$SoldierName = textcleaner($Suspicious_r['SoldierName']);
 		$PlayerID = $Suspicious_r['PlayerID'];
 		$KDR = round($Suspicious_r['KDR'], 2);
 		$HSpercent = round(($Suspicious_r['HSR']*100), 2);

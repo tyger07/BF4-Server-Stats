@@ -62,7 +62,7 @@ if($SoldierName == null)
 	<div class="headline">
 	';
 	// if there was a $playerid input but it was nulled out, let user know it was nulled out because index.php did not find that as a valid player id
-	if(!empty($_GET['pid']) && is_numeric($_GET['pid']))
+	if(!empty($pid) && is_numeric($pid))
 	{
 		echo 'This player ID does not exist.';
 	}
@@ -246,7 +246,7 @@ elseif($SoldierName != null)
 			while($PlayerMatch_r = @mysqli_fetch_assoc($PlayerMatch_q))
 			{
 				$count++;
-				$Soldier_Name = $PlayerMatch_r['SoldierName'];
+				$Soldier_Name = textcleaner($PlayerMatch_r['SoldierName']);
 				$Player_ID = $PlayerMatch_r['PlayerID'];
 				$Score = $PlayerMatch_r['Score'];
 				$Kills = $PlayerMatch_r['Kills'];

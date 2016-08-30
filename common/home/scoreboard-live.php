@@ -497,7 +497,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 				$count = 1;
 				while($Team_r = @mysqli_fetch_assoc($Team_q))
 				{
-					$player = $Team_r['Soldiername'];
+					$player = mysqli_real_escape_string($BF4stats, $Team_r['Soldiername']);
 					// see if this player has server stats in this server yet
 					$PlayerID_q = @mysqli_query($BF4stats,"
 						SELECT tpd.`PlayerID`
@@ -519,6 +519,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 					{
 						$PlayerID = null;
 					}
+					$player = htmlspecialchars(strip_tags($player));
 					$score = $Team_r['Score'];
 					$kills = $Team_r['Kills'];
 					$deaths = $Team_r['Deaths'];

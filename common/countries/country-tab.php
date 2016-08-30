@@ -18,7 +18,7 @@ if(!empty($sid))
 }
 if(!empty($_GET['c']) && !(is_numeric($_GET['c'])))
 {
-	$Code = strip_tags(mysqli_real_escape_string($BF4stats, $_GET['c']));
+	$Code = mysqli_real_escape_string($BF4stats, strip_tags($_GET['c']));
 }
 // list out the country
 $CountryCode = $Code;
@@ -145,7 +145,7 @@ else
 	while($CountryRank_r = @mysqli_fetch_assoc($CountryRank_q))
 	{
 		$country_count++;
-		$SoldierName = $CountryRank_r['SoldierName'];
+		$SoldierName = htmlspecialchars(strip_tags($CountryRank_r['SoldierName']));
 		$PlayerID = $CountryRank_r['PlayerID'];
 		$Score = $CountryRank_r['Score'];
 		$Kills = $CountryRank_r['Kills'];
