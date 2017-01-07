@@ -24,17 +24,36 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		{
 			$fav = mysqli_real_escape_string($BF4stats, strip_tags($_GET['fav']));
 		}
-		// query for this player's info
-		$q = @mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`GlobalRank`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
-			FROM `tbl_playerdata` tpd
-			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-			WHERE tpd.`PlayerID` = {$PlayerID}
-			AND tpd.`GameID` = {$GameID}
-			AND tsp.`ServerID` IN ({$valid_ids})
-			GROUP BY tpd.`PlayerID`
-		");
+		// is adkats information available?
+		if($adkats_available)
+		{
+			// query for this player's info
+			$q = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`GlobalRank`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, adk.`ban_status`
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`PlayerID`
+			");
+		}
+		else
+		{
+			// query for this player's info
+			$q = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`GlobalRank`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, SUM(tps.`Headshots`) AS Headshots, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				WHERE tpd.`PlayerID` = {$PlayerID}
+				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`PlayerID`
+			");
+		}
 		if(mysqli_num_rows($q) == 1)
 		{
 			$found = 1;
@@ -55,6 +74,25 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$rank_img = '../images/ranks/missing.png';
+			}
+			// is this player banned?
+			// or have previous ban which was lifted?
+			$player_banned = 0;
+			$previous_banned = 0;
+			if($adkats_available)
+			{
+				$ban_status = $r['ban_status'];
+				if(!is_null($ban_status))
+				{
+					if($ban_status == 'Active')
+					{
+						$player_banned = 1;
+					}
+					elseif($ban_status == 'Expired')
+					{
+						$previous_banned = 1;
+					}
+				}
 			}
 			// query for this player's weapon stats
 			// this doesn't include vehicle weapon stats
@@ -233,16 +271,16 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 						{
 							$srank = 0;
 						}
-						// update old data in database
-						@mysqli_query($BF4stats,"
-							UPDATE `tyger_stats_rank_cache`
-							SET `rank` = '{$srank}', `timestamp` = '{$now_timestamp}'
-							WHERE `category` = 'Score'
-							AND `SID` = '{$valid_ids}'
-							AND `GID` = '{$GameID}'
-							AND `PlayerID` = {$PlayerID}
-						");
 					}
+					// update old data in database
+					@mysqli_query($BF4stats,"
+						UPDATE `tyger_stats_rank_cache`
+						SET `rank` = '{$srank}', `timestamp` = '{$now_timestamp}'
+						WHERE `category` = 'Score'
+						AND `SID` = '{$valid_ids}'
+						AND `GID` = '{$GameID}'
+						AND `PlayerID` = {$PlayerID}
+					");
 				}
 			}
 			else
@@ -420,14 +458,16 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		}
 		// start outputting the image
 		header('Pragma: public');
-		header('Cache-Control: max-age=0');
-		header('Expires: 0');
+		header('Cache-Control: max-age=43200');
+		header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', $now_timestamp + 43200));
 		header("Content-type: image/png");
 		// base image
 		$base = imagecreatefrompng('./images/background.png');
 		// text color
 		$light = imagecolorallocate($base, 255, 255, 255);
 		$yellow = imagecolorallocate($base, 255, 250, 200);
+		$red = imagecolorallocate($base, 255, 000, 000);
+		$orange = imagecolorallocate($base, 255, 100, 000);
 		$dark = imagecolorallocate($base, 200, 200, 190);
 		// add clan name text
 		imagestring($base, 2, 220, 17, $clan_name . '\'s Servers', $dark);
@@ -477,6 +517,14 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagestring($base, 2, 288, 57, $headshots, $yellow);
 			imagestring($base, 2, 225, 68, 'HS %:', $yellow);
 			imagestring($base, 2, 288, 68, $hsr . ' %', $yellow);
+			if($player_banned == 1)
+			{
+				imagestring($base, 2, 110, 8, 'Banned', $red);
+			}
+			elseif($previous_banned == 1)
+			{
+				imagestring($base, 2, 110, 8, 'Warned', $orange);
+			}
 		}
 		// this soldier was not found
 		else

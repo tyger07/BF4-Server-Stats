@@ -40,8 +40,15 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			while($row = mysqli_fetch_assoc($result))
 			{
 				$raw_hour = $row['Hourly'];
-				// add missing hours to fill in hours for which the query found no results
+				// add missing hours to fill in hours near the middle and end of the day for which the query found no results
 				while($increment > $raw_hour && $increment != '')
+				{
+					$hour[] = $increment;
+					$average[] = 0;
+					$increment--;
+				}
+				// add missing hours to fill in hours at the beginning of the day for which the query found no results
+				while($increment < $raw_hour && $increment != '' && $increment > 0)
 				{
 					$hour[] = $increment;
 					$average[] = 0;
@@ -207,7 +214,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			}
 			// copy the map image onto the background image
 			imagecopy($base, $resize_map, 8, 8, 0, 0, 100, 56);
-			// bf4 logo
+			// BF4 logo
 			$logo = imagecreatefrompng('./images/bf4.png');
 			// copy the logo image onto the background image
 			imagecopy($base, $logo, 8, 70, 0, 0, 100, 19);
@@ -297,8 +304,6 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagestring($base, 2, 400, 4, 'Players: Previous 24 Hrs', $yellow);
 			imagestring($base, 2, 120, 4, 'Server Name', $yellow);
 			imagestring($base, 3, 140, 18, $servername, $light);
-			imagestring($base, 2, 120, 32, 'IP Address', $yellow);
-			imagestring($base, 3, 120, 47, $server_ip, $light);
 			imagestring($base, 2, 240, 32, 'Current Mode', $yellow);
 			imagestring($base, 3, 240, 47, $mode_name, $light);
 			imagestring($base, 2, 120, 62, 'Players', $yellow);

@@ -71,10 +71,11 @@ echo '
 foreach($ServerIDs as $this_ServerID)
 {
 	$Basic_q = @mysqli_query($BF4stats,"
-		SELECT `mapName`, `Gamemode`, `maxSlots`, `usedSlots`, `ServerName`
-		FROM `tbl_server`
-		WHERE `ServerID` = {$this_ServerID}
-		AND `GameID` = {$GameID}
+		SELECT ts.`mapName`, ts.`Gamemode`, ts.`maxSlots`, ts.`usedSlots`, ts.`ServerName`, tss.`CountPlayers`
+		FROM `tbl_server` ts
+		LEFT JOIN `tbl_server_stats` tss ON tss.`ServerID` = ts.`ServerID`
+		WHERE ts.`ServerID` = {$this_ServerID}
+		AND ts.`GameID` = {$GameID}
 	");
 	// information was found
 	if(@mysqli_num_rows($Basic_q) != 0)
@@ -82,19 +83,9 @@ foreach($ServerIDs as $this_ServerID)
 		$Basic_r = @mysqli_fetch_assoc($Basic_q);
 		$used_slots = $Basic_r['usedSlots'];
 		$available_slots = $Basic_r['maxSlots'];
-		$Basic_q2 = @mysqli_query($BF4stats,"
-			SELECT tss.`CountPlayers`
-			FROM `tbl_server` ts
-			INNER JOIN `tbl_server_stats` tss ON tss.`ServerID` = ts.`ServerID`
-			WHERE ts.`ServerID` = {$this_ServerID}
-			AND ts.`GameID` = {$GameID}
-		");
-		if(@mysqli_num_rows($Basic_q2) != 0)
-		{
-			$Basic_r2 = @mysqli_fetch_assoc($Basic_q2);
-			$players = $Basic_r2['CountPlayers'];
-		}
-		else
+		$players = $Basic_r['CountPlayers'];
+		// player count found for this server
+		if(is_null($players))
 		{
 			$players = 'error';
 		}

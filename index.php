@@ -13,7 +13,10 @@ echo '
 <meta http-equiv="imagetoolbar" content="no" />
 <meta name="resource-type" content="document" />
 <meta name="distribution" content="global" />
+<meta name="viewport" content="width=device-width, initial-scale=0.8" />
+<meta http-equiv="Cache-Control" content="max-age=604800" />
 <meta name="copyright" content="2016 Ty_ger07 https://forum.myrcon.com/showthread.php?6854" />
+<link rel="icon" type="image/png" href="./favicon.ico" />
 <link rel="stylesheet" href="./common/stats.css" type="text/css" />
 <link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
 <script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
@@ -82,14 +85,14 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				$Server_r = @mysqli_fetch_assoc($Server_q);
 				$ServerName = $Server_r['ServerName'];
 				// create battlelog link for this server
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+				$battlelog = 'http://battlelog.battlefield.com/BF4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 			}
 			// error?  what?  This will probably never happen.
 			// damage control...
 			else
 			{
 				$ServerName = 'Error';
-				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
+				$battlelog = 'http://battlelog.battlefield.com/BF4/servers/pc/';
 			}
 			// lets see if a SoldierName or PlayerID was provided to us in the URL
 			// first look for a SoldierName in URL and try to convert it to PlayerID
@@ -211,7 +214,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		<div class="content-gradient"></div>
 		<div id="topcontent">
 		<div id="topbanner">
-		<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page Copyright 2015 Open-Web-Community" border="0" /></a>
+		<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page 2016 Ty_ger07" border="0" /></a>
 		</div>
 		</div>
 		<div id="topmenu">
@@ -292,7 +295,7 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		<br/>
 		<br/>
 		<div class="subsection">
-		<div class="headline">[ <span class="information">Statistics data provided by <a href="https://forum.myrcon.com/showthread.php?6698-_BF4-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s Procon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</div>
+		<div class="headline" style="font-size: 12px;">[ <span class="information">Statistics data provided by <a href="https://forum.myrcon.com/showthread.php?6698-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s Procon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</div>
 		</div>
 		';
 		// now lets check our stats page sessions
@@ -308,7 +311,16 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 		echo '
 		<br/>
 		<center>
-		<span class="footertext">' . $ses . ' users viewing these BF4 stats pages</span>
+		';
+		if($ses > 1)
+		{
+			echo '<span class="footertext">' . $ses . ' users viewing these BF4 stats pages</span>';
+		}
+		else
+		{
+			echo '<span class="footertext">' . $ses . ' user viewing these BF4 stats pages</span>';
+		}
+		echo '
 		</center>
 		';
 		// display denied bot stats
@@ -334,19 +346,21 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 			// display bot stats
 			echo '
 			<center>
-			<span class="footertext">' . $TotalBots . ' bots have been denied access</span>
+			';
+			if($TotalBots > 1)
+			{
+				echo '<span class="footertext">' . $TotalBots . ' bots have been denied access</span>';
+			}
+			else
+			{
+				echo '<span class="footertext">' . $TotalBots . ' bot has been denied access</span>';
+			}
+			echo '
 			</center>
 			';
 		}
 		// display denied browser stats
 		// check to see if denied table exists
-		@mysqli_query($BF4stats,"
-			CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
-			(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `count` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-			ENGINE=MyISAM
-			DEFAULT CHARSET=utf8
-			COLLATE=utf8_bin
-		");
 		// count number of browsers recorded
 		$TotalDenied_q = @mysqli_query($BF4stats,"
 			SELECT SUM(`count`) AS count

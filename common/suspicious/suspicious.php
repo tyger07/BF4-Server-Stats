@@ -128,35 +128,76 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// check for suspicious players
-		$Suspicious_q = @mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			WHERE tsp.`ServerID` = {$ServerID}
-			AND (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
-			AND tpd.`GameID` = {$GameID}
-			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-			LIMIT {$offset}, {$rowsperpage}
-		");
+		// is adkats information available?
+		if($adkats_available)
+		{
+			// check for suspicious players
+			$Suspicious_q = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`, adk.`ban_status`
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+				AND tpd.`GameID` = {$GameID}
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
+		else
+		{
+			// check for suspicious players
+			$Suspicious_q = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tps.`Rounds`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tpd.`PlayerID`
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+				AND tpd.`GameID` = {$GameID}
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
 	}
 	// or else this is a global stats page
 	else
 	{
-		// check for suspicious players
-		$Suspicious_q = @mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
-			AND tpd.`GameID` = {$GameID}
-			AND tsp.`ServerID` IN ({$valid_ids})
-			GROUP BY tpd.`SoldierName`
-			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-			LIMIT {$offset}, {$rowsperpage}
-		");
+		// is adkats information available?
+		if($adkats_available)
+		{
+			// check for suspicious players
+			$Suspicious_q = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`, adk.`ban_status`
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+				WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`SoldierName`
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
+		else
+		{
+			// check for suspicious players
+			$Suspicious_q = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, SUM(tps.`Rounds`) AS Rounds, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, tpd.`PlayerID`
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE (((tps.`Kills`/tps.`Deaths`) > 5 AND (tps.`Headshots`/tps.`Kills`) > 0.70 AND tps.`Kills` > 30 AND tps.`Rounds` > 1) OR ((tps.`Kills`/tps.`Deaths`) > 10 AND tps.`Kills` > 50 AND tps.`Rounds` > 1))
+				AND tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`SoldierName`
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
 	}
 	// start the table
 	echo '
@@ -193,6 +234,25 @@ else
 			$link .= 'sid=' . $ServerID . '&amp;';
 		}
 		$link .= 'pid=' . $PlayerID . '&amp;p=player';
+		// is this player banned?
+		// or have previous ban which was lifted?
+		$player_banned = 0;
+		$previous_banned = 0;
+		if($adkats_available)
+		{
+			$ban_status = $Suspicious_r['ban_status'];
+			if(!is_null($ban_status))
+			{
+				if($ban_status == 'Active')
+				{
+					$player_banned = 1;
+				}
+				elseif($ban_status == 'Expired')
+				{
+					$previous_banned = 1;
+				}
+			}
+		}
 		echo '
 		<table class="prettytable" style="margin-top: -2px; position: relative;">
 			<tr>
@@ -202,7 +262,21 @@ else
 					</div>
 					<span class="information">' . $count . '</span>
 				</td>
-				<td width="20%" class="tablecontents"><a href="' . $link . '">' . $SoldierName . '</a></td>
+				';
+				if($player_banned == 1)
+				{
+					echo '<td width="20%" class="banoutline"><div class="bansubscript">Banned</div>';
+				}
+				elseif($previous_banned == 1)
+				{
+					echo '<td width="20%" class="warnoutline"><div class="bansubscript">Warned</div>';
+				}
+				else
+				{
+					echo '<td width="20%" class="tablecontents">';
+				}
+				echo '
+				<a href="' . $link . '">' . $SoldierName . '</a></td>
 				<td width="20%" class="tablecontents">' . $KDR . '</td>
 				<td width="20%" class="tablecontents">' . $HSpercent . '<span class="information"> %</span></td>
 				<td width="20%" class="tablecontents">' . $Rounds . '</td>

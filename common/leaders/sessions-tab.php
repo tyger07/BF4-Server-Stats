@@ -17,36 +17,78 @@ if(!empty($sid))
 // if there is a ServerID, this is a server stats page
 if(!empty($ServerID))
 {
-	// get the info from the db 
-	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
-		FROM `tbl_sessions` tss
-		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE tsp.`ServerID` = {$ServerID}
-		AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-		AND tpd.`GameID` = {$GameID}
-		GROUP BY tpd.`PlayerID`
-		ORDER BY Score DESC, tpd.`SoldierName` ASC
-		LIMIT 0, 20
-	");
+	// is adkats information available?
+	if($adkats_available)
+	{
+		// get the info from the db 
+		$Players_q  = @mysqli_query($BF4stats,"
+			SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR, adk.`ban_status`
+			FROM `tbl_sessions` tss
+			INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+			WHERE tsp.`ServerID` = {$ServerID}
+			AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+			AND tpd.`GameID` = {$GameID}
+			GROUP BY tpd.`PlayerID`
+			ORDER BY Score DESC, tpd.`SoldierName` ASC
+			LIMIT 0, 20
+		");
+	}
+	else
+	{
+		// get the info from the db 
+		$Players_q  = @mysqli_query($BF4stats,"
+			SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
+			FROM `tbl_sessions` tss
+			INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE tsp.`ServerID` = {$ServerID}
+			AND tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+			AND tpd.`GameID` = {$GameID}
+			GROUP BY tpd.`PlayerID`
+			ORDER BY Score DESC, tpd.`SoldierName` ASC
+			LIMIT 0, 20
+		");
+	}
 }
 // or else this is a global stats page
 else
 {
-	// get the info from the db 
-	$Players_q  = @mysqli_query($BF4stats,"
-		SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
-		FROM `tbl_sessions` tss
-		INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
-		INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-		WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
-		AND tpd.`GameID` = {$GameID}
-		AND tsp.`ServerID` IN ({$valid_ids})
-		GROUP BY tpd.`PlayerID`
-		ORDER BY Score DESC, tpd.`SoldierName` ASC
-		LIMIT 0, 20
-	");
+	// is adkats information available?
+	if($adkats_available)
+	{
+		// get the info from the db 
+		$Players_q  = @mysqli_query($BF4stats,"
+			SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR, adk.`ban_status`
+			FROM `tbl_sessions` tss
+			INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+			WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+			AND tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
+			GROUP BY tpd.`PlayerID`
+			ORDER BY Score DESC, tpd.`SoldierName` ASC
+			LIMIT 0, 20
+		");
+	}
+	else
+	{
+		// get the info from the db 
+		$Players_q  = @mysqli_query($BF4stats,"
+			SELECT tpd.`PlayerID`, tpd.`SoldierName`, SUM(tss.`Score`) AS Score, SUM(tss.`Kills`) AS Kills, (SUM(tss.`Kills`)/SUM(tss.`Deaths`)) AS KDR, (SUM(tss.`Headshots`)/SUM(tss.`Kills`)) AS HSR
+			FROM `tbl_sessions` tss
+			INNER JOIN `tbl_server_player` tsp ON tss.`StatsID` = tsp.`StatsID`
+			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+			WHERE tss.`Starttime` BETWEEN CURDATE() - INTERVAL 7 DAY AND CURDATE()
+			AND tpd.`GameID` = {$GameID}
+			AND tsp.`ServerID` IN ({$valid_ids})
+			GROUP BY tpd.`PlayerID`
+			ORDER BY Score DESC, tpd.`SoldierName` ASC
+			LIMIT 0, 20
+		");
+	}
 }
 // check if there are rows returned
 if(@mysqli_num_rows($Players_q) != 0)
@@ -80,6 +122,25 @@ if(@mysqli_num_rows($Players_q) != 0)
 			$link .= 'sid=' . $ServerID . '&amp;';
 		}
 		$link .= 'pid=' . $Player_ID . '&amp;p=player';
+		// is this player banned?
+		// or have previous ban which was lifted?
+		$player_banned = 0;
+		$previous_banned = 0;
+		if($adkats_available)
+		{
+			$ban_status = $Player_r['ban_status'];
+			if(!is_null($ban_status))
+			{
+				if($ban_status == 'Active')
+				{
+					$player_banned = 1;
+				}
+				elseif($ban_status == 'Expired')
+				{
+					$previous_banned = 1;
+				}
+			}
+		}
 		echo '
 		<table class="prettytable" style="margin-top: -2px; position: relative;">
 			<tr>
@@ -89,7 +150,21 @@ if(@mysqli_num_rows($Players_q) != 0)
 					</div>
 					<span class="information">' . $count . '</span>
 				</td>
-				<td width="19%" class="tablecontents"><a href="' . $link . '">' . $Soldier_Name . '</a></td>
+				';
+				if($player_banned == 1)
+				{
+					echo '<td width="19%" class="banoutline"><div class="bansubscript">Banned</div>';
+				}
+				elseif($previous_banned == 1)
+				{
+					echo '<td width="19%" class="warnoutline"><div class="bansubscript">Warned</div>';
+				}
+				else
+				{
+					echo '<td width="19%" class="tablecontents">';
+				}
+				echo '
+				<a href="' . $link . '">' . $Soldier_Name . '</a></td>
 				<td width="19%" class="tablecontents">' . $Score . '</td>
 				<td width="19%" class="tablecontents">' . $Kills . '</td>
 				<td width="19%" class="tablecontents">' . $KDR . '</td>

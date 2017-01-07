@@ -33,7 +33,7 @@ if($rank == 'SoldierName')
 					ORDER BY tpd.`SoldierName` ASC
 					) sub
 				) sub2
-			WHERE sub2.`SoldierName` = '{$SoldierName}'
+			WHERE sub2.`SoldierName` = '{$Soldier_Name}'
 		");
 	}
 	// or else this is a global stats page
@@ -55,7 +55,7 @@ if($rank == 'SoldierName')
 					ORDER BY tpd.`SoldierName` ASC
 					) sub
 				) sub2
-			WHERE sub2.`SoldierName` = '{$SoldierName}'
+			WHERE sub2.`SoldierName` = '{$Soldier_Name}'
 		");
 	}
 	if(@mysqli_num_rows($rank_q) == 1)
@@ -78,7 +78,7 @@ elseif($rank == 'Score')
 		$ScoreC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
 			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
+			WHERE `PlayerID` = {$Player_ID}
 			AND `category` = 'Score'
 			AND `GID` = '{$GameID}'
 			AND `SID` = '{$ServerID}'
@@ -91,7 +91,7 @@ elseif($rank == 'Score')
 		$ScoreC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
 			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
+			WHERE `PlayerID` = {$Player_ID}
 			AND `category` = 'Score'
 			AND `GID` = '{$GameID}'
 			AND `SID` = '{$valid_ids}'
@@ -117,7 +117,7 @@ elseif($rank == 'Score')
 					WHERE `SID` = '{$ServerID}'
 					AND `GID` = '{$GameID}'
 					AND `timestamp` >= '{$old}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -129,7 +129,7 @@ elseif($rank == 'Score')
 					WHERE `SID` = '{$valid_ids}'
 					AND `GID` = '{$GameID}'
 					AND `timestamp` >= '{$old}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 			if(@mysqli_num_rows($Top_q) != 0)
@@ -153,7 +153,7 @@ elseif($rank == 'Score')
 								ORDER BY `Score` DESC, `SoldierName` ASC
 								) sub
 							) sub2
-						WHERE sub2.`PlayerID` = {$PlayerID}
+						WHERE sub2.`PlayerID` = {$Player_ID}
 					");
 				}
 				// or else this is a global stats page
@@ -174,7 +174,7 @@ elseif($rank == 'Score')
 								ORDER BY `Score` DESC, `SoldierName` ASC
 								) sub
 							) sub2
-						WHERE sub2.`PlayerID` = {$PlayerID}
+						WHERE sub2.`PlayerID` = {$Player_ID}
 					");
 				}
 				if(@mysqli_num_rows($Score_q) == 1)
@@ -211,7 +211,7 @@ elseif($rank == 'Score')
 								ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
 								) sub
 							) sub2
-						WHERE sub2.`PlayerID` = {$PlayerID}
+						WHERE sub2.`PlayerID` = {$Player_ID}
 					");
 				}
 				// or else this is a global stats page
@@ -233,7 +233,7 @@ elseif($rank == 'Score')
 								ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
 								) sub
 							) sub2
-						WHERE sub2.`PlayerID` = {$PlayerID}
+						WHERE sub2.`PlayerID` = {$Player_ID}
 					");
 				}
 				if(@mysqli_num_rows($Score_q) == 1)
@@ -256,7 +256,7 @@ elseif($rank == 'Score')
 					WHERE `category` = 'Score'
 					AND `SID` = '{$ServerID}'
 					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -268,7 +268,7 @@ elseif($rank == 'Score')
 					WHERE `category` = 'Score'
 					AND `SID` = '{$valid_ids}'
 					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 		}
@@ -286,7 +286,7 @@ elseif($rank == 'Score')
 				WHERE `SID` = '{$ServerID}'
 				AND `GID` = '{$GameID}'
 				AND `timestamp` >= '{$old}'
-				AND `PlayerID` = {$PlayerID}
+				AND `PlayerID` = {$Player_ID}
 			");
 		}
 		// or else this is a global stats page
@@ -298,7 +298,7 @@ elseif($rank == 'Score')
 				WHERE `SID` = '{$valid_ids}'
 				AND `GID` = '{$GameID}'
 				AND `timestamp` >= '{$old}'
-				AND `PlayerID` = {$PlayerID}
+				AND `PlayerID` = {$Player_ID}
 			");
 		}
 		if(@mysqli_num_rows($Top_q) != 0)
@@ -322,7 +322,7 @@ elseif($rank == 'Score')
 							ORDER BY `Score` DESC, `SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -343,7 +343,7 @@ elseif($rank == 'Score')
 							ORDER BY `Score` DESC, `SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			if(@mysqli_num_rows($Score_q) == 1)
@@ -380,7 +380,7 @@ elseif($rank == 'Score')
 							ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -402,7 +402,7 @@ elseif($rank == 'Score')
 							ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			if(@mysqli_num_rows($Score_q) == 1)
@@ -422,7 +422,7 @@ elseif($rank == 'Score')
 			@mysqli_query($BF4stats,"
 				INSERT INTO `tyger_stats_rank_cache`
 				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', 'Score', '{$srank}', '{$now_timestamp}')
+				VALUES ('{$Player_ID}', '{$GameID}', '{$ServerID}', 'Score', '{$srank}', '{$now_timestamp}')
 			");
 		}
 		// or else this is a global stats page
@@ -432,7 +432,7 @@ elseif($rank == 'Score')
 			@mysqli_query($BF4stats,"
 				INSERT INTO `tyger_stats_rank_cache`
 				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '{$srank}', '{$now_timestamp}')
+				VALUES ('{$Player_ID}', '{$GameID}', '{$valid_ids}', 'Score', '{$srank}', '{$now_timestamp}')
 			");
 		}
 	}
@@ -448,7 +448,7 @@ elseif($rank == 'Kills')
 		$KillsC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
 			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
+			WHERE `PlayerID` = {$Player_ID}
 			AND `category` = 'Kills'
 			AND `GID` = '{$GameID}'
 			AND `SID` = '{$ServerID}'
@@ -461,7 +461,7 @@ elseif($rank == 'Kills')
 		$KillsC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
 			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
+			WHERE `PlayerID` = {$Player_ID}
 			AND `category` = 'Kills'
 			AND `GID` = '{$GameID}'
 			AND `SID` = '{$valid_ids}'
@@ -496,7 +496,7 @@ elseif($rank == 'Kills')
 							ORDER BY tps.`Kills` DESC, tpd.`SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -518,7 +518,7 @@ elseif($rank == 'Kills')
 							ORDER BY SUM(tps.`Kills`) DESC, tpd.`SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			if(@mysqli_num_rows($Kills_q) == 1)
@@ -540,7 +540,7 @@ elseif($rank == 'Kills')
 					WHERE `category` = 'Kills'
 					AND `SID` = '{$ServerID}'
 					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -552,7 +552,7 @@ elseif($rank == 'Kills')
 					WHERE `category` = 'Kills'
 					AND `SID` = '{$valid_ids}'
 					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 		}
@@ -579,7 +579,7 @@ elseif($rank == 'Kills')
 						ORDER BY tps.`Kills` DESC, tpd.`SoldierName` ASC
 						) sub
 					) sub2
-				WHERE sub2.`PlayerID` = {$PlayerID}
+				WHERE sub2.`PlayerID` = {$Player_ID}
 			");
 		}
 		// or else this is a global stats page
@@ -601,7 +601,7 @@ elseif($rank == 'Kills')
 						ORDER BY SUM(tps.`Kills`) DESC, tpd.`SoldierName` ASC
 						) sub
 					) sub2
-				WHERE sub2.`PlayerID` = {$PlayerID}
+				WHERE sub2.`PlayerID` = {$Player_ID}
 			");
 		}
 		if(@mysqli_num_rows($Kills_q) == 1)
@@ -620,7 +620,7 @@ elseif($rank == 'Kills')
 			@mysqli_query($BF4stats,"
 				INSERT INTO `tyger_stats_rank_cache`
 				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', 'Kills', '{$killsrank}', '{$now_timestamp}')
+				VALUES ('{$Player_ID}', '{$GameID}', '{$ServerID}', 'Kills', '{$killsrank}', '{$now_timestamp}')
 			");
 		}
 		// or else this is a global stats page
@@ -629,7 +629,7 @@ elseif($rank == 'Kills')
 			@mysqli_query($BF4stats,"
 				INSERT INTO `tyger_stats_rank_cache`
 				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Kills', '{$killsrank}', '{$now_timestamp}')
+				VALUES ('{$Player_ID}', '{$GameID}', '{$valid_ids}', 'Kills', '{$killsrank}', '{$now_timestamp}')
 			");
 		}
 	}
@@ -645,7 +645,7 @@ elseif($rank == 'KDR')
 		$KDRC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
 			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
+			WHERE `PlayerID` = {$Player_ID}
 			AND `category` = 'KDR'
 			AND `GID` = '{$GameID}'
 			AND `SID` = '{$ServerID}'
@@ -658,7 +658,7 @@ elseif($rank == 'KDR')
 		$KDRC_q = @mysqli_query($BF4stats,"
 			SELECT `rank`, `timestamp`
 			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
+			WHERE `PlayerID` = {$Player_ID}
 			AND `category` = 'KDR'
 			AND `GID` = '{$GameID}'
 			AND `SID` = '{$valid_ids}'
@@ -693,7 +693,7 @@ elseif($rank == 'KDR')
 							ORDER BY (tps.`Kills`/tps.`Deaths`) DESC, tpd.`SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -715,7 +715,7 @@ elseif($rank == 'KDR')
 							ORDER BY (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) DESC, tpd.`SoldierName` ASC
 							) sub
 						) sub2
-					WHERE sub2.`PlayerID` = {$PlayerID}
+					WHERE sub2.`PlayerID` = {$Player_ID}
 				");
 			}
 			if(@mysqli_num_rows($KDR_q) == 1)
@@ -737,7 +737,7 @@ elseif($rank == 'KDR')
 					WHERE `category` = 'KDR'
 					AND `SID` = '{$ServerID}'
 					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 			// or else this is a global stats page
@@ -749,7 +749,7 @@ elseif($rank == 'KDR')
 					WHERE `category` = 'KDR'
 					AND `SID` = '{$valid_ids}'
 					AND `GID` = '{$GameID}'
-					AND `PlayerID` = {$PlayerID}
+					AND `PlayerID` = {$Player_ID}
 				");
 			}
 		}
@@ -776,7 +776,7 @@ elseif($rank == 'KDR')
 						ORDER BY (tps.`Kills`/tps.`Deaths`) DESC, tpd.`SoldierName` ASC
 						) sub
 					) sub2
-				WHERE sub2.`PlayerID` = {$PlayerID}
+				WHERE sub2.`PlayerID` = {$Player_ID}
 			");
 		}
 		// or else this is a global stats page
@@ -798,7 +798,7 @@ elseif($rank == 'KDR')
 						ORDER BY (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) DESC, tpd.`SoldierName` ASC
 						) sub
 					) sub2
-				WHERE sub2.`PlayerID` = {$PlayerID}
+				WHERE sub2.`PlayerID` = {$Player_ID}
 			");
 		}
 		if(@mysqli_num_rows($KDR_q) == 1)
@@ -817,7 +817,7 @@ elseif($rank == 'KDR')
 			@mysqli_query($BF4stats,"
 				INSERT INTO `tyger_stats_rank_cache`
 				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', 'KDR', '{$kdrrank}', '{$now_timestamp}')
+				VALUES ('{$Player_ID}', '{$GameID}', '{$ServerID}', 'KDR', '{$kdrrank}', '{$now_timestamp}')
 			");
 		}
 		// or else this is a global stats page
@@ -826,7 +826,7 @@ elseif($rank == 'KDR')
 			@mysqli_query($BF4stats,"
 				INSERT INTO `tyger_stats_rank_cache`
 				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'KDR', '{$kdrrank}', '{$now_timestamp}')
+				VALUES ('{$Player_ID}', '{$GameID}', '{$valid_ids}', 'KDR', '{$kdrrank}', '{$now_timestamp}')
 			");
 		}
 	}
@@ -852,7 +852,7 @@ elseif($rank == 'HSR')
 					ORDER BY (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) DESC, tpd.`SoldierName` ASC
 					) sub
 				) sub2
-			WHERE sub2.`SoldierName` = '{$SoldierName}'
+			WHERE sub2.`SoldierName` = '{$Soldier_Name}'
 		");
 	}
 	// or else this is a global stats page
@@ -874,7 +874,7 @@ elseif($rank == 'HSR')
 					ORDER BY (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) DESC, tpd.`SoldierName` ASC
 					) sub
 				) sub2
-			WHERE sub2.`SoldierName` = '{$SoldierName}'
+			WHERE sub2.`SoldierName` = '{$Soldier_Name}'
 		");
 	}
 	if(@mysqli_num_rows($rank_q) == 1)

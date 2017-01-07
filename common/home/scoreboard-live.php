@@ -76,7 +76,7 @@ if(@mysqli_num_rows($Basic_q) != 0)
 	$used_slots = $Basic_r['usedSlots'];
 	$available_slots = $Basic_r['maxSlots'];
 	$name = $Basic_r['ServerName'];
-	$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($name);
+	$battlelog = 'http://battlelog.battlefield.com/BF4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($name);
 	$mode = $Basic_r['Gamemode'];
 	// convert mode to friendly name
 	if(in_array($mode,$mode_array))
@@ -131,7 +131,7 @@ if(@mysqli_num_rows($Basic_q) != 0)
 // display blank information
 else
 {
-	$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
+	$battlelog = 'http://battlelog.battlefield.com/BF4/servers/pc/';
 	echo '
 	<div style="margin-bottom: 4px; position: relative;">
 	<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;"><a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $battlelog . '" target="_blank"></a></div>
@@ -245,86 +245,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 			// player is actually assigned to a team
 			else
 			{
-				// change team name displayed on scoreboard based on team number and game mode
-				if(($mode == 'ConquestLarge0') OR ($mode == 'ConquestSmall0') OR ($mode == 'Domination0') OR ($mode == 'Elimination0') OR ($mode == 'Obliteration') OR ($mode == 'TeamDeathMatch0') OR ($mode == 'AirSuperiority0') OR ($mode == 'CaptureTheFlag0'))
-				{
-					if($this_team == 1)
-					{
-						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Journey') OR ($map == 'MP_TheDish'))
-						{
-							$team_name = 'RU Army';
-						}
-						elseif(($map == 'MP_Flooded') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
-						{
-							$team_name = 'US Army';
-						}
-						else
-						{
-							$team_name = 'US Army';
-						}
-					}
-					elseif($this_team == 2)
-					{
-						if($map == 'MP_Abandoned')
-						{
-							$team_name = 'US Army';
-						}
-						elseif(($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront'))
-						{
-							$team_name = 'CN Army';
-						}
-						elseif(($map == 'MP_Prison') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
-						{
-							$team_name = 'RU Army';
-						}
-						else
-						{
-							$team_name = 'CN Army';
-						}
-					}
-					// something unexpected occurred and a correct team name was not found
-					// just name the team based on team number instead
-					else
-					{
-						$team_name = 'Team ' . $this_team;
-					}
-				}
-				elseif($mode == 'RushLarge0')
-				{
-					if($this_team == 1)
-					{
-						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
-						{
-							$team_name = 'US Attackers';
-						}
-						else
-						{
-							$team_name = 'Attackers';
-						}
-					}
-					elseif($this_team == 2)
-					{
-						if(($map == 'MP_Abandoned') OR ($map == 'MP_Damage') OR ($map == 'MP_Flooded') OR ($map == 'MP_Journey') OR ($map == 'MP_Naval') OR ($map == 'MP_Prison') OR ($map == 'MP_Resort') OR ($map == 'MP_Siege') OR ($map == 'MP_TheDish') OR ($map == 'MP_Tremors') OR ($map == 'XP1_001') OR ($map == 'XP1_002') OR ($map == 'XP1_003') OR ($map == 'XP1_004') OR ($map == 'XP3_MarketPl') OR ($map == 'XP3_Prpganda') OR ($map == 'XP3_UrbanGdn') OR ($map == 'XP3_WtrFront'))
-						{
-							$team_name = 'CN Defenders';
-						}
-						elseif(($map == 'XP0_Caspian') OR ($map == 'XP0_Firestorm') OR ($map == 'XP0_Metro') OR ($map == 'XP0_Oman') OR ($map == 'XP2_001') OR ($map == 'XP2_002') OR ($map == 'XP2_003') OR ($map == 'XP2_004') OR ($map == 'XP4_Arctic') OR ($map == 'XP4_SubBase') OR ($map == 'XP4_Titan') OR ($map == 'XP4_Wlkrftry'))
-						{
-							$team_name = 'RU Defenders';
-						}
-						else
-						{
-							$team_name = 'Defenders';
-						}
-					}
-					// something unexpected occurred and a correct team name was not found
-					// just name the team based on team number instead
-					else
-					{
-						$team_name = 'Team ' . $this_team;
-					}
-				}
-				elseif(($mode == 'SquadDeathMatch0'))
+				if($mode == 'SquadDeathMatch0')
 				{
 					if($this_team == 1)
 					{
@@ -349,38 +270,6 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 						$team_name = 'Team ' . $this_team;
 					}
 				}
-				elseif(($mode == 'CarrierAssaultLarge0') OR ($mode == 'CarrierAssaultSmall0'))
-				{
-					if($this_team == 1)
-					{
-						$team_name = 'US Attackers';
-					}
-					elseif($this_team == 2)
-					{
-						$team_name = 'CN Defenders';
-					}
-					else
-					{
-						$team_name = 'Team ' . $this_team;
-					}
-				}
-				elseif($mode == 'Chainlink0')
-				{
-					if($this_team == 1)
-					{
-						$team_name = 'US Attackers';
-					}
-					elseif($this_team == 2)
-					{
-						$team_name = 'CN Defenders';
-					}
-					else
-					{
-						$team_name = 'Team ' . $this_team;
-					}
-				}
-				// something unexpected occurred and a correct team name was not found
-				// just name the team based on team number instead
 				else
 				{
 					$team_name = 'Team ' . $this_team;
@@ -484,47 +373,80 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 			}
 			echo'</tr>';
 			// query for all players on this team
-			$Team_q = @mysqli_query($BF4stats,"
-				SELECT `Soldiername`, `Score`, `Kills`, `Deaths`, `TeamID`, `SquadID`, `CountryCode`
-				FROM `tbl_currentplayers`
-				WHERE `ServerID` = {$ServerID}
-				AND `TeamID` = {$this_team}
-				ORDER BY {$rank} {$order}
-			");
+			// is adkats information available?
+			if($adkats_available)
+			{
+				$Team_q = @mysqli_query($BF4stats,"
+					SELECT cp.`Soldiername`, cp.`Score`, cp.`Kills`, cp.`Deaths`, cp.`TeamID`, cp.`SquadID`, cp.`CountryCode`, sub.`PlayerID`, sub.`ban_status`
+					FROM `tbl_currentplayers` cp
+					LEFT JOIN
+					(
+						SELECT tpd.`PlayerID`, tpd.`SoldierName`, adk.`ban_status`
+						FROM `tbl_playerdata` tpd
+						INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+						INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+						LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+						WHERE tpd.`GameID` = {$GameID}
+						AND tsp.`ServerID` = {$ServerID}
+					) sub ON sub.`SoldierName` = cp.`SoldierName`
+					WHERE cp.`ServerID` = {$ServerID}
+					AND cp.`TeamID` = {$this_team}
+					GROUP BY cp.`SoldierName`
+					ORDER BY {$rank} {$order};
+				");
+			}
+			else
+			{
+				$Team_q = @mysqli_query($BF4stats,"
+					SELECT cp.`Soldiername`, cp.`Score`, cp.`Kills`, cp.`Deaths`, cp.`TeamID`, cp.`SquadID`, cp.`CountryCode`, sub.`PlayerID`
+					FROM `tbl_currentplayers` cp
+					LEFT JOIN
+					(
+						SELECT tpd.`PlayerID`, tpd.`SoldierName`
+						FROM `tbl_playerdata` tpd
+						INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+						INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+						WHERE tpd.`GameID` = {$GameID}
+						AND tsp.`ServerID` = {$ServerID}
+					) sub ON sub.`SoldierName` = cp.`SoldierName`
+					WHERE cp.`ServerID` = {$ServerID}
+					AND cp.`TeamID` = {$this_team}
+					GROUP BY cp.`SoldierName`
+					ORDER BY {$rank} {$order};
+				");
+			}
 			// if team query worked and players were found on this team
 			if(@mysqli_num_rows($Team_q) != 0)
 			{
 				$count = 1;
 				while($Team_r = @mysqli_fetch_assoc($Team_q))
 				{
-					$player = mysqli_real_escape_string($BF4stats, $Team_r['Soldiername']);
-					// see if this player has server stats in this server yet
-					$PlayerID_q = @mysqli_query($BF4stats,"
-						SELECT tpd.`PlayerID`
-						FROM `tbl_playerdata` tpd
-						INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-						WHERE tpd.`GameID` = {$GameID}
-						AND tpd.`SoldierName` = '{$player}'
-						AND tsp.`ServerID` = {$ServerID}
-					");
-					// server stats found for this player in this server
-					if(@mysqli_num_rows($PlayerID_q) == 1)
-					{
-						$PlayerID_r = @mysqli_fetch_assoc($PlayerID_q);
-						$PlayerID = $PlayerID_r['PlayerID'];
-					}
-					// this player needs to finish this round to get server stats in this server
-					else
-					{
-						$PlayerID = null;
-					}
-					$player = htmlspecialchars(strip_tags($player));
+					$PlayerID = $Team_r['PlayerID'];
+					$player = textcleaner($Team_r['Soldiername']);
 					$score = $Team_r['Score'];
 					$kills = $Team_r['Kills'];
 					$deaths = $Team_r['Deaths'];
 					$team = $Team_r['TeamID'];
 					$squad = $Team_r['SquadID'];
+					// is this player banned?
+					// or have previous ban which was lifted?
+					$player_banned = 0;
+					$previous_banned = 0;
+					if($adkats_available)
+					{
+						$ban_status = $Team_r['ban_status'];
+						if(!is_null($ban_status))
+						{
+							if($ban_status == 'Active')
+							{
+								$player_banned = 1;
+							}
+							elseif($ban_status == 'Expired')
+							{
+								$previous_banned = 1;
+							}
+						}
+					}
 					// convert squad name to friendly name
 					// first find out if this squad name is the list of squad names
 					if(in_array($squad,$squad_array))
@@ -561,7 +483,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 						$country_img = './common/images/flags/none.png';
 					}
 					// create player link if player id is known
-					if($PlayerID != null)
+					if(!is_null($PlayerID))
 					{
 						$link = './index.php?sid=' . $ServerID . '&amp;pid=' . $PlayerID . '&amp;p=player';
 					}
@@ -574,9 +496,21 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 						<td class="tablecontents" width="3%" style="text-align:left"><img src="' . $country_img . '" style="height: 11px; width: 16px;" alt="' . $country_name . '"/></td>
 						';
 						// if this player has stats in this server, provide a link to their stats page
-						if($PlayerID != null)
+						if(!is_null($PlayerID))
 						{
-							echo '<td class="tablecontents" width="93%" style="text-align:left; position: relative;">
+							if($player_banned == 1)
+							{
+								echo '<td class="banoutline" width="93%" style="text-align:left; position: relative;"><div class="bansubscript">Banned</div>';
+							}
+							elseif($previous_banned == 1)
+							{
+								echo '<td class="warnoutline" width="93%" style="text-align:left; position: relative;"><div class="bansubscript">Warned</div>';
+							}
+							else
+							{
+								echo '<td class="tablecontents" width="93%" style="text-align:left; position: relative;">';
+							}
+							echo '
 							<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
 								<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
 							</div>
@@ -597,9 +531,21 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 						<td class="tablecontents" width="3%" style="text-align:left"><img src="' . $country_img . '" style="height: 11px; width: 16px;" alt="' . $country_name . '"/></td>
 						';
 						// if this player has stats in this server, provide a link to their stats page
-						if($PlayerID != null)
+						if(!is_null($PlayerID))
 						{
-							echo '<td class="tablecontents" width="37%" style="text-align:left; position: relative;">
+							if($player_banned == 1)
+							{
+								echo '<td class="banoutline" width="37%" style="text-align:left; position: relative;"><div class="bansubscript">Banned</div>';
+							}
+							elseif($previous_banned == 1)
+							{
+								echo '<td class="warnoutline" width="37%" style="text-align:left; position: relative;"><div class="bansubscript">Warned</div>';
+							}
+							else
+							{
+								echo '<td class="tablecontents" width="37%" style="text-align:left; position: relative;">';
+							}
+							echo '
 							<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
 								<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
 							</div>

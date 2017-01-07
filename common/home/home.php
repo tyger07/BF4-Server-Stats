@@ -22,6 +22,13 @@ $(\'#loading\').hide(0);
 $(\'#loaded\').fadeIn("slow");
 </script>
 ';
+// if there is a ServerID, this is a server stats page
+// that means that we should show scoreboard on home page
+if(!empty($ServerID))
+{
+	require_once('./scoreboard-wrapper.php');
+	echo '<br/><br/>';
+}
 // continue html output
 echo '
 <div class="subsection">
@@ -45,15 +52,6 @@ echo '
 </div>
 <br/>
 <br/>
-';
-// if there is a ServerID, this is a server stats page
-// that means that we should show scoreboard on home page
-if(!empty($ServerID))
-{
-	require_once('./scoreboard-wrapper.php');
-	echo '<br/><br/>';
-}
-echo '
 <div class="subsection">
 <div class="headline">Top Players</div>
 </div>
@@ -160,33 +158,72 @@ else
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// get the info from the db 
-		$Players_q  = @mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
-			FROM `tbl_playerstats` tps
-			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
-			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-			WHERE tsp.`ServerID` = {$ServerID}
-			AND tpd.`GameID` = {$GameID}
-			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-			LIMIT {$offset}, {$rowsperpage}
-		");
+		// is adkats information available?
+		if($adkats_available)
+		{
+			// get the info from the db 
+			$Players_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, adk.`ban_status`
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND tpd.`GameID` = {$GameID}
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
+		else
+		{
+			// get the info from the db 
+			$Players_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+				FROM `tbl_playerstats` tps
+				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
+				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+				WHERE tsp.`ServerID` = {$ServerID}
+				AND tpd.`GameID` = {$GameID}
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
 	}
 	// or else this is a global stats page
 	else
 	{
-		// get the info from the db 
-		$Players_q  = @mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
-			FROM `tbl_playerdata` tpd
-			INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-			INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-			WHERE tpd.`GameID` = {$GameID}
-			AND tsp.`ServerID` IN ({$valid_ids})
-			GROUP BY tpd.`PlayerID`
-			ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
-			LIMIT {$offset}, {$rowsperpage}
-		");
+		// is adkats information available?
+		if($adkats_available)
+		{
+			// get the info from the db 
+			$Players_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, adk.`ban_status`
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+				WHERE tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`PlayerID`
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
+		else
+		{
+			// get the info from the db 
+			$Players_q  = @mysqli_query($BF4stats,"
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+				FROM `tbl_playerdata` tpd
+				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+				WHERE tpd.`GameID` = {$GameID}
+				AND tsp.`ServerID` IN ({$valid_ids})
+				GROUP BY tpd.`PlayerID`
+				ORDER BY {$rank} {$order}, tpd.`SoldierName` {$nextorder}
+				LIMIT {$offset}, {$rowsperpage}
+			");
+		}
 	}
 }
 // offset of player rank count to show on scoreboard
@@ -229,6 +266,54 @@ if(@mysqli_num_rows($Players_q) != 0)
 			$link .= 'sid=' . $ServerID . '&amp;';
 		}
 		$link .= 'pid=' . $PlayerID . '&amp;p=player';
+		// is this player banned?
+		// or have previous ban which was lifted?
+		$player_banned = 0;
+		$previous_banned = 0;
+		// if this is the default first page, we don't know the answer yet because the cache doesn't store this information
+		if($rank == 'Score' && $order == 'DESC' && $offset == '0')
+		{
+			if($adkats_available)
+			{
+				$Ban_q  = @mysqli_query($BF4stats,"
+					SELECT `ban_status`
+					FROM `adkats_bans`
+					WHERE `player_id` = {$PlayerID}
+				");
+				if(@mysqli_num_rows($Ban_q) == 1)
+				{
+					$Ban_r = @mysqli_fetch_assoc($Ban_q);
+					$Ban_Status = $Ban_r['ban_status'];
+					if($Ban_Status == 'Active')
+					{
+						$player_banned = 1;
+					}
+					elseif($Ban_Status == 'Expired')
+					{
+						$previous_banned = 1;
+					}
+				}
+			}
+		}
+		// not the default first page. we figured out the ban status in the query above
+		else
+		{
+			if($adkats_available)
+			{
+				$ban_status = $Players_r['ban_status'];
+				if(!is_null($ban_status))
+				{
+					if($ban_status == 'Active')
+					{
+						$player_banned = 1;
+					}
+					elseif($ban_status == 'Expired')
+					{
+						$previous_banned = 1;
+					}
+				}
+			}
+		}
 		echo '
 		<table class="prettytable" style="margin-top: -2px; position: relative;">
 			<tr>
@@ -238,7 +323,21 @@ if(@mysqli_num_rows($Players_q) != 0)
 					</div>
 					<span class="information">' . $count . '</span>
 				</td>
-				<td width="19%" class="tablecontents"><a href="' . $link . '">' . $SoldierName . '</a></td>
+				';
+				if($player_banned == 1)
+				{
+					echo '<td width="19%" class="banoutline"><div class="bansubscript">Banned</div>';
+				}
+				elseif($previous_banned == 1)
+				{
+					echo '<td width="19%" class="warnoutline"><div class="bansubscript">Warned</div>';
+				}
+				else
+				{
+					echo '<td width="19%" class="tablecontents">';
+				}
+				echo '
+				<a href="' . $link . '">' . $SoldierName . '</a></td>
 				<td width="19%" class="tablecontents">' . $Score . '</td>
 				<td width="19%" class="tablecontents">' . $Kills . '</td>
 				<td width="19%" class="tablecontents">' . $KDR . '</td>

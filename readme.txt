@@ -108,6 +108,11 @@ Enjoy!
 
 ## Changelog:
 
+1-07-2017:
+- Removed server IP address from server banner image
+- Added basic AdKats integration to highlight a player if they are banned or warned if running AdKats plugin
+- Optimizations and improvements
+
 8-29-2016:
 - Removed some potential XSS exploits (thanks zer0sec)
 - Removed "second-order" or "type 2" attack vectors for attackers who may try to craft specific server chat messages or user names to attempt an attack against the website or database

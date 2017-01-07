@@ -45,8 +45,7 @@ else
 // $player = ?player
 if(!empty($_GET['player']))
 {
-	// remove accidental spaces from name input
-	$player = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['player'])));
+	$player = str_replace(array('\'', '"', '\\', '`'), '',mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['player']))));
 }
 else
 {
@@ -57,7 +56,7 @@ else
 // $pid = ?pid
 if(!empty($_GET['pid']) && is_numeric($_GET['pid']))
 {
-	$pid = mysqli_real_escape_string($BF4stats, $_GET['pid']);
+	$pid = mysqli_real_escape_string($BF4stats, strip_tags($_GET['pid']));
 }
 else
 {
@@ -68,7 +67,7 @@ else
 // $term = ?term
 if(!empty($_GET['term']))
 {
-	$term = mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['term'])));
+	$term = str_replace(array('\'', '"', '\\', '`'), '',mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['term']))));
 }
 else
 {
@@ -79,7 +78,7 @@ else
 // $sid = ?sid
 if(!empty($_GET['sid']) && is_numeric($_GET['sid']))
 {
-	$sid = mysqli_real_escape_string($BF4stats, $_GET['sid']);
+	$sid = mysqli_real_escape_string($BF4stats, strip_tags($_GET['sid']));
 }
 else
 {
@@ -90,7 +89,7 @@ else
 // $gid = ?gid
 if(!empty($_GET['gid']) && is_numeric($_GET['gid']))
 {
-	$gid = mysqli_real_escape_string($BF4stats, $_GET['gid']);
+	$gid = mysqli_real_escape_string($BF4stats, strip_tags($_GET['gid']));
 }
 else
 {
@@ -101,7 +100,7 @@ else
 // $query = ?q
 if(!empty($_GET['q']))
 {
-	$query = mysqli_real_escape_string($BF4stats, strip_tags($_GET['q']));
+	$query = str_replace(array('\'', '"', '\\', '`'), '',mysqli_real_escape_string($BF4stats, strip_tags($_GET['q'])));
 }
 else
 {
@@ -112,7 +111,7 @@ else
 // $currentpage = ?cp
 if(!empty($_GET['cp']) && is_numeric($_GET['cp']))
 {
-	$currentpage = mysqli_real_escape_string($BF4stats, $_GET['cp']);
+	$currentpage = mysqli_real_escape_string($BF4stats, strip_tags($_GET['cp']));
 }
 else
 {
@@ -167,7 +166,7 @@ else
 // $cc = ?cc
 if(!empty($_GET['cc']) && strlen($_GET['cc']) == 2 && !(is_numeric($_GET['cc'])))
 {
-	$cc = strtoupper(mysqli_real_escape_string($BF4stats, $_GET['cc']));
+	$cc = strtoupper(mysqli_real_escape_string($BF4stats, strip_tags($_GET['cc'])));
 }
 else
 {

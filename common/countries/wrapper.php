@@ -76,7 +76,7 @@ else
 		function drawVisualization()
 		{
 			var data = new google.visualization.DataTable();
-			data.addRows(250);
+			data.addRows(20);
 			data.addColumn(\'string\', \'Country\');
 			data.addColumn(\'number\', \'Playercount\');
 			';
