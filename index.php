@@ -85,14 +85,14 @@ if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === fa
 				$Server_r = @mysqli_fetch_assoc($Server_q);
 				$ServerName = $Server_r['ServerName'];
 				// create battlelog link for this server
-				$battlelog = 'http://battlelog.battlefield.com/BF4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
 			}
 			// error?  what?  This will probably never happen.
 			// damage control...
 			else
 			{
 				$ServerName = 'Error';
-				$battlelog = 'http://battlelog.battlefield.com/BF4/servers/pc/';
+				$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
 			}
 			// lets see if a SoldierName or PlayerID was provided to us in the URL
 			// first look for a SoldierName in URL and try to convert it to PlayerID
