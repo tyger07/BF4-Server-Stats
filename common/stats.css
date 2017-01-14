@@ -6,7 +6,7 @@
 .teamname{color:#DDDDDD;}
 .information{color:#CCCCCC;}
 .footertext{color:#888888;font-size:12px;}
-body{margin:0px 0px 0px 0px;padding:0;text-align:left;height:100%;width:100%;background:#4d5d5d;background-image:url("./images/BF4back.jpg");background-position:center 142px;background-repeat:no-repeat;background-attachment:fixed;background-size:100% auto;font-family:Arial, Arial, Arial, sans-serif;font-size:14px;font-weight:normal;color:#BBBBBB;}
+body{margin:0px 0px 0px 0px;padding:0;text-align:left;height:100%;width:100%;background:#4d5d5d;background-image:url("./images/background.jpg");background-position:center 142px;background-repeat:no-repeat;background-attachment:fixed;background-size:100% auto;font-family:Arial, Arial, Arial, sans-serif;font-size:14px;font-weight:normal;color:#BBBBBB;}
 .body-grid{position:fixed;z-index:-4;width:100%;height:100%;top:0;left:0;padding:0px;margin:0px;background:url("./images/grid.png") left top repeat;}
 .content-gradient{position:fixed;z-index:-3;width:100%;height:100%;top:0;left:0;padding:0px;margin:0px;background-image:url("./images/content-gradient.png");background-position:center 142px;background-repeat:repeat-y;background-attachment:fixed;}
 a, a:visited{color:#D5DDE5;text-decoration:none;box-shadow:0px 0px 20px 1px rgba(100,120,150,0.1);}
