@@ -111,7 +111,7 @@ Enjoy!
 1-07-2017:
 - Removed server IP address from server banner image
 - Added basic AdKats integration to highlight a player if they are banned or warned if running AdKats plugin
-- Optimizations and improvements
+- Optimizations and improvements: SQL queries combined where possible to reduce the SQL server connection pool size (can drasticly improve performance in some cases with huge databases at remote locations), server HTML banner uses jquery to reload content instead of reloading the whole HTML document (less distracting reloads), file size reductions for CSS, JS, and some image files, background image resizes width to fit various resolutions better, etc.
 
 8-29-2016:
 - Removed some potential XSS exploits (thanks zer0sec)
