@@ -24,7 +24,8 @@ $(\'#loaded\').fadeIn("slow");
 ';
 // if there is a ServerID, this is a server stats page
 // that means that we should show scoreboard on home page
-if(!empty($ServerID))
+// don't show to bots
+if(!empty($ServerID) && !($isbot))
 {
 	require_once('./scoreboard-wrapper.php');
 	echo '<br/><br/>';

@@ -108,12 +108,15 @@ Enjoy!
 
 ## Changelog:
 
-1-07-2017:
+01-28-2017
+- Unbanned bot access and made bot access restricted instead.  This allows search engines to crawl the stats page and get more clan/community attention while also restricting bot database performance impact to some slower features.
+
+01-07-2017:
 - Removed server IP address from server banner image
 - Added basic AdKats integration to highlight a player if they are banned or warned if running AdKats plugin
 - Optimizations and improvements: SQL queries combined where possible to reduce the SQL server connection pool size (can drasticly improve performance in some cases with huge databases at remote locations), server HTML banner uses jquery to reload content instead of reloading the whole HTML document (less distracting reloads), file size reductions for CSS, JS, and some image files, background image resizes width to fit various resolutions better, etc.
 
-8-29-2016:
+08-29-2016:
 - Removed some potential XSS exploits (thanks zer0sec)
 - Removed "second-order" or "type 2" attack vectors for attackers who may try to craft specific server chat messages or user names to attempt an attack against the website or database
 - Fixed an issue with the `tyger_stats_sessions` table where it was
@@ -124,27 +127,27 @@ code if you are affected.
 - Made it so you can select and copy text in the chat page instead of
 making all the content one giant link.
 
-4-18-2016:
+04-18-2016:
 - Fixed PHP Notice caused by leftover no longer used variable in signature.php (thanks marshyonline)
 
-2-12-2016:
+02-12-2016:
 - Added new maps and weapons (thanks pwk)
 - Added git-ignore (thanks nikez)
 
-1-21-2015:
+01-21-2015:
 - Added visual indicator of server location uncertainty to server banner image in the case that the server's location is not known and is instead guessed
 
-1-16-2015:
+01-16-2015:
 - Fixed Gamemode undefined error in maps page
 
-1-15-2015:
+01-15-2015:
 - Added optional query string parameters to resize server banner image output as requested
 
-1-8-2015:
+01-08-2015:
 - Fixed duplicate loading of javascript resources causing reduced performance
 - Added a few elements into stats.css
 
-1-1-2015:
+01-01-2015:
 - Fixed a reported display bug in Firefox
 - Did a little code conformity of the player page
 
@@ -155,10 +158,10 @@ making all the content one giant link.
 - Bug fixes and performance improvements
 - Added missing Final Stand weapons
 
-12-7-2014:
+12-07-2014:
 - Fixed missing banner_cache folder causing banner graphs not to appear
 
-12-3-2014:
+12-03-2014:
 - Increased font size in banner graph for better visibility for those with wonky php GD extension
 - Fixed serverbanner.php directory location in server info tab
 - Removed combined rank calculation from combined player stats pages due to large database load for those with many combined players
@@ -189,14 +192,14 @@ making all the content one giant link.
 - Performance enhancement of rank function
 - Added missing country Montenegro
 
-11-6-2014:
+11-06-2014:
 - Top 20 players are cached for performance reasons
 
-11-4-2014:
+11-04-2014:
 - Optimizations in load time
 - Missing weapon images corrected
 
-11-1-2014:
+11-01-2014:
 - Optimizations
 - Cacheing
 - Bug fixes
@@ -223,21 +226,21 @@ making all the content one giant link.
 - Improved search, navigation, and tabs
 - Chat log can be searched through based on player name, message text, or date/time
 
-2-19-2014:
+02-19-2014:
 - Added missing Second Assault banner images
 - Added updated pChart API
 
-2-18-2014:
+02-18-2014:
 - Added Second Assault Maps, Mode, and Weapons
 
-1-23-2014:
+01-23-2014:
 - Bug fixes
 - Code size reduction
 - Style changes
 - Added map pie chart to maps page and moved daily player quantity data chart from maps page to server info page
 - Reverted back to on-demand signature images instead of caching signature images on the server (for server space usage reasons and to ensure up-to-date data is displayed)
 
-1-3-2014:
+01-03-2014:
 - Fixed server info graphs showing old data instead of new data.
 - Use GameID associated specifically with 'BF4' instead of just the most common GameID in the database.
 - Better error explanations if database doesn't connect or BF4 servers aren't found in the database.

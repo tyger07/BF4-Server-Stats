@@ -58,4 +58,26 @@ if(@mysqli_num_rows($AdKats_q) != 0)
 {
 	$adkats_available = TRUE;
 }
+
+// detect bots
+// set a default value
+$isbot = FALSE;
+// set default client user agent value
+$useragent = 'unknown';
+// update client's user agent
+if(isset($_SERVER["HTTP_USER_AGENT"]))
+{
+	$useragent = $_SERVER["HTTP_USER_AGENT"];
+}
+// check for a user agent bot match
+if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === false && stripos($useragent, 'fetch') === false && stripos($useragent, 'archiv') === false && stripos($useragent, 'spide') === false && stripos($useragent, 'validat') === false && stripos($useragent, 'analyze') === false && stripos($useragent, 'crawl') === false && stripos($useragent, 'robot') === false && stripos($useragent, 'track') === false && stripos($useragent, 'generat') === false && stripos($useragent, 'google') === false && stripos($useragent, 'bing') === false && stripos($useragent, 'msnbot') === false && stripos($useragent, 'yahoo') === false && stripos($useragent, 'facebook') === false && stripos($useragent, 'yandex') === false && stripos($useragent, 'alexa') === false)
+{
+	$isbot = FALSE;
+}
+else
+{
+	$isbot = TRUE;
+	// remove adkats integration information for bots
+	$adkats_available = FALSE;
+}
 ?>

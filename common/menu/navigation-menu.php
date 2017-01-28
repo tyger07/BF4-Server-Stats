@@ -7,31 +7,35 @@
 if(!empty($ServerID) || !empty($page))
 {
 	// jquery auto-find players in input box
-	echo '
-	<script type="text/javascript">
-	$(function()
+	// don't show to bots
+	if(!($isbot))
 	{
-		$("#soldiers").autocomplete(
+		echo '
+		<script type="text/javascript">
+		$(function()
 		{
-			source: "./common/player/player-search.php?gid=' . $GameID;
-			if(!empty($ServerID))
+			$("#soldiers").autocomplete(
 			{
-				echo '&sid=' . $ServerID;
-			}
-			echo '",
-			minLength: 3,
-			select: function( event, ui )
-			{
-				if(ui.item)
+				source: "./common/player/player-search.php?gid=' . $GameID;
+				if(!empty($ServerID))
 				{
-					$(\'#soldiers\').val(ui.item.value);
+					echo '&sid=' . $ServerID;
 				}
-				$(\'#ajaxsearch\').submit();
-			}
+				echo '",
+				minLength: 3,
+				select: function( event, ui )
+				{
+					if(ui.item)
+					{
+						$(\'#soldiers\').val(ui.item.value);
+					}
+					$(\'#ajaxsearch\').submit();
+				}
+			});
 		});
-	});
-	</script>
-	';
+		</script>
+		';
+	}
 	// continue HTML
 	echo '
 	<div id="menucontent">

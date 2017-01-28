@@ -324,7 +324,9 @@ elseif($SoldierName != null)
 				$Score = $PlayerMatch_r['Score'];
 				$Kills = $PlayerMatch_r['Kills'];
 				$KDR = round($PlayerMatch_r['KDR'],2);
-				if(empty($player))
+				// do the fast count if player name search isn't being done
+				// or do fast count if this is a bot
+				if(empty($player) || $isbot)
 				{
 					$count++;
 				}
@@ -502,7 +504,8 @@ elseif($SoldierName != null)
 		}
 		// show ranks for player in this server
 		// don't show ranks in combined server stats page due to server load concerns
-		if(!empty($ServerID))
+		// don't show to bots
+		if(!empty($ServerID) && !($isbot))
 		{
 			echo '
 			<br/>
@@ -863,412 +866,421 @@ elseif($SoldierName != null)
 			';
 		}
 		// begin dog tag stats
-		// check to see if the player has gotten anyone's tags
-		// query for dog tags this user has collected
-		// if there is a ServerID, this is a server stats page
-		if(!empty($ServerID))
+		// don't show to bots
+		if(!($isbot))
 		{
-			$DogTag_q1 = @mysqli_query($BF4stats,"
-				SELECT tpd.`PlayerID`
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-				AND tsp.`ServerID` = {$ServerID}
-				LIMIT 1
-			");
-		}
-		// or else this is a combined stats page
-		else
-		{
-			$DogTag_q1 = @mysqli_query($BF4stats,"
-				SELECT tpd.`PlayerID`
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-				AND tsp.`ServerID` IN ({$valid_ids})
-				LIMIT 1
-			");
-		}
-		// or if anyone has gotten his
-		// find who has killed this player
-		// if there is a ServerID, this is a server stats page
-		if(!empty($ServerID))
-		{
-			$DogTag_q2 = @mysqli_query($BF4stats,"
-				SELECT tpd.`PlayerID`
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`VictimID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-				AND tsp.`ServerID` = {$ServerID}
-				LIMIT 1
-			");
-		}
-		// or else this is a combined stats page
-		else
-		{
-			$DogTag_q2 = @mysqli_query($BF4stats,"
-				SELECT tpd.`PlayerID`
-				FROM `tbl_dogtags` dt
-				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`VictimID`
-				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-				WHERE tpd.`PlayerID` = {$PlayerID}
-				AND tpd.`GameID` = {$GameID}
-				AND tsp.`ServerID` IN ({$valid_ids})
-				LIMIT 1
-			");
-		}
-		// only display dogtag block if this player has dogtags or someone has this player's dogtags
-		if(@mysqli_num_rows($DogTag_q1) != 0 || @mysqli_num_rows($DogTag_q2) != 0)
-		{
-			// initialize value
-			$count = 0;
-			echo '
-			<br/>
-			<div id="dogtag_tab">
-			<ul>
-			<li><a href="#dogtag_tab-1">Dog Tags Collected</a></li>
-			';
-			// if there is a ServerID, this is a server stats page
-			if(!empty($ServerID))
-			{
-				echo '<li><a href="./common/player/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
-			}
-			// or else this is a global stats page
-			else
-			{
-				echo '<li><a href="./common/player/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
-			}
-			echo '
-			</ul>
-			<div id="dogtag_tab-1">
-			<table class="prettytable">
-			';
 			// check to see if the player has gotten anyone's tags
 			// query for dog tags this user has collected
 			// if there is a ServerID, this is a server stats page
 			if(!empty($ServerID))
 			{
-				// is adkats information available?
-				if($adkats_available)
-				{
-					$DogTag_q = @mysqli_query($BF4stats,"
-						SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID, adk.`ban_status`
-						FROM `tbl_dogtags` dt
-						INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-						INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-						INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-						LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd2.`PlayerID`
-						WHERE tpd.`PlayerID` = {$PlayerID}
-						AND tpd.`GameID` = {$GameID}
-						AND tsp.`ServerID` = {$ServerID}
-						ORDER BY Count DESC, Victim ASC
-					");
-				}
-				else
-				{
-					$DogTag_q = @mysqli_query($BF4stats,"
-						SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
-						FROM `tbl_dogtags` dt
-						INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-						INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-						INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-						WHERE tpd.`PlayerID` = {$PlayerID}
-						AND tpd.`GameID` = {$GameID}
-						AND tsp.`ServerID` = {$ServerID}
-						ORDER BY Count DESC, Victim ASC
-					");
-				}
+				$DogTag_q1 = @mysqli_query($BF4stats,"
+					SELECT tpd.`PlayerID`
+					FROM `tbl_dogtags` dt
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` = {$ServerID}
+					LIMIT 1
+				");
 			}
 			// or else this is a combined stats page
 			else
 			{
-				// is adkats information available?
-				if($adkats_available)
+				$DogTag_q1 = @mysqli_query($BF4stats,"
+					SELECT tpd.`PlayerID`
+					FROM `tbl_dogtags` dt
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` IN ({$valid_ids})
+					LIMIT 1
+				");
+			}
+			// or if anyone has gotten his
+			// find who has killed this player
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				$DogTag_q2 = @mysqli_query($BF4stats,"
+					SELECT tpd.`PlayerID`
+					FROM `tbl_dogtags` dt
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`VictimID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` = {$ServerID}
+					LIMIT 1
+				");
+			}
+			// or else this is a combined stats page
+			else
+			{
+				$DogTag_q2 = @mysqli_query($BF4stats,"
+					SELECT tpd.`PlayerID`
+					FROM `tbl_dogtags` dt
+					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`VictimID`
+					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+					WHERE tpd.`PlayerID` = {$PlayerID}
+					AND tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` IN ({$valid_ids})
+					LIMIT 1
+				");
+			}
+			// only display dogtag block if this player has dogtags or someone has this player's dogtags
+			if(@mysqli_num_rows($DogTag_q1) != 0 || @mysqli_num_rows($DogTag_q2) != 0)
+			{
+				// initialize value
+				$count = 0;
+				echo '
+				<br/>
+				<div id="dogtag_tab">
+				<ul>
+				<li><a href="#dogtag_tab-1">Dog Tags Collected</a></li>
+				';
+				// if there is a ServerID, this is a server stats page
+				if(!empty($ServerID))
 				{
-					$DogTag_q = @mysqli_query($BF4stats,"
-						SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID, adk.`ban_status`
-						FROM `tbl_dogtags` dt
-						INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-						INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-						INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-						LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd2.`PlayerID`
-						WHERE tpd.`PlayerID` = {$PlayerID}
-						AND tpd.`GameID` = {$GameID}
-						AND tsp.`ServerID` IN ({$valid_ids})
-						GROUP BY Victim
-						ORDER BY Count DESC, Victim ASC
-					");
+					echo '<li><a href="./common/player/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;sid=' . $ServerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
+				}
+				// or else this is a global stats page
+				else
+				{
+					echo '<li><a href="./common/player/dogtag-tab.php?gid=' . $GameID . '&amp;pid=' . $PlayerID . '&amp;player=' . $SoldierName . '">Dog Tags Surrendered</a></li>';
+				}
+				echo '
+				</ul>
+				<div id="dogtag_tab-1">
+				<table class="prettytable">
+				';
+				// check to see if the player has gotten anyone's tags
+				// query for dog tags this user has collected
+				// if there is a ServerID, this is a server stats page
+				if(!empty($ServerID))
+				{
+					// is adkats information available?
+					if($adkats_available)
+					{
+						$DogTag_q = @mysqli_query($BF4stats,"
+							SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID, adk.`ban_status`
+							FROM `tbl_dogtags` dt
+							INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+							INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
+							INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+							INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
+							LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd2.`PlayerID`
+							WHERE tpd.`PlayerID` = {$PlayerID}
+							AND tpd.`GameID` = {$GameID}
+							AND tsp.`ServerID` = {$ServerID}
+							ORDER BY Count DESC, Victim ASC
+						");
+					}
+					else
+					{
+						$DogTag_q = @mysqli_query($BF4stats,"
+							SELECT dt.`Count`, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
+							FROM `tbl_dogtags` dt
+							INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+							INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
+							INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+							INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
+							WHERE tpd.`PlayerID` = {$PlayerID}
+							AND tpd.`GameID` = {$GameID}
+							AND tsp.`ServerID` = {$ServerID}
+							ORDER BY Count DESC, Victim ASC
+						");
+					}
+				}
+				// or else this is a combined stats page
+				else
+				{
+					// is adkats information available?
+					if($adkats_available)
+					{
+						$DogTag_q = @mysqli_query($BF4stats,"
+							SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID, adk.`ban_status`
+							FROM `tbl_dogtags` dt
+							INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+							INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
+							INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+							INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
+							LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd2.`PlayerID`
+							WHERE tpd.`PlayerID` = {$PlayerID}
+							AND tpd.`GameID` = {$GameID}
+							AND tsp.`ServerID` IN ({$valid_ids})
+							GROUP BY Victim
+							ORDER BY Count DESC, Victim ASC
+						");
+					}
+					else
+					{
+						$DogTag_q = @mysqli_query($BF4stats,"
+							SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
+							FROM `tbl_dogtags` dt
+							INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
+							INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
+							INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
+							INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
+							WHERE tpd.`PlayerID` = {$PlayerID}
+							AND tpd.`GameID` = {$GameID}
+							AND tsp.`ServerID` IN ({$valid_ids})
+							GROUP BY Victim
+							ORDER BY Count DESC, Victim ASC
+						");
+					}
+				}
+				if(@mysqli_num_rows($DogTag_q) != 0)
+				{
+					echo '
+					<tr>
+					<th width="5%" class="countheader">#</th>
+					<th width="47%" style="text-align: left;padding-left: 10px;">Victim</th>
+					<th width="48%" style="text-align: left;padding-left: 5px;"><span class="orderedDESCheader">Count</span></th>
+					</tr>
+					';
+					while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
+					{
+						$Victim = textcleaner($DogTag_r['Victim']);
+						$VictimID = $DogTag_r['VictimID'];
+						$KillCount = $DogTag_r['Count'];
+						$link = './index.php?';
+						if(!empty($ServerID))
+						{
+							$link .= 'sid=' . $ServerID . '&amp;';
+						}
+						$link .= 'pid=' . $VictimID . '&amp;p=player';
+						// is this player banned?
+						// or have previous ban which was lifted?
+						$player_banned = 0;
+						$previous_banned = 0;
+						if($adkats_available)
+						{
+							$ban_status = $DogTag_r['ban_status'];
+							if(!is_null($ban_status))
+							{
+								if($ban_status == 'Active')
+								{
+									$player_banned = 1;
+								}
+								elseif($ban_status == 'Expired')
+								{
+									$previous_banned = 1;
+								}
+							}
+						}
+						// show expand/contract if very long
+						if($count == 10)
+						{
+							echo '
+							</table>
+							<div>
+							<span class="expanded">
+							<table class="prettytable" style="margin-top: -2px;">
+							';
+						}
+						$count++;
+						echo '
+						<tr>
+							<td width="5%" class="count"><span class="information">' . $count . '</span></td>
+							';
+							if($player_banned == 1)
+							{
+								echo '<td width="47%" class="banoutline" style="text-align: left;padding-left: 10px; position: relative;"><div class="bansubscript">Banned</div>';
+							}
+							elseif($previous_banned == 1)
+							{
+								echo '<td width="47%" class="warnoutline" style="text-align: left;padding-left: 10px; position: relative;"><div class="bansubscript">Warned</div>';
+							}
+							else
+							{
+								echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px; position: relative;">';
+							}
+							echo '
+								<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
+									<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
+								</div>
+								<a href="' . $link . '">' . $Victim . '</a>
+							</td>
+							<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+						</tr>
+						';
+					}
+					// finish expand/contract if very long
+					if($count > 10)
+					{
+						$remaining = $count - 10;
+						echo '
+						</table>
+						</span>
+						<a href="javascript:void(0)" class="collapsed"><table class="prettytable" style="margin-top: -2px;"><tr><td class="tablecontents" style="text-align: left;padding-left: 15px;"><span class="orderedDESCheader">Show ' . $remaining . ' More</span></td></tr></table></a>
+						</div>
+						<table>
+						<tr>
+						<td>
+						</td>
+						</tr>
+						';
+					}
 				}
 				else
 				{
-					$DogTag_q = @mysqli_query($BF4stats,"
-						SELECT SUM(dt.`Count`) AS Count, tpd2.`SoldierName` AS Victim, tpd2.`PlayerID` AS VictimID
-						FROM `tbl_dogtags` dt
-						INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = dt.`KillerID`
-						INNER JOIN `tbl_server_player` tsp2 ON tsp2.`StatsID` = dt.`VictimID`
-						INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerdata` tpd2 ON tsp2.`PlayerID` = tpd2.`PlayerID`
-						WHERE tpd.`PlayerID` = {$PlayerID}
-						AND tpd.`GameID` = {$GameID}
-						AND tsp.`ServerID` IN ({$valid_ids})
-						GROUP BY Victim
-						ORDER BY Count DESC, Victim ASC
-					");
-				}
-			}
-			if(@mysqli_num_rows($DogTag_q) != 0)
-			{
-				echo '
-				<tr>
-				<th width="5%" class="countheader">#</th>
-				<th width="47%" style="text-align: left;padding-left: 10px;">Victim</th>
-				<th width="48%" style="text-align: left;padding-left: 5px;"><span class="orderedDESCheader">Count</span></th>
-				</tr>
-				';
-				while($DogTag_r = @mysqli_fetch_assoc($DogTag_q))
-				{
-					$Victim = textcleaner($DogTag_r['Victim']);
-					$VictimID = $DogTag_r['VictimID'];
-					$KillCount = $DogTag_r['Count'];
-					$link = './index.php?';
-					if(!empty($ServerID))
-					{
-						$link .= 'sid=' . $ServerID . '&amp;';
-					}
-					$link .= 'pid=' . $VictimID . '&amp;p=player';
-					// is this player banned?
-					// or have previous ban which was lifted?
-					$player_banned = 0;
-					$previous_banned = 0;
-					if($adkats_available)
-					{
-						$ban_status = $DogTag_r['ban_status'];
-						if(!is_null($ban_status))
-						{
-							if($ban_status == 'Active')
-							{
-								$player_banned = 1;
-							}
-							elseif($ban_status == 'Expired')
-							{
-								$previous_banned = 1;
-							}
-						}
-					}
-					// show expand/contract if very long
-					if($count == 10)
-					{
-						echo '
-						</table>
-						<div>
-						<span class="expanded">
-						<table class="prettytable" style="margin-top: -2px;">
-						';
-					}
-					$count++;
 					echo '
 					<tr>
-						<td width="5%" class="count"><span class="information">' . $count . '</span></td>
-						';
-						if($player_banned == 1)
-						{
-							echo '<td width="47%" class="banoutline" style="text-align: left;padding-left: 10px; position: relative;"><div class="bansubscript">Banned</div>';
-						}
-						elseif($previous_banned == 1)
-						{
-							echo '<td width="47%" class="warnoutline" style="text-align: left;padding-left: 10px; position: relative;"><div class="bansubscript">Warned</div>';
-						}
-						else
-						{
-							echo '<td width="47%" class="tablecontents" style="text-align: left;padding-left: 10px; position: relative;">';
-						}
-						echo '
-							<div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;">
-								<a class="fill-div" style="padding: 0px; margin: 0px;" href="' . $link . '"></a>
-							</div>
-							<a href="' . $link . '">' . $Victim . '</a>
-						</td>
-						<td width="48%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $KillCount . '</td>
+					<td width="100%" class="tablecontents" colspan="3" style="text-align: left;padding-left: 10px;"><div class="headline">' . $SoldierName . ' has not collected any dog tags.</div></td>
 					</tr>
 					';
 				}
-				// finish expand/contract if very long
-				if($count > 10)
+				echo '
+				</table>
+				</div>
+				</div>
+				<br/>
+				';
+			}
+		}
+		// begin signature images...
+		// don't show to bots
+		if(!($isbot))
+		{
+			echo '
+			<br/>
+			<div class="subsection" style="position: relative;"><div class="headline"><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></div>
+			';
+			// check if this player's rank is cached in the database
+			// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
+			// (in other words, insert dummy data now quickly, so later the parallel slow execution updates the one dummy data row instead of inserting multiple new data rows in parallel)
+			// rank players by score
+			// check to see if this rank cache table exists
+			@mysqli_query($BF4stats,"
+				CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
+				(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
+				ENGINE=MyISAM
+				DEFAULT CHARSET=utf8
+				COLLATE=utf8_bin
+			");
+			// initialize timestamp values
+			$now_timestamp = time();
+			$old = $now_timestamp - 43200;
+			// rank players by score
+			// check if score rank is already cached
+			$ScoreC_q = @mysqli_query($BF4stats,"
+				SELECT `rank`, `timestamp`
+				FROM `tyger_stats_rank_cache`
+				WHERE `PlayerID` = {$PlayerID}
+				AND `category` = 'Score'
+				AND `GID` = '{$GameID}'
+				AND `SID` = '{$valid_ids}'
+				GROUP BY `PlayerID`
+			");
+			if(@mysqli_num_rows($ScoreC_q) != 0)
+			{
+				$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
+				$srank = $ScoreC_r['rank'];
+				$timestamp = $ScoreC_r['timestamp'];
+				// data older than 12 hours? or incorrect data? show recalculate message
+				if(($timestamp <= $old) OR ($srank == 0))
 				{
-					$remaining = $count - 10;
+					// we aren't actually doing this now
+					// we are just showing the message that it will be done
 					echo '
-					</table>
-					</span>
-					<a href="javascript:void(0)" class="collapsed"><table class="prettytable" style="margin-top: -2px;"><tr><td class="tablecontents" style="text-align: left;padding-left: 15px;"><span class="orderedDESCheader">Show ' . $remaining . ' More</span></td></tr></table></a>
+					<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+					<div class="subsection" style="width: 100px; font-size: 12px;">
+					<center>Cache Recreated:<br/>Ranks</center>
 					</div>
-					<table>
-					<tr>
-					<td>
-					</td>
-					</tr>
+					</div>
+					<script type="text/javascript">
+					$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+					</script>
+					';
+				}
+				// show reuse message
+				else
+				{
+					// we aren't actually doing this now
+					// we are just showing the message that it will be done
+					echo '
+					<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+					<div class="subsection" style="width: 100px; font-size: 12px;">
+					<center>Cache Used:<br/>Ranks</center>
+					</div>
+					</div>
+					<script type="text/javascript">
+					$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+					</script>
 					';
 				}
 			}
 			else
 			{
+				// show insert message
 				echo '
-				<tr>
-				<td width="100%" class="tablecontents" colspan="3" style="text-align: left;padding-left: 10px;"><div class="headline">' . $SoldierName . ' has not collected any dog tags.</div></td>
-				</tr>
+				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Created:<br/>Ranks</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+				</script>
 				';
+				// insert useless dummy data for now
+				@mysqli_query($BF4stats,"
+					INSERT INTO `tyger_stats_rank_cache`
+					(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
+					VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '0', '0')
+				");
 			}
+			// done with the dummy cache stuff...
+			// find current URL info
+			$host = 'http://' . $_SERVER['HTTP_HOST'];
+			$dir = dirname($_SERVER['PHP_SELF']);
+			$file = $_SERVER['PHP_SELF'];
+			// show signature images
 			echo '
+			</div>
+			<table class="prettytable">
+			<tr>
+			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
+			Stats image with player\'s rank:<br/><br/>
+			';
+			// include signature.php image
+			echo '
+			<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./common/signature/signature.png?pid=' . $PlayerID . '" style="height: 100px; width: 400px;" alt="signature" /></a>
+			<br/>
+			<span class="information">BBcode:</span>
+			<br/><br/>
+			<table class="prettytable">
+			<tr>
+			<td class="tablecontents">
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signature.png?pid=' . $PlayerID . '[/IMG][/URL]</span>
+			</td>
+			</tr>
 			</table>
-			</div>
-			</div>
+			</td>
+			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
+			Stats image with player\'s favorite weapon:<br/><br/>
+			';
+			// include signature.php image
+			echo '
+			<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./common/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1" style="height: 100px; width: 400px;" alt="signature" /></a>
+			<br/>
+			<span class="information">BBcode:</span>
+			<br/><br/>
+			<table class="prettytable">
+			<tr>
+			<td class="tablecontents">
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1[/IMG][/URL]</span>
+			</td>
+			</tr>
+			</table>
+			</td>
+			</tr>
+			</table>
 			<br/>
 			';
 		}
-		// signature images...
-		echo '
-		<br/>
-		<div class="subsection" style="position: relative;"><div class="headline"><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></div>
-		';
-		// check if this player's rank is cached in the database
-		// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
-		// (in other words, insert dummy data now quickly, so later the parallel slow execution updates the one dummy data row instead of inserting multiple new data rows in parallel)
-		// rank players by score
-		// check to see if this rank cache table exists
-		@mysqli_query($BF4stats,"
-			CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-			(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
-			ENGINE=MyISAM
-			DEFAULT CHARSET=utf8
-			COLLATE=utf8_bin
-		");
-		// initialize timestamp values
-		$now_timestamp = time();
-		$old = $now_timestamp - 43200;
-		// rank players by score
-		// check if score rank is already cached
-		$ScoreC_q = @mysqli_query($BF4stats,"
-			SELECT `rank`, `timestamp`
-			FROM `tyger_stats_rank_cache`
-			WHERE `PlayerID` = {$PlayerID}
-			AND `category` = 'Score'
-			AND `GID` = '{$GameID}'
-			AND `SID` = '{$valid_ids}'
-			GROUP BY `PlayerID`
-		");
-		if(@mysqli_num_rows($ScoreC_q) != 0)
-		{
-			$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
-			$srank = $ScoreC_r['rank'];
-			$timestamp = $ScoreC_r['timestamp'];
-			// data older than 12 hours? or incorrect data? show recalculate message
-			if(($timestamp <= $old) OR ($srank == 0))
-			{
-				// we aren't actually doing this now
-				// we are just showing the message that it will be done
-				echo '
-				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
-				<div class="subsection" style="width: 100px; font-size: 12px;">
-				<center>Cache Recreated:<br/>Ranks</center>
-				</div>
-				</div>
-				<script type="text/javascript">
-				$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-				</script>
-				';
-			}
-			// show reuse message
-			else
-			{
-				// we aren't actually doing this now
-				// we are just showing the message that it will be done
-				echo '
-				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
-				<div class="subsection" style="width: 100px; font-size: 12px;">
-				<center>Cache Used:<br/>Ranks</center>
-				</div>
-				</div>
-				<script type="text/javascript">
-				$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-				</script>
-				';
-			}
-		}
-		else
-		{
-			// show insert message
-			echo '
-			<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Created:<br/>Ranks</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-			</script>
-			';
-			// insert useless dummy data for now
-			@mysqli_query($BF4stats,"
-				INSERT INTO `tyger_stats_rank_cache`
-				(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-				VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '0', '0')
-			");
-		}
-		// done with the dummy cache stuff...
-		// find current URL info
-		$host = 'http://' . $_SERVER['HTTP_HOST'];
-		$dir = dirname($_SERVER['PHP_SELF']);
-		$file = $_SERVER['PHP_SELF'];
-		// show signature images
-		echo '
-		</div>
-		<table class="prettytable">
-		<tr>
-		<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
-		Stats image with player\'s rank:<br/><br/>
-		';
-		// include signature.php image
-		echo '
-		<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./common/signature/signature.png?pid=' . $PlayerID . '" style="height: 100px; width: 400px;" alt="signature" /></a>
-		<br/>
-		<span class="information">BBcode:</span>
-		<br/><br/>
-		<table class="prettytable">
-		<tr>
-		<td class="tablecontents">
-		<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signature.png?pid=' . $PlayerID . '[/IMG][/URL]</span>
-		</td>
-		</tr>
-		</table>
-		</td>
-		<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
-		Stats image with player\'s favorite weapon:<br/><br/>
-		';
-		// include signature.php image
-		echo '
-		<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./common/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1" style="height: 100px; width: 400px;" alt="signature" /></a>
-		<br/>
-		<span class="information">BBcode:</span>
-		<br/><br/>
-		<table class="prettytable">
-		<tr>
-		<td class="tablecontents">
-		<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1[/IMG][/URL]</span>
-		</td>
-		</tr>
-		</table>
-		</td>
-		</tr>
-		</table>
-		';
 	}
 }
 // this shouldn't happen, but we will make sure
@@ -1297,7 +1309,7 @@ elseif($SoldierName == 'Not Found')
 if($SoldierName != null AND $SoldierName != 'Not Found')
 {
 	echo '
-	<br/><br/>
+	<br/>
 	<div class="subsection"><div class="headline"><span class="information">External Links for "' . $SoldierName . '"</span></div></div>
 	<table class="prettytable">
 	<tr>

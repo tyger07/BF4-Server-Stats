@@ -37,31 +37,35 @@ $(function()
 </script>
 ';
 // jquery auto-find players in leaderboard
-echo '
-<script type="text/javascript">
-$(function()
+// don't show to bots
+if(!($isbot))
 {
-	$("#soldiers_leaders").autocomplete(
+	echo '
+	<script type="text/javascript">
+	$(function()
 	{
-		source: "./common/player/player-search.php?';
-		if(!empty($ServerID))
+		$("#soldiers_leaders").autocomplete(
 		{
-			echo 'sid=' . $ServerID . '&';
-		}
-		echo 'gid=' . $GameID . '",
-		minLength: 3,
-		select: function( event, ui )
-		{
-			if(ui.item)
+			source: "./common/player/player-search.php?';
+			if(!empty($ServerID))
 			{
-				$(\'#soldiers_leaders\').val(ui.item.value);
+				echo 'sid=' . $ServerID . '&';
 			}
-			$(\'#ajaxsearch_leaders\').submit();
-		}
+			echo 'gid=' . $GameID . '",
+			minLength: 3,
+			select: function( event, ui )
+			{
+				if(ui.item)
+				{
+					$(\'#soldiers_leaders\').val(ui.item.value);
+				}
+				$(\'#ajaxsearch_leaders\').submit();
+			}
+		});
 	});
-});
-</script>
-';
+	</script>
+	';
+}
 // javascript transition wrapper between loading and loaded
 echo '
 <script type="text/javascript">
@@ -379,7 +383,9 @@ if(@mysqli_num_rows($Players_q) != 0)
 		$Kills = $Players_r['Kills'];
 		$KDR = round($Players_r['KDR'], 2);
 		$HSR = round(($Players_r['HSR']*100),2);
-		if(empty($player))
+		// do the fast count if player name search isn't being done
+		// or do fast count if this is a bot
+		if(empty($player) || $isbot)
 		{
 			$count++;
 		}

@@ -3,7 +3,8 @@
 // https://forum.myrcon.com/showthread.php?6854
 
 // jquery auto refresh scoreboard every 30 seconds
-if(!empty($ServerID))
+// don't show to bots
+if(!empty($ServerID) && !($isbot))
 {
 	echo '
 	<script type="text/javascript">
