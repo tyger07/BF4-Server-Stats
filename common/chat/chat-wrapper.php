@@ -46,6 +46,40 @@ $(function() {
 });
 </script>
 ';
+// jquery auto-find players in input box
+// don't show to bots
+if(!($isbot))
+{
+	echo '
+	<script type="text/javascript">
+	$(function()
+	{
+		$("#chat_search").autocomplete(
+		{
+			source: "./common/chat/chat-search.php?gid=' . $GameID;
+			if(!empty($ServerID))
+			{
+				echo '&sid=' . $ServerID;
+			}
+			echo '",
+			minLength: 3,
+			select: function( event, ui )
+			{
+				if(ui.item)
+				{
+					var str = ui.item.value;
+					if(!(str.includes("Message: ")) && !(str.includes("Date: ")))
+					{
+						$(\'#chat_search\').val(ui.item.value);
+					}
+				}
+				$(\'#ajaxsearch_chat\').submit();
+			}
+		});
+	});
+	</script>
+	';
+}
 // javascript transition wrapper between loading and loaded
 echo '
 <script type="text/javascript">
@@ -56,8 +90,8 @@ $(\'#loaded\').fadeIn("slow");
 // continue html output
 echo'
 <div class="subsection" style="margin-bottom: 4px;">
-<form action="./index.php" method="get">
-<span class="information">Search for Player, Message, or Date:</span>
+<form id="ajaxsearch_chat" action="./index.php" method="get">
+<span class="information">Search for Date, Message, or Player:</span>
 <input type="hidden" name="p" value="chat" />
 ';
 if(!empty($ServerID))
@@ -66,11 +100,11 @@ if(!empty($ServerID))
 }
 if(!empty($query))
 {
-	echo '<input type="text" class="messagebox" name="q" value="' . $query . '" />';
+	echo '<input id="chat_search" type="text" class="messagebox" name="q" value="' . $query . '" />';
 }
 else
 {
-	echo '<input type="text" class="messagebox" name="q" />';
+	echo '<input id="chat_search" type="text" class="messagebox" name="q" />';
 }
 echo '
 </form>

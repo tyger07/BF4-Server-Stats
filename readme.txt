@@ -108,6 +108,10 @@ Enjoy!
 
 ## Changelog:
 
+02-05-2017
+- Added warning to scoreboard if a possible server connection issue was detected
+- Added simple chat search suggestions which shouldn't have a huge impact on database performance
+
 01-28-2017
 - Unbanned bot access and made bot access restricted instead.  This allows search engines to crawl the stats page and get more clan/community attention while also restricting bot database performance impact to some slower features.
 

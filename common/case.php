@@ -67,7 +67,6 @@ else
 // $term = ?term
 if(!empty($_GET['term']))
 {
-	$term = str_replace(array('\'', '"', '\\', '`'), '',mysqli_real_escape_string($BF4stats, strip_tags(preg_replace('/\s/','',$_GET['term']))));
 }
 else
 {
