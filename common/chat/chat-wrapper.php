@@ -63,6 +63,7 @@ if(!($isbot))
 			}
 			echo '",
 			minLength: 3,
+			delay: 500,
 			select: function( event, ui )
 			{
 				if(ui.item)

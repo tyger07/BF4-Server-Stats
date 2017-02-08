@@ -53,6 +53,7 @@ if(!($isbot))
 			}
 			echo 'gid=' . $GameID . '",
 			minLength: 3,
+			delay: 500,
 			select: function( event, ui )
 			{
 				if(ui.item)

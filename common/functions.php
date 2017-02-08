@@ -1433,7 +1433,7 @@ function pagination_headers($columnname,$ServerID,$targetpage,$width,$ranktext,$
 	';
 }
 // function to count sessions
-function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats)
+function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page, $pid, $player)
 {
 	// check to see if the session table exists
 	@mysqli_query($BF4stats,"
@@ -1450,26 +1450,72 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats)
 	if(!empty($ServerID))
 	{
 		$exist_query = @mysqli_query($BF4stats,"
-			SELECT DISTINCT(`IP`) AS IP
+			SELECT DISTINCT(`IP`) AS IP, `timestamp`
 			FROM `tyger_stats_sessions`
 			WHERE `IP` = '{$userip}'
 			AND `SID` = '{$ServerID}'
-			AND `GID` = '{$GameID}'
+			AND `GID` = {$GameID}
 		");
 	}
 	else
 	{
 		$exist_query = @mysqli_query($BF4stats,"
-			SELECT DISTINCT(`IP`) AS IP
+			SELECT DISTINCT(`IP`) AS IP, `timestamp`
 			FROM `tyger_stats_sessions`
 			WHERE `IP` = '{$userip}'
 			AND `SID` = '{$valid_ids}'
-			AND `GID` = '{$GameID}'
+			AND `GID` = {$GameID}
 		");
 	}
 	// user IP found, update timestamp
 	if(@mysqli_num_rows($exist_query) != 0)
 	{
+		// check if user is flooding the stats page with reloads/requests too often
+		// if they are, slow them down
+		$time_row = @mysqli_fetch_assoc($exist_query);
+		$previous_session_time = $time_row['timestamp'];
+		// previous request was more than 1 second ago, but less than or equal to 2 seconds ago
+		// just slow them down
+		if(($now_timestamp - $previous_session_time <= 2) && ($now_timestamp - $previous_session_time > 1))
+		{
+			// sleep for a period of time
+			sleep(1);
+			$now_timestamp = time();
+		}
+		// previous request was less than or equal to a second ago
+		// kill this request and make them create a new request
+		elseif($now_timestamp - $previous_session_time <= 1)
+		{
+			// deliberate attack?
+			// kill it
+			// find current URL info
+			$host = 'http://' . $_SERVER['HTTP_HOST'];
+			$dir = dirname($_SERVER['PHP_SELF']);
+			$home = rtrim($dir, "common");
+			// build redirect link
+			$redirect =  $host . $home . 'index.php';
+			if(!empty($ServerID))
+			{
+				$redirect .= '?sid=' . $ServerID;
+			}
+			else
+			{
+				$redirect .= '?sid=null';
+			}
+			if(!empty($page))
+			{
+				$redirect .= '&amp;p=' . $page;
+			}
+			if(!empty($pid))
+			{
+				$redirect .= '&amp;pid=' . $pid;
+			}
+			if(!empty($player))
+			{
+				$redirect .= '&amp;player=' . $player;
+			}
+			die ("<title>BF4 Player Stats - Denied</title></head><body><br/><br/><br/><br/><center><b>You are exceeding the number of requests allowed within a short period of time. <a href='" . $redirect . "'>Try again.</a></b></center></body></html>");
+		}
 		if(!empty($ServerID))
 		{
 			@mysqli_query($BF4stats,"

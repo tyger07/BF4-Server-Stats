@@ -66,6 +66,16 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 		{
 			$ServerID = $sid;
 		}
+		// lets check our stats page sessions
+		// stats page sessions are used to monitor how many people are viewing these stats pages
+		// set default client IP address value
+		$userip = 'unknown';
+		// update client's IP address
+		if(isset($_SERVER["REMOTE_ADDR"]))
+		{
+			$userip = $_SERVER["REMOTE_ADDR"];
+		}
+		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats,$page,$pid,$player);
 		// find this server info
 		$Server_q = @mysqli_query($BF4stats,"
 			SELECT `ServerName`
@@ -146,6 +156,16 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	// this must be a combined stats page
 	else
 	{
+		// lets check our stats page sessions
+		// stats page sessions are used to monitor how many people are viewing these stats pages
+		// set default client IP address value
+		$userip = 'unknown';
+		// update client's IP address
+		if(isset($_SERVER["REMOTE_ADDR"]))
+		{
+			$userip = $_SERVER["REMOTE_ADDR"];
+		}
+		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats,$page,$pid,$player);
 		// lets see if a SoldierName or PlayerID was provided to us in the URL
 		// first look for a SoldierName in URL and try to convert it to PlayerID
 		if(!empty($player))
@@ -291,18 +311,6 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	<div class="subsection">
 	<div class="headline" style="font-size: 12px;">[ <span class="information">Statistics data provided by <a href="https://forum.myrcon.com/showthread.php?6698-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s Procon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</div>
 	</div>
-	';
-	// now lets check our stats page sessions
-	// stats page sessions are used to monitor how many people are viewing these stats pages
-	// set default client IP address value
-	$userip = 'unknown';
-	// update client's IP address
-	if(isset($_SERVER["REMOTE_ADDR"]))
-	{
-		$userip = $_SERVER["REMOTE_ADDR"];
-	}
-	$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats);
-	echo '
 	<br/>
 	<center>
 	';
@@ -397,7 +405,16 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 		// display browser stats
 		echo '
 		<center>
-		<span class="footertext">' . $TotalDenied . ' archaic browsers have been blocked</span>
+		';
+		if($TotalDenied > 1)
+		{
+			echo '<span class="footertext">' . $TotalDenied . ' archaic browsers have been blocked</span>';
+		}
+		else
+		{
+			echo '<span class="footertext">' . $TotalDenied . ' archaic browser has been blocked</span>';
+		}
+		echo '
 		</center>
 		';
 	}

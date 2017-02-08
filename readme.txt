@@ -108,6 +108,10 @@ Enjoy!
 
 ## Changelog:
 
+02-07-2017
+- Reduced the rate at which autocomplete tries to fill in searches
+- Added page request throttles.  If a user tries to load pages every 1 to 2 seconds, server adds a 1 second delay.  If a user tries to load pages every 1 second or less, the server denies the request and gives them an error message and redirect link.
+
 02-05-2017
 - Added warning to scoreboard if a possible server connection issue was detected
 - Added simple chat search suggestions which shouldn't have a huge impact on database performance
