@@ -108,6 +108,9 @@ Enjoy!
 
 ## Changelog:
 
+02-08-2017
+- Instead of counting every bot view as a new bot, only add bot as a new bot if it is during a new bot session.
+
 02-07-2017
 - Reduced the rate at which autocomplete tries to fill in searches
 - Added page request throttles.  If a user tries to load pages every 1 to 2 seconds, server adds a 1 second delay.  If a user tries to load pages every 1 second or less, the server denies the request and gives them an error message and redirect link.

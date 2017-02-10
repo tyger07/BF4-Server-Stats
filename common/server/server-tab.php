@@ -16,10 +16,6 @@ if(!empty($sid))
 // find current URL info
 $host = 'http://' . $_SERVER['HTTP_HOST'];
 $dir = dirname($_SERVER['PHP_SELF']);
-$file = $_SERVER['PHP_SELF'];
-// find current URL info
-$host = 'http://' . $_SERVER['HTTP_HOST'];
-$dir = dirname($_SERVER['PHP_SELF']);
 // remove this directory name from the string
 $dir = rtrim($dir, "/server");
 // adjust URL to reflect the location of index.php

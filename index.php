@@ -75,7 +75,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 		{
 			$userip = $_SERVER["REMOTE_ADDR"];
 		}
-		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats,$page,$pid,$player);
+		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats,$page,$pid,$player,$isbot);
 		// find this server info
 		$Server_q = @mysqli_query($BF4stats,"
 			SELECT `ServerName`
@@ -165,7 +165,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 		{
 			$userip = $_SERVER["REMOTE_ADDR"];
 		}
-		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats,$page,$pid,$player);
+		$ses = session_count($userip,$ServerID,$valid_ids,$GameID,$BF4stats,$page,$pid,$player,$isbot);
 		// lets see if a SoldierName or PlayerID was provided to us in the URL
 		// first look for a SoldierName in URL and try to convert it to PlayerID
 		if(!empty($player))
@@ -326,14 +326,6 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	</center>
 	';
 	// display denied bot stats
-	// check to see if denied table exists
-	@mysqli_query($BF4stats,"
-		CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `count` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
-	");
 	// count number of bots recorded
 	$TotalBots_q = @mysqli_query($BF4stats,"
 		SELECT SUM(`count`) AS count
@@ -346,17 +338,6 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	{
 		$TotalBots_r = @mysqli_fetch_assoc($TotalBots_q);
 		$TotalBots = $TotalBots_r['count'];
-		// update bot stats if this is a bot viewing
-		if($isbot)
-		{
-			$TotalBots++;
-			// store new value
-			@mysqli_query($BF4stats,"
-				UPDATE `tyger_stats_denied`
-				SET `count` = '{$TotalBots}'
-				WHERE `category` = 'bots'
-			");
-		}
 		// display bot stats
 		echo '
 		<center>
@@ -370,22 +351,6 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 			echo '<span class="footertext">' . $TotalBots . ' bot has been restricted access</span>';
 		}
 		echo '
-		</center>
-		';
-	}
-	// no previous bot access history exists but this is a bot who needs to be added
-	elseif($isbot)
-	{
-		// add this bot
-		@mysqli_query($BF4stats,"
-			INSERT INTO `tyger_stats_denied`
-			(`category`, `count`)
-			VALUES ('bots', '1')
-		");
-		// display bot stats
-		echo '
-		<center>
-		<span class="footertext">1 bot has been restricted access</span>
 		</center>
 		';
 	}

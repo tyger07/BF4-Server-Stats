@@ -1433,7 +1433,7 @@ function pagination_headers($columnname,$ServerID,$targetpage,$width,$ranktext,$
 	';
 }
 // function to count sessions
-function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page, $pid, $player)
+function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page, $pid, $player, $isbot)
 {
 	// check to see if the session table exists
 	@mysqli_query($BF4stats,"
@@ -1491,9 +1491,8 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 			// find current URL info
 			$host = 'http://' . $_SERVER['HTTP_HOST'];
 			$dir = dirname($_SERVER['PHP_SELF']);
-			$home = rtrim($dir, "common");
 			// build redirect link
-			$redirect =  $host . $home . 'index.php';
+			$redirect =  $host . $dir . '/index.php';
 			if(!empty($ServerID))
 			{
 				$redirect .= '?sid=' . $ServerID;
@@ -1555,6 +1554,47 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 				(`IP`, `GID`, `SID`, `timestamp`)
 				VALUES ('{$userip}', '{$GameID}', '{$valid_ids}', '{$now_timestamp}')
 			");
+		}
+		// check to see if denied table exists
+		@mysqli_query($BF4stats,"
+			CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
+			(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `count` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
+			ENGINE=MyISAM
+			DEFAULT CHARSET=utf8
+			COLLATE=utf8_bin
+		");
+		// update bot stats if this is a bot viewing
+		if($isbot)
+		{
+			// count number of bots recorded
+			$TotalBots_q = @mysqli_query($BF4stats,"
+				SELECT SUM(`count`) AS count
+				FROM `tyger_stats_denied`
+				WHERE `category` = 'bots'
+				GROUP BY `category`
+			");
+			// previous bot access history exists
+			if(@mysqli_num_rows($TotalBots_q) != 0)
+			{
+				$TotalBots_r = @mysqli_fetch_assoc($TotalBots_q);
+				$TotalBots = $TotalBots_r['count'];
+				$TotalBots++;
+				// store new value
+				@mysqli_query($BF4stats,"
+					UPDATE `tyger_stats_denied`
+					SET `count` = '{$TotalBots}'
+					WHERE `category` = 'bots'
+				");
+			}
+			else
+			{
+				// add this bot
+				@mysqli_query($BF4stats,"
+					INSERT INTO `tyger_stats_denied`
+					(`category`, `count`)
+					VALUES ('bots', '1')
+				");
+			}
 		}
 	}
 	// find if there are sessions older than 30 minutes
