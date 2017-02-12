@@ -1513,7 +1513,7 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 			{
 				$redirect .= '&amp;player=' . $player;
 			}
-			die ("<title>BF4 Player Stats - Denied</title></head><body><br/><br/><br/><br/><center><b>You are exceeding the number of requests allowed within a short period of time. <a href='" . $redirect . "'>Try again.</a></b></center></body></html>");
+			die ("<title>BF4 Player Stats - Denied</title></head><body><div id='pagebody'><div class='subsection'><div class='headline'>You are exceeding the number of requests allowed within a short period of time. <a href='" . $redirect . "'>Try again.</a></div></div></div></body></html>");
 		}
 		if(!empty($ServerID))
 		{

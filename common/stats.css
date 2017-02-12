@@ -6,9 +6,9 @@
 .teamname{color:#DDDDDD;}
 .information{color:#CCCCCC;}
 .footertext{color:#888888;font-size:12px;}
-body{margin:0px 0px 0px 0px;padding:0;text-align:left;height:100%;width:100%;background:#4d5d5d;background-image:url("./images/background.jpg");background-position:center 142px;background-repeat:no-repeat;background-attachment:fixed;background-size:100% auto;font-family:Arial, Arial, Arial, sans-serif;font-size:14px;font-weight:normal;color:#BBBBBB;}
+body{margin:0px 0px 0px 0px;padding:0;text-align:left;height:100%;width:100%;background:#4d5d5d;background-image:url("./images/background.jpg");background-position:center top;background-repeat:no-repeat;background-attachment:fixed;background-size:100% auto;font-family:Arial, Arial, Arial, sans-serif;font-size:14px;font-weight:normal;color:#BBBBBB;}
 .body-grid{position:fixed;z-index:-4;width:100%;height:100%;top:0;left:0;padding:0px;margin:0px;background:url("./images/grid.png") left top repeat;}
-.content-gradient{position:fixed;z-index:-3;width:100%;height:100%;top:0;left:0;padding:0px;margin:0px;background-image:url("./images/content-gradient.png");background-position:center 142px;background-repeat:repeat-y;background-attachment:fixed;}
+.content-gradient{position:fixed;z-index:-3;width:100%;height:100%;top:0;left:0;padding:0px;margin:0px;background-image:url("./images/content-gradient.png");background-position:center top;background-repeat:repeat-y;background-attachment:fixed;}
 a, a:visited{color:#D5DDE5;text-decoration:none;box-shadow:0px 0px 20px 1px rgba(100,120,150,0.1);}
 a:hover, a:active{color:#DDDDDD;text-decoration:none;box-shadow:0px 0px 10px 1px rgba(000,020,050,0.1);}
 a.fill-div{display:block;height:100%;width:100%;text-decoration:none;padding-top:5px;padding-bottom:5px;box-shadow:none;}
@@ -41,10 +41,10 @@ td{display:table-cell;text-align:left;font-family:Arial, Arial, Arial, sans-seri
 .button{cursor:pointer;text-align:left;background-color:transparent;color:#DDDDDD;border:0px solid #444444;outline-color:transparent;}
 option{background-color:rgba(8, 13, 16, 0.98);color:#CCCCCC;}
 option:hover, option:active{background-color:rgba(20, 25, 28, 0.98);color:#FFFFFF;}
-#topcontent{display:table;position:fixed;top:0;margin:0px 0px 0px 0px;z-index:9;padding-top:2px;padding-bottom:2px;text-align:center;width:100%;height:100px;overflow:hidden;background:rgba(8, 13, 16, 0.98);box-shadow:0px 0px 20px 5px rgba(8, 13, 16, 0.8);border:0px solid;}
+#topcontent{display:table;position:relative;top:0;margin:0px 0px 0px 0px;z-index:9;padding-top:2px;padding-bottom:2px;text-align:center;width:100%;height:100px;overflow:hidden;background:rgba(8, 13, 16, 0.98);box-shadow:0px 0px 20px 5px rgba(8, 13, 16, 0.8);border:0px solid;}
 #topbanner{display:table-cell;vertical-align:middle;height:96px;overflow:hidden;}
 .banner{height:96px;}
-#topmenu{display:table;position:fixed;top:104px;margin:0px 0px 0px 0px;padding-bottom:0px;z-index:8;text-align:center;width:100%;background:rgba(8, 13, 16, 0.98);box-shadow:0px 0px 20px 5px rgba(8, 13, 16, 0.8);border:0px solid;}
+#topmenu{display:table;position:relative;margin:0px 0px 0px 0px;padding-bottom:0px;z-index:8;text-align:center;width:100%;background:rgba(8, 13, 16, 0.98);box-shadow:0px 0px 20px 5px rgba(8, 13, 16, 0.8);border:0px solid;}
 .topmenuitems{display:table-cell;vertical-align:middle;border:0px solid;padding:0px;padding-top:2px;padding-bottom:6px;}
 #topmenudropdown{display:inline-block;vertical-align:middle;text-align:right;}
 #topmenujoin{display:inline-block;vertical-align:middle;text-align:left;}
@@ -52,7 +52,7 @@ option:hover, option:active{background-color:rgba(20, 25, 28, 0.98);color:#FFFFF
 .menuitems{display:table-cell;vertical-align:middle;border:0px solid;border-left:1px solid #666666;padding:0px;}
 .menuitems:hover{background:rgba(20, 50, 50, 0.8);}
 .menuitemselected{display:table-cell;vertical-align:middle;border:0px solid;border-left:1px solid #666666;background:rgba(30, 90, 90, 0.8);padding:0px;}
-#pagebody{margin-left:auto;margin-right:auto;text-align:left;padding-top:200px;margin-bottom:10px;width:992px;}
+#pagebody{margin-left:auto;margin-right:auto;text-align:left;padding-top:100px;margin-bottom:10px;width:992px;}
 .title{margin-left:2px;margin-right:auto;background-color:rgba(7, 7, 7, 0.6);box-shadow:0px 0px 2px 0px rgba(7, 7, 7, 0.6);float:left;padding:0px;padding-left:10px;padding-right:10px;text-align:center;font-family:Arial, Arial, Arial, sans-serif;font-weight:normal;font-size:30px;color:#EEEEEE;margin-bottom:30px;}
 .sectionheader{margin-left:2px;margin-right:2px;background-color:rgba(7, 7, 7, 0.8);box-shadow:0px 0px 2px 0px rgba(7, 7, 7, 0.8);padding:5px;margin-bottom:4px;font-family:Arial, Arial, Arial, sans-serif;font-size:14px;font-weight:normal;}
 .subsection{margin-left:2px;margin-right:2px;background-color:rgba(7, 7, 7, 0.6);box-shadow:0px 0px 2px 0px rgba(7, 7, 7, 0.6);padding:5px;font-family:Arial, Arial, Arial, sans-serif;font-size:14px;font-weight:normal;}

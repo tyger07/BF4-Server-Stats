@@ -21,6 +21,12 @@ echo '
 <link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
 <script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
+<script type="text/javascript">
+	$(window).scroll(function()
+	{
+		$("#menucontent").css("top",Math.max(0,142-$(this).scrollTop()));
+	});
+</script>
 ';
 // hide php notices
 error_reporting(E_ALL ^ E_NOTICE);

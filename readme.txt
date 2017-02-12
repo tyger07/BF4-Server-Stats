@@ -108,7 +108,10 @@ Enjoy!
 
 ## Changelog:
 
-02-08-2017
+02-11-2017
+- Free up the top 142px of the page when scrolling down.
+
+02-09-2017
 - Instead of counting every bot view as a new bot, only add bot as a new bot if it is during a new bot session.
 
 02-07-2017
