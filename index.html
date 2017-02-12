@@ -118,6 +118,38 @@ For example, this would work:</p>
 <h2>
 <a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog:</h2>
 
+<p>02-11-2017</p>
+
+<ul>
+<li>Free up the top 142px of the page when scrolling down.</li>
+</ul>
+
+<p>02-09-2017</p>
+
+<ul>
+<li>Instead of counting every bot view as a new bot, only add bot as a new bot if it is during a new bot session.</li>
+</ul>
+
+<p>02-07-2017</p>
+
+<ul>
+<li>Reduced the rate at which autocomplete tries to fill in searches</li>
+<li>Added page request throttles.  If a user tries to load pages every 1 to 2 seconds, server adds a 1 second delay.  If a user tries to load pages every 1 second or less, the server denies the request and gives them an error message and redirect link.</li>
+</ul>
+
+<p>02-05-2017</p>
+
+<ul>
+<li>Added warning to scoreboard if a possible server connection issue was detected</li>
+<li>Added simple chat search suggestions which shouldn't have a huge impact on database performance</li>
+</ul>
+
+<p>01-28-2017</p>
+
+<ul>
+<li>Unbanned bot access and made bot access restricted instead.  This allows search engines to crawl the stats page and get more clan/community attention while also restricting bot database performance impact to some slower features.</li>
+</ul>
+
 <p>1-07-2017:</p>
 
 <ul>
