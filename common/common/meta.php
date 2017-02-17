@@ -47,6 +47,27 @@ if(!empty($page))
 			';
 		}
 	}
+	elseif($page == 'bans')
+	{
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			echo '
+			<meta name="keywords" content="Ban,List,' . $ServerName . ',' . $clan_name . ',BF4,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 ' . $ServerName . ' Banned Players page." />
+			<title>' . $clan_name . ' BF4 Stats - Banned Players - ' . $ServerName . '</title>
+			';
+		}
+		// or else this is a combined stats page
+		else
+		{
+			echo '
+			<meta name="keywords" content="Ban,List,' . $clan_name . ',BF4,Stats" />
+			<meta name="description" content="This is our ' . $clan_name . ' BF4 global Banned Players page." />
+			<title>' . $clan_name . ' BF4 Stats - Banned Players - Global Stats</title>
+			';
+		}
+	}
 	elseif($page == 'leaders')
 	{
 		// if there is a ServerID, this is a server stats page

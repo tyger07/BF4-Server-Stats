@@ -49,6 +49,10 @@ if(!empty($page))
 	{
 		echo 'LEADERBOARD';
 	}
+	elseif($page == 'bans')
+	{
+		echo 'BAN LIST';
+	}
 	elseif($page == 'home')
 	{
 		echo 'HOME PAGE';

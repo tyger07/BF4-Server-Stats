@@ -40,20 +40,22 @@ echo '
 <table class="prettytable" style="width: 550px;">
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
+<span style="font-size: 12px;"><b>?sid=</b> : (required) server ID of this server (default: null)</span>
+</td>
+</tr>
+<tr>
+<td class="tablecontents" style="padding-left: 10px;">
 <span style="font-size: 12px;"><b>&amp;cc=</b> : (optional) two letter country code designator of server location flag (default: null)</span>
-</span>
 </td>
 </tr>
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
 <span style="font-size: 12px;"><b>&amp;h=</b> : (optional) height of image in pixels (default: 95)</span>
-</span>
 </td>
 </tr>
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
 <span style="font-size: 12px;"><b>&amp;w=</b> : (optional) width of image in pixels (default: 560)</span>
-</span>
 </td>
 </tr>
 </table>

@@ -4,8 +4,8 @@
 
 // include required files
 require_once('../../config/config.php');
-require_once('../functions.php');
 require_once('../connect.php');
+require_once('../functions.php');
 require_once('../constants.php');
 require_once('../case.php');
 // default variable to null
@@ -170,7 +170,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 {
 	// is the server providing recent stats properly?
 	// or is it possible that the game server, procon, or XpKiller's stats plugin has stopped?
-	if(@mysqli_num_rows($Scoreboard_q) > 4)
+	if(@mysqli_num_rows($Scoreboard_q) > 10)
 	{
 		$StatsLive_q = @mysqli_query($BF4stats,"
 			SELECT sub.`LastSeenOnServer`
@@ -185,7 +185,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 				AND tsp.`ServerID` = {$ServerID}
 			) sub ON sub.`SoldierName` = cp.`SoldierName`
 			WHERE cp.`ServerID` = {$ServerID}
-			AND sub.`LastSeenOnServer` > NOW() - INTERVAL 1 HOUR AND NOW()
+			AND sub.`LastSeenOnServer` > NOW() - INTERVAL 2 HOUR AND NOW()
 		");
 		// He’s dead, Jim.
 		if(@mysqli_num_rows($StatsLive_q) == 0)

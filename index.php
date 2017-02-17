@@ -13,19 +13,19 @@ echo '
 <meta http-equiv="imagetoolbar" content="no" />
 <meta name="resource-type" content="document" />
 <meta name="distribution" content="global" />
-<meta name="viewport" content="width=device-width, initial-scale=0.8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="Cache-Control" content="max-age=604800" />
-<meta name="copyright" content="2016 Ty_ger07 https://forum.myrcon.com/showthread.php?6854" />
+<meta name="copyright" content="2017 Ty_ger07 https://forum.myrcon.com/showthread.php?6854" />
 <link rel="icon" type="image/png" href="./favicon.ico" />
 <link rel="stylesheet" href="./common/stats.css" type="text/css" />
 <link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
 <script type="text/javascript" src="./common/javascript/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="./common/javascript/jquery-ui.js"></script>
 <script type="text/javascript">
-	$(window).scroll(function()
-	{
-		$("#menucontent").css("top",Math.max(0,142-$(this).scrollTop()));
-	});
+$(window).scroll(function()
+{
+	$("#menucontent").css("top",Math.max(0,142-$(this).scrollTop()));
+});
 </script>
 ';
 // hide php notices
@@ -234,7 +234,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	<div class="content-gradient"></div>
 	<div id="topcontent">
 	<div id="topbanner">
-	<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page 2016 Ty_ger07" border="0" /></a>
+	<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page 2017 Ty_ger07" border="0" /></a>
 	</div>
 	</div>
 	<div id="topmenu">
@@ -267,32 +267,44 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 		}
 		elseif($page == 'countries')
 		{
-			// include countries.php contents
+			// include countries.php contents through wrapper
 			require_once('./common/countries/wrapper.php');
 		}
 		elseif($page == 'maps')
 		{
-			// include maps.php contents
+			// include maps.php contents through wrapper
 			require_once('./common/maps/wrapper.php');
 		}
 		elseif($page == 'server')
 		{
-			// include serverstats.php contents
+			// include serverstats.php contents through wrapper
 			require_once('./common/server/wrapper.php');
 		}
 		elseif($page == 'chat')
 		{
-			// include chat.php contents
+			// include chat.php contents through wrapper
 			require_once('./common/chat/wrapper.php');
 		}
 		elseif($page == 'leaders')
 		{
-			// include leaders.php contents
+			// include leaders.php contents through wrapper
 			require_once('./common/leaders/wrapper.php');
+		}
+		elseif($page == 'bans')
+		{
+			if(!($isbot) && $adkats_available)
+			{
+				// include bans.php contents through wrapper
+				require_once('./common/bans/wrapper.php');
+			}
+			else
+			{
+				$page = 'home';
+			}
 		}
 		elseif($page == 'home')
 		{
-			// include home.php contents
+			// include home.php contents through wrapper
 			require_once('./common/home/home-wrapper.php');
 		}
 	}

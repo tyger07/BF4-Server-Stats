@@ -75,7 +75,15 @@ if(!empty($ServerID) || !empty($page))
 	{
 		echo 'elected';
 	}
-	echo '" style="width: 11%">
+	if(!($isbot) && $adkats_available)
+	{
+		echo '" style="width: 9%">';
+	}
+	else
+	{
+		echo '" style="width: 11%">';
+	}
+	echo '
 	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=home';
 	if(!empty($ServerID))
 	{
@@ -91,7 +99,15 @@ if(!empty($ServerID) || !empty($page))
 	{
 		echo 'elected';
 	}
-	echo '" style="width: 13%">
+	if(!($isbot) && $adkats_available)
+	{
+		echo '" style="width: 12%">';
+	}
+	else
+	{
+		echo '" style="width: 13%">';
+	}
+	echo '
 	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=leaders';
 	if(!empty($ServerID))
 	{
@@ -116,6 +132,25 @@ if(!empty($ServerID) || !empty($page))
 	echo '">Suspicious</a>
 	</div>
 	';
+	// bans column
+	if(!($isbot) && $adkats_available)
+	{
+		echo '
+		<div class="menuitems';
+		if($page == 'bans')
+		{
+			echo 'elected';
+		}
+		echo '" style="width: 9%">
+		<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=bans';
+		if(!empty($ServerID))
+		{
+			echo '&amp;sid=' . $ServerID;
+		}
+		echo '">Bans</a>
+		</div>
+		';
+	}
 	// chat column
 	echo '
 	<div class="menuitems';
@@ -123,7 +158,15 @@ if(!empty($ServerID) || !empty($page))
 	{
 		echo 'elected';
 	}
-	echo '" style="width: 11%">
+	if(!($isbot) && $adkats_available)
+	{
+		echo '" style="width: 9%">';
+	}
+	else
+	{
+		echo '" style="width: 11%">';
+	}
+	echo '
 	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=chat';
 	if(!empty($ServerID))
 	{
@@ -155,7 +198,15 @@ if(!empty($ServerID) || !empty($page))
 	{
 		echo 'elected';
 	}
-	echo '" style="width: 11%">
+	if(!($isbot) && $adkats_available)
+	{
+		echo '" style="width: 9%">';
+	}
+	else
+	{
+		echo '" style="width: 11%">';
+	}
+	echo '
 	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=maps';
 	if(!empty($ServerID))
 	{
@@ -171,7 +222,15 @@ if(!empty($ServerID) || !empty($page))
 	{
 		echo 'elected';
 	}
-	echo '" style="width: 13%">
+	if(!($isbot) && $adkats_available)
+	{
+		echo '" style="width: 11%">';
+	}
+	else
+	{
+		echo '" style="width: 13%">';
+	}
+	echo '
 	<a class="fill-div" href="' . $_SERVER['PHP_SELF'] . '?p=server';
 	if(!empty($ServerID))
 	{

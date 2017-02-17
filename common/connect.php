@@ -44,20 +44,10 @@ else
 }
 // merge server IDs array into a variable to use in combined server stats queries later
 $valid_ids = join(',',$ServerIDs);
+
 // is AdKats in this database?
 // set a default value
 $adkats_available = FALSE;
-// query to see if the adkats bans table exists
-$AdKats_q  = @mysqli_query($BF4stats,"
-	SELECT `TABLE_NAME`
-	FROM `INFORMATION_SCHEMA`.`TABLES`
-	WHERE `TABLE_SCHEMA` = '" . NAME . "'
-	AND `TABLE_NAME` = 'adkats_bans'
-");
-if(@mysqli_num_rows($AdKats_q) != 0)
-{
-	$adkats_available = TRUE;
-}
 
 // detect bots
 // set a default value
@@ -73,6 +63,17 @@ if(isset($_SERVER["HTTP_USER_AGENT"]))
 if(stripos($useragent, 'search') === false && stripos($useragent, 'seek') === false && stripos($useragent, 'fetch') === false && stripos($useragent, 'archiv') === false && stripos($useragent, 'spide') === false && stripos($useragent, 'validat') === false && stripos($useragent, 'analyze') === false && stripos($useragent, 'crawl') === false && stripos($useragent, 'robot') === false && stripos($useragent, 'track') === false && stripos($useragent, 'generat') === false && stripos($useragent, 'google') === false && stripos($useragent, 'bing') === false && stripos($useragent, 'msnbot') === false && stripos($useragent, 'yahoo') === false && stripos($useragent, 'facebook') === false && stripos($useragent, 'yandex') === false && stripos($useragent, 'alexa') === false)
 {
 	$isbot = FALSE;
+	// query to see if the adkats bans table exists
+	$AdKats_q  = @mysqli_query($BF4stats,"
+		SELECT `TABLE_NAME`
+		FROM `INFORMATION_SCHEMA`.`TABLES`
+		WHERE `TABLE_SCHEMA` = '" . NAME . "'
+		AND `TABLE_NAME` = 'adkats_bans'
+	");
+	if(@mysqli_num_rows($AdKats_q) != 0)
+	{
+		$adkats_available = TRUE;
+	}
 }
 else
 {

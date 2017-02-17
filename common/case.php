@@ -32,6 +32,9 @@ if(!empty($_GET['p']))
 		case 'home':
 			$page = 'home';
 			break;
+		case 'bans':
+			$page = 'bans';
+			break;
 		default:
 			$page = 'home';
 	}

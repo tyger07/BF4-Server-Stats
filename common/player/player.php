@@ -92,11 +92,12 @@ elseif($SoldierName != null)
 			if($adkats_available)
 			{
 				$PlayerData_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`, adk.`ban_status`
+					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`, adk.`ban_status`, abr.`record_message`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 					LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+					LEFT JOIN `adkats_records_main` abr ON abr.`record_id` = adk.`latest_record_id`
 					WHERE tsp.`ServerID` = {$ServerID}
 					AND tpd.`PlayerID` = {$PlayerID}
 					AND tpd.`GameID` = {$GameID}
@@ -122,11 +123,12 @@ elseif($SoldierName != null)
 			if($adkats_available)
 			{
 				$PlayerData_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer, adk.`ban_status`
+					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer, adk.`ban_status`, abr.`record_message`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
 					LEFT JOIN `adkats_bans` adk ON adk.`player_id` = tpd.`PlayerID`
+					LEFT JOIN `adkats_records_main` abr ON abr.`record_id` = adk.`latest_record_id`
 					WHERE tpd.`PlayerID` = {$PlayerID}
 					AND tpd.`GameID` = {$GameID}
 					AND tsp.`ServerID` IN ({$valid_ids})
@@ -455,9 +457,11 @@ elseif($SoldierName != null)
 		// or have previous ban which was lifted?
 		$player_banned = 0;
 		$previous_banned = 0;
+		$ban_reason = NULL;
 		if($adkats_available)
 		{
 			$ban_status = $PlayerData_r['ban_status'];
+			$ban_reason = textcleaner($PlayerData_r['record_message']);
 			if(!is_null($ban_status))
 			{
 				if($ban_status == 'Active')
@@ -474,7 +478,13 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<div class="banoutline">
-			<div style="position: absolute; color: #990000; margin: 4px;">Banned</div>
+			<div style="position: absolute; color: #990000; margin: 4px;">Banned';
+			if(!empty($ban_reason))
+			{
+				echo '<span style="font-size: 10px;">: ' . $ban_reason . '</span>';
+			}
+			echo '
+			</div>
 			<div class="headline">
 			' . ucfirst($SoldierName) . '
 			</div>
@@ -485,7 +495,13 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<div class="warnoutline">
-			<div style="position: absolute; color: #993300; margin: 4px;">Warned</div>
+			<div style="position: absolute; color: #993300; margin: 4px;">Warned';
+			if(!empty($ban_reason))
+			{
+				echo '<span style="font-size: 10px;">: ' . $ban_reason . '</span>';
+			}
+			echo '
+			</div>
 			<div class="headline">
 			' . ucfirst($SoldierName) . '
 			</div>

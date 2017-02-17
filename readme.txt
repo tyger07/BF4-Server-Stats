@@ -108,6 +108,10 @@ Enjoy!
 
 ## Changelog:
 
+02-16-2017
+- When using AdKats and when not a bot: Add ban reason to player page
+- When using AdKats and when not a bot: Add ban list page displaying all banned players and ban reasons
+
 02-11-2017
 - Free up the top 142px of the page when scrolling down.
 
