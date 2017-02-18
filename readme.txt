@@ -108,6 +108,9 @@ Enjoy!
 
 ## Changelog:
 
+02-18-2017
+- When using AdKats, the first (default) page of the leaderboard now loads slightly faster and uses less database connections
+
 02-16-2017
 - When using AdKats and when not a bot: Add ban reason to player page
 - When using AdKats and when not a bot: Add ban list page displaying all banned players and ban reasons

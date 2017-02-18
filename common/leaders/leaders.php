@@ -336,6 +336,31 @@ $count = ($currentpage * 20) - 20;
 // check if there are rows returned
 if(@mysqli_num_rows($Players_q) != 0)
 {
+	// if this is the default first page, we don't know the ban information yet because the cache doesn't store that information
+	// we do this now so that we can query for ban information only once instead of doing it in the while loop 20 times (once for all players now instead of once for each player later)
+	if($rank == 'Score' && $order == 'DESC' && $offset == '0')
+	{
+		if($adkats_available)
+		{
+			// create an intermediate array to store values in
+			$pid_array = array();
+			// while there are rows to be fetched...
+			while($Players_r = @mysqli_fetch_assoc($Players_q))
+			{
+				$pid_array[] = $Players_r['PlayerID'];
+			}
+			// merge the array into a list
+			$pid_list = join(',',$pid_array);
+			// set the pointer back to the beginning of the player query result array (so that we can loop through it again further down)
+			@mysqli_data_seek($Players_q, 0);
+			// now query for all banned player information for the pids we just gathered
+			$Ban_q  = @mysqli_query($BF4stats,"
+				SELECT `player_id`, `ban_status`
+				FROM `adkats_bans`
+				WHERE `player_id` IN ({$pid_list})
+			");
+		}
+	}
 	echo '
 	<table class="prettytable">
 	<tr>
@@ -405,28 +430,33 @@ if(@mysqli_num_rows($Players_q) != 0)
 		// or have previous ban which was lifted?
 		$player_banned = 0;
 		$previous_banned = 0;
-		// if this is the default first page, we don't know the answer yet because the cache doesn't store this information
+		// if this is the default first page, we had to use the alternate method of finding out ban information because the top 20 cache doesn't contain that information
 		if($rank == 'Score' && $order == 'DESC' && $offset == '0')
 		{
 			if($adkats_available)
 			{
-				$Ban_q  = @mysqli_query($BF4stats,"
-					SELECT `ban_status`
-					FROM `adkats_bans`
-					WHERE `player_id` = {$PlayerID}
-				");
-				if(@mysqli_num_rows($Ban_q) == 1)
+				// find if this player has any ban information
+				if(@mysqli_num_rows($Ban_q) != 0)
 				{
-					$Ban_r = @mysqli_fetch_assoc($Ban_q);
-					$Ban_Status = $Ban_r['ban_status'];
-					if($Ban_Status == 'Active')
+					while($Ban_r = @mysqli_fetch_assoc($Ban_q))
 					{
-						$player_banned = 1;
+						$Ban_Status = $Ban_r['ban_status'];
+						$Ban_pid = $Ban_r['player_id'];
+						if($PlayerID == $Ban_pid)
+						{
+							if($Ban_Status == 'Active')
+							{
+								$player_banned = 1;
+							}
+							elseif($Ban_Status == 'Expired')
+							{
+								$previous_banned = 1;
+							}
+							break;
+						}
 					}
-					elseif($Ban_Status == 'Expired')
-					{
-						$previous_banned = 1;
-					}
+					// set the pointer back to the beginning of the ban query result array (so that we can loop through it again)
+					@mysqli_data_seek($Ban_q, 0);
 				}
 			}
 		}
