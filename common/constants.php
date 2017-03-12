@@ -14,6 +14,7 @@ $mode_array = array(
 	'Conquest Large'			=>	'ConquestLarge0',
 	'Conquest Small'			=>	'ConquestSmall0',
 	'Squad Deathmatch'			=>	'SquadDeathMatch0',
+	'Gun Master'				=>	'GunMaster0',
 	// china rising
 	'Air Superiority'			=>	'AirSuperiority0',
 	// second assault
