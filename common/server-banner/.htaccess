@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^(.*)\.png $1.php [NC]
+RewriteRule ^(.*)\.png $1.php?%{QUERY_STRING} [QSA,NC,L]
