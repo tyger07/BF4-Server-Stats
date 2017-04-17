@@ -71,7 +71,7 @@ else
 	$mapcount = 0;
 	echo '
 	<script type="text/javascript" src="http';
-	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
+	if(isset($_SERVER['HTTPS']))
 	{
 		echo 's';
 	}
