@@ -70,7 +70,12 @@ else
 	$count = 0;
 	$mapcount = 0;
 	echo '
-	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="http';
+	if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
+	{
+		echo 's';
+	}
+	echo '://www.google.com/jsapi"></script>
 	<script type="text/javascript">
 		google.load(\'visualization\', \'1\', {packages: [\'geochart\']});
 		function drawVisualization()
