@@ -14,7 +14,6 @@ require_once('../constants.php');
 if(extension_loaded('gd') && function_exists('gd_info'))
 {
 	// we will need a server ID from the URL query string!
-	// if no data query string is provided, this is an image
 	if(!empty($sid) && in_array($sid,$ServerIDs))
 	{
 		// build graph using pChart API
