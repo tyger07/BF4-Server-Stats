@@ -1,2 +1,4 @@
 RewriteEngine on
-RewriteRule ^(.*)\.png $1.php [NC,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)(pid)(.*\d)(fav)(.*\d)(.*) $1.php?$2=$3&$4=$5 [QSA,NC,L]
+RewriteRule ^(.*)\.png $1.php [NC]

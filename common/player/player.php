@@ -1263,14 +1263,14 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./common/signature/signature.png?pid=' . $PlayerID . '" style="height: 100px; width: 400px;" alt="signature" /></a>
+			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav0.png" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signature.png?pid=' . $PlayerID . '[/IMG][/URL]</span>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png[/IMG][/URL]</span>
 			</td>
 			</tr>
 			</table>
@@ -1280,14 +1280,14 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<a href="' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '" target="_blank"><img src="./common/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1" style="height: 100px; width: 400px;" alt="signature" /></a>
+			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav1.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav1.png" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signature.png?pid=' . $PlayerID . '&amp;fav=1[/IMG][/URL]</span>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav1.png[/IMG][/URL]</span>
 			</td>
 			</tr>
 			</table>

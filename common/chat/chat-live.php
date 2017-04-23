@@ -640,7 +640,7 @@ if(!($isbot))
 				{
 					$link .= 'sid=' . $ServerID . '&amp;';
 				}
-				$playerlink = $link . 'pid=' . $PlayerID . '&amp;p=player';
+				$playerlink = $link . 'q=' . urlencode($logSoldierName) . '&amp;p=chat';
 				$datelink = $link . 'q=' . urlencode($logDate) . '&amp;p=chat';
 			}
 			// this player needs to finish this round to get server stats in this server

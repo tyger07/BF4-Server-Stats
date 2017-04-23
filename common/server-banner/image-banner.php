@@ -242,7 +242,10 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				// try API
 				$json = @file_get_contents('http://ip-api.com/json/' . $server_ip);
 				$data = @json_decode($json,true);
-				$location = $data['countryCode'];
+				if($data['status'] == 'success')
+				{
+					$location = $data['countryCode'];
+				}
 				// if above API failed ...
 				// use less accurate method by querying database for players with similar IP address as Server's IP address
 				if($location == '')
@@ -262,9 +265,16 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 						$server_ip = substr($server_ip, 0, -1);
 						// continuing to do broader and broader search with each pass...
 					}
-					// set the variable based on results of above query loop
-					$Location_r = @mysqli_fetch_assoc($Location_q);
-					$location = strtoupper($Location_r['CountryCode']);
+					if(@mysqli_num_rows($Location_q) != 0)
+					{
+						// set the variable based on results of above query loop
+						$Location_r = @mysqli_fetch_assoc($Location_q);
+						$location = strtoupper($Location_r['CountryCode']);
+					}
+					else
+					{
+						$location = '--';
+					}
 					$fallback = 1;
 					// add those characters back to $server_ip
 					$server_ip = $s_explode[0];

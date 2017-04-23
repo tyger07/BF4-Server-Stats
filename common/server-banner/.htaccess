@@ -1,2 +1,4 @@
 RewriteEngine on
-RewriteRule ^(.*)\.png $1.php [NC,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)(sid)(.*\d)(.*) $1.php?$2=$3 [QSA,NC,L]
+RewriteRule ^(.*)\.png $1.php [NC]
