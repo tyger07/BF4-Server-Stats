@@ -50,11 +50,11 @@ $clan_name = 'Ty_ger07\'s Clan';
 For example:
 
 // DATABASE INFORMATION
-DEFINE('HOST', '100.200.300.400');									// database host address
-DEFINE('PORT', '3306');												// database port - default is 3306
-DEFINE('NAME', 'database');											// database name
-DEFINE('USER', 'user');												// database user name - sometimes the same as the database name
-DEFINE('PASS', 'pass');												// database password
+DEFINE('HOST', '100.200.300.400');  // database host address
+DEFINE('PORT', '3306');             // database port - default is 3306
+DEFINE('NAME', 'database');         // database name
+DEFINE('USER', 'user');							// database user name - sometimes the same as the database name
+DEFINE('PASS', 'pass');							// database password
 
 Note: Some web server providers use the same value for database name and database user name.
 
@@ -63,17 +63,17 @@ Note: Some web server providers use the same value for database name and databas
 
 For example:
 
-$clan_name = 'MyClan';												// your gaming clan or organization name
+$clan_name = 'MyClan';              // your gaming clan or organization name
 
 
 **3)** Input your desired banner image URL if you want one other than the default banner image to be displayed.
 
-$banner_image = './images/bf4-logo.png';							// your desired page banner
+$banner_image = './images/bf4-logo.png';  // your desired page banner
 
 
 **4)** Enter the URL which you would like users to redirect to when they click your banner image.
 
-$banner_url = 'http://tyger07.github.io/BF4-Server-Stats/';			// where clicking the banner will take you
+$banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
 
 
 ## Additional Information
