@@ -424,10 +424,15 @@ else
 	// check to see if denied table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `count` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`category` VARCHAR(20) NOT NULL,
+			`count` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_DeniedData` (`category`),
+			INDEX `category` (`category` ASC)
+		)
+		ENGINE=InnoDB
 	");
 	// count number of browsers recorded
 	$TotalDenied_q = @mysqli_query($BF4stats,"
