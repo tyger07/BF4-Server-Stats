@@ -1193,7 +1193,7 @@ elseif($SoldierName != null)
 			");
 			// initialize timestamp values
 			$now_timestamp = time();
-			$old = $now_timestamp - 43200;
+			$old = $now_timestamp - 10800;
 			// rank players by score
 			// check if score rank is already cached
 			$ScoreC_q = @mysqli_query($BF4stats,"
