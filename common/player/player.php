@@ -1171,10 +1171,25 @@ elseif($SoldierName != null)
 			// check to see if this rank cache table exists
 			@mysqli_query($BF4stats,"
 				CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-				(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
-				ENGINE=MyISAM
-				DEFAULT CHARSET=utf8
-				COLLATE=utf8_bin
+				(
+					`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+					`PlayerID` INT(10) UNSIGNED NOT NULL,
+					`GID` TINYINT(4) UNSIGNED NOT NULL,
+					`SID` VARCHAR(100) NOT NULL,
+					`category` VARCHAR(20) NOT NULL,
+					`rank` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+					`timestamp` INT(11) NOT NULL DEFAULT '0',
+					PRIMARY KEY (`ID`),
+					UNIQUE `UNIQUE_RankData` (`PlayerID`, `GID`, `SID`, `category`),
+					INDEX `PlayerID` (`PlayerID` ASC),
+					INDEX `GID` (`GID` ASC),
+					INDEX `SID` (`SID` ASC),
+					INDEX `category` (`category` ASC),
+					INDEX `timestamp` (`timestamp` ASC),
+					CONSTRAINT `fk_tyger_stats_rank_cache_PlayerID` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_playerdata`(`PlayerID`) ON DELETE CASCADE ON UPDATE CASCADE,
+					CONSTRAINT `fk_tyger_stats_rank_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+				)
+				ENGINE=InnoDB
 			");
 			// initialize timestamp values
 			$now_timestamp = time();
