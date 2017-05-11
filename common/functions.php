@@ -280,7 +280,7 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 43200;
+	$old = $now_timestamp - 10800;
 	// this is a combined stats page
 	if(empty($ServerID))
 	{
@@ -1715,7 +1715,7 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 43200;
+	$old = $now_timestamp - 10800;
 	// check to see if player count is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -1924,7 +1924,7 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 43200;
+	$old = $now_timestamp - 10800;
 	// check to see if player count is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -2342,7 +2342,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 43200;
+	$old = $now_timestamp - 10800;
 	// check to see if top 20 is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
