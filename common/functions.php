@@ -1512,17 +1512,16 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 		// if they are, slow them down
 		$time_row = @mysqli_fetch_assoc($exist_query);
 		$previous_session_time = $time_row['timestamp'];
-		// previous request was more than 1 second ago, but less than or equal to 2 seconds ago
 		// just slow them down
-		if(($now_timestamp - $previous_session_time <= 2) && ($now_timestamp - $previous_session_time > 1))
+		if(($now_timestamp - $previous_session_time < 2) && ($now_timestamp - $previous_session_time >= 1))
 		{
 			// sleep for a period of time
 			sleep(1);
 			$now_timestamp = time();
 		}
-		// previous request was less than or equal to a second ago
+		// previous request was less than a second ago
 		// kill this request and make them create a new request
-		elseif($now_timestamp - $previous_session_time <= 1)
+		elseif($now_timestamp - $previous_session_time < 1)
 		{
 			// deliberate attack?
 			// kill it
