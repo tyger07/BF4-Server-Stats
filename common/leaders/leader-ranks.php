@@ -27,7 +27,7 @@
 ");
 // initialize timestamp values
 $now_timestamp = time();
-$old = $now_timestamp - 43200;
+$old = $now_timestamp - 10800;
 if($rank == 'SoldierName')
 {
 	if(!empty($ServerID))
