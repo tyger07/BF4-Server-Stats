@@ -258,10 +258,25 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 	// check to see if this rank cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_rank_cache`
-		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `rank` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`PlayerID` INT(10) UNSIGNED NOT NULL,
+			`GID` TINYINT(4) UNSIGNED NOT NULL,
+			`SID` VARCHAR(100) NOT NULL,
+			`category` VARCHAR(20) NOT NULL,
+			`rank` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+			`timestamp` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_RankData` (`PlayerID`, `GID`, `SID`, `category`),
+			INDEX `PlayerID` (`PlayerID` ASC),
+			INDEX `GID` (`GID` ASC),
+			INDEX `SID` (`SID` ASC),
+			INDEX `category` (`category` ASC),
+			INDEX `timestamp` (`timestamp` ASC),
+			CONSTRAINT `fk_tyger_stats_rank_cache_PlayerID` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_playerdata`(`PlayerID`) ON DELETE CASCADE ON UPDATE CASCADE,
+			CONSTRAINT `fk_tyger_stats_rank_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+		)
+		ENGINE=InnoDB
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
@@ -1101,10 +1116,22 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 		// check to see if this count cache table exists
 		@mysqli_query($BF4stats,"
 			CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-			(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-			ENGINE=MyISAM
-			DEFAULT CHARSET=utf8
-			COLLATE=utf8_bin
+			(
+				`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`category` VARCHAR(20) NOT NULL,
+				`GID` TINYINT(4) UNSIGNED NOT NULL,
+				`SID` VARCHAR(100) NOT NULL,
+				`value` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+				`timestamp` INT(11) NOT NULL DEFAULT '0',
+				PRIMARY KEY (`ID`),
+				UNIQUE `UNIQUE_CountData` (`category`, `GID`, `SID`),
+				INDEX `category` (`category` ASC),
+				INDEX `GID` (`GID` ASC),
+				INDEX `SID` (`SID` ASC),
+				INDEX `timestamp` (`timestamp` ASC),
+				CONSTRAINT `fk_tyger_stats_count_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+			)
+			ENGINE=InnoDB
 		");
 		// check to see if player count is already cached
 		$TotalRowsC_q = @mysqli_query($BF4stats,"
@@ -1438,10 +1465,21 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 	// check to see if the session table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_sessions`
-		(`IP` VARCHAR(45) NULL DEFAULT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`IP`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`IP` VARCHAR(45) NULL DEFAULT NULL,
+			`GID` TINYINT(4) UNSIGNED NOT NULL,
+			`SID` VARCHAR(100) NOT NULL,
+			`timestamp` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_SessionData` (`IP`, `GID`, `SID`),
+			INDEX `IP` (`IP` ASC),
+			INDEX `GID` (`GID` ASC),
+			INDEX `SID` (`SID` ASC),
+			INDEX `timestamp` (`timestamp` ASC),
+			CONSTRAINT `fk_tyger_stats_sessions_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+		)
+		ENGINE=InnoDB
 	");
 	// initialize values
 	$now_timestamp = time();
@@ -1558,10 +1596,15 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 		// check to see if denied table exists
 		@mysqli_query($BF4stats,"
 			CREATE TABLE IF NOT EXISTS `tyger_stats_denied`
-			(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `count` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-			ENGINE=MyISAM
-			DEFAULT CHARSET=utf8
-			COLLATE=utf8_bin
+			(
+				`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`category` VARCHAR(20) NOT NULL,
+				`count` INT(11) NOT NULL DEFAULT '0',
+				PRIMARY KEY (`ID`),
+				UNIQUE `UNIQUE_DeniedData` (`category`),
+				INDEX `category` (`category` ASC)
+			)
+			ENGINE=InnoDB
 		");
 		// update bot stats if this is a bot viewing
 		if($isbot)
@@ -1653,10 +1696,22 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this count cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`category` VARCHAR(20) NOT NULL,
+			`GID` TINYINT(4) UNSIGNED NOT NULL,
+			`SID` VARCHAR(100) NOT NULL,
+			`value` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+			`timestamp` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_CountData` (`category`, `GID`, `SID`),
+			INDEX `category` (`category` ASC),
+			INDEX `GID` (`GID` ASC),
+			INDEX `SID` (`SID` ASC),
+			INDEX `timestamp` (`timestamp` ASC),
+			CONSTRAINT `fk_tyger_stats_count_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+		)
+		ENGINE=InnoDB
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
@@ -1850,10 +1905,22 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this count cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`category` VARCHAR(20) NOT NULL,
+			`GID` TINYINT(4) UNSIGNED NOT NULL,
+			`SID` VARCHAR(100) NOT NULL,
+			`value` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+			`timestamp` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_CountData` (`category`, `GID`, `SID`),
+			INDEX `category` (`category` ASC),
+			INDEX `GID` (`GID` ASC),
+			INDEX `SID` (`SID` ASC),
+			INDEX `timestamp` (`timestamp` ASC),
+			CONSTRAINT `fk_tyger_stats_count_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+		)
+		ENGINE=InnoDB
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
@@ -2051,10 +2118,22 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this count cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-		(`category` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `value` INT(10) UNSIGNED NOT NULL DEFAULT '0', `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`category`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`category` VARCHAR(20) NOT NULL,
+			`GID` TINYINT(4) UNSIGNED NOT NULL,
+			`SID` VARCHAR(100) NOT NULL,
+			`value` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+			`timestamp` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_CountData` (`category`, `GID`, `SID`),
+			INDEX `category` (`category` ASC),
+			INDEX `GID` (`GID` ASC),
+			INDEX `SID` (`SID` ASC),
+			INDEX `timestamp` (`timestamp` ASC),
+			CONSTRAINT `fk_tyger_stats_count_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+		)
+		ENGINE=InnoDB
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
@@ -2237,10 +2316,29 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 	// check to see if this top twenty cache table exists
 	@mysqli_query($BF4stats,"
 		CREATE TABLE IF NOT EXISTS `tyger_stats_top_twenty_cache`
-		(`PlayerID` INT(10) UNSIGNED NOT NULL, `GID` INT(11) NOT NULL DEFAULT '0', `SID` VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `SoldierName` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `Score` INT(11) NOT NULL DEFAULT '0', `Kills` INT(11) NOT NULL DEFAULT '0', `KDR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `HSR` VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL, `timestamp` INT(11) NOT NULL DEFAULT '0', INDEX (`PlayerID`, `SID`))
-		ENGINE=MyISAM
-		DEFAULT CHARSET=utf8
-		COLLATE=utf8_bin
+		(
+			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+			`PlayerID` INT(10) UNSIGNED NOT NULL,
+			`GID` TINYINT(4) UNSIGNED NOT NULL,
+			`SID` VARCHAR(100) NOT NULL,
+			`SoldierName` VARCHAR(45) NOT NULL,
+			`Score` INT(11) NOT NULL DEFAULT '0',
+			`Kills` INT(11) NOT NULL DEFAULT '0',
+			`KDR` VARCHAR(20) NOT NULL,
+			`HSR` VARCHAR(20) NOT NULL,
+			`timestamp` INT(11) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`ID`),
+			UNIQUE `UNIQUE_TopTwentyData` (`PlayerID`, `GID`, `SID`),
+			INDEX `PlayerID` (`PlayerID` ASC),
+			INDEX `GID` (`GID` ASC),
+			INDEX `SID` (`SID` ASC),
+			INDEX `SoldierName` (`SoldierName` ASC),
+			INDEX `Score` (`Score` ASC),
+			INDEX `timestamp` (`timestamp` ASC),
+			CONSTRAINT `fk_tyger_stats_top_twenty_cache_PlayerID` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_playerdata`(`PlayerID`) ON DELETE CASCADE ON UPDATE CASCADE,
+			CONSTRAINT `fk_tyger_stats_top_twenty_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+		)
+		ENGINE=InnoDB
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
