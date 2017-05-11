@@ -283,7 +283,7 @@ $count = 0;
 // use faster query if top 20 cache is available
 // initialize timestamp values
 $now_timestamp = time();
-$old = $now_timestamp - 43200;
+$old = $now_timestamp - 10800;
 // check if this is a top 20 player
 // if so, we can get their score rank much faster
 $Score_q = @mysqli_query($BF4stats,"
