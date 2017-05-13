@@ -327,7 +327,7 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 		$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
 		$srank = $ScoreC_r['rank'];
 		$timestamp = $ScoreC_r['timestamp'];
-		// data older than 12 hours? or incorrect data? recalculate
+		// data old or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($srank == 0))
 		{
 			// check if this is a top 20 player
@@ -694,7 +694,7 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 		$KDRC_r = @mysqli_fetch_assoc($KDRC_q);
 		$kdrrank = $KDRC_r['rank'];
 		$timestamp = $KDRC_r['timestamp'];
-		// data older than 12 hours? or incorrect data? recalculate
+		// data old or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($kdrrank == 0))
 		{
 			// rank players by kdr
@@ -891,7 +891,7 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 		$KillsC_r = @mysqli_fetch_assoc($KillsC_q);
 		$killsrank = $KillsC_r['rank'];
 		$timestamp = $KillsC_r['timestamp'];
-		// data older than 12 hours? or incorrect data? recalculate
+		// data old or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($killsrank == 0))
 		{
 			// rank players by kills
@@ -1147,7 +1147,7 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 			$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 			$Players = $TotalRowsC_r['value'];
 			$timestamp = $TotalRowsC_r['timestamp'];
-			// data older than 12 hours? or incorrect data? recalculate
+			// data old or incorrect data? recalculate
 			if(($timestamp <= $old) OR ($Players == 0))
 			{
 				// find out how many rows are in the table
@@ -1744,7 +1744,7 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 		$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 		$total_players = $TotalRowsC_r['value'];
 		$timestamp = $TotalRowsC_r['timestamp'];
-		// data older than 12 hours? or incorrect data? recalculate
+		// data old or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($total_players == 0))
 		{
 			// find out how many rows are in the table
@@ -1953,7 +1953,7 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 		$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
 		$numrows = $TotalRowsC_r['value'];
 		$timestamp = $TotalRowsC_r['timestamp'];
-		// data older than 12 hours? or incorrect data? recalculate
+		// data old or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($numrows == 0))
 		{
 			// find out how many rows are in the table
@@ -2369,7 +2369,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 			ORDER BY `Score` DESC, `SoldierName` ASC
 		");
 	}
-	// if cached and data is newer than 12 hours old...
+	// if cached and data is new enough...
 	if(@mysqli_num_rows($TopC_q) != 0)
 	{
 		echo '
