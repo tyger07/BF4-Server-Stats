@@ -128,7 +128,7 @@ if(!($isbot))
 		}
 		else
 		{
-			if(!empty($order) && $order == ASC)
+			if(!empty($order) && $order == 'ASC')
 			{
 				echo '
 				Message dated: <span class="information">' . date("H:i F j, Y",strtotime($low)) . '</span> through <span class="information">' . date("H:i F j, Y",strtotime($high)) . '</span>
