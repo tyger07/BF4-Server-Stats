@@ -195,190 +195,48 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// initialize timestamp values
 			$now_timestamp = time();
 			$old = $now_timestamp - 10800;
-			// rank players by score
-			// check if score rank is already cached
+			// check if this player has a recent enough cached rank
+			// if so, we can get their score rank much faster from the cache
 			$ScoreC_q = @mysqli_query($BF4stats,"
-				SELECT `rank`, `timestamp`
+				SELECT `rank`
 				FROM `tyger_stats_rank_cache`
 				WHERE `PlayerID` = {$PlayerID}
 				AND `category` = 'Score'
 				AND `GID` = '{$GameID}'
 				AND `SID` = '{$valid_ids}'
+				AND `timestamp` >= '{$old}'
 				GROUP BY `PlayerID`
 			");
-			if(@mysqli_num_rows($ScoreC_q) != 0)
+			// if no recent results, do the slower query from live stats
+			if(@mysqli_num_rows($ScoreC_q) == 0)
 			{
-				$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
-				$srank = $ScoreC_r['rank'];
-				$timestamp = $ScoreC_r['timestamp'];
-				// data older than 12 hours? or incorrect data? recalculate
-				if(($timestamp <= $old) OR ($srank == 0))
-				{
-					// check if this is a top 20 player
-					// if so, we can get their score rank much faster
-					$Top_q = @mysqli_query($BF4stats,"
-						SELECT `PlayerID`
-						FROM `tyger_stats_top_twenty_cache`
-						WHERE `SID` = '{$valid_ids}'
-						AND `GID` = '{$GameID}'
-						AND `timestamp` >= '{$old}'
-						AND `PlayerID` = {$PlayerID}
-					");
-					if(@mysqli_num_rows($Top_q) != 0)
-					{
-						// rank players by score
-						$Score_q = @mysqli_query($BF4stats,"
-							SELECT sub2.rank
-							FROM
-								(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
-								 FROM
-									(SELECT `PlayerID`
-									FROM `tyger_stats_top_twenty_cache`
-									INNER JOIN (SELECT @num := 0) x
-									WHERE `SID` = '{$valid_ids}'
-									AND `GID` = '{$GameID}'
-									AND `timestamp` >= '{$old}'
-									GROUP BY `PlayerID`
-									ORDER BY `Score` DESC, `SoldierName` ASC
-									) sub
-								) sub2
-							WHERE sub2.`PlayerID` = {$PlayerID}
-						");
-						if(@mysqli_num_rows($Score_q) == 1)
-						{
-							$Score_r = @mysqli_fetch_assoc($Score_q);
-							$srank = $Score_r['rank'];
-						}
-						else
-						{
-							$srank = 0;
-						}
-					}
-					// not in top 20
-					// have to do slow query
-					else
-					{
-						// rank players by score
-						$Score_q = @mysqli_query($BF4stats,"
-							SELECT sub2.rank
-							FROM
-								(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
-								 FROM
-									(SELECT tpd.`PlayerID`
-									FROM `tbl_playerdata` tpd
-									INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-									INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-									INNER JOIN (SELECT @num := 0) x
-									WHERE tpd.`GameID` = {$GameID}
-									AND tsp.`ServerID` IN ({$valid_ids})
-									GROUP BY tpd.`PlayerID`
-									ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
-									) sub
-								) sub2
-							WHERE sub2.`PlayerID` = {$PlayerID}
-						");
-						if(@mysqli_num_rows($Score_q) == 1)
-						{
-							$Score_r = @mysqli_fetch_assoc($Score_q);
-							$srank = $Score_r['rank'];
-						}
-						else
-						{
-							$srank = 0;
-						}
-					}
-					// update old data in database
-					@mysqli_query($BF4stats,"
-						UPDATE `tyger_stats_rank_cache`
-						SET `rank` = '{$srank}', `timestamp` = '{$now_timestamp}'
-						WHERE `category` = 'Score'
-						AND `SID` = '{$valid_ids}'
-						AND `GID` = '{$GameID}'
-						AND `PlayerID` = {$PlayerID}
-					");
-				}
+				$ScoreC_q = @mysqli_query($BF4stats,"
+					SELECT sub2.rank
+					FROM
+						(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
+						 FROM
+							(SELECT tpd.`PlayerID`
+							FROM `tbl_playerdata` tpd
+							INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+							INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+							INNER JOIN (SELECT @num := 0) x
+							WHERE tpd.`GameID` = {$GameID}
+							AND tsp.`ServerID` IN ({$valid_ids})
+							GROUP BY tpd.`PlayerID`
+							ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
+							) sub
+						) sub2
+					WHERE sub2.`PlayerID` = {$PlayerID}
+				");
+			}
+			if(@mysqli_num_rows($ScoreC_q) == 1)
+			{
+				$Score_r = @mysqli_fetch_assoc($ScoreC_q);
+				$srank = $Score_r['rank'];
 			}
 			else
 			{
-				// check if this is a top 20 player
-				// if so, we can get their score rank much faster
-				$Top_q = @mysqli_query($BF4stats,"
-					SELECT `PlayerID`
-					FROM `tyger_stats_top_twenty_cache`
-					WHERE `SID` = '{$valid_ids}'
-					AND `GID` = '{$GameID}'
-					AND `timestamp` >= '{$old}'
-					AND `PlayerID` = {$PlayerID}
-				");
-				if(@mysqli_num_rows($Top_q) != 0)
-				{
-					// rank players by score
-					$Score_q = @mysqli_query($BF4stats,"
-						SELECT sub2.rank
-						FROM
-							(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
-							 FROM
-								(SELECT `PlayerID`
-								FROM `tyger_stats_top_twenty_cache`
-								INNER JOIN (SELECT @num := 0) x
-								WHERE `SID` = '{$valid_ids}'
-								AND `GID` = '{$GameID}'
-								AND `timestamp` >= '{$old}'
-								GROUP BY `PlayerID`
-								ORDER BY `Score` DESC, `SoldierName` ASC
-								) sub
-							) sub2
-						WHERE sub2.`PlayerID` = {$PlayerID}
-					");
-					if(@mysqli_num_rows($Score_q) == 1)
-					{
-						$Score_r = @mysqli_fetch_assoc($Score_q);
-						$srank = $Score_r['rank'];
-					}
-					else
-					{
-						$srank = 0;
-					}
-				}
-				// not in top 20
-				// have to do slow query
-				else
-				{
-					// rank players by score
-					$Score_q = @mysqli_query($BF4stats,"
-						SELECT sub2.rank
-						FROM
-							(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
-							 FROM
-								(SELECT tpd.`PlayerID`
-								FROM `tbl_playerdata` tpd
-								INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-								INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-								INNER JOIN (SELECT @num := 0) x
-								WHERE tpd.`GameID` = {$GameID}
-								AND tsp.`ServerID` IN ({$valid_ids})
-								GROUP BY tpd.`PlayerID`
-								ORDER BY SUM(tps.`Score`) DESC, tpd.`SoldierName` ASC
-								) sub
-							) sub2
-						WHERE sub2.`PlayerID` = {$PlayerID}
-					");
-					if(@mysqli_num_rows($Score_q) == 1)
-					{
-						$Score_r = @mysqli_fetch_assoc($Score_q);
-						$srank = $Score_r['rank'];
-					}
-					else
-					{
-						$srank = 0;
-					}
-				}
-				// add this data to the cache
-				@mysqli_query($BF4stats,"
-					INSERT INTO `tyger_stats_rank_cache`
-					(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
-					VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '{$srank}', '{$now_timestamp}')
-				");
+				$srank = 'error';
 			}
 			// count total combined players
 			// check to see if this count cache table exists
@@ -401,59 +259,19 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				)
 				ENGINE=InnoDB
 			");
-			// initialize timestamp values
-			$now_timestamp = time();
-			$old = $now_timestamp - 10800;
 			// check to see if player count is already cached
 			$TotalRowsC_q = @mysqli_query($BF4stats,"
-				SELECT DISTINCT(`value`) AS value, `timestamp`
+				SELECT DISTINCT(`value`) AS count
 				FROM `tyger_stats_count_cache`
 				WHERE `category` = 'total_players'
 				AND `SID` = '{$valid_ids}'
 				AND `GID` = '{$GameID}'
+				AND `timestamp` >= '{$old}'
 			");
-			// if cached...
-			if(@mysqli_num_rows($TotalRowsC_q) != 0)
+			// if no recent results, do the slower query from live stats
+			if(@mysqli_num_rows($TotalRowsC_q) == 0)
 			{
-				$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
-				$total_players = $TotalRowsC_r['value'];
-				$timestamp = $TotalRowsC_r['timestamp'];
-				// data older than 12 hours? or incorrect data? recalculate
-				if(($timestamp <= $old) OR ($total_players == 0))
-				{
-					// find out how many rows are in the table
-					$TotalRows_q = @mysqli_query($BF4stats,"
-						SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count
-						FROM  `tbl_playerdata` tpd
-						INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-						INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-						WHERE tpd.`GameID` = {$GameID}
-						AND tsp.`ServerID` IN ({$valid_ids})
-					");
-					if(@mysqli_num_rows($TotalRows_q) == 1)
-					{
-						$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
-						$total_players = $TotalRows_r['count'];
-					}
-					else
-					{
-						$total_players = 0;
-					}
-					// update old data in database
-					@mysqli_query($BF4stats,"
-						UPDATE `tyger_stats_count_cache`
-						SET `value` = '{$total_players}', `timestamp` = '{$now_timestamp}'
-						WHERE `category` = 'total_players'
-						AND `SID` = '{$valid_ids}'
-						AND `GID` = '{$GameID}'
-					");
-				}
-			}
-			// not cached.  add it
-			else
-			{
-				// find out how many rows are in the table
-				$TotalRows_q = @mysqli_query($BF4stats,"
+				$TotalRowsC_q = @mysqli_query($BF4stats,"
 					SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count
 					FROM  `tbl_playerdata` tpd
 					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -461,21 +279,15 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					WHERE tpd.`GameID` = {$GameID}
 					AND tsp.`ServerID` IN ({$valid_ids})
 				");
-				if(@mysqli_num_rows($TotalRows_q) == 1)
-				{
-					$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
-					$total_players = $TotalRows_r['count'];
-				}
-				else
-				{
-					$total_players = 0;
-				}
-				// add this data to the cache
-				@mysqli_query($BF4stats,"
-					INSERT INTO `tyger_stats_count_cache`
-					(`category`, `GID`, `SID`, `value`, `timestamp`)
-					VALUES ('total_players', '{$GameID}', '{$valid_ids}', '{$total_players}', '{$now_timestamp}')
-				");
+			}
+			if(@mysqli_num_rows($TotalRowsC_q) == 1)
+			{
+				$TotalRows_r = @mysqli_fetch_assoc($TotalRowsC_q);
+				$total_players = $TotalRows_r['count'];
+			}
+			else
+			{
+				$total_players = 'error';
 			}
 		}
 		else
