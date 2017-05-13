@@ -485,8 +485,8 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		}
 		// start outputting the image
 		header('Pragma: public');
-		header('Cache-Control: max-age=43200');
-		header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', $now_timestamp + 43200));
+		header('Cache-Control: max-age=10800');
+		header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', $now_timestamp + 10800));
 		header("Content-type: image/png");
 		// base image
 		$base = imagecreatefrompng('./images/background.png');
