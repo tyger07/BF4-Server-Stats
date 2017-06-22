@@ -186,6 +186,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 			) sub ON sub.`SoldierName` = cp.`SoldierName`
 			WHERE cp.`ServerID` = {$ServerID}
 			AND sub.`LastSeenOnServer` > NOW() - INTERVAL 2 HOUR AND NOW()
+			LIMIT 1
 		");
 		// He’s dead, Jim.
 		if(@mysqli_num_rows($StatsLive_q) == 0)
