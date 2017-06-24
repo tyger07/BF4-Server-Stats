@@ -168,41 +168,6 @@ $Scoreboard_q = @mysqli_query($BF4stats,"
 // display teams and players
 if(@mysqli_num_rows($Scoreboard_q) != 0)
 {
-	// is the server providing recent stats properly?
-	// or is it possible that the game server, procon, or XpKiller's stats plugin has stopped?
-	if(@mysqli_num_rows($Scoreboard_q) > 10)
-	{
-		$StatsLive_q = @mysqli_query($BF4stats,"
-			SELECT sub.`LastSeenOnServer`
-			FROM `tbl_currentplayers` cp
-			INNER JOIN
-			(
-				SELECT tpd.`SoldierName`, tps.`LastSeenOnServer`
-				FROM `tbl_playerdata` tpd
-				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
-				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
-				WHERE tpd.`GameID` = {$GameID}
-				AND tsp.`ServerID` = {$ServerID}
-			) sub ON sub.`SoldierName` = cp.`SoldierName`
-			WHERE cp.`ServerID` = {$ServerID}
-			AND sub.`LastSeenOnServer` > NOW() - INTERVAL 2 HOUR AND NOW()
-			LIMIT 1
-		");
-		// He’s dead, Jim.
-		if(@mysqli_num_rows($StatsLive_q) == 0)
-		{
-			echo '
-			<br/>
-			<div class="warnoutline">
-			<div style="position: absolute; color: #993300; margin: 4px;">Alert!</div>
-			<div class="headline">
-			A possible server or connection issue exists. Server information displayed may not be accurate.
-			</div>
-			</div>
-			<br/>
-			';
-		}
-	}
 	// initialize values
 	$last_team = -1;
 	// get current rank query details
