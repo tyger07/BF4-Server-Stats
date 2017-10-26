@@ -97,7 +97,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$GradientSettings = array("StartR"=>050,"StartG"=>100,"StartB"=>150,"Alpha"=>50,"Levels"=>-100);
 		$myPicture->drawGradientArea(0,0,160,80,DIRECTION_VERTICAL,$GradientSettings);
 		$myPicture->setShadow(FALSE);
-		$myPicture->setGraphArea(14,7,153,60);
+		$myPicture->setGraphArea(18,5,156,61);
 		$myPicture->setFontProperties(array("R"=>250,"G"=>250,"B"=>250,"FontName"=>"../pchart/fonts/Forgotte.ttf","FontSize"=>8));
 		$max = max($average) + 5;
 		if($max <= 0)
