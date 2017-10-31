@@ -67,6 +67,10 @@ if(!empty($scoreboard_order))
 {
 	echo '&order=' . $scoreboard_order;
 }
+if(!empty($cr))
+{
+	echo '&cr=' . $cr;
+}
 echo '");
 </script>
 </div>

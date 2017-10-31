@@ -100,7 +100,7 @@ if(!empty($ServerID))
 else
 {
 	echo '<div style="position: relative;">';
-	$numrows = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats);
+	$numrows = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr);
 	echo '</div>';
 }
 // number of rows to show per page
@@ -176,7 +176,42 @@ $offset = ($currentpage - 1) * $rowsperpage;
 if($rank == 'Score' && $order == 'DESC' && $offset == '0' && empty($player))
 {
 	echo '<div style="position: relative;">';
-	$Players_q = cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats);
+	$Players_q = cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr);
+	// cache refresh option
+	$refresh_link = './index.php?';
+	if(!empty($ServerID))
+	{
+		$refresh_link .= '&amp;sid=' . $ServerID;
+	}
+	if(!empty($page))
+	{
+		$refresh_link .= '&amp;p=' . $page;
+	}
+	if(!empty($player))
+	{
+		$refresh_link .= '&amp;player=' . $player;
+	}
+	if(!empty($currentpage))
+	{
+		$refresh_link .= '&amp;cp=' . $currentpage;
+	}
+	if(!empty($rank))
+	{
+		$refresh_link .= '&amp;r=' . $rank;
+	}
+	if(!empty($order))
+	{
+		$refresh_link .= '&amp;o=' . $order;
+	}
+	$refresh_link .= '&amp;cr=1';
+	echo '
+	<div id="cache_refresh" style="position: absolute; top: 10px; left: -25px; vertical-align: middle; display: none;">
+	<center><a href="' . $refresh_link . '"><img src="./common/images/refresh.png" alt="refresh" /></a></center>
+	</div>
+	<script type="text/javascript">
+	$("#cache_refresh").delay(4000).fadeIn("slow");
+	</script>
+	';
 	echo '</div>';
 }
 // if a player name was entered, search for the entered players' position

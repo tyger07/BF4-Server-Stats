@@ -194,10 +194,18 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			");
 			// initialize timestamp values
 			$now_timestamp = time();
-			$old = $now_timestamp - 10800;
+			// if cache refresh triggered, refresh cache regardless of last cache time
+			if($cr == 1)
+			{
+				$old = $now_timestamp;
+			}
+			else
+			{
+				$old = $now_timestamp - 10800;
+			}
 			// check if this player has a recent enough cached rank
 			// if so, we can get their score rank much faster from the cache
-			$ScoreC_q = @mysqli_query($BF4stats,"
+			$ScoreRecentCache_q = @mysqli_query($BF4stats,"
 				SELECT `rank`
 				FROM `tyger_stats_rank_cache`
 				WHERE `PlayerID` = {$PlayerID}
@@ -208,9 +216,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				GROUP BY `PlayerID`
 			");
 			// if no recent results, do the slower query from live stats
-			if(@mysqli_num_rows($ScoreC_q) == 0)
+			if(@mysqli_num_rows($ScoreRecentCache_q) == 0)
 			{
-				$ScoreC_q = @mysqli_query($BF4stats,"
+				$ScoreRecache_q = @mysqli_query($BF4stats,"
 					SELECT sub2.rank
 					FROM
 						(SELECT (@num := @num + 1) AS rank, sub.`PlayerID`
@@ -229,10 +237,46 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					WHERE sub2.`PlayerID` = {$PlayerID}
 				");
 			}
-			if(@mysqli_num_rows($ScoreC_q) == 1)
+			if(@mysqli_num_rows($ScoreRecentCache_q) == 1)
 			{
-				$Score_r = @mysqli_fetch_assoc($ScoreC_q);
+				$Score_r = @mysqli_fetch_assoc($ScoreRecentCache_q);
 				$srank = $Score_r['rank'];
+			}
+			elseif(@mysqli_num_rows($ScoreRecache_q) == 1)
+			{
+				$Score_r = @mysqli_fetch_assoc($ScoreRecache_q);
+				$srank = $Score_r['rank'];
+				// check if this player exists in the rank cache at all
+				$ScoreExistCache_q = @mysqli_query($BF4stats,"
+					SELECT `rank`
+					FROM `tyger_stats_rank_cache`
+					WHERE `PlayerID` = {$PlayerID}
+					AND `category` = 'Score'
+					AND `GID` = '{$GameID}'
+					AND `SID` = '{$valid_ids}'
+					GROUP BY `PlayerID`
+				");
+				if(@mysqli_num_rows($ScoreExistCache_q) == 0)
+				{
+					// insert new data
+					@mysqli_query($BF4stats,"
+						INSERT INTO `tyger_stats_rank_cache`
+						(`PlayerID`, `GID`, `SID`, `category`, `rank`, `timestamp`)
+						VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '{$srank}', '{$now_timestamp}')
+					");
+				}
+				else
+				{
+					// update old data
+					@mysqli_query($BF4stats,"
+						UPDATE `tyger_stats_rank_cache`
+						SET `rank` = '{$srank}', `timestamp` = '{$now_timestamp}'
+						WHERE `category` = 'Score'
+						AND `SID` = '{$valid_ids}'
+						AND `GID` = '{$GameID}'
+						AND `PlayerID` = {$PlayerID}
+					");
+				}
 			}
 			else
 			{

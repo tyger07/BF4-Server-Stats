@@ -46,14 +46,56 @@ if(!empty($ServerID))
 {
 	// get this player's ranks
 	// input as: server id, soldier, db, game id
-	rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID);
+	rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID, $cr);
+	// cache refresh option
+	$refresh_link = './index.php?';
+	if(!empty($ServerID))
+	{
+		$refresh_link .= '&sid=' . $ServerID;
+	}
+	if(!empty($PlayerID))
+	{
+		$refresh_link .= '&pid=' . $PlayerID;
+	}
+	$refresh_link .= '&amp;p=player&amp;cr=1';
+	echo '
+	<div style="position: relative;">
+	<div id="cache_refresh" style="position: absolute; top: 10px; left: -25px; vertical-align: middle; display: none;">
+	<center><a href="' . $refresh_link . '"><img src="./common/images/refresh.png" alt="refresh" /></a></center>
+	</div>
+	<script type="text/javascript">
+	$("#cache_refresh").delay(4000).fadeIn("slow");
+	</script>
+	</div>
+	';
 }
 // or else this is a global stats page
 else
 {
 	// get this player's ranks
 	// input as: server id, soldier, db, game id
-	rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID);
+	rank($ServerID, $valid_ids, $PlayerID, $BF4stats, $GameID, $cr);
+	// cache refresh option
+	$refresh_link = './index.php?';
+	if(!empty($ServerID))
+	{
+		$refresh_link .= '&sid=' . $ServerID;
+	}
+	if(!empty($PlayerID))
+	{
+		$refresh_link .= '&pid=' . $PlayerID;
+	}
+	$refresh_link .= '&amp;p=player&amp;cr=1';
+	echo '
+	<div style="position: relative;">
+	<div id="cache_refresh" style="position: absolute; top: 10px; left: -25px; vertical-align: middle; display: none;">
+	<center><a href="' . $refresh_link . '"><img src="./common/images/refresh.png" alt="refresh" /></a></center>
+	</div>
+	<script type="text/javascript">
+	$("#cache_refresh").delay(4000).fadeIn("slow");
+	</script>
+	</div>
+	';
 }
 echo '
 </tr>

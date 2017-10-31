@@ -183,7 +183,7 @@ echo '
 <div style="margin-bottom: 4px; position: relative;">
 ';
 // cache total players
-$total_players = cache_total_players($ServerID,$valid_ids,$GameID,$BF4stats);
+$total_players = cache_total_players($ServerID,$valid_ids,$GameID,$BF4stats,$cr);
 echo '
 <div style="position: absolute; z-index: 2; width: 100%; height: 100%; top: 0; left: 0; padding: 0px; margin: 0px;"><a class="fill-div" style="padding: 0px; margin: 0px;" href="./index.php?p=home&amp;sid=null"></a></div>
 <table>

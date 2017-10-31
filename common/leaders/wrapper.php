@@ -39,6 +39,10 @@ if(!empty($order))
 {
 	echo '&o=' . $order;
 }
+if(!empty($cr))
+{
+	echo '&cr=' . $cr;
+}
 echo '");
 </script>
 </div>

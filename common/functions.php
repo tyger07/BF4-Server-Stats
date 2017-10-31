@@ -253,7 +253,7 @@ function Statsout($damagetype,$weapon_array,$PlayerID,$ServerID,$valid_ids,$Game
 	}
 }
 // rank queries function for player stats page
-function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
+function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID,$cr)
 {
 	// check to see if this rank cache table exists
 	@mysqli_query($BF4stats,"
@@ -280,7 +280,15 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 10800;
+	// if cache refresh triggered, refresh cache regardless of last cache time
+	if($cr == 1)
+	{
+		$old = $now_timestamp;
+	}
+	else
+	{
+		$old = $now_timestamp - 10800;
+	}
 	// this is a combined stats page
 	if(empty($ServerID))
 	{
@@ -1690,7 +1698,7 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 	return $ses;
 }
 // function to cache total players
-function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
+function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr)
 {
 	// check to see if this count cache table exists
 	@mysqli_query($BF4stats,"
@@ -1714,7 +1722,15 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 10800;
+	// if cache refresh triggered, refresh cache regardless of last cache time
+	if($cr == 1)
+	{
+		$old = $now_timestamp;
+	}
+	else
+	{
+		$old = $now_timestamp - 10800;
+	}
 	// check to see if player count is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -2310,7 +2326,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 }
 
 // function to cache top 20 players
-function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
+function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr)
 {
 	// check to see if this top twenty cache table exists
 	@mysqli_query($BF4stats,"
@@ -2341,7 +2357,15 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 	");
 	// initialize timestamp values
 	$now_timestamp = time();
-	$old = $now_timestamp - 10800;
+	// if cache refresh triggered, refresh cache regardless of last cache time
+	if($cr == 1)
+	{
+		$old = $now_timestamp;
+	}
+	else
+	{
+		$old = $now_timestamp - 10800;
+	}
 	// check to see if top 20 is already cached
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
@@ -2372,6 +2396,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats)
 	// if cached and data is new enough...
 	if(@mysqli_num_rows($TopC_q) != 0)
 	{
+		// cache information shown
 		echo '
 		<div id="cache_fade2" style="position: absolute; top: ';
 		if(!empty($ServerID))

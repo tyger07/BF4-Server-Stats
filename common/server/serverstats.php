@@ -93,7 +93,7 @@ if(@mysqli_num_rows($Server_q) != 0)
 	else
 	{
 		echo '<div style="position: relative;">';
-		$players = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats);
+		$players = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr);
 		echo '</div>';
 	}
 	$kills = round($Server_r['SumKills'],2);

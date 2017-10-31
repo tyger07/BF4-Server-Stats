@@ -175,4 +175,15 @@ else
 {
 	$cc = null;
 }
+
+// cache refresh
+// $cr = ?cr
+if(!empty($_GET['cr']) AND is_numeric($_GET['cr']))
+{
+	$cr = mysqli_real_escape_string($BF4stats, strip_tags($_GET['cr']));
+}
+else
+{
+	$cr = null;
+}
 ?>

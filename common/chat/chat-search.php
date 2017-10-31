@@ -31,8 +31,8 @@ if(!empty($Chat_Search) && !empty($GameID))
 		// find timestamp for now and find the timestamp of the query
 		$now = time();
 		$compare = strtotime($date_search);
-		// find the difference between the two and make sure negative numbers (in the future) are filtered out to 0
-		$difference = max(($now - $compare),0);
+		// find the difference between the two
+		$difference = ($now - $compare);
 		// difference is less than an hour ago. show the last hour
 		if($difference < 3600)
 		{

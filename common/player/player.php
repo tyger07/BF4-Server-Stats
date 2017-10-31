@@ -548,6 +548,10 @@ elseif($SoldierName != null)
 			{
 				echo '&server=' . urlencode($ServerName);
 			}
+			if(!empty($cr))
+			{
+				echo '&cr=' . $cr;
+			}
 			echo '");
 			</script>
 			';
@@ -1193,7 +1197,15 @@ elseif($SoldierName != null)
 			");
 			// initialize timestamp values
 			$now_timestamp = time();
-			$old = $now_timestamp - 10800;
+			// if cache refresh triggered, refresh cache regardless of last cache time
+			if($cr == 1)
+			{
+				$old = $now_timestamp;
+			}
+			else
+			{
+				$old = $now_timestamp - 10800;
+			}
 			// rank players by score
 			// check if score rank is already cached
 			$ScoreC_q = @mysqli_query($BF4stats,"
@@ -1263,6 +1275,25 @@ elseif($SoldierName != null)
 					VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', 'Score', '0', '0')
 				");
 			}
+			// cache refresh option
+			$refresh_link = './index.php?';
+			if(!empty($ServerID))
+			{
+				$refresh_link .= '&sid=' . $ServerID;
+			}
+			if(!empty($PlayerID))
+			{
+				$refresh_link .= '&pid=' . $PlayerID;
+			}
+			$refresh_link .= '&amp;p=player&amp;cr=1';
+			echo '
+			<div id="cache_refresh2" style="position: absolute; top: 10px; left: -28px; vertical-align: middle; display: none;">
+			<center><a href="' . $refresh_link . '"><img src="./common/images/refresh.png" alt="refresh" /></a></center>
+			</div>
+			<script type="text/javascript">
+			$("#cache_refresh2").delay(4000).fadeIn("slow");
+			</script>
+			';
 			// done with the dummy cache stuff...
 			// find current URL info
 			$host = 'http://' . $_SERVER['HTTP_HOST'];
@@ -1278,7 +1309,12 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav0.png" style="height: 100px; width: 400px;" alt="signature" /></a>
+			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav0.png';
+			if(!empty($cr))
+			{
+				echo '?cr=' . $cr;
+			}
+			echo '" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
@@ -1295,7 +1331,12 @@ elseif($SoldierName != null)
 			';
 			// include signature.php image
 			echo '
-			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav1.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav1.png" style="height: 100px; width: 400px;" alt="signature" /></a>
+			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav1.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav1.png';
+			if(!empty($cr))
+			{
+				echo '?cr=' . $cr;
+			}
+			echo '" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
 			<span class="information">BBcode:</span>
 			<br/><br/>
