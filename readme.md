@@ -21,6 +21,9 @@
 * Gametracker-style server banners.
 * Battlelog theme.
 
+
+## About
+
 This web page code requires the use of a stats database which is created by XpKiller's Procon "Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
 https://forum.myrcon.com/showthread.php?6698
