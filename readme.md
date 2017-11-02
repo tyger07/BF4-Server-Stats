@@ -1,6 +1,25 @@
 ## BF4 Server Stats Webpage Overview
 ###### Version dated: 10/31/2017
 
+## Features
+
+* Easy setup.
+* Individual server or combined server stats.
+* Country stats.
+* Map stats.
+* Player stats.
+* Weapon stats.
+* Dog tag stats.
+* Game server stats.
+* Live scoreboard.
+* Top players list / leaderboard.
+* Player name search.
+* Top players of the Week.
+* Suspicious players search.
+* Server chat log.
+* Stats signature images.
+* Gametracker-style server banners.
+* Battlelog theme.
 
 This web page code requires the use of a stats database which is created by XpKiller's Procon "Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
