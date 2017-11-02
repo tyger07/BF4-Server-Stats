@@ -6,14 +6,14 @@ If you need help setting up and using XpKiller's Stats Logger plugin, you must s
 https://forum.myrcon.com/showthread.php?6698
 
 For best compatibility with this web stats page, use the following settings in XpKiller's Procon Stats Logging plugin:
-"Enable Statslogging?" : Yes
-"Enable Weaponstats?" : Yes
-"Enable Livescoreboard in DB?" : Yes
-"tableSuffix" : None
-"MapStats ON?" : Yes
-"Session ON?" : Yes
-"Save Sessiondata to DB?" : Yes
-"Log playerdata only (no playerstats)?" : No
+  "Enable Statslogging?" : Yes
+  "Enable Weaponstats?" : Yes
+  "Enable Livescoreboard in DB?" : Yes
+  "tableSuffix" : None
+  "MapStats ON?" : Yes
+  "Session ON?" : Yes
+  "Save Sessiondata to DB?" : Yes
+  "Log playerdata only (no playerstats)?" : No
 
 This webpage code requires that you have access to an Apache web server running a modern version of php and requires that you have read and write permission to add and modify files and directories on that web server.
 
