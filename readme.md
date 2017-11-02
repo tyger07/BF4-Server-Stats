@@ -45,7 +45,7 @@ $clan_name = 'Ty_ger07\'s Clan';
 
 ## You must fill in the following information in config.php which is in the config folder.
 
-**1)** Input your stats database host, stats database user name, stats database password, and stats database name.
+1) Input your stats database host, stats database user name, stats database password, and stats database name.
 
 For example:
 
@@ -59,19 +59,19 @@ DEFINE('PASS', 'pass');							// database password
 Note: Some web server providers use the same value for database name and database user name.
 
 
-**2)** Input your clan name as you would like it to appear in the stats pages.
+2) Input your clan name as you would like it to appear in the stats pages.
 
 For example:
 
 $clan_name = 'MyClan';              // your gaming clan or organization name
 
 
-**3)** Input your desired banner image URL if you want one other than the default banner image to be displayed.
+3) Input your desired banner image URL if you want one other than the default banner image to be displayed.
 
 $banner_image = './images/bf4-logo.png';  // your desired page banner
 
 
-**4)** Enter the URL which you would like users to redirect to when they click your banner image.
+4) Enter the URL which you would like users to redirect to when they click your banner image.
 
 $banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
 
