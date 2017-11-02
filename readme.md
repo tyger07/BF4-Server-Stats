@@ -50,7 +50,7 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
     For example:
 
-    ```// DATABASE INFORMATION`
+    ```// DATABASE INFORMATION
     DEFINE('HOST', '100.200.300.400'); // database host address
     DEFINE('PORT', '3306');            // database port - default is 3306
     DEFINE('NAME', 'database');        // database name
