@@ -1,6 +1,7 @@
 ## BF4 Server Stats Webpage Overview
 ###### Version dated: 10/31/2017
 
+
 This web page code requires the use of a stats database which is created by XpKiller's Procon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
 https://forum.myrcon.com/showthread.php?6698
@@ -47,33 +48,33 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
 1) Input your stats database host, stats database user name, stats database password, and stats database name.
 
-For example:
+    For example:
 
-// DATABASE INFORMATION
-DEFINE('HOST', '100.200.300.400');  // database host address
-DEFINE('PORT', '3306');             // database port - default is 3306
-DEFINE('NAME', 'database');         // database name
-DEFINE('USER', 'user');							// database user name - sometimes the same as the database name
-DEFINE('PASS', 'pass');							// database password
+    `// DATABASE INFORMATION`
+    `DEFINE('HOST', '100.200.300.400'); // database host address`
+    `DEFINE('PORT', '3306');            // database port - default is 3306`
+    `DEFINE('NAME', 'database');        // database name`
+    `DEFINE('USER', 'user');			// database user name - sometimes the same as the database name`
+    `DEFINE('PASS', 'pass');			// database password`
 
-Note: Some web server providers use the same value for database name and database user name.
+    Note: Some web server providers use the same value for database name and database user name.
 
 
 2) Input your clan name as you would like it to appear in the stats pages.
 
-For example:
+    For example:
 
-$clan_name = 'MyClan';              // your gaming clan or organization name
+    `$clan_name = 'MyClan';             // your gaming clan or organization name`
 
 
 3) Input your desired banner image URL if you want one other than the default banner image to be displayed.
 
-$banner_image = './images/bf4-logo.png';  // your desired page banner
+    `$banner_image = './images/bf4-logo.png'; // your desired page banner`
 
 
 4) Enter the URL which you would like users to redirect to when they click your banner image.
 
-$banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you
+    `$banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you`
 
 
 ## Additional Information
