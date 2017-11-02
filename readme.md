@@ -35,7 +35,7 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
 3) Fill in the required parameters in ./config/config.php.  For help with properly modifying the config.php file, see additional instructions further down in this readme file.
 
     Note:  You may not include single quotation marks (') in the config.php fields without also using an appropriate php delimiter.
-    For instance, you may not call your clan 'Ty_ger07's Clan' as it would cause a php compilation error.
+    For instance, you may not call your clan `'Ty_ger07's Clan'` as it would cause a php compilation error.
 
     Using an appropriate php delimiter, when required, would cause it to work properly.  For example:
 
