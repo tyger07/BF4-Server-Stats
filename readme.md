@@ -38,7 +38,7 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
     Using an appropriate php delimiter, when required, would cause it to work properly.  For example:
 
-    $clan_name = 'Ty_ger07\'s Clan';
+    `$clan_name = 'Ty_ger07\'s Clan';`
 
 4) Upload the entire contents to your php-enabled web server and enjoy!
 
