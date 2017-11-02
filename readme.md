@@ -1,26 +1,18 @@
-Version dated: 10/31/2017
 ## BF4 Server Stats Webpage Overview
+Version dated: 10/31/2017
 
 This web page code requires the use of a stats database which is created by XpKiller's Procon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
 https://forum.myrcon.com/showthread.php?6698
 
 For best compatibility with this web stats page, use the following settings in XpKiller's Procon Stats Logging plugin:
-
 "Enable Statslogging?" : Yes
-
 "Enable Weaponstats?" : Yes
-
 "Enable Livescoreboard in DB?" : Yes
-
 "tableSuffix" : None
-
 "MapStats ON?" : Yes
-
 "Session ON?" : Yes
-
 "Save Sessiondata to DB?" : Yes
-
 "Log playerdata only (no playerstats)?" : No
 
 This webpage code requires that you have access to an Apache web server running a modern version of php and requires that you have read and write permission to add and modify files and directories on that web server.
