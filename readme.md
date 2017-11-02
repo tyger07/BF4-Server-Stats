@@ -1,7 +1,7 @@
 ## BF4 Server Stats Webpage Overview
 ###### Version dated: 10/31/2017
 
-## Features
+### Features
 
 * Easy setup.
 * Individual server or combined server stats.
@@ -22,7 +22,7 @@
 * Battlelog theme.
 
 
-## About
+### About
 
 This web page code requires the use of a stats database which is created by XpKiller's Procon "Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
@@ -41,13 +41,13 @@ For best compatibility with this web stats page, use the following settings in X
 This webpage code requires that you have access to an Apache web server running a modern version of php and requires that you have read and write permission to add and modify files and directories on that web server.
 
 
-## Help and Support
+### Help and Support
 
 For help with this web stats page code, visit the following forum thread:
 https://forum.myrcon.com/showthread.php?6854
 
 
-## Installation Steps
+### Installation Steps
 
 1) Download the following file:
 https://github.com/tyger07/BF4-Server-Stats/zipball/master
@@ -65,7 +65,7 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
 4) Upload the entire contents to your php-enabled web server and enjoy!
 
 
-## You must fill in the following information in config.php which is in the config folder.
+### You must fill in the following information in config.php which is in the config folder.
 
 1) Input your stats database host, stats database user name, stats database password, and stats database name.
 
@@ -100,12 +100,12 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
     `$banner_url = 'http://tyger07.github.io/BF4-Server-Stats/'; // where clicking the banner will take you`
 
 
-## Additional Information
+### Additional Information
 
 A .sql file is included in the ./test-database/ folder for users to set up a dummy test database to test this web page when they otherwise have not yet set up a server or have not yet got XpKiller's Stats Logger plugin and database working.
 
 
-## Changelog
+### Changelog
 
 Refer to commmit history on GitHub:
 https://github.com/tyger07/BF4-Server-Stats/commits/master
