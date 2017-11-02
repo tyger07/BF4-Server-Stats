@@ -1,6 +1,7 @@
 ## BF4 Server Stats Webpage Overview
 ###### Version dated: 10/31/2017
 
+
 ### Features
 
 * Easy setup.
@@ -109,6 +110,7 @@ A .sql file is included in the ./test-database/ folder for users to set up a dum
 
 Refer to commmit history on GitHub:
 https://github.com/tyger07/BF4-Server-Stats/commits/master
+
 
 
 Enjoy!
