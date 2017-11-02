@@ -1,5 +1,5 @@
 ## BF4 Server Stats Webpage Overview
-Version dated: 10/31/2017
+###### Version dated: 10/31/2017
 
 This web page code requires the use of a stats database which is created by XpKiller's Procon "BF4 Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
