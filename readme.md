@@ -50,12 +50,12 @@ https://github.com/tyger07/BF4-Server-Stats/zipball/master
 
     For example:
 
-    `// DATABASE INFORMATION`
-    `DEFINE('HOST', '100.200.300.400'); // database host address`
-    `DEFINE('PORT', '3306');            // database port - default is 3306`
-    `DEFINE('NAME', 'database');        // database name`
-    `DEFINE('USER', 'user');			// database user name - sometimes the same as the database name`
-    `DEFINE('PASS', 'pass');			// database password`
+    ```// DATABASE INFORMATION`
+    DEFINE('HOST', '100.200.300.400'); // database host address
+    DEFINE('PORT', '3306');            // database port - default is 3306
+    DEFINE('NAME', 'database');        // database name
+    DEFINE('USER', 'user');			// database user name - sometimes the same as the database name
+    DEFINE('PASS', 'pass');			// database password```
 
     Note: Some web server providers use the same value for database name and database user name.
 
