@@ -323,13 +323,26 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 			require_once('./common/home/index-display-servers-wrapper.php');
 		}
 	}
+	echo base64_decode('
+		Cgk8YnIvPgoJPGJyLz4KCTxkaXYgY2xhc3M9InN1YnNlY3Rpb24iPgoJPGRpdiBjbGFzcz0iaGVhZGxpbmUiIHN0eWxlPSJmb250LXNpemU6IDEycHg7Ij5bIDxzcGFuIGNsYXNzPSJpbmZvcm1
+		hdGlvbiI+U3RhdGlzdGljcyBkYXRhIHByb3ZpZGVkIGJ5IDxhIGhyZWY9Imh0dHBzOi8vZm9ydW0ubXlyY29uLmNvbS9zaG93dGhyZWFkLnBocD82Njk4IiB0YXJnZXQ9Il9ibGFuayI+WHBLaW
+		xsZXIncyBQcm9jb24gU3RhdHMgTG9nZ2luZyBQbHVnaW48L2E+PC9zcGFuPiBdICAmbmJzcDsgWyA8c3BhbiBjbGFzcz0iaW5mb3JtYXRpb24iPlN0YXRzIHdlYnBhZ2UgcHJvdmlkZWQgYnkgP
+		GEgaHJlZj0iaHR0cDovL3R5Z2VyMDcuZ2l0aHViLmlvL0JGNC1TZXJ2ZXItU3RhdHMvIiB0YXJnZXQ9Il9ibGFuayI+VHlfZ2VyMDc8L2E+PC9zcGFuPiBdPC9kaXY+Cgk8L2Rpdj4KCTxici8+
+	');
+	// check if there are any updates to this stats page code
+	$xmlData = @file_get_contents('https://github.com/tyger07/BF4-Server-Stats/releases.atom');
+	$xml=@simplexml_load_string($xmlData);
+	$releaseVersion = $xml->entry[0]->title;
+	if((!empty($releaseVersion)) && (stripos($releaseVersion, 'Halloween') === false))
+	{
+		echo '
+		<div class="subsection">
+		<div class="headline" style="font-size: 12px;">[ <span class="information"><a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">An update is available</a></span> ]</div>
+		</div>
+		<br/>
+		';
+	}
 	echo '
-	<br/>
-	<br/>
-	<div class="subsection">
-	<div class="headline" style="font-size: 12px;">[ <span class="information">Statistics data provided by <a href="https://forum.myrcon.com/showthread.php?6698-PRoCon-Chat-GUID-Stats-and-Mapstats-Logger-1-0-0-1" target="_blank">XpKiller\'s Procon logging plugin</a></span> ]  &nbsp; [ <span class="information">Stats page provided by <a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">Ty_ger07</a></span> ]</div>
-	</div>
-	<br/>
 	<center>
 	';
 	if($ses > 1)
