@@ -1819,29 +1819,6 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr)
 					AND `GID` = '{$GameID}'
 				");
 			}
-			echo '
-			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Recreated:<br/>Player Count</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-			</script>
-			';
-		}
-		else
-		{
-			echo '
-			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Used:<br/>Player Count</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-			</script>
-			';
 		}
 	}
 	// not cached.  add it
@@ -1899,16 +1876,6 @@ function cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr)
 				VALUES ('total_players', '{$GameID}', '{$valid_ids}', '{$total_players}', '{$now_timestamp}')
 			");
 		}
-		echo '
-		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-		<div class="subsection" style="width: 100px; font-size: 12px;">
-		<center>Cache Created:<br/>Player Count</center>
-		</div>
-		</div>
-		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-		</script>
-		';
 	}
 	// return the value out of the function
 	return $total_players;
@@ -2030,16 +1997,19 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 					AND `GID` = '{$GameID}'
 				");
 			}
-			echo '
-			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Recreated:<br/>Suspect Count</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-			</script>
-			';
+			if($numrows != 0)
+			{
+				echo '
+				<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Recreated:<br/>Suspect Count</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+				</script>
+				';
+			}
 		}
 		else
 		{
@@ -2112,78 +2082,162 @@ function cache_total_suspects($ServerID, $valid_ids, $GameID, $BF4stats)
 				VALUES ('total_suspects', '{$GameID}', '{$valid_ids}', '{$numrows}', '{$now_timestamp}')
 			");
 		}
-		echo '
-		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-		<div class="subsection" style="width: 100px; font-size: 12px;">
-		<center>Cache Created:<br/>Suspect Count</center>
-		</div>
-		</div>
-		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-		</script>
-		';
+		if($numrows != 0)
+		{
+			echo '
+			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
+			<div class="subsection" style="width: 100px; font-size: 12px;">
+			<center>Cache Created:<br/>Suspect Count</center>
+			</div>
+			</div>
+			<script type="text/javascript">
+			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+			</script>
+			';
+		}
 	}
 	// return the value out of the function
 	return $numrows;
 }
 
 // function to cache total chat rows
-function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
+function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats, $TotalServerPlayers)
 {
-	// check to see if this count cache table exists
-	@mysqli_query($BF4stats,"
-		CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
-		(
-			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			`category` VARCHAR(20) NOT NULL,
-			`GID` TINYINT(4) UNSIGNED NOT NULL,
-			`SID` VARCHAR(100) NOT NULL,
-			`value` INT(10) UNSIGNED NOT NULL DEFAULT '0',
-			`timestamp` INT(11) NOT NULL DEFAULT '0',
-			PRIMARY KEY (`ID`),
-			UNIQUE `UNIQUE_CountData` (`category`, `GID`, `SID`),
-			INDEX `category` (`category` ASC),
-			INDEX `GID` (`GID` ASC),
-			INDEX `SID` (`SID` ASC),
-			INDEX `timestamp` (`timestamp` ASC),
-			CONSTRAINT `fk_tyger_stats_count_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
-		)
-		ENGINE=InnoDB
-	");
-	// initialize timestamp values
-	$now_timestamp = time();
-	$old = $now_timestamp - 3600;
-	// check to see if chat count is already cached
-	// if there is a ServerID, this is a server stats page
-	if(!empty($ServerID))
+	// only mess with caching the total chat rows if the server isn't small
+	if($TotalServerPlayers > 1000)
 	{
-		$TotalRowsC_q = @mysqli_query($BF4stats,"
-			SELECT DISTINCT(`value`) AS value, `timestamp`
-			FROM `tyger_stats_count_cache`
-			WHERE `category` = 'total_chat'
-			AND `SID` = '{$ServerID}'
-			AND `GID` = '{$GameID}'
+		// check to see if this count cache table exists
+		@mysqli_query($BF4stats,"
+			CREATE TABLE IF NOT EXISTS `tyger_stats_count_cache`
+			(
+				`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`category` VARCHAR(20) NOT NULL,
+				`GID` TINYINT(4) UNSIGNED NOT NULL,
+				`SID` VARCHAR(100) NOT NULL,
+				`value` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+				`timestamp` INT(11) NOT NULL DEFAULT '0',
+				PRIMARY KEY (`ID`),
+				UNIQUE `UNIQUE_CountData` (`category`, `GID`, `SID`),
+				INDEX `category` (`category` ASC),
+				INDEX `GID` (`GID` ASC),
+				INDEX `SID` (`SID` ASC),
+				INDEX `timestamp` (`timestamp` ASC),
+				CONSTRAINT `fk_tyger_stats_count_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+			)
+			ENGINE=InnoDB
 		");
-	}
-	// otherwise this is a combined stats page
-	else
-	{
-		$TotalRowsC_q = @mysqli_query($BF4stats,"
-			SELECT DISTINCT(`value`) AS value, `timestamp`
-			FROM `tyger_stats_count_cache`
-			WHERE `category` = 'total_chat'
-			AND `SID` = '{$valid_ids}'
-			AND `GID` = '{$GameID}'
-		");
-	}
-	// if cached...
-	if(@mysqli_num_rows($TotalRowsC_q) != 0)
-	{
-		$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
-		$numrows = $TotalRowsC_r['value'];
-		$timestamp = $TotalRowsC_r['timestamp'];
-		// data older than 1 hour? or incorrect data? recalculate
-		if(($timestamp <= $old) OR ($numrows == 0))
+		// initialize timestamp values
+		$now_timestamp = time();
+		$old = $now_timestamp - 3600;
+		// check to see if chat count is already cached
+		// if there is a ServerID, this is a server stats page
+		if(!empty($ServerID))
+		{
+			$TotalRowsC_q = @mysqli_query($BF4stats,"
+				SELECT DISTINCT(`value`) AS value, `timestamp`
+				FROM `tyger_stats_count_cache`
+				WHERE `category` = 'total_chat'
+				AND `SID` = '{$ServerID}'
+				AND `GID` = '{$GameID}'
+			");
+		}
+		// otherwise this is a combined stats page
+		else
+		{
+			$TotalRowsC_q = @mysqli_query($BF4stats,"
+				SELECT DISTINCT(`value`) AS value, `timestamp`
+				FROM `tyger_stats_count_cache`
+				WHERE `category` = 'total_chat'
+				AND `SID` = '{$valid_ids}'
+				AND `GID` = '{$GameID}'
+			");
+		}
+		// if cached...
+		if(@mysqli_num_rows($TotalRowsC_q) != 0)
+		{
+			$TotalRowsC_r = @mysqli_fetch_assoc($TotalRowsC_q);
+			$numrows = $TotalRowsC_r['value'];
+			$timestamp = $TotalRowsC_r['timestamp'];
+			// data older than 1 hour? or incorrect data? recalculate
+			if(($timestamp <= $old) OR ($numrows == 0))
+			{
+				// find out how many rows are in the table
+				// if there is a ServerID, this is a server stats page
+				if(!empty($ServerID))
+				{
+					$TotalRows_q = @mysqli_query($BF4stats,"
+						SELECT count(`ID`) AS count
+						FROM `tbl_chatlog`
+						WHERE `ServerID` = {$ServerID}
+					");
+				}
+				// otherwise this is a combined stats page
+				else
+				{
+					$TotalRows_q = @mysqli_query($BF4stats,"
+						SELECT count(`ID`) AS count
+						FROM `tbl_chatlog`
+						WHERE `ServerID` IN ({$valid_ids})
+					");
+				}
+				if(@mysqli_num_rows($TotalRows_q) != 0)
+				{
+					$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
+					$numrows = $TotalRows_r['count'];
+				}
+				else
+				{
+					$numrows = 0;
+				}
+				if(!empty($ServerID))
+				{
+					// update old data in database
+					@mysqli_query($BF4stats,"
+						UPDATE `tyger_stats_count_cache`
+						SET `value` = '{$numrows}', `timestamp` = '{$now_timestamp}'
+						WHERE `category` = 'total_chat'
+						AND `SID` = '{$ServerID}'
+						AND `GID` = '{$GameID}'
+					");
+				}
+				else
+				{
+					// update old data in database
+					@mysqli_query($BF4stats,"
+						UPDATE `tyger_stats_count_cache`
+						SET `value` = '{$numrows}', `timestamp` = '{$now_timestamp}'
+						WHERE `category` = 'total_chat'
+						AND `SID` = '{$valid_ids}'
+						AND `GID` = '{$GameID}'
+					");
+				}
+				echo '
+				<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Recreated:<br/>Chat Count</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+				</script>
+				';
+			}
+			else
+			{
+				echo '
+				<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Used:<br/>Chat Count</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+				</script>
+				';
+			}
+		}
+		// not cached.  add it
+		else
 		{
 			// find out how many rows are in the table
 			// if there is a ServerID, this is a server stats page
@@ -2195,7 +2249,7 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 					WHERE `ServerID` = {$ServerID}
 				");
 			}
-			// otherwise this is a combined stats page
+			// or else this is a combined stats page
 			else
 			{
 				$TotalRows_q = @mysqli_query($BF4stats,"
@@ -2215,52 +2269,37 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 			}
 			if(!empty($ServerID))
 			{
-				// update old data in database
+				// add this data to the cache
 				@mysqli_query($BF4stats,"
-					UPDATE `tyger_stats_count_cache`
-					SET `value` = '{$numrows}', `timestamp` = '{$now_timestamp}'
-					WHERE `category` = 'total_chat'
-					AND `SID` = '{$ServerID}'
-					AND `GID` = '{$GameID}'
+					INSERT INTO `tyger_stats_count_cache`
+					(`category`, `GID`, `SID`, `value`, `timestamp`)
+					VALUES ('total_chat', '{$GameID}', '{$ServerID}', '{$numrows}', '{$now_timestamp}')
 				");
 			}
 			else
 			{
-				// update old data in database
+				// add this data to the cache
 				@mysqli_query($BF4stats,"
-					UPDATE `tyger_stats_count_cache`
-					SET `value` = '{$numrows}', `timestamp` = '{$now_timestamp}'
-					WHERE `category` = 'total_chat'
-					AND `SID` = '{$valid_ids}'
-					AND `GID` = '{$GameID}'
+					INSERT INTO `tyger_stats_count_cache`
+					(`category`, `GID`, `SID`, `value`, `timestamp`)
+					VALUES ('total_chat', '{$GameID}', '{$valid_ids}', '{$numrows}', '{$now_timestamp}')
 				");
 			}
 			echo '
 			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
 			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Recreated:<br/>Chat Count</center>
+			<center>Cache Created:<br/>Chat Count</center>
 			</div>
 			</div>
 			<script type="text/javascript">
 			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
 			</script>
 			';
+			
 		}
-		else
-		{
-			echo '
-			<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Used:<br/>Chat Count</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-			</script>
-			';
-		}
+		// return the value out of the function
+		return $numrows;
 	}
-	// not cached.  add it
 	else
 	{
 		// find out how many rows are in the table
@@ -2291,166 +2330,210 @@ function cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats)
 		{
 			$numrows = 0;
 		}
-		if(!empty($ServerID))
-		{
-			// add this data to the cache
-			@mysqli_query($BF4stats,"
-				INSERT INTO `tyger_stats_count_cache`
-				(`category`, `GID`, `SID`, `value`, `timestamp`)
-				VALUES ('total_chat', '{$GameID}', '{$ServerID}', '{$numrows}', '{$now_timestamp}')
-			");
-		}
-		else
-		{
-			// add this data to the cache
-			@mysqli_query($BF4stats,"
-				INSERT INTO `tyger_stats_count_cache`
-				(`category`, `GID`, `SID`, `value`, `timestamp`)
-				VALUES ('total_chat', '{$GameID}', '{$valid_ids}', '{$numrows}', '{$now_timestamp}')
-			");
-		}
-		echo '
-		<div id="cache_fade" style="position: absolute; top: 3px; left: -150px; display: none;">
-		<div class="subsection" style="width: 100px; font-size: 12px;">
-		<center>Cache Created:<br/>Chat Count</center>
-		</div>
-		</div>
-		<script type="text/javascript">
-		$("#cache_fade").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-		</script>
-		';
-		
+		// return the value out of the function
+		return $numrows;
 	}
-	// return the value out of the function
-	return $numrows;
 }
 
 // function to cache top 20 players
-function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr)
+function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $TotalServerPlayers)
 {
-	// check to see if this top twenty cache table exists
-	@mysqli_query($BF4stats,"
-		CREATE TABLE IF NOT EXISTS `tyger_stats_top_twenty_cache`
-		(
-			`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			`PlayerID` INT(10) UNSIGNED NOT NULL,
-			`GID` TINYINT(4) UNSIGNED NOT NULL,
-			`SID` VARCHAR(100) NOT NULL,
-			`SoldierName` VARCHAR(45) NOT NULL,
-			`Score` INT(11) NOT NULL DEFAULT '0',
-			`Kills` INT(11) NOT NULL DEFAULT '0',
-			`KDR` VARCHAR(20) NOT NULL,
-			`HSR` VARCHAR(20) NOT NULL,
-			`timestamp` INT(11) NOT NULL DEFAULT '0',
-			PRIMARY KEY (`ID`),
-			UNIQUE `UNIQUE_TopTwentyData` (`PlayerID`, `GID`, `SID`),
-			INDEX `PlayerID` (`PlayerID` ASC),
-			INDEX `GID` (`GID` ASC),
-			INDEX `SID` (`SID` ASC),
-			INDEX `SoldierName` (`SoldierName` ASC),
-			INDEX `Score` (`Score` ASC),
-			INDEX `timestamp` (`timestamp` ASC),
-			CONSTRAINT `fk_tyger_stats_top_twenty_cache_PlayerID` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_playerdata`(`PlayerID`) ON DELETE CASCADE ON UPDATE CASCADE,
-			CONSTRAINT `fk_tyger_stats_top_twenty_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
-		)
-		ENGINE=InnoDB
-	");
-	// initialize timestamp values
-	$now_timestamp = time();
-	// if cache refresh triggered, refresh cache regardless of last cache time
-	if($cr == 1)
+	// only mess with caching if the server isn't small
+	if($TotalServerPlayers > 1000)
 	{
-		$old = $now_timestamp;
-	}
-	else
-	{
-		$old = $now_timestamp - 10800;
-	}
-	// check to see if top 20 is already cached
-	// if there is a ServerID, this is a server stats page
-	if(!empty($ServerID))
-	{
-		$TopC_q = @mysqli_query($BF4stats,"
-			SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
-			FROM `tyger_stats_top_twenty_cache`
-			WHERE `SID` = '{$ServerID}'
-			AND `GID` = '{$GameID}'
-			AND `timestamp` >= '{$old}'
-			GROUP BY `PlayerID`
-			ORDER BY `Score` DESC, `SoldierName` ASC
+		// check to see if this top twenty cache table exists
+		@mysqli_query($BF4stats,"
+			CREATE TABLE IF NOT EXISTS `tyger_stats_top_twenty_cache`
+			(
+				`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+				`PlayerID` INT(10) UNSIGNED NOT NULL,
+				`GID` TINYINT(4) UNSIGNED NOT NULL,
+				`SID` VARCHAR(100) NOT NULL,
+				`SoldierName` VARCHAR(45) NOT NULL,
+				`Score` INT(11) NOT NULL DEFAULT '0',
+				`Kills` INT(11) NOT NULL DEFAULT '0',
+				`KDR` VARCHAR(20) NOT NULL,
+				`HSR` VARCHAR(20) NOT NULL,
+				`timestamp` INT(11) NOT NULL DEFAULT '0',
+				PRIMARY KEY (`ID`),
+				UNIQUE `UNIQUE_TopTwentyData` (`PlayerID`, `GID`, `SID`),
+				INDEX `PlayerID` (`PlayerID` ASC),
+				INDEX `GID` (`GID` ASC),
+				INDEX `SID` (`SID` ASC),
+				INDEX `SoldierName` (`SoldierName` ASC),
+				INDEX `Score` (`Score` ASC),
+				INDEX `timestamp` (`timestamp` ASC),
+				CONSTRAINT `fk_tyger_stats_top_twenty_cache_PlayerID` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_playerdata`(`PlayerID`) ON DELETE CASCADE ON UPDATE CASCADE,
+				CONSTRAINT `fk_tyger_stats_top_twenty_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+			)
+			ENGINE=InnoDB
 		");
-	}
-	// or else this is a combined stats page
-	else
-	{
-		$TopC_q = @mysqli_query($BF4stats,"
-			SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
-			FROM `tyger_stats_top_twenty_cache`
-			WHERE `SID` = '{$valid_ids}'
-			AND `GID` = '{$GameID}'
-			AND `timestamp` >= '{$old}'
-			GROUP BY `PlayerID`
-			ORDER BY `Score` DESC, `SoldierName` ASC
-		");
-	}
-	// if cached and data is new enough...
-	if(@mysqli_num_rows($TopC_q) != 0)
-	{
-		// cache information shown
-		echo '
-		<div id="cache_fade2" style="position: absolute; top: ';
-		if(!empty($ServerID))
+		// initialize timestamp values
+		$now_timestamp = time();
+		// if cache refresh triggered, refresh cache regardless of last cache time
+		if($cr == 1)
 		{
-			echo '3px;';
+			$old = $now_timestamp;
 		}
 		else
 		{
-			echo '50px;';
+			$old = $now_timestamp - 10800;
 		}
-		echo ' left: -150px; display: none;">
-		<div class="subsection" style="width: 100px; font-size: 12px;">
-		<center>Cache Used:<br/>Top Twenty</center>
-		</div>
-		</div>
-		<script type="text/javascript">
-		$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-		</script>
-		';
-		// return the value out of the function
-		return $TopC_q;
-	}
-	// otherwise, cache or re-cache
-	else
-	{
-		// delete old rows
+		// check to see if top 20 is already cached
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
 		{
-			@mysqli_query($BF4stats,"
-				DELETE
+			$TopC_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
 				FROM `tyger_stats_top_twenty_cache`
-				WHERE `timestamp` <= '{$old}'
-				AND `SID` = '{$ServerID}'
+				WHERE `SID` = '{$ServerID}'
 				AND `GID` = '{$GameID}'
-			");
-			@mysqli_query($BF4stats,"
-				OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
+				AND `timestamp` >= '{$old}'
+				GROUP BY `PlayerID`
+				ORDER BY `Score` DESC, `SoldierName` ASC
 			");
 		}
+		// or else this is a combined stats page
 		else
 		{
-			@mysqli_query($BF4stats,"
-				DELETE
+			$TopC_q = @mysqli_query($BF4stats,"
+				SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
 				FROM `tyger_stats_top_twenty_cache`
-				WHERE `timestamp` <= '{$old}'
-				AND `SID` = '{$valid_ids}'
+				WHERE `SID` = '{$valid_ids}'
 				AND `GID` = '{$GameID}'
-			");
-			@mysqli_query($BF4stats,"
-				OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
+				AND `timestamp` >= '{$old}'
+				GROUP BY `PlayerID`
+				ORDER BY `Score` DESC, `SoldierName` ASC
 			");
 		}
-		// insert new rows
+		// if cached and data is new enough...
+		if(@mysqli_num_rows($TopC_q) != 0)
+		{
+			// cache information shown
+			echo '
+			<div id="cache_fade2" style="position: absolute; top: 2px; left: -150px; display: none;">
+			<div class="subsection" style="width: 100px; font-size: 12px;">
+			<center>Cache Used:<br/>Top Twenty</center>
+			</div>
+			</div>
+			<script type="text/javascript">
+			$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+			</script>
+			';
+			// return the value out of the function
+			return $TopC_q;
+		}
+		// otherwise, cache or re-cache
+		else
+		{
+			// delete old rows
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				@mysqli_query($BF4stats,"
+					DELETE
+					FROM `tyger_stats_top_twenty_cache`
+					WHERE `timestamp` <= '{$old}'
+					AND `SID` = '{$ServerID}'
+					AND `GID` = '{$GameID}'
+				");
+				@mysqli_query($BF4stats,"
+					OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
+				");
+			}
+			else
+			{
+				@mysqli_query($BF4stats,"
+					DELETE
+					FROM `tyger_stats_top_twenty_cache`
+					WHERE `timestamp` <= '{$old}'
+					AND `SID` = '{$valid_ids}'
+					AND `GID` = '{$GameID}'
+				");
+				@mysqli_query($BF4stats,"
+					OPTIMIZE TABLE `tyger_stats_top_twenty_cache`
+				");
+			}
+			// insert new rows
+			// get the info from the db
+			// if there is a ServerID, this is a server stats page
+			if(!empty($ServerID))
+			{
+				$Players_q  = @mysqli_query($BF4stats,"
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+					FROM `tbl_playerdata` tpd
+					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+					WHERE tsp.`ServerID` = {$ServerID}
+					AND tpd.`GameID` = {$GameID}
+					ORDER BY Score DESC, tpd.`SoldierName` ASC
+					LIMIT 0, 20
+				");
+			}
+			// or else this is a global stats page
+			else
+			{
+				$Players_q  = @mysqli_query($BF4stats,"
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+					FROM `tbl_playerdata` tpd
+					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+					WHERE tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` IN ({$valid_ids})
+					GROUP BY tpd.`PlayerID`
+					ORDER BY Score DESC, tpd.`SoldierName` ASC
+					LIMIT 0, 20
+				");
+			}
+			while($Players_r = @mysqli_fetch_assoc($Players_q))
+			{
+				$Score = $Players_r['Score'];
+				$SoldierName = mysqli_real_escape_string($BF4stats, $Players_r['SoldierName']);
+				$PlayerID = $Players_r['PlayerID'];
+				$Kills = $Players_r['Kills'];
+				$KDR = round($Players_r['KDR'],2);
+				$HSR = round($Players_r['HSR'],4);
+				// insert into db
+				// if there is a ServerID, this is a server stats page
+				if(!empty($ServerID))
+				{
+					@mysqli_query($BF4stats,"
+						INSERT INTO `tyger_stats_top_twenty_cache`
+						(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
+						VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
+					");
+				}
+				// or else this is a global stats page
+				else
+				{
+					@mysqli_query($BF4stats,"
+						INSERT INTO `tyger_stats_top_twenty_cache`
+						(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
+						VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
+					");
+				}
+			}
+			// set the pointer back to the beginning of the query result array
+			@mysqli_data_seek($Players_q, 0);
+			if(@mysqli_num_rows($Players_q) != 0)
+			{
+				echo '
+				<div id="cache_fade2" style="position: absolute; top: 2px; left: -150px; display: none;">
+				<div class="subsection" style="width: 100px; font-size: 12px;">
+				<center>Cache Recreated:<br/>Top Twenty</center>
+				</div>
+				</div>
+				<script type="text/javascript">
+				$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
+				</script>
+				';
+				// return the value out of the function
+				return $Players_q;
+			}
+		}
+	}
+	else
+	{
 		// get the info from the db
 		// if there is a ServerID, this is a server stats page
 		if(!empty($ServerID))
@@ -2481,60 +2564,8 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr)
 				LIMIT 0, 20
 			");
 		}
-		while($Players_r = @mysqli_fetch_assoc($Players_q))
-		{
-			$Score = $Players_r['Score'];
-			$SoldierName = mysqli_real_escape_string($BF4stats, $Players_r['SoldierName']);
-			$PlayerID = $Players_r['PlayerID'];
-			$Kills = $Players_r['Kills'];
-			$KDR = round($Players_r['KDR'],2);
-			$HSR = round($Players_r['HSR'],4);
-			// insert into db
-			// if there is a ServerID, this is a server stats page
-			if(!empty($ServerID))
-			{
-				@mysqli_query($BF4stats,"
-					INSERT INTO `tyger_stats_top_twenty_cache`
-					(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
-					VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
-				");
-			}
-			// or else this is a global stats page
-			else
-			{
-				@mysqli_query($BF4stats,"
-					INSERT INTO `tyger_stats_top_twenty_cache`
-					(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
-					VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
-				");
-			}
-		}
-		// set the pointer back to the beginning of the query result array
-		@mysqli_data_seek($Players_q, 0);
-		if(@mysqli_num_rows($Players_q) != 0)
-		{
-			echo '
-			<div id="cache_fade2" style="position: absolute; top: ';
-			if(!empty($ServerID))
-			{
-				echo '3px;';
-			}
-			else
-			{
-				echo '50px;';
-			}
-			echo ' left: -150px; display: none;">
-			<div class="subsection" style="width: 100px; font-size: 12px;">
-			<center>Cache Recreated:<br/>Top Twenty</center>
-			</div>
-			</div>
-			<script type="text/javascript">
-			$("#cache_fade2").finish().fadeIn("slow").show().delay(2000).fadeOut("slow");
-			</script>
-			';
-			// return the value out of the function
-			return $Players_q;
-		}
+		// return the value out of the function
+		return $Players_q;
 	}
 }
 // function to replace dangerous characters in content

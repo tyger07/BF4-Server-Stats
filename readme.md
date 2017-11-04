@@ -1,5 +1,5 @@
 ## BF4 Server Stats Webpage Overview
-###### Version dated: 10/31/2017
+###### Version dated: 11/04/2017
 
 
 ### Features

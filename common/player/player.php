@@ -1222,13 +1222,13 @@ elseif($SoldierName != null)
 				$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
 				$srank = $ScoreC_r['rank'];
 				$timestamp = $ScoreC_r['timestamp'];
-				// data older than 12 hours? or incorrect data? show recalculate message
+				// data old? or incorrect data? show recalculate message
 				if(($timestamp <= $old) OR ($srank == 0))
 				{
 					// we aren't actually doing this now
 					// we are just showing the message that it will be done
 					echo '
-					<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+					<div id="cache_fade2" style="position: absolute; top: 1px; left: -150px; display: none;">
 					<div class="subsection" style="width: 100px; font-size: 12px;">
 					<center>Cache Recreated:<br/>Ranks</center>
 					</div>
@@ -1244,7 +1244,7 @@ elseif($SoldierName != null)
 					// we aren't actually doing this now
 					// we are just showing the message that it will be done
 					echo '
-					<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+					<div id="cache_fade2" style="position: absolute; top: 1px; left: -150px; display: none;">
 					<div class="subsection" style="width: 100px; font-size: 12px;">
 					<center>Cache Used:<br/>Ranks</center>
 					</div>
@@ -1259,7 +1259,7 @@ elseif($SoldierName != null)
 			{
 				// show insert message
 				echo '
-				<div id="cache_fade2" style="position: absolute; top: 3px; left: -150px; display: none;">
+				<div id="cache_fade2" style="position: absolute; top: 1px; left: -150px; display: none;">
 				<div class="subsection" style="width: 100px; font-size: 12px;">
 				<center>Cache Created:<br/>Ranks</center>
 				</div>

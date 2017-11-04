@@ -25,6 +25,33 @@
 	)
 	ENGINE=InnoDB
 ");
+// check to see if this top twenty cache table exists
+@mysqli_query($BF4stats,"
+	CREATE TABLE IF NOT EXISTS `tyger_stats_top_twenty_cache`
+	(
+		`ID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+		`PlayerID` INT(10) UNSIGNED NOT NULL,
+		`GID` TINYINT(4) UNSIGNED NOT NULL,
+		`SID` VARCHAR(100) NOT NULL,
+		`SoldierName` VARCHAR(45) NOT NULL,
+		`Score` INT(11) NOT NULL DEFAULT '0',
+		`Kills` INT(11) NOT NULL DEFAULT '0',
+		`KDR` VARCHAR(20) NOT NULL,
+		`HSR` VARCHAR(20) NOT NULL,
+		`timestamp` INT(11) NOT NULL DEFAULT '0',
+		PRIMARY KEY (`ID`),
+		UNIQUE `UNIQUE_TopTwentyData` (`PlayerID`, `GID`, `SID`),
+		INDEX `PlayerID` (`PlayerID` ASC),
+		INDEX `GID` (`GID` ASC),
+		INDEX `SID` (`SID` ASC),
+		INDEX `SoldierName` (`SoldierName` ASC),
+		INDEX `Score` (`Score` ASC),
+		INDEX `timestamp` (`timestamp` ASC),
+		CONSTRAINT `fk_tyger_stats_top_twenty_cache_PlayerID` FOREIGN KEY (`PlayerID`) REFERENCES `tbl_playerdata`(`PlayerID`) ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT `fk_tyger_stats_top_twenty_cache_GID` FOREIGN KEY (`GID`) REFERENCES `tbl_games`(`GameID`) ON DELETE CASCADE ON UPDATE CASCADE
+	)
+	ENGINE=InnoDB
+");
 // initialize timestamp values
 $now_timestamp = time();
 $old = $now_timestamp - 10800;
@@ -118,7 +145,7 @@ elseif($rank == 'Score')
 		$ScoreC_r = @mysqli_fetch_assoc($ScoreC_q);
 		$srank = $ScoreC_r['rank'];
 		$timestamp = $ScoreC_r['timestamp'];
-		// data older than 12 hours? or incorrect data? recalculate
+		// data old? or incorrect data? recalculate
 		if(($timestamp <= $old) OR ($srank == 0))
 		{
 			// check if this is a top 20 player

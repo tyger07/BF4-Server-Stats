@@ -27,8 +27,8 @@ if(!($isbot))
 		// find timestamp for now and find the timestamp of the query
 		$now = time();
 		$compare = strtotime($date_query);
-		// find the difference between the two and make sure negative numbers (in the future) are filtered out to 0
-		$difference = max(($now - $compare),0);
+		// find the difference between the two
+		$difference = ($now - $compare);
 		// difference is less than an hour ago. show the last hour
 		if($difference < 3600)
 		{
@@ -76,7 +76,7 @@ if(!($isbot))
 	// updating text...
 	// hidden by default until time is reached
 	echo '
-	<div id="fadein" style="position: absolute; top: -31px; left: -150px; display: none;">
+	<div id="fadein" style="position: absolute; top: -26px; left: -150px; display: none;">
 	<div class="subsection" style="width: 100px;">
 	<center>Updating ...<span style="float:right;"><img class="update" src="./common/images/loading.gif" alt="loading" /></span></center>
 	</div>
@@ -85,7 +85,7 @@ if(!($isbot))
 	// last updated text...
 	// shown by default until faded away
 	echo '
-	<div id="fadeaway" style="position: absolute; top: -31px; left: -150px;">
+	<div id="fadeaway" style="position: absolute; top: -26px; left: -150px;">
 	<div class="subsection" style="width: 100px;">
 	<center>Updated <span id="timestamp"></span></center>
 	</div>
@@ -180,8 +180,10 @@ if(!($isbot))
 		// or else use the caching system if no search query submitted
 		else
 		{
+			// count total players in servers
+			$TotalServerPlayers = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr);
 			echo '<div style="position: relative;">';
-			$numrows = cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats);
+			$numrows = cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats, $TotalServerPlayers);
 			echo '</div>';
 		}
 	}
@@ -218,8 +220,10 @@ if(!($isbot))
 		// or else use the caching system if no search query submitted
 		else
 		{
+			// count total players in servers
+			$TotalServerPlayers = cache_total_players($ServerID, $valid_ids, $GameID, $BF4stats, $cr);
 			echo '<div style="position: relative;">';
-			$numrows = cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats);
+			$numrows = cache_total_chat($ServerID, $valid_ids, $GameID, $BF4stats, $TotalServerPlayers);
 			echo '</div>';
 		}
 	}

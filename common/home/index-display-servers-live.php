@@ -25,7 +25,7 @@ $(\'#loaded\').fadeIn("slow");
 // updating text...
 // hidden by default until time is reached
 echo '
-<div id="fadein" style="position: absolute; top: 11px; left: -150px; display: none;">
+<div id="fadein" style="position: absolute; top: 10px; left: -150px; display: none;">
 <div class="subsection" style="width: 100px;">
 <center>Updating ...<span style="float:right;"><img class="update" src="./common/images/loading.gif" alt="loading" /></span></center>
 </div>
@@ -34,7 +34,7 @@ echo '
 // last updated text...
 // shown by default until faded away
 echo '
-<div id="fadeaway" style="position: absolute; top: 11px; left: -150px;">
+<div id="fadeaway" style="position: absolute; top: 10px; left: -150px;">
 <div class="subsection" style="width: 100px;">
 <center>Updated <span id="timestamp"></span></center>
 </div>
