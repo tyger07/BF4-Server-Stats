@@ -161,7 +161,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	{
 		echo '
 		<div class="subsection">
-		<div class="headline" style="font-size: 12px;">[ <span class="information"><a href="http://tyger07.github.io/BF4-Server-Stats/" target="_blank">An update is available</a></span> ]</div>
+		<div class="headline" style="font-size: 12px;">[ <span class="information"><a href="https://github.com/tyger07/BF4-Server-Stats/releases/latest" target="_blank">An update is available</a></span> ]</div>
 		</div>
 		<br/>
 		';
