@@ -156,15 +156,15 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	// check if there are any updates to this stats page code
 	$xmlData = @file_get_contents('https://github.com/tyger07/BF4-Server-Stats/releases.atom');
 	$xml=@simplexml_load_string($xmlData);
-	$releaseVersion = $xml->entry[0]->title;
-	if((!empty($releaseVersion)) && (stripos($releaseVersion, 'the cache is a lie') === false))
+	$releaseVersion = $xml->entry[0]->id;
+	if((!empty($releaseVersion)) && (stripos($releaseVersion, '11-4-17') === false))
 	{
-		echo '
-		<div class="subsection">
-		<div class="headline" style="font-size: 12px;">[ <span class="information"><a href="https://github.com/tyger07/BF4-Server-Stats/releases/latest" target="_blank">An update is available</a></span> ]</div>
-		</div>
-		<br/>
-		';
+			echo '
+			<div class="subsection">
+			<div class="headline" style="font-size: 12px;">[ <span class="information"><a href="https://github.com/tyger07/BF4-Server-Stats/releases/latest" target="_blank">An update is available</a></span> ]</div>
+			</div>
+			<br/>
+			';
 	}
 	echo '
 	<center>
