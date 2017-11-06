@@ -1,6 +1,7 @@
 ## BF4 Server Stats Webpage Overview
-##### Version dated: 11/04/2017
 ###### Download the most recent release and view the most recent release notes: https://github.com/tyger07/BF4-Server-Stats/releases/latest
+##### Version dated: 11/04/2017
+
 
 ### Features
 
