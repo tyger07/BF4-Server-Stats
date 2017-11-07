@@ -35,6 +35,7 @@
 		`SID` VARCHAR(100) NOT NULL,
 		`SoldierName` VARCHAR(45) NOT NULL,
 		`Score` INT(11) NOT NULL DEFAULT '0',
+		`Playtime` INT(11) NOT NULL DEFAULT '0',
 		`Kills` INT(11) NOT NULL DEFAULT '0',
 		`KDR` VARCHAR(20) NOT NULL,
 		`HSR` VARCHAR(20) NOT NULL,
@@ -914,6 +915,61 @@ elseif($rank == 'HSR')
 					AND tsp.`ServerID` IN ({$valid_ids})
 					GROUP BY tpd.`SoldierName`
 					ORDER BY (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) DESC, tpd.`SoldierName` ASC
+					) sub
+				) sub2
+			WHERE sub2.`SoldierName` = '{$Soldier_Name}'
+		");
+	}
+	if(@mysqli_num_rows($rank_q) == 1)
+	{
+		$rank_r = @mysqli_fetch_assoc($rank_q);
+		$count = $rank_r['rank'];
+	}
+	else
+	{
+		$count = 0;
+	}
+}
+elseif($rank == 'Playtime')
+{
+	if(!empty($ServerID))
+	{
+		$rank_q = @mysqli_query($BF4stats,"
+			SELECT sub2.rank
+			FROM
+				(SELECT (@num := @num + 1) AS rank, sub.`SoldierName`
+				 FROM
+					(SELECT tpd.`SoldierName`
+					FROM `tbl_playerdata` tpd
+					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+					INNER JOIN (SELECT @num := 0) x
+					WHERE tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` = {$ServerID}
+					GROUP BY tpd.`SoldierName`
+					ORDER BY tps.`Playtime` DESC, tpd.`SoldierName` ASC
+					) sub
+				) sub2
+			WHERE sub2.`SoldierName` = '{$Soldier_Name}'
+		");
+	}
+	// or else this is a global stats page
+	else
+	{
+		$rank_q = @mysqli_query($BF4stats,"
+			SELECT sub2.rank
+			FROM
+				(SELECT (@num := @num + 1) AS rank, sub.`SoldierName`
+				 FROM
+					(SELECT tpd.`SoldierName`
+					FROM `tbl_playerdata` tpd
+					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
+					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
+					INNER JOIN (SELECT @num := 0) x
+					WHERE tpd.`GameID` = {$GameID}
+					AND tsp.`ServerID` IN ({$valid_ids})
+					GROUP BY tpd.`SoldierName`
+					ORDER BY (SUM(tps.`Playtime`) DESC, tpd.`SoldierName` ASC
 					) sub
 				) sub2
 			WHERE sub2.`SoldierName` = '{$Soldier_Name}'

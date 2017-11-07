@@ -294,6 +294,7 @@ $old = $now_timestamp - 10800;
 		`SID` VARCHAR(100) NOT NULL,
 		`SoldierName` VARCHAR(45) NOT NULL,
 		`Score` INT(11) NOT NULL DEFAULT '0',
+		`Playtime` INT(11) NOT NULL DEFAULT '0',
 		`Kills` INT(11) NOT NULL DEFAULT '0',
 		`KDR` VARCHAR(20) NOT NULL,
 		`HSR` VARCHAR(20) NOT NULL,

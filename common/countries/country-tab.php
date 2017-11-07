@@ -51,7 +51,7 @@ if(!empty($ServerID))
 	if($adkats_available)
 	{
 		$CountryCount_q = mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, adk.`ban_status`, sub.`PlayerCount`
+			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, adk.`ban_status`, sub.`PlayerCount`
 			FROM `tbl_playerstats` tps
 			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -77,7 +77,7 @@ if(!empty($ServerID))
 	else
 	{
 		$CountryCount_q = mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, sub.`PlayerCount`
+			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, sub.`PlayerCount`
 			FROM `tbl_playerstats` tps
 			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -106,7 +106,7 @@ else
 	if($adkats_available)
 	{
 		$CountryCount_q = mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, adk.`ban_status`, sub.`PlayerCount`
+			SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, adk.`ban_status`, sub.`PlayerCount`
 			FROM `tbl_playerstats` tps
 			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -125,6 +125,7 @@ else
 			WHERE tsp.`ServerID` IN ({$valid_ids})
 			AND tpd.`CountryCode` = '{$CountryCodeL}'
 			AND tpd.`GameID` = {$GameID}
+			GROUP BY tpd.`PlayerID`
 			ORDER BY Score DESC, tpd.`SoldierName` ASC
 			LIMIT 0, 20
 		");
@@ -132,7 +133,7 @@ else
 	else
 	{
 		$CountryCount_q = mysqli_query($BF4stats,"
-			SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, sub.`PlayerCount`
+			SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, sub.`PlayerCount`
 			FROM `tbl_playerstats` tps
 			INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 			INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -150,6 +151,7 @@ else
 			WHERE tsp.`ServerID` IN ({$valid_ids})
 			AND tpd.`CountryCode` = '{$CountryCodeL}'
 			AND tpd.`GameID` = {$GameID}
+			GROUP BY tpd.`PlayerID`
 			ORDER BY Score DESC, tpd.`SoldierName` ASC
 			LIMIT 0, 20
 		");
@@ -169,10 +171,11 @@ echo '
 <table class="prettytable" style="margin-top: -2px;">
 <tr>
 <th width="5%" class="countheader">#</th>
-<th width="24%">Player</th>
-<th width="24%"><span class="orderedDESCheader">Score</span></th>
-<th width="24%">Kills</th>
-<th width="24%">Kill / Death</th>
+<th width="19%">Player</th>
+<th width="19%"><span class="orderedDESCheader">Score</span></th>
+<th width="19%">Playtime</th>
+<th width="19%">Kills</th>
+<th width="19%">Kill / Death</th>
 </tr>
 ';
 // set the pointer back to the beginning of the query result array
@@ -185,7 +188,7 @@ if(@mysqli_num_rows($CountryCount_q) == 0)
 	echo '
 	<tr>
 	<td width="5%" class="tablecontents">&nbsp;</td>
-	<td width="95%" class="tablecontents" colspan="4">No players found!</td>
+	<td width="95%" class="tablecontents" colspan="5">No players found!</td>
 	</tr>
 	</table>
 	';
@@ -202,6 +205,11 @@ else
 		$SoldierName = htmlspecialchars(strip_tags($CountryRank_r['SoldierName']));
 		$PlayerID = $CountryRank_r['PlayerID'];
 		$Score = $CountryRank_r['Score'];
+		$Playtime = $CountryRank_r['Playtime'];
+		$Playhours = floor($Playtime / 3600);
+		$Playminutes = floor(($Playtime / 60) % 60);
+		$Playseconds = $Playtime % 60;
+		$Playtime = $Playhours . ':' . $Playminutes . ':' . $Playseconds;
 		$Kills = $CountryRank_r['Kills'];
 		$KDR = round($CountryRank_r['KDR'],2);
 		$link = './index.php?';
@@ -241,21 +249,22 @@ else
 		';
 		if($player_banned == 1)
 		{
-			echo '<td width="24%" class="banoutline"><div class="bansubscript">Banned</div>';
+			echo '<td width="19%" class="banoutline"><div class="bansubscript">Banned</div>';
 		}
 		elseif($previous_banned == 1)
 		{
-			echo '<td width="24%" class="warnoutline"><div class="bansubscript">Warned</div>';
+			echo '<td width="19%" class="warnoutline"><div class="bansubscript">Warned</div>';
 		}
 		else
 		{
-			echo '<td width="24%" class="tablecontents">';
+			echo '<td width="19%" class="tablecontents">';
 		}
 		echo '
 		<a href="' . $link . '">' . $SoldierName . '</a></td>
-		<td width="24%" class="tablecontents">' . $Score . '</td>
-		<td width="24%" class="tablecontents">' . $Kills . '</td>
-		<td width="24%" class="tablecontents">' . $KDR . '</td>
+		<td width="19%" class="tablecontents">' . $Score . '</td>
+		<td width="19%" class="tablecontents">' . $Playtime . '</td>
+		<td width="19%" class="tablecontents">' . $Kills . '</td>
+		<td width="19%" class="tablecontents">' . $KDR . '</td>
 		</tr>
 		</table>
 		';

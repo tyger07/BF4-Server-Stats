@@ -92,7 +92,7 @@ elseif($SoldierName != null)
 			if($adkats_available)
 			{
 				$PlayerData_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`, adk.`ban_status`, abr.`record_message`
+					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Playtime`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`, adk.`ban_status`, abr.`record_message`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -106,7 +106,7 @@ elseif($SoldierName != null)
 			else
 			{
 				$PlayerData_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`
+					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, tps.`Suicide`, tps.`Score`, tps.`Playtime`, tps.`Kills`, tps.`Deaths`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, tps.`TKs`, tps.`Headshots`, tps.`Rounds`, tps.`Killstreak`, tps.`Deathstreak`, tps.`Wins`, tps.`Losses`, (tps.`Wins`/tps.`Losses`) AS WLR, tps.`HighScore`, tps.`FirstSeenOnServer`, tps.`LastSeenOnServer`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -123,7 +123,7 @@ elseif($SoldierName != null)
 			if($adkats_available)
 			{
 				$PlayerData_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer, adk.`ban_status`, abr.`record_message`
+					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer, adk.`ban_status`, abr.`record_message`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -138,7 +138,7 @@ elseif($SoldierName != null)
 			else
 			{
 				$PlayerData_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
+					SELECT tpd.`CountryCode`, tpd.`PlayerID`, tpd.`GlobalRank`, SUM(tps.`Suicide`) AS Suicide, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, SUM(tps.`Deaths`) AS Deaths, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, SUM(tps.`TKs`) AS TKs, SUM(tps.`Headshots`) AS Headshots, SUM(tps.`Rounds`) AS Rounds, MAX(tps.`Killstreak`) AS Killstreak, MAX(tps.`Deathstreak`) AS Deathstreak, SUM(tps.`Wins`) AS Wins, SUM(tps.`Losses`) AS Losses, (SUM(tps.`Wins`)/SUM(tps.`Losses`)) AS WLR, MAX(tps.`HighScore`) AS HighScore, MIN(tps.`FirstSeenOnServer`) AS FirstSeenOnServer, MAX(tps.`LastSeenOnServer`) AS LastSeenOnServer
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -179,7 +179,7 @@ elseif($SoldierName != null)
 		if(!empty($rank))
 		{
 			// filter out SQL injection
-			if($rank != 'SoldierName' AND $rank != 'Score' AND $rank != 'Kills' AND $rank != 'KDR')
+			if($rank != 'SoldierName' AND $rank != 'Score' AND $rank != 'Playtime' AND $rank != 'Kills' AND $rank != 'KDR')
 			{
 				// unexpected input detected
 				// use default instead
@@ -228,7 +228,7 @@ elseif($SoldierName != null)
 			if($adkats_available)
 			{
 				$PlayerMatch_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, adk.`ban_status`
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, adk.`ban_status`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -243,7 +243,7 @@ elseif($SoldierName != null)
 			else
 			{
 				$PlayerMatch_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -262,7 +262,7 @@ elseif($SoldierName != null)
 			if($adkats_available)
 			{
 				$PlayerMatch_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, adk.`ban_status`
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, adk.`ban_status`
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -278,7 +278,7 @@ elseif($SoldierName != null)
 			else
 			{
 				$PlayerMatch_q = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR
 					FROM `tbl_playerstats` tps
 					INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 					INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -306,13 +306,15 @@ elseif($SoldierName != null)
 			<th width="5%" class="countheader">#</th>
 			';
 			// player column
-			pagination_headers('Player',$ServerID,'player','24','r',$rank,'SoldierName','o',$order,'ASC',$nextorder,$currentpage,'',$SoldierName,'');
+			pagination_headers('Player',$ServerID,'player','19','r',$rank,'SoldierName','o',$order,'ASC',$nextorder,$currentpage,'',$SoldierName,'');
 			// score column
-			pagination_headers('Score',$ServerID,'player','24','r',$rank,'Score','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			pagination_headers('Score',$ServerID,'player','19','r',$rank,'Score','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			// playtime column
+			pagination_headers('Playtime',$ServerID,'player','19','r',$rank,'Playtime','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
 			// kills column
-			pagination_headers('Kills',$ServerID,'player','24','r',$rank,'Kills','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			pagination_headers('Kills',$ServerID,'player','19','r',$rank,'Kills','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
 			// kill / death column
-			pagination_headers('Kill / Death',$ServerID,'player','24','r',$rank,'KDR','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
+			pagination_headers('Kill / Death',$ServerID,'player','19','r',$rank,'KDR','o',$order,'DESC',$nextorder,$currentpage,'',$SoldierName,'');
 			echo '
 			</tr>
 			</table>
@@ -324,6 +326,11 @@ elseif($SoldierName != null)
 				$Soldier_Name = textcleaner($PlayerMatch_r['SoldierName']);
 				$Player_ID = $PlayerMatch_r['PlayerID'];
 				$Score = $PlayerMatch_r['Score'];
+				$Playtime = $PlayerMatch_r['Playtime'];
+				$Playhours = floor($Playtime / 3600);
+				$Playminutes = floor(($Playtime / 60) % 60);
+				$Playseconds = $Playtime % 60;
+				$Playtime = $Playhours . ':' . $Playminutes . ':' . $Playseconds;
 				$Kills = $PlayerMatch_r['Kills'];
 				$KDR = round($PlayerMatch_r['KDR'],2);
 				// do the fast count if player name search isn't being done
@@ -374,25 +381,27 @@ elseif($SoldierName != null)
 						';
 						if($player_banned == 1)
 						{
-							echo '<td width="24%" class="banoutline"><div class="bansubscript">Banned</div>';
+							echo '<td width="19%" class="banoutline"><div class="bansubscript">Banned</div>';
 						}
 						elseif($previous_banned == 1)
 						{
-							echo '<td width="24%" class="warnoutline"><div class="bansubscript">Warned</div>';
+							echo '<td width="19%" class="warnoutline"><div class="bansubscript">Warned</div>';
 						}
 						else
 						{
-							echo '<td width="24%" class="tablecontents">';
+							echo '<td width="19%" class="tablecontents">';
 						}
 						echo '
 						<a href="' . $link . '">' . $Soldier_Name . '</a></td>
-						<td width="24%" class="tablecontents">' . $Score . '</td>
-						<td width="24%" class="tablecontents">' . $Kills . '</td>
-						<td width="24%" class="tablecontents">' . $KDR . '</td>
+						<td width="19%" class="tablecontents">' . $Score . '</td>
+						<td width="19%" class="tablecontents">' . $Playtime . '</td>
+						<td width="19%" class="tablecontents">' . $Kills . '</td>
+						<td width="19%" class="tablecontents">' . $KDR . '</td>
 					</tr>
 				</table>
 				';
 			}
+			echo '<br/>';
 		}
 	}
 	// this unique player was found
@@ -427,6 +436,11 @@ elseif($SoldierName != null)
 		// continue getting information from the query
 		$Suicides = $PlayerData_r['Suicide'];
 		$Score = $PlayerData_r['Score'];
+		$Playtime = $PlayerData_r['Playtime'];
+		$Playhours = floor($Playtime / 3600);
+		$Playminutes = floor(($Playtime / 60) % 60);
+		$Playseconds = $Playtime % 60;
+		$Playtime = $Playhours . ':' . $Playminutes . ':' . $Playseconds;
 		$Kills = $PlayerData_r['Kills'];
 		$Deaths = $PlayerData_r['Deaths'];
 		$Headshots = $PlayerData_r['Headshots'];
@@ -581,10 +595,10 @@ elseif($SoldierName != null)
 		<td width="18%" class="tablecontents">' . $KDR . '</td>
 		</tr>
 		<tr>
-		<th width="15%" style="padding-left: 10px;">Suicides</th>
-		<td width="18%" class="tablecontents">' . $Suicides . '</td>
 		<th width="15%" style="padding-left: 10px;">Headshots</th>
 		<td width="18%" class="tablecontents">' . $Headshots . '</td>
+		<th width="15%" style="padding-left: 10px;">Suicides</th>
+		<td width="18%" class="tablecontents">' . $Suicides . '</td>
 		<th width="15%" style="padding-left: 10px;">Headshot / Kill</th>
 		<td width="18%" class="tablecontents">' . $HSpercent . '<span class="information"> %</span></td>
 		</tr>
@@ -611,6 +625,14 @@ elseif($SoldierName != null)
 		<td width="18%" class="tablecontents">' . $HighScore . '</td>
 		<th width="15%" style="padding-left: 10px;">Rounds Played</th>
 		<td width="18%" class="tablecontents">' . $Rounds . '</td>
+		</tr>
+		<tr>
+		<th width="15%" style="padding-left: 10px;">Playtime</th>
+		<td width="18%" class="tablecontents">' . $Playtime . '</td>
+		<th width="15%" style="padding-left: 10px;">&nbsp;</th>
+		<td width="18%" class="tablecontents">&nbsp;</td>
+		<th width="15%" style="padding-left: 10px;">&nbsp;</th>
+		<td width="18%" class="tablecontents">&nbsp;</td>
 		</tr>
 		</table>
 		<br/>

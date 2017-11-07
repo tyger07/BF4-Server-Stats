@@ -106,7 +106,7 @@ if($currentpage < 1)
 if(!empty($rank))
 {
 	// filter out SQL injection
-	if($rank != 'SoldierName' AND $rank != 'Score' AND $rank != 'Kills' AND $rank != 'KDR' AND $rank != 'HSR')
+	if($rank != 'SoldierName' AND $rank != 'Score' AND $rank != 'Playtime' AND $rank != 'Kills' AND $rank != 'KDR' AND $rank != 'HSR')
 	{
 		// unexpected input detected
 		// use default instead
@@ -209,7 +209,7 @@ else
 		{
 			// get the info from the db 
 			$Players_q  = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, adk.`ban_status`
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR, adk.`ban_status`
 				FROM `tbl_playerstats` tps
 				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -224,7 +224,7 @@ else
 		{
 			// get the info from the db 
 			$Players_q  = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
 				FROM `tbl_playerstats` tps
 				INNER JOIN `tbl_server_player` tsp ON tsp.`StatsID` = tps.`StatsID`
 				INNER JOIN `tbl_playerdata` tpd ON tsp.`PlayerID` = tpd.`PlayerID`
@@ -243,7 +243,7 @@ else
 		{
 			// get the info from the db 
 			$Players_q  = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, adk.`ban_status`
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR, adk.`ban_status`
 				FROM `tbl_playerdata` tpd
 				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
@@ -259,7 +259,7 @@ else
 		{
 			// get the info from the db 
 			$Players_q  = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
 				FROM `tbl_playerdata` tpd
 				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
@@ -308,15 +308,17 @@ if(@mysqli_num_rows($Players_q) != 0)
 	<th width="5%" class="countheader">#</th>
 	';
 	// player column
-	pagination_headers('Player',$ServerID,'leaders','19','r',$rank,'SoldierName','o',$order,'ASC',$nextorder,$currentpage,'','','');
+	pagination_headers('Player',$ServerID,'leaders','16','r',$rank,'SoldierName','o',$order,'ASC',$nextorder,$currentpage,'','','');
 	// score column
-	pagination_headers('Score',$ServerID,'leaders','19','r',$rank,'Score','o',$order,'DESC',$nextorder,$currentpage,'','','');
+	pagination_headers('Score',$ServerID,'leaders','15','r',$rank,'Score','o',$order,'DESC',$nextorder,$currentpage,'','','');
+	// playtime column
+	pagination_headers('Playtime',$ServerID,'leaders','15','r',$rank,'Playtime','o',$order,'DESC',$nextorder,$currentpage,'','','');
 	// kills column
-	pagination_headers('Kills',$ServerID,'leaders','19','r',$rank,'Kills','o',$order,'DESC',$nextorder,$currentpage,'','','');
+	pagination_headers('Kills',$ServerID,'leaders','15','r',$rank,'Kills','o',$order,'DESC',$nextorder,$currentpage,'','','');
 	// kdr column
-	pagination_headers('Kill / Death',$ServerID,'leaders','19','r',$rank,'KDR','o',$order,'DESC',$nextorder,$currentpage,'','','');
+	pagination_headers('Kill / Death',$ServerID,'leaders','15','r',$rank,'KDR','o',$order,'DESC',$nextorder,$currentpage,'','','');
 	// hsr column
-	pagination_headers('Headshot / Kill',$ServerID,'leaders','19','r',$rank,'HSR','o',$order,'DESC',$nextorder,$currentpage,'','','');
+	pagination_headers('Headshot / Kill',$ServerID,'leaders','15','r',$rank,'HSR','o',$order,'DESC',$nextorder,$currentpage,'','','');
 	echo '
 	</tr>
 	</table>
@@ -325,6 +327,11 @@ if(@mysqli_num_rows($Players_q) != 0)
 	while($Players_r = @mysqli_fetch_assoc($Players_q))
 	{
 		$Score = $Players_r['Score'];
+		$Playtime = $Players_r['Playtime'];
+		$Playhours = floor($Playtime / 3600);
+		$Playminutes = floor(($Playtime / 60) % 60);
+		$Playseconds = $Playtime % 60;
+		$Playtime = $Playhours . ':' . $Playminutes . ':' . $Playseconds;
 		$SoldierName = textcleaner($Players_r['SoldierName']);
 		$PlayerID = $Players_r['PlayerID'];
 		$Kills = $Players_r['Kills'];
@@ -402,22 +409,23 @@ if(@mysqli_num_rows($Players_q) != 0)
 				';
 				if($player_banned == 1)
 				{
-					echo '<td width="19%" class="banoutline"><div class="bansubscript">Banned</div>';
+					echo '<td width="16%" class="banoutline"><div class="bansubscript">Banned</div>';
 				}
 				elseif($previous_banned == 1)
 				{
-					echo '<td width="19%" class="warnoutline"><div class="bansubscript">Warned</div>';
+					echo '<td width="16%" class="warnoutline"><div class="bansubscript">Warned</div>';
 				}
 				else
 				{
-					echo '<td width="19%" class="tablecontents">';
+					echo '<td width="16%" class="tablecontents">';
 				}
 				echo '
 				<a href="' . $link . '">' . $SoldierName . '</a></td>
-				<td width="19%" class="tablecontents">' . $Score . '</td>
-				<td width="19%" class="tablecontents">' . $Kills . '</td>
-				<td width="19%" class="tablecontents">' . $KDR . '</td>
-				<td width="19%" class="tablecontents">' . $HSR . '<span class="information"> %</span></td>
+				<td width="15%" class="tablecontents">' . $Score . '</td>
+				<td width="15%" class="tablecontents">' . $Playtime . '</td>
+				<td width="15%" class="tablecontents">' . $Kills . '</td>
+				<td width="15%" class="tablecontents">' . $KDR . '</td>
+				<td width="15%" class="tablecontents">' . $HSR . '<span class="information"> %</span></td>
 			</tr>
 		</table>
 		';

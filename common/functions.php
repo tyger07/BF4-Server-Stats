@@ -2351,6 +2351,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 				`SID` VARCHAR(100) NOT NULL,
 				`SoldierName` VARCHAR(45) NOT NULL,
 				`Score` INT(11) NOT NULL DEFAULT '0',
+				`Playtime` INT(11) NOT NULL DEFAULT '0',
 				`Kills` INT(11) NOT NULL DEFAULT '0',
 				`KDR` VARCHAR(20) NOT NULL,
 				`HSR` VARCHAR(20) NOT NULL,
@@ -2384,7 +2385,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 		if(!empty($ServerID))
 		{
 			$TopC_q = @mysqli_query($BF4stats,"
-				SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
+				SELECT `PlayerID`, `SoldierName`, `Score`, `Playtime`, `Kills`, `KDR`, `HSR`, `timestamp`
 				FROM `tyger_stats_top_twenty_cache`
 				WHERE `SID` = '{$ServerID}'
 				AND `GID` = '{$GameID}'
@@ -2397,7 +2398,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 		else
 		{
 			$TopC_q = @mysqli_query($BF4stats,"
-				SELECT `PlayerID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`
+				SELECT `PlayerID`, `SoldierName`, `Score`, `Playtime`, `Kills`, `KDR`, `HSR`, `timestamp`
 				FROM `tyger_stats_top_twenty_cache`
 				WHERE `SID` = '{$valid_ids}'
 				AND `GID` = '{$GameID}'
@@ -2460,7 +2461,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 			if(!empty($ServerID))
 			{
 				$Players_q  = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
 					FROM `tbl_playerdata` tpd
 					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
@@ -2474,7 +2475,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 			else
 			{
 				$Players_q  = @mysqli_query($BF4stats,"
-					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+					SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
 					FROM `tbl_playerdata` tpd
 					INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 					INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
@@ -2488,6 +2489,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 			while($Players_r = @mysqli_fetch_assoc($Players_q))
 			{
 				$Score = $Players_r['Score'];
+				$Playtime = $Players_r['Playtime'];
 				$SoldierName = mysqli_real_escape_string($BF4stats, $Players_r['SoldierName']);
 				$PlayerID = $Players_r['PlayerID'];
 				$Kills = $Players_r['Kills'];
@@ -2499,8 +2501,8 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 				{
 					@mysqli_query($BF4stats,"
 						INSERT INTO `tyger_stats_top_twenty_cache`
-						(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
-						VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
+						(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Playtime`, `Kills`, `KDR`, `HSR`, `timestamp`)
+						VALUES ('{$PlayerID}', '{$GameID}', '{$ServerID}', '{$SoldierName}', '{$Score}', '{$Playtime}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
 					");
 				}
 				// or else this is a global stats page
@@ -2508,8 +2510,8 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 				{
 					@mysqli_query($BF4stats,"
 						INSERT INTO `tyger_stats_top_twenty_cache`
-						(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Kills`, `KDR`, `HSR`, `timestamp`)
-						VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', '{$SoldierName}', '{$Score}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
+						(`PlayerID`, `GID`, `SID`, `SoldierName`, `Score`, `Playtime`, `Kills`, `KDR`, `HSR`, `timestamp`)
+						VALUES ('{$PlayerID}', '{$GameID}', '{$valid_ids}', '{$SoldierName}', '{$Score}', '{$Playtime}', '{$Kills}', '{$KDR}', '{$HSR}', '{$now_timestamp}')
 					");
 				}
 			}
@@ -2539,7 +2541,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 		if(!empty($ServerID))
 		{
 			$Players_q  = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, tps.`Score`, tps.`Playtime`, tps.`Kills`, (tps.`Kills`/tps.`Deaths`) AS KDR, (tps.`Headshots`/tps.`Kills`) AS HSR
 				FROM `tbl_playerdata` tpd
 				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
@@ -2553,7 +2555,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 		else
 		{
 			$Players_q  = @mysqli_query($BF4stats,"
-				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
+				SELECT tpd.`SoldierName`, tpd.`PlayerID`, SUM(tps.`Score`) AS Score, SUM(tps.`Playtime`) AS Playtime, SUM(tps.`Kills`) AS Kills, (SUM(tps.`Kills`)/SUM(tps.`Deaths`)) AS KDR, (SUM(tps.`Headshots`)/SUM(tps.`Kills`)) AS HSR
 				FROM `tbl_playerdata` tpd
 				INNER JOIN `tbl_server_player` tsp ON tsp.`PlayerID` = tpd.`PlayerID`
 				INNER JOIN `tbl_playerstats` tps ON tps.`StatsID` = tsp.`StatsID`
