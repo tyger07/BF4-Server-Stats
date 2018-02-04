@@ -87,7 +87,7 @@ foreach($ServerIDs as $this_ServerID)
 		// player count found for this server
 		if(is_null($players))
 		{
-			$players = 'error';
+			$players = 0;
 		}
 		$name = $Basic_r['ServerName'];
 		$mode = $Basic_r['Gamemode'];
