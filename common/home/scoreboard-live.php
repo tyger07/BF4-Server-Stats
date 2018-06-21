@@ -391,7 +391,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 					) sub ON sub.`SoldierName` = cp.`SoldierName`
 					WHERE cp.`ServerID` = {$ServerID}
 					AND cp.`TeamID` = {$this_team}
-					GROUP BY cp.`SoldierName`
+					GROUP BY cp.`SoldierName`, sub.`PlayerID`
 					ORDER BY {$rank} {$order};
 				");
 			}
@@ -411,7 +411,7 @@ if(@mysqli_num_rows($Scoreboard_q) != 0)
 					) sub ON sub.`SoldierName` = cp.`SoldierName`
 					WHERE cp.`ServerID` = {$ServerID}
 					AND cp.`TeamID` = {$this_team}
-					GROUP BY cp.`SoldierName`
+					GROUP BY cp.`SoldierName`, sub.`PlayerID`
 					ORDER BY {$rank} {$order};
 				");
 			}
