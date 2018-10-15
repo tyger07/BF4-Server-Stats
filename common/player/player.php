@@ -1408,7 +1408,7 @@ if($SoldierName != null AND $SoldierName != 'Not Found')
 	<table class="prettytable">
 	<tr>
 	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">Battlelog Stats: </span><a href="http://battlelog.battlefield.com/bf4/user/' . $SoldierName . '" target="_blank">www.Battlelog.Battlefield.com</a></td>
-	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">PlayerCheck: </span><a href="https://i-stats.net/index.php?action=pcheck&player=' . $SoldierName . '&game=BF4&sub=Check+Player" target="_blank">www.i-Stats.net</a></td>
+	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">BF4Stats: </span><a href="https://bf4stats.com/pc/' . $SoldierName . '" target="_blank">www.BF4Stats.com</a></td>
 	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">BF4DB: </span><a href="https://bf4db.com/player/search?name=' . $SoldierName . '" target="_blank">www.BF4DB.com</a></td>
 	</tr>
 	</table>
