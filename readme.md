@@ -28,7 +28,7 @@
 
 This web page code requires the use of a stats database which is created by XpKiller's Procon "Chat, GUID, Stats and Mapstats Logger" Plugin.
 If you need help setting up and using XpKiller's Stats Logger plugin, you must seek assistance in XpKiller's plugin thread:
-https://forum.myrcon.com/showthread.php?6698
+https://myrcon.net/index.php?/topic/11-chat-guid-stats-and-mapstats-logger-1003-by-xpkiller/
 
 For best compatibility with this web stats page, use the following settings in XpKiller's Procon Stats Logging plugin:
 * "Enable Statslogging?" : Yes
@@ -46,8 +46,9 @@ This webpage code requires that you have access to an Apache web server running 
 ### Help and Support
 
 For help with this web stats page code, visit the following forum thread:
-https://forum.myrcon.com/showthread.php?6854
-
+https://myrcon.net/index.php?/topic/15-bf4-server-stats-webpage-overview/
+Or, submit a "New Issue" using GitHub:
+https://github.com/tyger07/BF4-Server-Stats/issues/new
 
 ### Installation Steps
 
