@@ -1,6 +1,6 @@
 <?php
 // BF4 Stats Page by Ty_ger07
-// https://forum.myrcon.com/showthread.php?6854
+// https://myrcon.net/topic/162-chat-guid-stats-and-mapstats-logger-1003/
 
 // connect to the stats database
 $BF4stats = @mysqli_connect(HOST, USER, PASS, NAME, PORT) or die ("<title>BF4 Player Stats - Error</title></head><body><div id='pagebody'><div class='subsection'><div class='headline'>Unable to access stats database. Please notify this website's administrator.</div></div><br/><div class='subsection'><div class='headline'>If you are the administrator, please seek assistance <a href='https://myrcon.net/topic/166-bf4-stats-webpage-for-xpkillers-stats-logger-plugin/' target='_blank'>here</a>.</div></div><br/><div class='subsection'><div class='headline'>Error: " . mysqli_connect_error() . "</div></div></div></body></html>");
