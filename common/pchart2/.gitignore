@@ -1,0 +1,14 @@
+php.exe
+php.ini
+php7ts.dll
+php8ts.dll
+php_gd2.dll
+cloc-1.80.exe
+php.webserver.cmd
+Barcodes/*
+QRCode/*
+PDF417/*
+temp/*
+php_xdebug*
+WinCacheGrind*
+php_gd.dll

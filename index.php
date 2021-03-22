@@ -15,7 +15,7 @@ echo '
 <meta name="distribution" content="global" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta http-equiv="Cache-Control" content="max-age=604800" />
-<meta name="copyright" content="2017 Ty_ger07 https://forum.myrcon.com/showthread.php?6854" />
+<meta name="copyright" content="2021 Ty_ger07 http://tyger07.github.io/BF4-Server-Stats/" />
 <link rel="icon" type="image/png" href="./favicon.ico" />
 <link rel="stylesheet" href="./common/stats.css" type="text/css" />
 <link rel="stylesheet" href="./common/javascript/jquery-ui.css" />
@@ -58,7 +58,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	<div class="content-gradient"></div>
 	<div id="topcontent">
 	<div id="topbanner">
-	<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page 2017 Ty_ger07" border="0" /></a>
+	<a href="' . $banner_url . '" target="_blank"><img class="banner" src="' . $banner_image . '" alt="BF4 Stats Page 2021 Ty_ger07" border="0" /></a>
 	</div>
 	</div>
 	<div id="topmenu">
@@ -157,7 +157,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	$xmlData = @file_get_contents('https://github.com/tyger07/BF4-Server-Stats/releases.atom');
 	$xml=@simplexml_load_string($xmlData);
 	$releaseVersion = $xml->entry[0]->id;
-	if((!empty($releaseVersion)) && (stripos($releaseVersion, '10-14-18') === false))
+	if((!empty($releaseVersion)) && (stripos($releaseVersion, '3-22-21') === false))
 	{
 		echo '
 		<div class="subsection">

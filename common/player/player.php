@@ -1407,9 +1407,8 @@ if($SoldierName != null AND $SoldierName != 'Not Found')
 	<div class="subsection"><div class="headline"><span class="information">External Links for "' . $SoldierName . '"</span></div></div>
 	<table class="prettytable">
 	<tr>
-	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">Battlelog Stats: </span><a href="http://battlelog.battlefield.com/bf4/user/' . $SoldierName . '" target="_blank">www.Battlelog.Battlefield.com</a></td>
-	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">BF4Stats: </span><a href="https://bf4stats.com/pc/' . $SoldierName . '" target="_blank">www.BF4Stats.com</a></td>
-	<td class="tablecontents" width="33%" style="text-align: center"><span class="information">BF4DB: </span><a href="https://bf4db.com/player/search?name=' . $SoldierName . '" target="_blank">www.BF4DB.com</a></td>
+	<td class="tablecontents" width="50%" style="text-align: center"><span class="information">Battlelog Stats: </span><a href="http://battlelog.battlefield.com/bf4/user/' . $SoldierName . '" target="_blank">www.Battlelog.Battlefield.com</a></td>
+	<td class="tablecontents" width="50%" style="text-align: center"><span class="information">BF4DB: </span><a href="https://bf4db.com/player/search?name=' . $SoldierName . '" target="_blank">www.BF4DB.com</a></td>
 	</tr>
 	</table>
 	<br/>
