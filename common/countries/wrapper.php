@@ -38,7 +38,7 @@ else
 	");
 }
 // no country stats found
-if(@mysqli_num_rows($CountryMap_q) == 0)
+if(!$CountryMap_q || @mysqli_num_rows($CountryMap_q) == 0)
 {
 	echo '
 	<div class="subsection">

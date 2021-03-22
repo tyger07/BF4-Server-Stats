@@ -194,7 +194,7 @@ if(@mysqli_num_rows($Tickets_q) > 2)
 }
 // no teams found
 // some sort of error occured
-elseif(@mysqli_num_rows($Tickets_q) == 0)
+elseif(!$Tickets_q || @mysqli_num_rows($Tickets_q) == 0)
 {
 	echo '
 	<center>
@@ -324,7 +324,7 @@ $Score_q = @mysqli_query($BF4stats,"
 	ORDER BY tps.`Score` DESC, tpd.`SoldierName` ASC LIMIT 10
 ");
 // if no recent results, do the slower query from live stats
-if(@mysqli_num_rows($Score_q) == 0)
+if(!$Score_q || @mysqli_num_rows($Score_q) == 0)
 {
 	$Score_q = @mysqli_query($BF4stats,"
 		SELECT tpd.`SoldierName`, tps.`Score`

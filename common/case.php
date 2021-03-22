@@ -165,17 +165,6 @@ else
 	$scoreboard_order = null;
 }
 
-// country code (flag image in banner override) case
-// $cc = ?cc
-if(!empty($_GET['cc']) && strlen($_GET['cc']) == 2 && !(is_numeric($_GET['cc'])))
-{
-	$cc = strtoupper(mysqli_real_escape_string($BF4stats, strip_tags($_GET['cc'])));
-}
-else
-{
-	$cc = null;
-}
-
 // cache refresh
 // $cr = ?cr
 if(!empty($_GET['cr']) AND is_numeric($_GET['cr']))

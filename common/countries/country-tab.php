@@ -183,7 +183,7 @@ echo '
 // no players found
 // this must be a random database error
 // showing blank
-if(@mysqli_num_rows($CountryCount_q) == 0)
+if(!$CountryCount_q || @mysqli_num_rows($CountryCount_q) == 0)
 {
 	echo '
 	<tr>

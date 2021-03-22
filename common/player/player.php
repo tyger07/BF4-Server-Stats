@@ -1188,7 +1188,7 @@ elseif($SoldierName != null)
 		{
 			echo '
 			<br/>
-			<div class="subsection" style="position: relative;"><div class="headline"><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s Servers.</span></div>
+			<div class="subsection" style="position: relative;"><div class="headline"><span class="information">Signature images use combined stats from all of ' . $clan_name . '\'s servers.</span></div>
 			';
 			// check if this player's rank is cached in the database
 			// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed
@@ -1327,10 +1327,10 @@ elseif($SoldierName != null)
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
-			Stats image with player\'s rank:<br/><br/>
 			';
 			// include signature.php image
 			echo '
+			<br/><br/>
 			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav0.png';
 			if(!empty($cr))
 			{
@@ -1338,8 +1338,12 @@ elseif($SoldierName != null)
 			}
 			echo '" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
+			</td>
+			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
 			<span class="information">BBcode:</span>
 			<br/><br/>
+			Image with rank:
+			<br/>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
@@ -1347,21 +1351,9 @@ elseif($SoldierName != null)
 			</td>
 			</tr>
 			</table>
-			</td>
-			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
-			Stats image with player\'s favorite weapon:<br/><br/>
-			';
-			// include signature.php image
-			echo '
-			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav1.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav1.png';
-			if(!empty($cr))
-			{
-				echo '?cr=' . $cr;
-			}
-			echo '" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
-			<span class="information">BBcode:</span>
-			<br/><br/>
+			Image with favorite weapon:
+			<br/>
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">

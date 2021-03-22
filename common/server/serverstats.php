@@ -19,7 +19,7 @@ echo '
 <script type="text/javascript">
 $(function()
 {
-	$( "#tabs, #dogtag_tab" ).tabs(
+	$( "#tabs" ).tabs(
 	{
 		beforeLoad: function( event, ui )
 		{

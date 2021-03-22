@@ -302,7 +302,7 @@ function rank($ServerID,$valid_ids,$PlayerID,$BF4stats,$GameID,$cr)
 			AND `SID` = '{$valid_ids}'
 			GROUP BY `PlayerID`
 		");
-		if(@mysqli_num_rows($ScoreC_q) == 0)
+		if(!$ScoreC_q || @mysqli_num_rows($ScoreC_q) == 0)
 		{
 			// insert useless dummy data for now
 			// we do this early so that we can insert dummy data now into the database (if necessary) to reduce duplicates later when the slower parallel process is executed

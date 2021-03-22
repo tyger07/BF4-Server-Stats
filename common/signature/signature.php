@@ -216,7 +216,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				GROUP BY `PlayerID`
 			");
 			// if no recent results, do the slower query from live stats
-			if(@mysqli_num_rows($ScoreRecentCache_q) == 0)
+			if(!$ScoreRecentCache_q || @mysqli_num_rows($ScoreRecentCache_q) == 0)
 			{
 				$ScoreRecache_q = @mysqli_query($BF4stats,"
 					SELECT sub2.rank
@@ -256,7 +256,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					AND `SID` = '{$valid_ids}'
 					GROUP BY `PlayerID`
 				");
-				if(@mysqli_num_rows($ScoreExistCache_q) == 0)
+				if(!$ScoreExistCache_q || @mysqli_num_rows($ScoreExistCache_q) == 0)
 				{
 					// insert new data
 					@mysqli_query($BF4stats,"
@@ -313,7 +313,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				AND `timestamp` >= '{$old}'
 			");
 			// if no recent results, do the slower query from live stats
-			if(@mysqli_num_rows($TotalRowsC_q) == 0)
+			if(!$TotalRowsC_q || @mysqli_num_rows($TotalRowsC_q) == 0)
 			{
 				$TotalRowsC_q = @mysqli_query($BF4stats,"
 					SELECT COUNT(DISTINCT tpd.`PlayerID`) AS count

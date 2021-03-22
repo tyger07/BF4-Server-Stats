@@ -50,6 +50,7 @@ if((count($ServerIDs) == 1) || (!empty($sid) && in_array($sid,$ServerIDs) && emp
 		$ServerName = $Server_r['ServerName'];
 		// create battlelog link for this server
 		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+		$ServerName = textcleaner($ServerName);
 	}
 	// error?  what?  This will probably never happen.
 	// damage control...

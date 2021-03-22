@@ -40,11 +40,6 @@ echo '
 <table class="prettytable" style="width: 550px;">
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
-<span style="font-size: 12px;"><b>?cc=</b> : (optional) two letter country code designator of server location flag (default: null)</span>
-</td>
-</tr>
-<tr>
-<td class="tablecontents" style="padding-left: 10px;">
 <span style="font-size: 12px;"><b>&amp;h=</b> : (optional) height of image in pixels (default: 95)</span>
 </td>
 </tr>
