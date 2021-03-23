@@ -110,22 +110,14 @@ if(@mysqli_num_rows($Server_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// include playersbydate.php contents
+		// show players-by-date.png contents
 		echo '<br/><center><img class="embed" src="./common/server/players-by-date.png?sid=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
-		// include players.php contents
-		echo '<center><img class="embed" src="./common/server/players-by-round.png?sid=' . $ServerID . '" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
-		// include joinsleaves.php contents
-		echo '<center><img class="embed" src="./common/server/joins-leaves.png?sid=' . $ServerID . '" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
-		// include playersbydate.php contents
+		// show players-by-date.png contents
 		echo '<br/><center><img class="embed" src="./common/server/players-by-date.png" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
-		// include players.php contents
-		echo '<center><img class="embed" src="./common/server/players-by-round.png" alt="minimum, maximum and average players" title="minimum, maximum and average players" height="300" width="600" /></center><br/>';
-		// include joinsleaves.php contents
-		echo '<center><img class="embed" src="./common/server/joins-leaves.png" alt="joins and leaves from server" title="joins and leaves from server" height="300" width="600" /></center><br/>';
 	}
 	echo '
 	</div>
