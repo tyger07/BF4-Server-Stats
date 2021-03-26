@@ -56,46 +56,49 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 	// text color
 	$light = imagecolorallocate($base, 255, 255, 255);
 	$yellow = imagecolorallocate($base, 255, 250, 200);
-	$red = imagecolorallocate($base, 255, 000, 000);
 	$orange = imagecolorallocate($base, 255, 100, 000);
-	$dark = imagecolorallocate($base, 200, 200, 190);
 	if(@mysqli_num_rows($result) != 0)
 	{
 		$numrows = @mysqli_num_rows($result);
-		$x_range = 520 / $numrows;
-		$x = 50;
+		$top_offset = 40;
+		$height = 220;
+		$width = 520;
+		$x_division = $width / $numrows;
+		$x_finish = 50;
 		$last_average = 0;
-		$i = 0;
+		$loop_count = 0;
 		while($row = mysqli_fetch_assoc($result))
 		{
-			$Max = round($row['Max'], 0);
-			$Ticks = 270 / $Max;
+			$y_max = $row['Max'];
+			$y_max_display = round($y_max, 0);
+			$y_division = $height / $y_max;
 			$date = date("M d", strtotime($row['Date']));
-			$average = 270 - ($row['Average'] * $Ticks);
-			$x_axis = $x;
-			$x += $x_range;
-			if($i > 0)
+			$day_average = $height - ($row['Average'] * $y_division) + $top_offset;
+			$x_start = $x_finish;
+			$x_finish += $x_division;
+			if($loop_count > 0)
 			{
-				imageline($base, $x_axis, $last_average, $x, $average, $orange);
+				imageline($base, $x_start, $last_average, $x_finish, $day_average, $orange);
 			}
 			else
 			{
-				imageline($base, $x_axis, $average, $x, $average, $orange);
+				imageline($base, $x_start, $day_average, $x_finish, $day_average, $orange);
 			}
-			imagestring($base, 2, $x_axis, 280, $date, $yellow);
-			$last_average = $average;
-			$i++;
+			imagestring($base, 2, $x_start, $height + 15 + $top_offset, $date, $yellow);
+			$last_average = $day_average;
+			$loop_count++;
 		}
-		imagestring($base, 2, 15, 5, $Max, $yellow);
-		$middle = round(($Max / 2), 0);
-		imagestring($base, 2, 15, 133, $middle, $yellow);
-		imagestring($base, 2, 15, 270, "0", $yellow);
-		imageline($base, 40, 280, 580, 280, $light);
-		imageline($base, 40, 10, 40, 280, $light);
+		imagestring($base, 2, 15, $height - ($y_max_display * $y_division) + $top_offset, $y_max_display, $yellow);
+		$middle = round(($y_max / 2), 0);
+		imagestring($base, 2, 15, $height - ($middle * $y_division) + $top_offset, $middle, $yellow);
+		imagestring($base, 2, 15, $height + $top_offset, "0", $yellow);
+		imageline($base, 40, $height + 10 + $top_offset, $width + 40, $height + 10 + $top_offset, $light);
+		imageline($base, 40, 10 + $top_offset, 40, $height + 10 + $top_offset, $light);
+		imagestring($base, 4, 90, 15, 'Average Players per Day on Days with Server Acitivity', $light);
 	}
 	else
 	{
-		imagestring($base, 4, 140, 135, 'The query returned no results.', $light);
+		imagestring($base, 4, 170, 135, 'The query returned no results.', $light);
 	}
 	// compile image
 	imagealphablending($base, false);
