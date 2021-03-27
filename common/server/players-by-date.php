@@ -84,7 +84,8 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			{
 				imageline($base, $x_start, $day_average, $x_finish, $day_average, $orange);
 			}
-			imagestring($base, 2, $x_start, $height + 15 + $top_offset, $date, $yellow);
+			imagestring($base, 2, $x_start + 10, $height + 15 + $top_offset, $date, $yellow);
+			imageline($base, $x_finish, $height + $top_offset, $x_finish, $height + 10 + $top_offset, $light);
 			$last_average = $day_average;
 			$loop_count++;
 		}
@@ -92,8 +93,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$middle = round(($y_max / 2), 0);
 		imagestring($base, 2, 15, $height - ($middle * $y_division) + $top_offset, $middle, $yellow);
 		imagestring($base, 2, 15, $height + $top_offset, "0", $yellow);
-		imageline($base, 40, $height + 10 + $top_offset, $width + 40, $height + 10 + $top_offset, $light);
-		imageline($base, 40, 10 + $top_offset, 40, $height + 10 + $top_offset, $light);
+		imageline($base, 40, $top_offset + 10, 50, $top_offset + 10, $light);
+		imageline($base, 40, $height + $top_offset, $width + 50, $height + $top_offset, $light);
+		imageline($base, 50, 10 + $top_offset, 50, $height + 10 + $top_offset, $light);
 		imagestring($base, 4, 90, 15, 'Average Players per Day on Days with Server Acitivity', $light);
 	}
 	else
