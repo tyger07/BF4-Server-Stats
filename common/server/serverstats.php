@@ -74,7 +74,7 @@ if(@mysqli_num_rows($Server_q) != 0)
 	{
 		echo '
 		<ul>
-		<li><a href="#tabs-1">Graphs / Info</a></li>
+		<li><a href="#tabs-1">Graph / Info</a></li>
 		<li><a href="./common/server/server-tab.php?sid=' . $ServerID . '&amp;gid=' . $GameID . '">Banners</a></li>
 		</ul>
 		';

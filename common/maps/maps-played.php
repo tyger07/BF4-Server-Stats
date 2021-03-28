@@ -3,10 +3,6 @@
 // https://myrcon.net/topic/162-chat-guid-stats-and-mapstats-logger-1003/
 
 // include required files
-require_once("../pchart/class/pData.class.php");
-require_once("../pchart/class/pDraw.class.php");
-require_once("../pchart/class/pPie.class.php");
-require_once("../pchart/class/pImage.class.php");
 require_once('../../config/config.php');
 require_once('../connect.php');
 require_once('../constants.php');
@@ -19,12 +15,21 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 	if(!empty($sid))
 	{
 		$query = "
-			SELECT `MapName`, SUM(`NumberofRounds`) AS number
+			SELECT `MapName`, SUM(`NumberofRounds`) AS number, sub.`total`
 			FROM `tbl_mapstats`
+			LEFT JOIN
+			(
+				SELECT SUM(`NumberofRounds`) AS total
+				FROM `tbl_mapstats`
+				WHERE `ServerID` = {$sid}
+                AND `Gamemode` != ''
+				LIMIT 0, 1
+			) sub ON sub.`total` = `total`
 			WHERE `ServerID` = {$sid}
 			AND `Gamemode` != ''
 			GROUP BY `MapName`
 			ORDER BY number DESC
+			LIMIT 20
 		";
 		$result = @mysqli_query($BF4stats, $query);
 	}
@@ -34,20 +39,53 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		// merge server IDs array into a variable
 		$ids = join(',',$ServerIDs);
 		$query = "
-			SELECT `MapName`, SUM(`NumberofRounds`) AS number
+			SELECT `MapName`, SUM(`NumberofRounds`) AS number, sub.`total`
 			FROM `tbl_mapstats`
+			LEFT JOIN
+			(
+				SELECT SUM(`NumberofRounds`) AS total
+				FROM `tbl_mapstats`
+				WHERE `ServerID` in ({$ids})
+                AND `Gamemode` != ''
+				LIMIT 0, 1
+			) sub ON sub.`total` = `total`
 			WHERE `ServerID` in ({$ids})
 			AND `Gamemode` != ''
 			GROUP BY `MapName`
 			ORDER BY number DESC
+			LIMIT 20
 		"; 
 		$result = @mysqli_query($BF4stats, $query);
 	}
-	if($result)
+	// initialize timestamp values
+	$now_timestamp = time();
+	// start outputting the image
+	header('Pragma: public');
+	header('Cache-Control: max-age=10800');
+	header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', $now_timestamp + 10800));
+	header("Content-type: image/png");
+	// base image
+	$base = imagecreatefrompng('./images/background.png');
+	// color
+	$dark = imagecolorallocate($base, 20, 20, 20);
+	$faded = imagecolorallocate($base, 150, 150, 150);
+	$yellow = imagecolorallocate($base, 255, 250, 200);
+	$orange = imagecolorallocate($base, 200, 150, 000);
+	if(@mysqli_num_rows($result) != 0)
 	{
+		$legend_y_position = 19;
+		$loop_count = 0;
+		$previous_end = 0;
+		$num_rows = @mysqli_num_rows($result);
+		$color_steps = round(250 / $num_rows, 0);
 		while($row = mysqli_fetch_assoc($result))
 		{
 			$key = $row['MapName'];
+			$number = $row['number'];
+			$total_rounds = $row['total'];
+			$fraction = round(($number / $total_rounds * 100), 0);
+			$degrees = 360 * ($number / $total_rounds);
+			$wedge_color = imagecolorallocate($base, abs(-200 + $loop_count * $color_steps), abs(-200 + $loop_count * $color_steps), abs(-255 + $loop_count * $color_steps));
 			// convert map to friendly name
 			// first find if this map name is even in the map array
 			if(in_array($key,$map_array))
@@ -59,35 +97,40 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			{
 				$MapName = $key;
 			}
-			$maps[] = $MapName;
-			$number[] = $row['number'];
+			imagefilledrectangle($base, 457, $legend_y_position + 1, 462, $legend_y_position + 6, $wedge_color);
+			imagestring($base, 1, 467, $legend_y_position, $MapName, $faded);
+			if($num_rows > 1)
+			{
+				if(strlen((string)$fraction) < 2)
+				{
+					imagestring($base, 1, 439, $legend_y_position, " " . $fraction . "%", $faded);
+				}
+				else
+				{
+					imagestring($base, 1, 439, $legend_y_position, $fraction . "%", $faded);
+				}
+			}
+			else
+			{
+				imagestring($base, 1, 433, $legend_y_position, $fraction . "%", $faded);
+			}
+			ImageFilledArc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $wedge_color, IMG_ARC_PIE);
+			ImageFilledArc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $dark, IMG_ARC_EDGED | IMG_ARC_NOFILL);
+			$legend_y_position += 10;
+			$loop_count++;
+			$previous_end += $degrees;
 		}
-		/* Create and populate the pData object */
-		$MyData = new pData();   
-		$MyData->addPoints($number,"ScoreA");  
-		$MyData->setSerieDescription("ScoreA","Application A");
-		/* Define the absissa serie */
-		$MyData->addPoints($maps,"Labels");
-		$MyData->setAbscissa("Labels");
-		/* Create the pChart object */
-		$myPicture = new pImage(600,300,$MyData,TRUE);
-		/* Write the picture title */
-		$myPicture->setFontProperties(array("FontName"=>"../pchart/fonts/Forgotte.ttf","FontSize"=>12));
-		$myPicture->drawText(170,24,"Maps played in percent from greatest to least.",array("R"=>150,"G"=>150,"B"=>150));
-		/* Set the default font properties */
-		$myPicture->setFontProperties(array("FontName"=>"../pchart/fonts/pf_arma_five.ttf","FontSize"=>6,"R"=>150,"G"=>150,"B"=>150));
-		/* Create the pPie object */
-		$PieChart = new pPie($myPicture,$MyData);
-		/* Draw an AA pie chart */
-		$PieChart->draw2DRing(300,150,array("WriteValues"=>TRUE,"ValueR"=>150,"ValueG"=>150,"ValueB"=>150,"Border"=>TRUE));
-		/* Set the default font properties */
-		$myPicture->setFontProperties(array("FontName"=>"../pchart/fonts/pf_arma_five.ttf","FontSize"=>6,"R"=>150,"G"=>150,"B"=>150));
-		/* Write the legend box */
-		$myPicture->setShadow(FALSE);
-		$PieChart->drawPieLegend(480,10,array("Alpha"=>0));
-		/* Render the picture */
-		$myPicture->stroke($BrowserExpire=TRUE);
+		imagestring($base, 2, 250, 15, 'Maps Played Most', $faded);
 	}
+	else
+	{
+		imagestring($base, 4, 170, 135, 'The query returned no results.', $faded);
+	}
+	// compile image
+	imagealphablending($base, false);
+	imagesavealpha($base, true);
+	imagepng($base);
+	imagedestroy($base);
 }
 // php GD extension doesn't exist. show error image
 else

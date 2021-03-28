@@ -53,10 +53,10 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 	header("Content-type: image/png");
 	// base image
 	$base = imagecreatefrompng('./images/background.png');
-	// text color
-	$light = imagecolorallocate($base, 255, 255, 255);
+	// color
+	$faded = imagecolorallocate($base, 150, 150, 150);
 	$yellow = imagecolorallocate($base, 255, 250, 200);
-	$orange = imagecolorallocate($base, 255, 100, 000);
+	$orange = imagecolorallocate($base, 200, 150, 000);
 	if(@mysqli_num_rows($result) != 0)
 	{
 		$numrows = @mysqli_num_rows($result);
@@ -84,23 +84,25 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			{
 				imageline($base, $x_start, $day_average, $x_finish, $day_average, $orange);
 			}
-			imagestring($base, 2, $x_start + 10, $height + 15 + $top_offset, $date, $yellow);
-			imageline($base, $x_finish, $height + $top_offset, $x_finish, $height + 10 + $top_offset, $light);
+			imagestring($base, 1, $x_start + 12, $height + 15 + $top_offset, $date, $faded);
+			imageline($base, $x_finish, $height + $top_offset, $x_finish, $height + 10 + $top_offset, $faded);
 			$last_average = $day_average;
 			$loop_count++;
 		}
-		imagestring($base, 2, 15, $height - ($y_max_display * $y_division) + $top_offset, $y_max_display, $yellow);
+		imagestring($base, 1, 15, $top_offset - 4, $y_max_display, $faded);
 		$middle = round(($y_max / 2), 0);
-		imagestring($base, 2, 15, $height - ($middle * $y_division) + $top_offset, $middle, $yellow);
-		imagestring($base, 2, 15, $height + $top_offset, "0", $yellow);
-		imageline($base, 40, $top_offset + 10, 50, $top_offset + 10, $light);
-		imageline($base, 40, $height + $top_offset, $width + 50, $height + $top_offset, $light);
-		imageline($base, 50, 10 + $top_offset, 50, $height + 10 + $top_offset, $light);
-		imagestring($base, 4, 90, 15, 'Average Players per Day on Days with Server Acitivity', $light);
+		imagestring($base, 1, 15, $height - ($middle * $y_division) + $top_offset - 4, $middle, $faded);
+		imagestring($base, 1, 15, $height + $top_offset - 4, "0", $faded);
+		imageline($base, 40, $top_offset, 50, $top_offset, $faded);
+		imageline($base, 40, $height + $top_offset, $width + 50, $height + $top_offset, $faded);
+		imageline($base, 50, $top_offset, 50, $height + 10 + $top_offset, $faded);
+		imagestring($base, 2, 140, 15, 'Average Players per Day on Days with Server Acitivity', $faded);
+		imagefilledrectangle($base, 527, 20, 532, 25, $orange);
+		imagestring($base, 1, 537, 19, 'Average', $faded);
 	}
 	else
 	{
-		imagestring($base, 4, 170, 135, 'The query returned no results.', $light);
+		imagestring($base, 4, 170, 135, 'The query returned no results.', $faded);
 	}
 	// compile image
 	imagealphablending($base, false);

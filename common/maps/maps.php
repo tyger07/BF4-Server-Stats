@@ -92,6 +92,17 @@ if(!$Mode_q || @mysqli_num_rows($Mode_q) == 0)
 }
 else
 {
+	echo '
+	<div class="subsection">
+	<br/><center><div class="embed"><img src="./common/maps/maps-played.png';
+	if(!empty($ServerID))
+	{
+		echo '?sid=' . $ServerID;
+	}
+	echo '" style="height: 300px; width: 600px;" alt="maps played" title="maps played" /></div></center><br/>
+	</div>
+	<br/>
+	';
 	// create empty array for storing values in
 	$game_modes = array();
 	// break the data up into individual game modes
