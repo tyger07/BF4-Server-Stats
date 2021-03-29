@@ -57,6 +57,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 	$faded = imagecolorallocate($base, 150, 150, 150);
 	$yellow = imagecolorallocate($base, 255, 250, 200);
 	$orange = imagecolorallocate($base, 200, 150, 000);
+	$y_max = 2;
 	if(@mysqli_num_rows($result) != 0)
 	{
 		$numrows = @mysqli_num_rows($result);
@@ -69,7 +70,10 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$loop_count = 0;
 		while($row = mysqli_fetch_assoc($result))
 		{
-			$y_max = $row['Max'];
+			if($row['Max'] > $y_max)
+			{
+				$y_max = $row['Max'];
+			}
 			$y_max_display = round($y_max, 0);
 			$y_division = $height / $y_max;
 			$date = date("M d", strtotime($row['Date']));

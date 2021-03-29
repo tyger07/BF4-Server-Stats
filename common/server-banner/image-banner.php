@@ -129,7 +129,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// initialize empty arrays
 			$hour = array();
 			$average = array();
-			$y_max = 0;
+			$y_max = 2;
 			// did the query return results
 			if(@mysqli_num_rows($result) != 0)
 			{
