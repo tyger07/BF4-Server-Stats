@@ -129,6 +129,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// initialize empty arrays
 			$hour = array();
 			$average = array();
+			$y_max = 0;
 			// did the query return results
 			if(@mysqli_num_rows($result) != 0)
 			{
@@ -138,7 +139,10 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				while($row = mysqli_fetch_assoc($result))
 				{
 					$raw_hour = $row['Hourly'];
-					$y_max = $row['Max'];
+					if($row['Max'] > $y_max)
+					{
+						$y_max = $row['Max'];
+					}
 					// add missing hours to fill in hours near the middle and end of the day for which the query found no results
 					while($increment > $raw_hour && $increment != '')
 					{
