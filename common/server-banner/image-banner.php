@@ -24,13 +24,14 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		// information was found
 		if(@mysqli_num_rows($Basic_q) != 0)
 		{
+			// get basic information
 			$Basic_r = @mysqli_fetch_assoc($Basic_q);
 			$used_slots = $Basic_r['usedSlots'];
 			$available_slots = $Basic_r['maxSlots'];
 			$servername = textcleaner($Basic_r['ServerName']);
-			if(strlen($servername) > 54)
+			if(strlen($servername) > 41)
 			{
-				$servername = substr($servername,0,53);
+				$servername = substr($servername,0,40);
 				$servername .= '..';
 			}
 			$mode = $Basic_r['Gamemode'];
@@ -38,9 +39,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($mode,$mode_array))
 			{
 				$mode_name = array_search($mode,$mode_array);
-				if(strlen($mode_name) > 19)
+				if(strlen($mode_name) > 15)
 				{
-					$mode_name = substr($mode_name,0,18);
+					$mode_name = substr($mode_name,0,14);
 					$mode_name .= '..';
 				}
 			}
@@ -48,9 +49,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$mode_name = $mode;
-				if(strlen($mode_name) > 19)
+				if(strlen($mode_name) > 15)
 				{
-					$mode_name = substr($mode_name,0,18);
+					$mode_name = substr($mode_name,0,14);
 					$mode_name .= '..';
 				}
 			}
@@ -62,9 +63,11 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			header("Content-type: image/png");
 			// base image
 			$base = imagecreatefrompng('./images/background.png');
-			// text color
+			// color
 			$light = imagecolorallocate($base, 255, 255, 255);
+			$faded = imagecolorallocate($base, 150, 150, 150);
 			$yellow = imagecolorallocate($base, 255, 250, 200);
+			$orange = imagecolorallocate($base, 200, 150, 000);
 			// copy map background onto the base background image
 			$back = imagecreatefrompng('./images/map_back.png');
 			imagecopy($base, $back, 6, 6, 0, 0, 104, 60);
@@ -73,9 +76,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($map,$map_array))
 			{
 				$map_name = array_search($map,$map_array);
-				if(strlen($map_name) > 19)
+				if(strlen($map_name) > 15)
 				{
-					$map_name = substr($map_name,0,18);
+					$map_name = substr($map_name,0,14);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/' . $map . '.png'); 
@@ -86,9 +89,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$map_name = $map;
-				if(strlen($map_name) > 19)
+				if(strlen($map_name) > 15)
 				{
-					$map_name = substr($map_name,0,18);
+					$map_name = substr($map_name,0,14);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/missing.png');
@@ -104,17 +107,164 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// add text to image
 			imagestring($base, 2, 120, 4, 'Server Name', $yellow);
 			imagestring($base, 3, 120, 18, $servername, $light);
-			imagestring($base, 2, 190, 42, 'Current Mode', $yellow);
-			imagestring($base, 3, 190, 57, $mode_name, $light);
+			imagestring($base, 2, 185, 42, 'Current Mode', $yellow);
+			imagestring($base, 3, 185, 57, $mode_name, $light);
 			imagestring($base, 2, 120, 42, 'Players', $yellow);
 			imagestring($base, 3, 120, 57, $used_slots . ' / ' . $available_slots, $light);
-			imagestring($base, 2, 350, 42, 'Current Map', $yellow);
-			imagestring($base, 3, 350, 57, $map_name, $light);
+			imagestring($base, 2, 310, 42, 'Current Map', $yellow);
+			imagestring($base, 3, 310, 57, $map_name, $light);
+			imagestring($base, 2, 440, 4, 'Players in 24 Hrs:', $yellow);
+			// compile graph
+			// build graph
+			$result = @mysqli_query($BF4stats,"
+				SELECT SUBSTRING(`TimeMapLoad`, 11, length(`TimeMapLoad`) - 16) AS Hourly, AVG(`MaxPlayers`) AS Average, MAX(`MaxPlayers`) AS Max
+				FROM `tbl_mapstats`
+				WHERE `ServerID` = {$sid}
+				AND SUBSTRING(`TimeMapLoad`, 1, LENGTH(`TimeMapLoad`) - 9) BETWEEN CURDATE() - INTERVAL 24 HOUR AND CURDATE()
+				AND `Gamemode` != ''
+				AND `MapName` != ''
+				GROUP BY Hourly
+				ORDER BY `TimeMapLoad` DESC
+			");
+			// initialize empty arrays
+			$hour = array();
+			$average = array();
+			// did the query return results
+			if(@mysqli_num_rows($result) != 0)
+			{
+				// initialize tracking variable
+				$increment = '';
+				// loop through query results
+				while($row = mysqli_fetch_assoc($result))
+				{
+					$raw_hour = $row['Hourly'];
+					$y_max = $row['Max'];
+					// add missing hours to fill in hours near the middle and end of the day for which the query found no results
+					while($increment > $raw_hour && $increment != '')
+					{
+						$hour[] = $increment;
+						$average[] = 0;
+						$increment--;
+					}
+					// add missing hours to fill in hours at the beginning of the day for which the query found no results
+					while($increment < $raw_hour && $increment != '' && $increment > 0)
+					{
+						$hour[] = $increment;
+						$average[] = 0;
+						$increment--;
+					}
+					$hour[] = $row['Hourly'];
+					$average[] = $row['Average'];
+					$increment = ($raw_hour - 1);
+				}
+				// query ran out of results to finish the day
+				if(count($hour) < 23)
+				{
+					// get last array element to know where we need to start filling in data
+					$last = end($hour);
+					while(count($hour) < 23)
+					{
+						$hour[] = $last;
+						$average[] = 0;
+						$last--;
+					}
+				}
+				// initialize variables
+				$numrows = count($hour);
+				$increment = 0;
+				$top_offset = 23;
+				$height = 60;
+				$width = 110;
+				$x_division = $width / $numrows;
+				$x_finish = 440;
+				$last_average = 0;
+				$loop_count = 0;
+				// loop through query results
+				foreach($hour as $this_hour)
+				{
+					$this_average = $average[$loop_count];
+					$y_max_display = round($y_max, 0);
+					$y_division = $height / $y_max;
+					$point_average = $height - ($this_average * $y_division) + $top_offset;
+					$x_start = $x_finish;
+					$x_finish += $x_division;
+					if($loop_count > 0)
+					{
+						imageline($base, $x_start, $last_average, $x_finish, $point_average, $orange);
+					}
+					else
+					{
+						imageline($base, $x_start, $point_average, $x_finish, $point_average, $orange);
+					}
+					$last_average = $point_average;
+					$loop_count++;
+					$increment++;
+				}
+				$middle = round(($y_max / 2), 0);
+				imageline($base, 440, $top_offset, 440, $height + $top_offset, $faded);
+				if(strlen((string)$y_max_display) > 1)
+				{
+					imagestring($base, 1, 426, $top_offset - 4, $y_max_display, $light);
+				}
+				else
+				{
+					imagestring($base, 1, 430, $top_offset - 4, $y_max_display, $light);
+				}
+				if(strlen((string)$middle) > 1)
+				{
+					imagestring($base, 1, 426, $height - ($middle * $y_division) + $top_offset - 4, $middle, $light);
+				}
+				else
+				{
+					imagestring($base, 1, 430, $height - ($middle * $y_division) + $top_offset - 4, $middle, $light);
+				}
+				imagestring($base, 1, 430, $height + $top_offset - 4, "0", $light);
+			}
+			// no?
+			else
+			{
+				// initialize variables
+				$increment = 0;
+				$top_offset = 23;
+				$height = 60;
+				$width = 110;
+				$x_division = $width / 24;
+				$x_finish = 440;
+				$last_average = 0;
+				$loop_count = 0;
+				// add 24 hours of zeroes
+				while($increment < 24)
+				{
+					$average = 0;
+					$y_max = 2;
+					$y_max_display = round($y_max, 0);
+					$y_division = $height / $y_max;
+					$point_average = $height - ($average * $y_division) + $top_offset;
+					$x_start = $x_finish;
+					$x_finish += $x_division;
+					if($loop_count > 0)
+					{
+						imageline($base, $x_start, $last_average, $x_finish, $point_average, $orange);
+					}
+					else
+					{
+						imageline($base, $x_start, $point_average, $x_finish, $point_average, $orange);
+					}
+					$last_average = $point_average;
+					$loop_count++;
+					$increment++;
+				}
+				$middle = round(($y_max / 2), 0);
+				imageline($base, 440, $top_offset, 440, $height + $top_offset, $faded);
+				imagestring($base, 1, 430, $height - ($middle * $y_division) + $top_offset - 4, $middle, $light);
+				imagestring($base, 1, 430, $height + $top_offset - 4, "0", $light);
+				imagestring($base, 1, 430, $top_offset - 4, $y_max_display, $light);
+			}
+			// compile image and save it in the cache
 			$white = imagecolorallocate($base, 255, 255, 255);
 			imagecolortransparent($base, $white);
 			imagealphablending($base, true);
 			imagesavealpha($base, true);
-			// compile image and save it in the cache
 			$save = './cache/banner_sid' . $sid . '.png';
 			imagepng($base, $save);
 			imagedestroy($base);

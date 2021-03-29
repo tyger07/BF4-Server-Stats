@@ -68,6 +68,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 	$base = imagecreatefrompng('./images/background.png');
 	// color
 	$dark = imagecolorallocate($base, 20, 20, 20);
+	$lighttransparent = imagecolorallocatealpha($base, 200, 200, 200, 90);
 	$faded = imagecolorallocate($base, 150, 150, 150);
 	$yellow = imagecolorallocate($base, 255, 250, 200);
 	$orange = imagecolorallocate($base, 200, 150, 000);
@@ -77,7 +78,8 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$loop_count = 0;
 		$previous_end = 0;
 		$num_rows = @mysqli_num_rows($result);
-		$color_steps = round(250 / $num_rows, 0);
+		$color_steps = round(200 / $num_rows, 0);
+		imagefilledarc($base, 300, 150, 200, 200, 0, 360, $lighttransparent, IMG_ARC_PIE);
 		while($row = mysqli_fetch_assoc($result))
 		{
 			$key = $row['MapName'];
@@ -85,7 +87,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$total_rounds = $row['total'];
 			$fraction = round(($number / $total_rounds * 100), 0);
 			$degrees = 360 * ($number / $total_rounds);
-			$wedge_color = imagecolorallocate($base, abs(-200 + $loop_count * $color_steps), abs(-200 + $loop_count * $color_steps), abs(-255 + $loop_count * $color_steps));
+			$wedge_color = imagecolorallocate($base, $loop_count * $color_steps / 2, $loop_count * $color_steps + 40, $loop_count * $color_steps + 40);
 			// convert map to friendly name
 			// first find if this map name is even in the map array
 			if(in_array($key,$map_array))
@@ -114,8 +116,8 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			{
 				imagestring($base, 1, 433, $legend_y_position, $fraction . "%", $faded);
 			}
-			ImageFilledArc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $wedge_color, IMG_ARC_PIE);
-			ImageFilledArc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $dark, IMG_ARC_EDGED | IMG_ARC_NOFILL);
+			imagefilledarc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $wedge_color, IMG_ARC_PIE);
+			imagefilledarc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $dark, IMG_ARC_EDGED | IMG_ARC_NOFILL);
 			$legend_y_position += 10;
 			$loop_count++;
 			$previous_end += $degrees;
