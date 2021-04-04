@@ -1326,7 +1326,7 @@ elseif($SoldierName != null)
 			</div>
 			<table class="prettytable">
 			<tr>
-			<td class="tablecontents" style="text-align: left; padding: 20px;" valign="top" width="50%">
+			<td class="tablecontents" style="text-align: center; padding: 20px;" valign="top" width="50%">
 			';
 			// include signature.php image
 			echo '
