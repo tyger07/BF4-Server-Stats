@@ -89,7 +89,7 @@ if(!empty($sid) && in_array($sid,$ServerIDs))
 	<meta http-equiv="imagetoolbar" content="no" />
 	<meta name="resource-type" content="document" />
 	<meta name="distribution" content="global" />
-	<meta name="copyright" content="2021 Ty_ger07 https://myrcon.net/topic/162-chat-guid-stats-and-mapstats-logger-1003/" />
+	<meta name="copyright" content="2021 Ty_ger07 http://tyger07.github.io/BF4-Server-Stats/" />
 	<meta name="keywords" content="banner" />
 	<meta name="description" content="banner" />
 	<script type="text/javascript" src="../javascript/jquery-1.10.2.js"></script>
@@ -257,7 +257,7 @@ else
 	<meta http-equiv="imagetoolbar" content="no" />
 	<meta name="resource-type" content="document" />
 	<meta name="distribution" content="global" />
-	<meta name="copyright" content="2021 Ty_ger07 https://myrcon.net/topic/162-chat-guid-stats-and-mapstats-logger-1003/" />
+	<meta name="copyright" content="2021 Ty_ger07 http://tyger07.github.io/BF4-Server-Stats/" />
 	<meta name="keywords" content="banner" />
 	<meta name="description" content="banner" />
 	<title>banner</title>
