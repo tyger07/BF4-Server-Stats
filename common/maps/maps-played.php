@@ -22,7 +22,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				SELECT SUM(`NumberofRounds`) AS total
 				FROM `tbl_mapstats`
 				WHERE `ServerID` = {$sid}
-                AND `Gamemode` != ''
+                		AND `Gamemode` != ''
 				LIMIT 0, 1
 			) sub ON sub.`total` = `total`
 			WHERE `ServerID` = {$sid}
@@ -46,7 +46,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				SELECT SUM(`NumberofRounds`) AS total
 				FROM `tbl_mapstats`
 				WHERE `ServerID` in ({$ids})
-                AND `Gamemode` != ''
+                		AND `Gamemode` != ''
 				LIMIT 0, 1
 			) sub ON sub.`total` = `total`
 			WHERE `ServerID` in ({$ids})
