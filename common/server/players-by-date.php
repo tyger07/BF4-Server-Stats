@@ -78,7 +78,10 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$top_offset = 40;
 		$height = 220;
 		$width = 520;
+		$y_max_display = round($y_max, 0);
+		$y_division = $height / $y_max;
 		$x_division = $width / $numrows;
+		$middle = round(($y_max / 2), 0);
 		$x_finish = 50;
 		$last_average = 0;
 		$loop_count = 0;
@@ -86,8 +89,6 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		foreach($day as $this_day)
 		{
 			$this_average = $average[$loop_count];
-			$y_max_display = round($y_max, 0);
-			$y_division = $height / $y_max;
 			$date = date("M d", strtotime($this_day));
 			$day_average = $height - ($this_average * $y_division) + $top_offset;
 			$x_start = $x_finish;
@@ -106,7 +107,6 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$loop_count++;
 		}
 		imagestring($base, 1, 15, $top_offset - 4, $y_max_display, $faded);
-		$middle = round(($y_max / 2), 0);
 		imagestring($base, 1, 15, $height - ($middle * $y_division) + $top_offset - 4, $middle, $faded);
 		imagestring($base, 1, 15, $height + $top_offset - 4, "0", $faded);
 		imageline($base, 40, $top_offset, 50, $top_offset, $faded);

@@ -40,7 +40,7 @@ echo '
 <table class="prettytable" style="width: 550px;">
 <tr>
 <td class="tablecontents" style="padding-left: 10px;">
-<span style="font-size: 12px;"><b>&amp;h=</b> : (optional) height of image in pixels (default: 95)</span>
+<span style="font-size: 12px;"><b>?h=</b> : (optional) height of image in pixels (default: 95)</span>
 </td>
 </tr>
 <tr>
