@@ -175,11 +175,13 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				}
 				// initialize variables
 				$numrows = count($hour);
-				$increment = 0;
 				$top_offset = 23;
 				$height = 60;
 				$width = 110;
+				$y_max_display = round($y_max, 0);
+				$y_division = $height / $y_max;
 				$x_division = $width / $numrows;
+				$middle = round(($y_max / 2), 0);
 				$x_finish = 440;
 				$last_average = 0;
 				$loop_count = 0;
@@ -187,8 +189,6 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 				foreach($hour as $this_hour)
 				{
 					$this_average = $average[$loop_count];
-					$y_max_display = round($y_max, 0);
-					$y_division = $height / $y_max;
 					$point_average = $height - ($this_average * $y_division) + $top_offset;
 					$x_start = $x_finish;
 					$x_finish += $x_division;
@@ -202,9 +202,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					}
 					$last_average = $point_average;
 					$loop_count++;
-					$increment++;
 				}
-				$middle = round(($y_max / 2), 0);
 				imageline($base, 440, $top_offset, 440, $height + $top_offset, $faded);
 				if(strlen((string)$y_max_display) > 1)
 				{
@@ -228,21 +226,21 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				// initialize variables
-				$increment = 0;
+				$average = 0;
+				$y_max = 2;
 				$top_offset = 23;
 				$height = 60;
 				$width = 110;
+				$y_max_display = round($y_max, 0);
+				$y_division = $height / $y_max;
 				$x_division = $width / 24;
+				$middle = round(($y_max / 2), 0);
 				$x_finish = 440;
 				$last_average = 0;
 				$loop_count = 0;
 				// add 24 hours of zeroes
-				while($increment < 24)
+				while($loop_count < 24)
 				{
-					$average = 0;
-					$y_max = 2;
-					$y_max_display = round($y_max, 0);
-					$y_division = $height / $y_max;
 					$point_average = $height - ($average * $y_division) + $top_offset;
 					$x_start = $x_finish;
 					$x_finish += $x_division;
@@ -256,9 +254,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					}
 					$last_average = $point_average;
 					$loop_count++;
-					$increment++;
 				}
-				$middle = round(($y_max / 2), 0);
 				imageline($base, 440, $top_offset, 440, $height + $top_offset, $faded);
 				imagestring($base, 1, 430, $height - ($middle * $y_division) + $top_offset - 4, $middle, $light);
 				imagestring($base, 1, 430, $height + $top_offset - 4, "0", $light);
