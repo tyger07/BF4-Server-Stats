@@ -29,9 +29,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$used_slots = $Basic_r['usedSlots'];
 			$available_slots = $Basic_r['maxSlots'];
 			$servername = textcleaner($Basic_r['ServerName']);
-			if(strlen($servername) > 41)
+			if(strlen($servername) > 39)
 			{
-				$servername = substr($servername,0,40);
+				$servername = substr($servername,0,38);
 				$servername .= '..';
 			}
 			$mode = $Basic_r['Gamemode'];
@@ -76,9 +76,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($map,$map_array))
 			{
 				$map_name = array_search($map,$map_array);
-				if(strlen($map_name) > 15)
+				if(strlen($map_name) > 13)
 				{
-					$map_name = substr($map_name,0,14);
+					$map_name = substr($map_name,0,12);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/' . $map . '.png'); 
@@ -89,9 +89,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$map_name = $map;
-				if(strlen($map_name) > 15)
+				if(strlen($map_name) > 13)
 				{
-					$map_name = substr($map_name,0,14);
+					$map_name = substr($map_name,0,12);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/missing.png');
@@ -269,40 +269,50 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagecolortransparent($base, $white);
 			imagealphablending($base, true);
 			imagesavealpha($base, true);
-			$save = './cache/banner_sid' . $sid . '.png';
-			imagepng($base, $save);
-			imagedestroy($base);
 			// find out if user specified for the image to be resized
 			// $width = ?w
 			// $height = ?h
-			if(!empty($_GET['w']) && is_numeric($_GET['w']))
+			if((!empty($_GET['w']) && is_numeric($_GET['w'])) && (!empty($_GET['h']) && is_numeric($_GET['h'])))
 			{
-				$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+				if(!empty($_GET['w']) && is_numeric($_GET['w'])) 
+				{
+					$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+				}
+				else
+				{
+					$width = 560;
+				}
+				if(!empty($_GET['h']) && is_numeric($_GET['h']))
+				{
+					$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
+				}
+				else
+				{
+					$height = 95;
+				}
+				// compile image and save it in the cache
+				$save = './cache/banner_sid' . $sid . '.png';
+				imagepng($base, $save);
+				imagedestroy($base);
+				// load the cached image back in
+				$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+				$resize_img = imagecreatetruecolor($width, $height);
+				imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+				// start outputting the image
+				header('Pragma: public');
+				header('Cache-Control: max-age=0');
+				header('Expires: 0');
+				header("Content-type: image/png");
+				// compile image
+				imagepng($resize_img);
+				imagedestroy($resize_img);
 			}
 			else
 			{
-				$width = 560;
+				// compile image
+				imagepng($base);
+				imagedestroy($base);
 			}
-			if(!empty($_GET['h']) && is_numeric($_GET['h']))
-			{
-				$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
-			}
-			else
-			{
-				$height = 95;
-			}
-			// load the cached image back in
-			$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
-			$resize_img = imagecreatetruecolor($width, $height);
-			imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
-			// start outputting the image
-			header('Pragma: public');
-			header('Cache-Control: max-age=0');
-			header('Expires: 0');
-			header("Content-type: image/png");
-			// compile image
-			imagepng($resize_img);
-			imagedestroy($resize_img);
 		}
 		// an error occurred while processing query
 		else
@@ -314,47 +324,56 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			header("Content-type: image/png");
 			// base image
 			$base = imagecreatefrompng('./images/background.png');
-			imagealphablending($base, false);
-			imagesavealpha($base, true);
 			// text color
 			$light = imagecolorallocate($base, 255, 255, 255);
 			// add text to image
 			imagestring($base, 4, 100, 40, 'An error occurred while processing your query.', $light);
-			// compile image and save it in the cache
-			$save = './cache/banner_sid' . $sid . '.png';
-			imagepng($base, $save);
-			imagedestroy($base);
+			imagealphablending($base, false);
+			imagesavealpha($base, true);
 			// find out if user specified for the image to be resized
 			// $width = ?w
 			// $height = ?h
-			if(!empty($_GET['w']) && is_numeric($_GET['w']))
+			if((!empty($_GET['w']) && is_numeric($_GET['w'])) && (!empty($_GET['h']) && is_numeric($_GET['h'])))
 			{
-				$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+				if(!empty($_GET['w']) && is_numeric($_GET['w'])) 
+				{
+					$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+				}
+				else
+				{
+					$width = 560;
+				}
+				if(!empty($_GET['h']) && is_numeric($_GET['h']))
+				{
+					$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
+				}
+				else
+				{
+					$height = 95;
+				}
+				// compile image and save it in the cache
+				$save = './cache/banner_sid' . $sid . '.png';
+				imagepng($base, $save);
+				imagedestroy($base);
+				// load the cached image back in
+				$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+				$resize_img = imagecreatetruecolor($width, $height);
+				imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+				// start outputting the image
+				header('Pragma: public');
+				header('Cache-Control: max-age=0');
+				header('Expires: 0');
+				header("Content-type: image/png");
+				// compile image
+				imagepng($resize_img);
+				imagedestroy($resize_img);
 			}
 			else
 			{
-				$width = 560;
+				// compile image
+				imagepng($base);
+				imagedestroy($base);
 			}
-			if(!empty($_GET['h']) && is_numeric($_GET['h']))
-			{
-				$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
-			}
-			else
-			{
-				$height = 95;
-			}
-			// load the cached image back in
-			$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
-			$resize_img = imagecreatetruecolor($width, $height);
-			imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
-			// start outputting the image
-			header('Pragma: public');
-			header('Cache-Control: max-age=0');
-			header('Expires: 0');
-			header("Content-type: image/png");
-			// compile image
-			imagepng($resize_img);
-			imagedestroy($resize_img);
 		}
 	}
 	// this server id doesn't exist
@@ -367,47 +386,56 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		header("Content-type: image/png");
 		// base image
 		$base = imagecreatefrompng('./images/background.png');
-		imagealphablending($base, false);
-		imagesavealpha($base, true);
 		// text color
 		$light = imagecolorallocate($base, 255, 255, 255);
 		// add text to image
 		imagestring($base, 4, 130, 40, 'The provided Server ID doesn\'t exist.', $light);
-		// compile image and save it in the cache
-		$save = './cache/banner_sid' . $sid . '.png';
-		imagepng($base, $save);
-		imagedestroy($base);
+		imagealphablending($base, false);
+		imagesavealpha($base, true);
 		// find out if user specified for the image to be resized
 		// $width = ?w
 		// $height = ?h
-		if(!empty($_GET['w']) && is_numeric($_GET['w']))
+		if((!empty($_GET['w']) && is_numeric($_GET['w'])) && (!empty($_GET['h']) && is_numeric($_GET['h'])))
 		{
-			$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+			if(!empty($_GET['w']) && is_numeric($_GET['w'])) 
+			{
+				$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+			}
+			else
+			{
+				$width = 560;
+			}
+			if(!empty($_GET['h']) && is_numeric($_GET['h']))
+			{
+				$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
+			}
+			else
+			{
+				$height = 95;
+			}
+			// compile image and save it in the cache
+			$save = './cache/banner_sid' . $sid . '.png';
+			imagepng($base, $save);
+			imagedestroy($base);
+			// load the cached image back in
+			$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+			$resize_img = imagecreatetruecolor($width, $height);
+			imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+			// start outputting the image
+			header('Pragma: public');
+			header('Cache-Control: max-age=0');
+			header('Expires: 0');
+			header("Content-type: image/png");
+			// compile image
+			imagepng($resize_img);
+			imagedestroy($resize_img);
 		}
 		else
 		{
-			$width = 560;
+			// compile image
+			imagepng($base);
+			imagedestroy($base);
 		}
-		if(!empty($_GET['h']) && is_numeric($_GET['h']))
-		{
-			$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
-		}
-		else
-		{
-			$height = 95;
-		}
-		// load the cached image back in
-		$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
-		$resize_img = imagecreatetruecolor($width, $height);
-		imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
-		// start outputting the image
-		header('Pragma: public');
-		header('Cache-Control: max-age=0');
-		header('Expires: 0');
-		header("Content-type: image/png");
-		// compile image
-		imagepng($resize_img);
-		imagedestroy($resize_img);
 	}
 	// there is no server id number in the url query string
 	else
@@ -419,47 +447,56 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		header("Content-type: image/png");
 		// base image
 		$base = imagecreatefrompng('./images/background.png');
-		imagealphablending($base, false);
-		imagesavealpha($base, true);
 		// text color
 		$light = imagecolorallocate($base, 255, 255, 255);
 		// add text to image
 		imagestring($base, 4, 200, 40, 'Server ID required.', $light);
-		// compile image and save it in the cache
-		$save = './cache/banner_sid' . $sid . '.png';
-		imagepng($base, $save);
-		imagedestroy($base);
+		imagealphablending($base, false);
+		imagesavealpha($base, true);
 		// find out if user specified for the image to be resized
 		// $width = ?w
 		// $height = ?h
-		if(!empty($_GET['w']) && is_numeric($_GET['w']))
+		if((!empty($_GET['w']) && is_numeric($_GET['w'])) && (!empty($_GET['h']) && is_numeric($_GET['h'])))
 		{
-			$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+			if(!empty($_GET['w']) && is_numeric($_GET['w'])) 
+			{
+				$width = mysqli_real_escape_string($BF4stats, strip_tags($_GET['w']));
+			}
+			else
+			{
+				$width = 560;
+			}
+			if(!empty($_GET['h']) && is_numeric($_GET['h']))
+			{
+				$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
+			}
+			else
+			{
+				$height = 95;
+			}
+			// compile image and save it in the cache
+			$save = './cache/banner_sid' . $sid . '.png';
+			imagepng($base, $save);
+			imagedestroy($base);
+			// load the cached image back in
+			$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
+			$resize_img = imagecreatetruecolor($width, $height);
+			imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
+			// start outputting the image
+			header('Pragma: public');
+			header('Cache-Control: max-age=0');
+			header('Expires: 0');
+			header("Content-type: image/png");
+			// compile image
+			imagepng($resize_img);
+			imagedestroy($resize_img);
 		}
 		else
 		{
-			$width = 560;
+			// compile image
+			imagepng($base);
+			imagedestroy($base);
 		}
-		if(!empty($_GET['h']) && is_numeric($_GET['h']))
-		{
-			$height = mysqli_real_escape_string($BF4stats, strip_tags($_GET['h']));
-		}
-		else
-		{
-			$height = 95;
-		}
-		// load the cached image back in
-		$banner_img = imagecreatefrompng('./cache/banner_sid' . $sid . '.png');
-		$resize_img = imagecreatetruecolor($width, $height);
-		imagecopyresampled($resize_img, $banner_img, 0, 0, 0, 0, $width, $height, 560, 95);
-		// start outputting the image
-		header('Pragma: public');
-		header('Cache-Control: max-age=0');
-		header('Expires: 0');
-		header("Content-type: image/png");
-		// compile image
-		imagepng($resize_img);
-		imagedestroy($resize_img);
 	}
 // php GD extension doesn't exist. show error image
 }

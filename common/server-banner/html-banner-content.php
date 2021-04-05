@@ -7,7 +7,7 @@ require_once('../../config/config.php');
 require_once('../connect.php');
 require_once('../case.php');
 require_once('../constants.php');
-
+require_once('../functions.php');
 // get query string options
 $ServerID = $sid;
 // echo out HTML
@@ -30,9 +30,10 @@ if(@mysqli_num_rows($CurrentMap_q) != 0)
 	$CurrentMap_r = @mysqli_fetch_assoc($CurrentMap_q);
 	$map = $CurrentMap_r['mapName'];
 	$server = $CurrentMap_r['ServerName'];
-	$servername = substr($CurrentMap_r['ServerName'],0,28);
-	if(strlen($CurrentMap_r['ServerName']) > 28)
+	$servername = textcleaner($CurrentMap_r['ServerName']);
+	if(strlen($servername) > 24)
 	{
+		$servername = substr($servername,0,23);
 		$servername .= '..';
 	}
 	$slots = $CurrentMap_r['maxSlots'];

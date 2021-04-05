@@ -57,10 +57,24 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 	$faded = imagecolorallocate($base, 150, 150, 150);
 	$yellow = imagecolorallocate($base, 255, 250, 200);
 	$orange = imagecolorallocate($base, 200, 150, 000);
+	// initialize empty arrays
+	$day = array();
+	$average = array();
 	$y_max = 2;
 	if(@mysqli_num_rows($result) != 0)
 	{
-		$numrows = @mysqli_num_rows($result);
+		// loop through query results
+		while($row = mysqli_fetch_assoc($result))
+		{
+			if($row['Max'] > $y_max)
+			{
+				$y_max = $row['Max'];
+			}
+			$day[] = $row['Date'];
+			$average[] = $row['Average'];
+		}
+		// initialize variables
+		$numrows = count($day);
 		$top_offset = 40;
 		$height = 220;
 		$width = 520;
@@ -68,16 +82,14 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$x_finish = 50;
 		$last_average = 0;
 		$loop_count = 0;
-		while($row = mysqli_fetch_assoc($result))
+		// loop through query results
+		foreach($day as $this_day)
 		{
-			if($row['Max'] > $y_max)
-			{
-				$y_max = $row['Max'];
-			}
+			$this_average = $average[$loop_count];
 			$y_max_display = round($y_max, 0);
 			$y_division = $height / $y_max;
-			$date = date("M d", strtotime($row['Date']));
-			$day_average = $height - ($row['Average'] * $y_division) + $top_offset;
+			$date = date("M d", strtotime($this_day));
+			$day_average = $height - ($this_average * $y_division) + $top_offset;
 			$x_start = $x_finish;
 			$x_finish += $x_division;
 			if($loop_count > 0)
