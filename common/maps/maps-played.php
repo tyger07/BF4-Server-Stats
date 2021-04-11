@@ -79,15 +79,21 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 		$previous_end = 0;
 		$num_rows = @mysqli_num_rows($result);
 		$color_steps = round(200 / $num_rows, 0);
+		$running_total = 0;
 		imagefilledarc($base, 300, 150, 200, 200, 0, 360, $lighttransparent, IMG_ARC_PIE);
 		while($row = mysqli_fetch_assoc($result))
 		{
 			$key = $row['MapName'];
 			$number = $row['number'];
+			$running_total += $number;
 			$total_rounds = $row['total'];
 			$fraction = round(($number / $total_rounds * 100), 0);
 			$degrees = 360 * ($number / $total_rounds);
-			$wedge_color = imagecolorallocate($base, $loop_count * $color_steps / 2, $loop_count * $color_steps + 40, $loop_count * $color_steps + 40);
+			if($degrees < 1)
+			{
+				$degrees = 1;
+			}
+			$wedge_color = imagecolorallocate($base, 0, abs(-220 + ($loop_count * $color_steps + 20)), abs(-220 + ($loop_count * $color_steps + 20)));
 			// convert map to friendly name
 			// first find if this map name is even in the map array
 			if(in_array($key,$map_array))
@@ -121,6 +127,31 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$legend_y_position += 10;
 			$loop_count++;
 			$previous_end += $degrees;
+			if($previous_end > 360)
+			{
+				$previous_end = 359;
+			}
+		}
+		if($running_total < $total_rounds)
+		{
+			$fraction = round((100 - ($running_total / $total_rounds * 100)), 0);
+			imagefilledrectangle($base, 457, $legend_y_position + 1, 462, $legend_y_position + 6, $lighttransparent);
+			imagestring($base, 1, 467, $legend_y_position, "Other", $faded);
+			if($num_rows > 1)
+			{
+				if(strlen((string)$fraction) < 2)
+				{
+					imagestring($base, 1, 439, $legend_y_position, " " . $fraction . "%", $faded);
+				}
+				else
+				{
+					imagestring($base, 1, 439, $legend_y_position, $fraction . "%", $faded);
+				}
+			}
+			else
+			{
+				imagestring($base, 1, 433, $legend_y_position, $fraction . "%", $faded);
+			}
 		}
 		imagestring($base, 2, 250, 15, 'Maps Played Most', $faded);
 	}

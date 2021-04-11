@@ -157,7 +157,7 @@ if(!(preg_match('/(?i)msie [1-7]/',$useragent)))
 	$xmlData = @file_get_contents('https://github.com/tyger07/BF4-Server-Stats/releases.atom');
 	$xml=@simplexml_load_string($xmlData);
 	$releaseVersion = $xml->entry[0]->id;
-	if((!empty($releaseVersion)) && (stripos($releaseVersion, '4-5-21') === false))
+	if((!empty($releaseVersion)) && (stripos($releaseVersion, '4-10-21') === false))
 	{
 		echo '
 		<div class="subsection">
