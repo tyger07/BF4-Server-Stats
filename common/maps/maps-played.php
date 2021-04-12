@@ -29,7 +29,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			AND `Gamemode` != ''
 			GROUP BY `MapName`
 			ORDER BY number DESC
-			LIMIT 20
+			LIMIT 25
 		";
 		$result = @mysqli_query($BF4stats, $query);
 	}
@@ -53,7 +53,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			AND `Gamemode` != ''
 			GROUP BY `MapName`
 			ORDER BY number DESC
-			LIMIT 20
+			LIMIT 25
 		"; 
 		$result = @mysqli_query($BF4stats, $query);
 	}
@@ -89,9 +89,15 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$total_rounds = $row['total'];
 			$fraction = round(($number / $total_rounds * 100), 0);
 			$degrees = 360 * ($number / $total_rounds);
+			// avoid zero degree bug
 			if($degrees < 1)
 			{
 				$degrees = 1;
+			}
+			// prevent zero degree bug hacky fix from causing a greater than 360 bug
+			if(($previous_end + $degrees) > 360)
+			{
+				$previous_end = 360 - $degrees;
 			}
 			$wedge_color = imagecolorallocate($base, 0, abs(-220 + ($loop_count * $color_steps + 20)), abs(-220 + ($loop_count * $color_steps + 20)));
 			// convert map to friendly name
@@ -109,48 +115,45 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			imagestring($base, 1, 467, $legend_y_position, $MapName, $faded);
 			if($num_rows > 1)
 			{
-				if(strlen((string)$fraction) < 2)
+				if(strlen((string)$fraction) == 1)
 				{
 					imagestring($base, 1, 439, $legend_y_position, " " . $fraction . "%", $faded);
 				}
-				else
+				elseif(strlen((string)$fraction) == 2)
 				{
 					imagestring($base, 1, 439, $legend_y_position, $fraction . "%", $faded);
+				}
+				else
+				{
+					imagestring($base, 1, 434, $legend_y_position, $fraction . "%", $faded);
 				}
 			}
 			else
 			{
-				imagestring($base, 1, 433, $legend_y_position, $fraction . "%", $faded);
+				imagestring($base, 1, 434, $legend_y_position, $fraction . "%", $faded);
 			}
 			imagefilledarc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $wedge_color, IMG_ARC_PIE);
 			imagefilledarc($base, 300, 150, 200, 200, $previous_end - 90, $degrees + $previous_end - 90, $dark, IMG_ARC_EDGED | IMG_ARC_NOFILL);
 			$legend_y_position += 10;
 			$loop_count++;
 			$previous_end += $degrees;
-			if($previous_end > 360)
-			{
-				$previous_end = 359;
-			}
 		}
 		if($running_total < $total_rounds)
 		{
 			$fraction = round((100 - ($running_total / $total_rounds * 100)), 0);
 			imagefilledrectangle($base, 457, $legend_y_position + 1, 462, $legend_y_position + 6, $lighttransparent);
-			imagestring($base, 1, 467, $legend_y_position, "Other", $faded);
-			if($num_rows > 1)
+			imagestring($base, 1, 467, $legend_y_position, "Other Maps", $faded);
+			if(strlen((string)$fraction) == 1)
 			{
-				if(strlen((string)$fraction) < 2)
-				{
-					imagestring($base, 1, 439, $legend_y_position, " " . $fraction . "%", $faded);
-				}
-				else
-				{
-					imagestring($base, 1, 439, $legend_y_position, $fraction . "%", $faded);
-				}
+				imagestring($base, 1, 439, $legend_y_position, " " . $fraction . "%", $faded);
+			}
+			elseif(strlen((string)$fraction) == 2)
+			{
+				imagestring($base, 1, 439, $legend_y_position, $fraction . "%", $faded);
 			}
 			else
 			{
-				imagestring($base, 1, 433, $legend_y_position, $fraction . "%", $faded);
+				imagestring($base, 1, 434, $legend_y_position, $fraction . "%", $faded);
 			}
 		}
 		imagestring($base, 2, 250, 15, 'Maps Played Most', $faded);
