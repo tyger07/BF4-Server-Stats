@@ -1534,7 +1534,15 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 			// deliberate attack?
 			// kill it
 			// find current URL info
-			$host = 'http://' . $_SERVER['HTTP_HOST'];
+			// is this an HTTPS server?
+			if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
+			{
+				$host = 'https://' . $_SERVER['HTTP_HOST'];
+			}
+			else
+			{
+				$host = 'http://' . $_SERVER['HTTP_HOST'];
+			}
 			$dir = dirname($_SERVER['PHP_SELF']);
 			// build redirect link
 			$redirect =  $host . $dir . '/index.php';

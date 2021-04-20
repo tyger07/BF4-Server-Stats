@@ -2,4 +2,4 @@ Many of these images are edited, altered, or un-edited copies of images taken pr
 
 BF4stats.com API : http://bf4stats.com/api
 
-BattleLog: http://battlelog.battlefield.com/bf4/
+BattleLog: https://battlelog.battlefield.com/bf4/

@@ -78,6 +78,19 @@ if(!empty($sid) && in_array($sid,$ServerIDs))
 	$onlineheight = ($onlinecount * 18) + 6;
 	// total page content height based on onlineheight
 	$contentheight = 500 + $onlineheight;
+	// find current URL info
+	// is this an HTTPS server?
+	if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
+	{
+		$host = 'https://' . $_SERVER['HTTP_HOST'];
+	}
+	else
+	{
+		$host = 'http://' . $_SERVER['HTTP_HOST'];
+	}
+	$dir = dirname($_SERVER['PHP_SELF']);
+	// remove this directory name from the string
+	$dir = str_replace("/server-banner", "", $dir);
 	// echo out the header
 	echo '
 	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -92,7 +105,7 @@ if(!empty($sid) && in_array($sid,$ServerIDs))
 	<meta name="copyright" content="2021 Ty_ger07 http://tyger07.github.io/BF4-Server-Stats/" />
 	<meta name="keywords" content="banner" />
 	<meta name="description" content="banner" />
-	<script type="text/javascript" src="../javascript/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="' . $host . $dir . '/javascript/jquery-1.10.2.js"></script>
 	<title>banner</title>
 	<style type="text/css">
 		body{
@@ -156,7 +169,7 @@ if(!empty($sid) && in_array($sid,$ServerIDs))
 	<script type="text/javascript">
 		$(function() {
 			function callAjax(){
-				$(\'#content\').load("./html-banner-content.php?sid=' . $ServerID . '");
+				$(\'#content\').load("' . $host . $dir . '/server-banner/html-banner-content.php?sid=' . $ServerID . '");
 			}
 			setInterval(callAjax, 30000 );
 		});
@@ -165,7 +178,7 @@ if(!empty($sid) && in_array($sid,$ServerIDs))
 		<br/><br/>
 		<center><img class="load" src="../images/loading.gif" alt="loading" /></center>
 		<script type="text/javascript">
-			$(\'#content\').load("./html-banner-content.php?sid=' . $ServerID . '");
+			$(\'#content\').load("' . $host . $dir . '/server-banner/html-banner-content.php?sid=' . $ServerID . '");
 		</script>
 	</div>
 	<br/>

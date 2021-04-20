@@ -219,6 +219,21 @@ elseif(!$Tickets_q || @mysqli_num_rows($Tickets_q) == 0)
 	</table>
 	</center>';
 }
+// find current URL info
+// is this an HTTPS server?
+if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
+{
+	$host = 'https://' . $_SERVER['HTTP_HOST'];
+}
+else
+{
+	$host = 'http://' . $_SERVER['HTTP_HOST'];
+}
+$dir = dirname($_SERVER['PHP_SELF']);
+// remove this directory name from the string
+$dir = str_replace("/server-banner", "", $dir);
+// adjust URL to reflect the location of index.php
+$home = str_replace("common", "", $dir);
 // display online players
 echo '
 <div class="section"><b>Online Players:</b></div>
@@ -247,7 +262,7 @@ if(@mysqli_num_rows($Score_q) != 0)
 		echo '
 		<tr>
 		<td width="75%" style="text-align: left;">
-		' . $count . ' <a href="../../index.php?p=player&amp;sid=' . $ServerID . '&amp;player=' . $soldier . '" target="_blank">' . $soldier . '</a>
+		' . $count . ' <a href="' . $host . $home . 'index.php?p=player&amp;sid=' . $ServerID . '&amp;player=' . $soldier . '" target="_blank">' . $soldier . '</a>
 		</td>
 		<td width="25%" style="text-align: right;">
 		' . $score . '
@@ -351,7 +366,7 @@ if(@mysqli_num_rows($Score_q) != 0)
 		echo '
 		<tr>
 		<td width="75%" style="text-align: left;">
-		' . $count . ' <a href="../../index.php?p=player&amp;sid=' . $ServerID . '&amp;player=' . $soldier . '" target="_blank">' . $soldier . '</a>
+		' . $count . ' <a href="' . $host . $home . 'index.php?p=player&amp;sid=' . $ServerID . '&amp;player=' . $soldier . '" target="_blank">' . $soldier . '</a>
 		</td>
 		<td width="25%" style="text-align: right;">
 		' . $score . '

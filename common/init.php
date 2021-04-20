@@ -57,7 +57,7 @@ if((count($ServerIDs) == 1) || (!empty($sid) && in_array($sid,$ServerIDs) && emp
 	else
 	{
 		$ServerName = 'Error';
-		$battlelog = 'http://battlelog.battlefield.com/bf4/servers/pc/';
+		$battlelog = 'https://battlelog.battlefield.com/bf4/servers/pc/';
 	}
 	// lets see if a SoldierName or PlayerID was provided to us in the URL
 	// first look for a SoldierName in URL and try to convert it to PlayerID

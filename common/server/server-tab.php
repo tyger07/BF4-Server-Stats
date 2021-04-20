@@ -14,18 +14,26 @@ if(!empty($sid))
 	$ServerID = $sid;
 }
 // find current URL info
-$host = 'http://' . $_SERVER['HTTP_HOST'];
+// is this an HTTPS server?
+if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
+{
+	$host = 'https://' . $_SERVER['HTTP_HOST'];
+}
+else
+{
+	$host = 'http://' . $_SERVER['HTTP_HOST'];
+}
 $dir = dirname($_SERVER['PHP_SELF']);
 // remove this directory name from the string
-$dir = rtrim($dir, "/server");
+$dir = str_replace("/server", "", $dir);
 // adjust URL to reflect the location of index.php
-$home = rtrim($dir, "common");
+$home = str_replace("common", "", $dir);
 echo '
 <table class="prettytable">
 <tr>
 <td class="tablecontents" width="240px">
 <br/>
-<center><a href="' . $host . $home . 'common/server-banner/image-bannersid' . $ServerID . '.png" target="_blank"><img src="./common/server-banner/image-bannersid' . $ServerID . '.png" style="width: 560px; height: 95px;" alt="banner"/></a></center>
+<center><a href="' . $host . $dir . '/server-banner/image-bannersid' . $ServerID . '.png" target="_blank"><img src="./common/server-banner/image-bannersid' . $ServerID . '.png" style="width: 560px; height: 95px;" alt="banner"/></a></center>
 <br/>
 <div class="headline" style="width: 550px; text-align: left;">BBcode</div>
 <table class="prettytable" style="width: 550px;">

@@ -71,7 +71,8 @@ else
 	$mapcount = 0;
 	echo '
 	<script type="text/javascript" src="http';
-	if(isset($_SERVER['HTTPS']))
+	// is this an HTTPS server?
+	if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
 	{
 		echo 's';
 	}
