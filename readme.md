@@ -3,6 +3,9 @@
 ###### View the pretty overview page: http://tyger07.github.io/BF4-Server-Stats/
 
 
+![GitHub Logo](/.github/overview.png)
+###### Example. Not affiliated with 'Banzore'
+
 ### Features
 
 * Easy setup.
