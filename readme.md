@@ -4,7 +4,7 @@
  
 ##
 ![GitHub Logo](/.github/overview.png)
-###### *(Example) Not affiliated with 'Banzore'*
+###### *(Example Images) Not affiliated with 'Banzore'*
  
 ##
  
