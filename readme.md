@@ -1,11 +1,13 @@
 ## BF4 Server Stats Webpage Overview
 ###### Download the most recent release and view the most recent release notes: https://github.com/tyger07/BF4-Server-Stats/releases/latest
 ###### View the pretty overview page: http://tyger07.github.io/BF4-Server-Stats/
-
-
+ 
+##
 ![GitHub Logo](/.github/overview.png)
-###### Example. Not affiliated with 'Banzore'
-
+###### *(Example) Not affiliated with 'Banzore'*
+ 
+##
+ 
 ### Features
 
 * Easy setup.
