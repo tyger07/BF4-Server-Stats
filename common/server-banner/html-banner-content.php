@@ -31,6 +31,7 @@ if(@mysqli_num_rows($CurrentMap_q) != 0)
 	$map = $CurrentMap_r['mapName'];
 	$server = $CurrentMap_r['ServerName'];
 	$servername = textcleaner($CurrentMap_r['ServerName']);
+	$servername = ltrim($servername);
 	if(strlen($servername) > 24)
 	{
 		$servername = substr($servername,0,23);

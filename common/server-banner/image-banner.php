@@ -29,6 +29,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			$used_slots = $Basic_r['usedSlots'];
 			$available_slots = $Basic_r['maxSlots'];
 			$servername = textcleaner($Basic_r['ServerName']);
+			$servername = ltrim($servername);
 			if(strlen($servername) > 39)
 			{
 				$servername = substr($servername,0,38);
