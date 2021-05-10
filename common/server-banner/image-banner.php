@@ -39,9 +39,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($mode,$mode_array))
 			{
 				$mode_name = array_search($mode,$mode_array);
-				if(strlen($mode_name) > 15)
+				if(strlen($mode_name) > 22)
 				{
-					$mode_name = substr($mode_name,0,14);
+					$mode_name = substr($mode_name,0,21);
 					$mode_name .= '..';
 				}
 			}
@@ -49,9 +49,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$mode_name = $mode;
-				if(strlen($mode_name) > 15)
+				if(strlen($mode_name) > 22)
 				{
-					$mode_name = substr($mode_name,0,14);
+					$mode_name = substr($mode_name,0,21);
 					$mode_name .= '..';
 				}
 			}
@@ -76,9 +76,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			if(in_array($map,$map_array))
 			{
 				$map_name = array_search($map,$map_array);
-				if(strlen($map_name) > 13)
+				if(strlen($map_name) > 22)
 				{
-					$map_name = substr($map_name,0,12);
+					$map_name = substr($map_name,0,21);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/' . $map . '.png'); 
@@ -89,9 +89,9 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			else
 			{
 				$map_name = $map;
-				if(strlen($map_name) > 13)
+				if(strlen($map_name) > 22)
 				{
-					$map_name = substr($map_name,0,12);
+					$map_name = substr($map_name,0,21);
 					$map_name .= '..';
 				}
 				$map_img = imagecreatefrompng('../images/maps/missing.png');
@@ -107,12 +107,12 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// add text to image
 			imagestring($base, 2, 120, 4, 'Server Name', $yellow);
 			imagestring($base, 3, 120, 18, $servername, $light);
-			imagestring($base, 2, 185, 42, 'Current Mode', $yellow);
-			imagestring($base, 3, 185, 57, $mode_name, $light);
-			imagestring($base, 2, 120, 42, 'Players', $yellow);
-			imagestring($base, 3, 120, 57, $used_slots . ' / ' . $available_slots, $light);
-			imagestring($base, 2, 310, 42, 'Current Map', $yellow);
-			imagestring($base, 3, 310, 57, $map_name, $light);
+			imagestring($base, 2, 240, 32, 'Current Mode', $yellow);
+			imagestring($base, 3, 240, 47, $mode_name, $light);
+			imagestring($base, 2, 120, 47, 'Players', $yellow);
+			imagestring($base, 3, 120, 62, $used_slots . ' / ' . $available_slots, $light);
+			imagestring($base, 2, 240, 62, 'Current Map', $yellow);
+			imagestring($base, 3, 240, 76, $map_name, $light);
 			imagestring($base, 2, 440, 4, 'Players in 24 Hrs:', $yellow);
 			// compile graph
 			// build graph
