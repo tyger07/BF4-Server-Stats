@@ -159,7 +159,16 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 						$increment--;
 					}
 					$hour[] = $row['Hourly'];
-					$average[] = $row['Average'];
+					// if this is the first point, set it to zero if the current server slots is zero
+					// this is because the server stops updating the map stats when no one is in the server, and it just looks funny when it freezes at the last value
+					if($increment == '' && $used_slots == 0)
+					{
+						$average[] = 0;
+					}
+					else
+					{
+						$average[] = $row['Average'];
+					}
 					$increment = ($raw_hour - 1);
 				}
 				// query ran out of results to finish the day
