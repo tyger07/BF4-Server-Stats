@@ -159,16 +159,7 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 						$increment--;
 					}
 					$hour[] = $row['Hourly'];
-					// if this is the first point, set it to zero if the current server slots is zero
-					// this is because the server stops updating the map stats when no one is in the server, and it just looks funny when it freezes at the last value
-					if($increment == '' && $used_slots == 0)
-					{
-						$average[] = 0;
-					}
-					else
-					{
-						$average[] = $row['Average'];
-					}
+					$average[] = $row['Average'];
 					$increment = ($raw_hour - 1);
 				}
 				// query ran out of results to finish the day
@@ -208,7 +199,17 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 					}
 					else
 					{
-						imageline($base, $x_start, $point_average, $x_finish, $point_average, $orange);
+						if($used_slots == 0)
+						{
+							// if this is the first point, set it to zero if the current server slots is zero
+							// this is because the server stops updating the map stats when no one is in the server, and it just looks funny when it freezes at the last value
+							$first_point = $height - (0 * $y_division) + $top_offset;
+							imageline($base, $x_start, $first_point, $x_finish, $point_average, $orange);
+						}
+						else
+						{
+							imageline($base, $x_start, $point_average, $x_finish, $point_average, $orange);
+						}
 					}
 					$last_average = $point_average;
 					$loop_count++;
