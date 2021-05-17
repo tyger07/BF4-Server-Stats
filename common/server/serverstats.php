@@ -111,13 +111,13 @@ if(@mysqli_num_rows($Server_q) != 0)
 	if(!empty($ServerID))
 	{
 		// show players-by-date.png contents
-		echo '<br/><center><img class="embed" src="./common/server/players-by-date.png?sid=' . $ServerID . '" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
+		echo '<br/><center><div class="embed"><img src="./common/server/players-by-date.php?sid=' . $ServerID . '" style="height: 300px; width: 600px;" alt="average players per day" title="average players per day"/></div></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
 		// show players-by-date.png contents
-		echo '<br/><center><img class="embed" src="./common/server/players-by-date.png" alt="average players per day" title="average players per day" height="300" width="600" /></center><br/>';
+		echo '<br/><center><div class="embed"><img src="./common/server/players-by-date.php" style="height: 300px; width: 600px;" alt="average players per day" title="average players per day"/></div></center><br/>';
 	}
 	echo '
 	</div>

@@ -94,7 +94,7 @@ else
 {
 	echo '
 	<div class="subsection">
-	<br/><center><div class="embed"><img src="./common/maps/maps-played.png';
+	<br/><center><div class="embed"><img src="./common/maps/maps-played.php';
 	if(!empty($ServerID))
 	{
 		echo '?sid=' . $ServerID;
