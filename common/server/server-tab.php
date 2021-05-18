@@ -33,7 +33,7 @@ echo '
 <tr>
 <td class="tablecontents" width="240px">
 <br/>
-<center><a href="' . $host . $dir . '/server-banner/image-bannersid' . $ServerID . '.png" target="_blank"><img src="./common/server-banner/image-bannersid' . $ServerID . '.png" style="width: 560px; height: 95px;" alt="banner"/></a></center>
+<center><a href="' . $host . $dir . '/server-banner/image-bannersid' . $ServerID . '.png" target="_blank"><img src="./common/server-banner/image-banner.php?sid=' . $ServerID . '" style="width: 560px; height: 95px;" alt="banner"/></a></center>
 <br/>
 <div class="headline" style="width: 550px; text-align: left;">BBcode</div>
 <table class="prettytable" style="width: 550px;">

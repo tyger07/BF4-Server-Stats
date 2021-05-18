@@ -110,13 +110,13 @@ if(@mysqli_num_rows($Server_q) != 0)
 	// if there is a ServerID, this is a server stats page
 	if(!empty($ServerID))
 	{
-		// show players-by-date.png contents
+		// show players-by-date.php contents
 		echo '<br/><center><div class="embed"><img src="./common/server/players-by-date.php?sid=' . $ServerID . '" style="height: 300px; width: 600px;" alt="average players per day" title="average players per day"/></div></center><br/>';
 	}
 	// or else this is a global stats page
 	else
 	{
-		// show players-by-date.png contents
+		// show players-by-date.php contents
 		echo '<br/><center><div class="embed"><img src="./common/server/players-by-date.php" style="height: 300px; width: 600px;" alt="average players per day" title="average players per day"/></div></center><br/>';
 	}
 	echo '

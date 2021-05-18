@@ -1339,10 +1339,10 @@ elseif($SoldierName != null)
 			// include signature.php image
 			echo '
 			<br/><br/>
-			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signaturepid' . $PlayerID . 'fav0.php';
+			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signature.php?fav=0&amp;pid=' . $PlayerID;
 			if(!empty($cr))
 			{
-				echo '?cr=' . $cr;
+				echo '&amp;cr=' . $cr;
 			}
 			echo '" style="height: 100px; width: 400px;" alt="signature" /></a>
 			<br/>
