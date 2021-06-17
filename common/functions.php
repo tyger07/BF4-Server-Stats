@@ -45,84 +45,87 @@ function Statsout($damagetype,$weapon_array,$PlayerID,$ServerID,$valid_ids,$Game
 		");
 	}
 	// see if we have any records for this player for this category
-	if(@mysqli_num_rows($Weapon_q) != 0)
+	if($damagetype != 'VehicleCustom')
 	{
-		echo '
-		<table class="prettytable">
-			<tr>
-				<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
-				<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
-				<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
-				<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
-				<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
-			</tr>
-		';
-		// set default count value
-		$count = 0;
-		while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
+		if(@mysqli_num_rows($Weapon_q) != 0)
 		{
-			// show expand/contract if very long
-			if($count == 5)
+			echo '
+			<table class="prettytable">
+				<tr>
+					<th width="23%" style="text-align:left;padding-left: 10px;">Weapon Name</th>
+					<th width="19%" style="text-align:left;padding-left: 5px;"><span class="orderedDESCheader">Kills</span></th>
+					<th width="19%" style="text-align:left;padding-left: 10px;">Deaths</th>
+					<th width="19%" style="text-align:left;padding-left: 10px;">Headshots</th>
+					<th width="20%" style="text-align:left;padding-left: 10px;">Headshot Ratio</th>
+				</tr>
+			';
+			// set default count value
+			$count = 0;
+			while($Weapon_r = @mysqli_fetch_assoc($Weapon_q))
 			{
+				// show expand/contract if very long
+				if($count == 5)
+				{
+					echo '
+					</table>
+					<div>
+					<span class="expanded' . $ID . '">
+					<table class="prettytable" style="margin-top: -2px;">
+					';
+				}
+				$count++;
+				$weapon = $Weapon_r['Friendlyname'];
+				// rename 'Death'
+				if($weapon == 'Death')
+				{
+					$weapon = 'Machinery';
+				}
+				// convert weapon to friendly name
+				if(in_array($weapon,$weapon_array))
+				{
+					$weapon_name = array_search($weapon,$weapon_array);
+					$weapon_img = './common/images/weapons/' . $weapon . '.png';
+				}
+				// this weapon is missing!
+				else
+				{
+					$weapon_name = preg_replace("/_/"," ",$weapon);
+					$weapon_img = './common/images/weapons/missing.png';
+				}
+				$kills = $Weapon_r['Kills'];
+				$deaths = $Weapon_r['Deaths'];
+				$headshots = $Weapon_r['Headshots'];
+				$ratio = round(($Weapon_r['HSR']*100),2);
 				echo '
-				</table>
-				<div>
-				<span class="expanded' . $ID . '">
-				<table class="prettytable" style="margin-top: -2px;">
+				<tr>
+					<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" style="height: 57px; width: 95px;" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
+					<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
+					<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
+				</tr>
 				';
 			}
-			$count++;
-			$weapon = $Weapon_r['Friendlyname'];
-			// rename 'Death'
-			if($weapon == 'Death')
+			// finish expand/contract if very long
+			if($count > 5)
 			{
-				$weapon = 'Machinery';
+				$remaining = $count - 5;
+				echo '
+				</table>
+				</span>
+				<a href="javascript:void(0)" class="collapsed' . $ID . '"><table class="prettytable" style="margin-top: -2px;"><tr><td class="tablecontents" style="text-align: left;padding-left: 15px;"><span class="orderedDESCheader">Show ' . $remaining . ' More</span></td></tr></table></a>
+				</div>
+				<table>
+				<tr>
+				<td>
+				</td>
+				</tr>
+				';
 			}
-			// convert weapon to friendly name
-			if(in_array($weapon,$weapon_array))
-			{
-				$weapon_name = array_search($weapon,$weapon_array);
-				$weapon_img = './common/images/weapons/' . $weapon . '.png';
-			}
-			// this weapon is missing!
-			else
-			{
-				$weapon_name = preg_replace("/_/"," ",$weapon);
-				$weapon_img = './common/images/weapons/missing.png';
-			}
-			$kills = $Weapon_r['Kills'];
-			$deaths = $Weapon_r['Deaths'];
-			$headshots = $Weapon_r['Headshots'];
-			$ratio = round(($Weapon_r['HSR']*100),2);
-			echo '
-			<tr>
-				<td width="23%" class="tablecontents"  style="text-align: left;"><table width="100%" border="0"><tr><td width="120px"><img src="'. $weapon_img . '" style="height: 57px; width: 95px;" alt="' . $weapon_name . '" /></td><td style="text-align: left;" valign="middle"><font class="information">' . $weapon_name . '</font></td></tr></table></td>
-				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $kills . '</td>
-				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $deaths . '</td>
-				<td width="19%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $headshots . '</td>
-				<td width="20%" class="tablecontents" style="text-align: left;padding-left: 10px;">' . $ratio . ' <font class="information">%</font></td>
-			</tr>
-			';
-		}
-		// finish expand/contract if very long
-		if($count > 5)
-		{
-			$remaining = $count - 5;
 			echo '
 			</table>
-			</span>
-			<a href="javascript:void(0)" class="collapsed' . $ID . '"><table class="prettytable" style="margin-top: -2px;"><tr><td class="tablecontents" style="text-align: left;padding-left: 15px;"><span class="orderedDESCheader">Show ' . $remaining . ' More</span></td></tr></table></a>
-			</div>
-			<table>
-			<tr>
-			<td>
-			</td>
-			</tr>
 			';
 		}
-		echo '
-		</table>
-		';
 	}
 	// vehicle stats for 'VehicleCustom' array
 	elseif($damagetype == 'VehicleCustom')
@@ -1543,9 +1546,11 @@ function session_count($userip, $ServerID, $valid_ids, $GameID, $BF4stats, $page
 			{
 				$host = 'http://' . $_SERVER['HTTP_HOST'];
 			}
-			$dir = dirname($_SERVER['PHP_SELF']);
+			$dir = dirname($_SERVER['PHP_SELF']) . '/index.php';
+			// remove double slashes
+			$dir = preg_replace('/(\/+)/', '/', $dir);
 			// build redirect link
-			$redirect =  $host . $dir . '/index.php';
+			$redirect =  $host . $dir;
 			if(!empty($ServerID))
 			{
 				$redirect .= '?sid=' . $ServerID;

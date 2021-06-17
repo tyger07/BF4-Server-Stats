@@ -1327,7 +1327,9 @@ elseif($SoldierName != null)
 			{
 				$host = 'http://' . $_SERVER['HTTP_HOST'];
 			}
-			$dir = dirname($_SERVER['PHP_SELF']);
+			$dir = dirname($_SERVER['PHP_SELF']) . '/common/signature/';
+			// remove double slashes
+			$dir = preg_replace('/(\/+)/', '/', $dir);
 			$file = $_SERVER['PHP_SELF'];
 			// show signature images
 			echo '
@@ -1339,7 +1341,7 @@ elseif($SoldierName != null)
 			// include signature.php image
 			echo '
 			<br/><br/>
-			<a href="' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png" target="_blank"><img src="./common/signature/signature.php?fav=0&amp;pid=' . $PlayerID;
+			<a href="' . $host . $dir . 'signature.php?fav=0&amp;pid=' . $PlayerID . '" target="_blank"><img src="' . $host . $dir . 'signature.php?fav=0&amp;pid=' . $PlayerID;
 			if(!empty($cr))
 			{
 				echo '&amp;cr=' . $cr;
@@ -1355,7 +1357,7 @@ elseif($SoldierName != null)
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav0.png[/IMG][/URL]</span>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . 'signaturepid' . $PlayerID . 'fav0.png[/IMG][/URL]</span>
 			</td>
 			</tr>
 			</table>
@@ -1365,7 +1367,7 @@ elseif($SoldierName != null)
 			<table class="prettytable">
 			<tr>
 			<td class="tablecontents">
-			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . '/common/signature/signaturepid' . $PlayerID . 'fav1.png[/IMG][/URL]</span>
+			<span style="font-size: 10px;">[URL=' . $host . $file . '?p=player&amp;pid=' . $PlayerID . '][IMG]' . $host . $dir . 'signaturepid' . $PlayerID . 'fav1.png[/IMG][/URL]</span>
 			</td>
 			</tr>
 			</table>
