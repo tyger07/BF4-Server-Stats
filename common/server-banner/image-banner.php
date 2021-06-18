@@ -118,10 +118,10 @@ if(extension_loaded('gd') && function_exists('gd_info'))
 			// compile graph
 			// build graph
 			$result = @mysqli_query($BF4stats,"
-				SELECT SUBSTRING(`TimeMapLoad`, 11, length(`TimeMapLoad`) - 16) AS Hourly, AVG(`MaxPlayers`) AS Average, MAX(`MaxPlayers`) AS Max
+				SELECT HOUR(`TimeMapLoad`) AS Hourly, AVG(`MaxPlayers`) AS Average, MAX(`MaxPlayers`) AS Max
 				FROM `tbl_mapstats`
 				WHERE `ServerID` = {$sid}
-				AND SUBSTRING(`TimeMapLoad`, 1, LENGTH(`TimeMapLoad`) - 9) BETWEEN CURDATE() - INTERVAL 24 HOUR AND CURDATE()
+				AND `TimeMapLoad` > NOW() - INTERVAL 24 HOUR
 				AND `Gamemode` != ''
 				AND `MapName` != ''
 				GROUP BY Hourly
