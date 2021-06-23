@@ -49,14 +49,14 @@ if((count($ServerIDs) == 1) || (!empty($sid) && in_array($sid,$ServerIDs) && emp
 		$Server_r = @mysqli_fetch_assoc($Server_q);
 		$ServerName = $Server_r['ServerName'];
 		// create battlelog link for this server
-		$battlelog = 'https://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($ServerName);
+		$battlelog = 'https://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode(ltrim($ServerName));
 		$ServerName = textcleaner($ServerName);
 	}
 	// error?  what?  This will probably never happen.
 	// damage control...
 	else
 	{
-		$ServerName = 'Error';
+		$ServerName = 'Error - Unknown';
 		$battlelog = 'https://battlelog.battlefield.com/bf4/servers/pc/';
 	}
 	// lets see if a SoldierName or PlayerID was provided to us in the URL

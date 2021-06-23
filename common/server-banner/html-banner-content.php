@@ -29,7 +29,7 @@ if(@mysqli_num_rows($CurrentMap_q) != 0)
 {
 	$CurrentMap_r = @mysqli_fetch_assoc($CurrentMap_q);
 	$map = $CurrentMap_r['mapName'];
-	$server = $CurrentMap_r['ServerName'];
+	$server = ltrim($CurrentMap_r['ServerName']);
 	$servername = textcleaner($CurrentMap_r['ServerName']);
 	$servername = ltrim($servername);
 	if(strlen($servername) > 24)
