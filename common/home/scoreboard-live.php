@@ -76,7 +76,7 @@ if(@mysqli_num_rows($Basic_q) != 0)
 	$used_slots = $Basic_r['usedSlots'];
 	$available_slots = $Basic_r['maxSlots'];
 	$name = $Basic_r['ServerName'];
-	$battlelog = 'https://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode($name);
+	$battlelog = 'https://battlelog.battlefield.com/bf4/servers/pc/?filtered=1&amp;expand=0&amp;useAdvanced=1&amp;q=' . urlencode(ltrim($name));
 	$mode = $Basic_r['Gamemode'];
 	// convert mode to friendly name
 	if(in_array($mode,$mode_array))
