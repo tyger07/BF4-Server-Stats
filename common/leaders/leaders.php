@@ -94,7 +94,14 @@ if(!empty($ServerID))
 		WHERE `ServerID` = {$ServerID}
 	");
 	$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
-	$numrows = $TotalRows_r['CountPlayers'];
+	if(!empty($TotalRows_r)
+	{
+		$numrows = $TotalRows_r['CountPlayers'];
+	}
+	else
+	{
+		$numrows = 0;
+	}
 	$TotalServerPlayers = $numrows;
 }
 // or else this is a global stats page
