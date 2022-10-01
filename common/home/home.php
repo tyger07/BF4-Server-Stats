@@ -68,7 +68,7 @@ if(!empty($ServerID))
 		WHERE `ServerID` = {$ServerID}
 	");
 	$TotalRows_r = @mysqli_fetch_assoc($TotalRows_q);
-	if(!empty($TotalRows_r)
+	if(!empty($TotalRows_r))
 	{
 		$numrows = $TotalRows_r['CountPlayers'];
 	}
