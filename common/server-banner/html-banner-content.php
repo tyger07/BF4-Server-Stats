@@ -338,7 +338,7 @@ $Score_q = @mysqli_query($BF4stats,"
 	AND `GID` = '{$GameID}'
 	AND `timestamp` >= '{$old}'
 	GROUP BY `PlayerID`
-	ORDER BY tps.`Score` DESC, tpd.`SoldierName` ASC LIMIT 10
+	ORDER BY `Score` DESC, `SoldierName` ASC LIMIT 10
 ");
 // if no recent results, do the slower query from live stats
 if(!$Score_q || @mysqli_num_rows($Score_q) == 0)
