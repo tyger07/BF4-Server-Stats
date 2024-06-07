@@ -2586,7 +2586,7 @@ function cache_top_twenty($ServerID, $valid_ids, $GameID, $BF4stats, $cr, $Total
 // function to replace dangerous characters in content
 function textcleaner($content)
 {
-	$content = str_replace(array('\'', '"', '\\', '`'), '',htmlspecialchars(strip_tags($content)));
+	$content = str_replace(array('\'', '"', '\\', '`'), '',htmlspecialchars(strip_tags((string) $content)));
 	// return the value out of the function
 	return $content;
 }
