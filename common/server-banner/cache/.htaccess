@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^(.*)\.png $1.png [NC]

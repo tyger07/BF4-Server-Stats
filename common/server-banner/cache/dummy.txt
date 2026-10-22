@@ -1,0 +1,2 @@
+This is a dummy file just so that this directory isn't empty.  GitHub apparently ignores empty directories.
+This directory is where cache images are stored while image-banner.php creates the image.
